@@ -1,0 +1,52 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 6rem 0 1rem;
+  position: relative;
+
+  .title-wrapper {
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-radius: 1rem;
+    position: fixed;
+    background: var(--white);
+    width: 100%;
+    padding: 1.5rem;
+
+    .title {
+      color: var(--dark-slate);
+      font-family: Manrope, Arial, Helvetica, sans-serif;
+      font-size: 2rem;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 150%; /* 3rem */
+      letter-spacing: -0.04rem;
+    }
+
+    .times {
+      width: 3rem;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--light-gray-3);
+      border: none;
+      padding: .75rem; /* 1rem * 1.6 */
+      cursor: pointer;
+      border-radius: 50%;
+    }
+  }
+
+  .children {
+    overflow-y: scroll;
+    padding: 1.5rem 1.5rem .5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+}

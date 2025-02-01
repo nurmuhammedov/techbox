@@ -1,0 +1,100 @@
+.root {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--light-gray-2);
+
+  .left {
+    background: var(--dark-slate);
+    display: flex;
+    flex-direction: column;
+
+    .top {
+      background: var(--teal);
+      flex: 1;
+    }
+
+    .bottom {
+      padding: 3rem 3rem 4.7rem 3rem;
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: .75rem;
+        margin-bottom: 2.5rem;
+
+        span {
+          color: var(--white);
+          font-family: Poppins, Arial, Helvetica, sans-serif;
+          font-size: 1.75rem;
+          font-style: normal;
+          //text-align: center;
+          font-weight: 500;
+          line-height: normal;
+        }
+      }
+
+      .slogan {
+        color: var(--white);
+        font-family: Poppins, Arial, Helvetica, sans-serif;
+        font-size: 2.5rem;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 150%; /* 3.75rem */
+        //letter-spacing: -0.075rem;
+        //text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      .tagline {
+        color: var(--light-gray-3, #DCE4E8);
+        font-family: Poppins, Arial, Helvetica, sans-serif;
+        font-size: 1.25rem;
+        font-style: normal;
+        //text-align: center;
+        font-weight: 500;
+        line-height: 150%; /* 1.875rem */
+        //letter-spacing: -0.02rem;
+      }
+    }
+  }
+
+  .wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+
+    .form {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      border-radius: 1rem;
+      background: var(--white);
+      width: 30rem;
+      padding: 2rem;
+      gap: 2rem;
+
+
+      h1 {
+        color: var(--dark-slate);
+        font-family: Poppins, Arial, Helvetica, sans-serif;
+        font-size: 2rem;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 150%; /* 3rem */
+        //letter-spacing: -0.06rem;
+        text-align: center;
+      }
+
+      form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    }
+  }
+}

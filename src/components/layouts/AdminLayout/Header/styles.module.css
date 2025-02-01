@@ -1,0 +1,122 @@
+.root {
+  padding: 1.2rem 3.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--dark-teal);
+}
+.root .logo {
+  align-items: center;
+  gap: 0.75rem;
+  display: flex;
+  justify-content: flex-start;
+}
+.root .logo span {
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 1.75rem;
+  font-style: normal;
+  color: var(--white);
+  font-weight: 500;
+  line-height: normal;
+}
+.root .nav {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.root .profile-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  user-select: none;
+}
+.root .profile-container .profile {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  align-items: center;
+  gap: 0.5rem;
+  padding-right: 0.4rem;
+}
+.root .profile-container .profile .status-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+.root .profile-container .profile .status-wrapper .status {
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--light-white-opacity);
+}
+.root .profile-container .profile .status-wrapper .name {
+  color: var(--white);
+  text-align: center;
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%; /* 1.5rem */
+}
+.root .profile-container .profile .icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.root .profile-container .profile .icon svg {
+  transition: all 0.3s ease-out;
+}
+.root .profile-container .profile .icon svg path {
+  stroke: var(--white);
+}
+.root .profile-container .profile .active-icon svg {
+  transform: rotate(-180deg);
+}
+.root .profile-container .account {
+  position: absolute;
+  width: 10rem;
+  background: var(--white);
+  box-shadow: 0 0.1rem 1rem rgba(0, 0, 0, 0.15);
+  border-radius: 0.4rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  top: 110%;
+  right: 0;
+  gap: 0.4rem;
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.1s ease-out;
+}
+.root .profile-container .account .logout {
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+.root .profile-container .account .logout span {
+  color: var(--dark-slate);
+  text-align: center;
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 1.5rem */
+}
+.root .profile-container .account .logout svg path {
+  fill: var(--red);
+}
+.root .profile-container .active-account {
+  opacity: 1;
+  visibility: visible;
+}
+
+/*# sourceMappingURL=styles.module.css.map */

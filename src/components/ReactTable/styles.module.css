@@ -1,0 +1,72 @@
+.root {
+  background: var(--white);
+  width: 100%;
+}
+.root table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.root table thead {
+  background: var(--light-blue);
+  user-select: none;
+}
+.root table thead tr th {
+  padding: 0.75rem;
+  text-align: start;
+  border: none;
+  color: var(--slate-gray);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%; /* 1.5rem */
+  letter-spacing: -0.02rem;
+}
+.root table tbody {
+  transition: color 0.15s ease-in-out;
+}
+.root table tbody tr td {
+  padding: 1.25rem 0.75rem;
+  max-width: 15rem;
+  color: var(--dark-slate);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 1.125rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%; /* 1.6875rem */
+  letter-spacing: -0.0225rem;
+}
+.root table tbody tr:hover {
+  background: var(--light-gray-1);
+}
+
+.empty table {
+  height: 100%;
+}
+.empty table tbody tr td {
+  text-align: center;
+  color: var(--dark-slate) !important;
+}
+.empty table tbody tr:hover {
+  background: var(--white) !important;
+}
+
+.loader table {
+  height: 100%;
+}
+.loader table tbody tr:hover {
+  background: var(--white) !important;
+}
+
+.screen {
+  flex: 1;
+}
+
+.spacing td {
+  padding: 0.2rem !important;
+}
+.spacing:hover {
+  background: var(--white) !important;
+}
+
+/*# sourceMappingURL=styles.module.css.map */

@@ -1,0 +1,13 @@
+.title {
+  color: var(--dark-slate);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 2rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 150%; /* 3rem */
+  letter-spacing: -0.04rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/*# sourceMappingURL=styles.module.css.map */

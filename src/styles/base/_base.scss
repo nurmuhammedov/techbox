@@ -1,0 +1,63 @@
+/* Global Reset */
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: inherit;
+}
+
+/* Scrollbar */
+*::-webkit-scrollbar {
+  background-color: transparent;
+  width: 0.3rem;
+  height: 0.3rem;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 0.8rem;
+  background-color: var(--gray-soft);
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* HTML */
+html {
+  box-sizing: border-box;
+}
+
+/* Images */
+img {
+  user-select: none;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Links */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Lists */
+ul,
+ol {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+/* Modal */
+.rodal-mask {
+  background: rgba(0, 0, 0, 0.60) !important;
+}
+
+.rodal-dialog {
+  padding: 0 !important;
+  flex-direction: column !important;
+  border-radius: 1rem !important;
+  background: var(--gray-lightest) !important;
+}

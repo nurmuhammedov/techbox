@@ -1,0 +1,105 @@
+.root {
+  position: relative;
+}
+.root.error input[data-title=input],
+.root.error textarea {
+  border: 1px solid var(--red);
+  box-shadow: 0 0 0 1px var(--red);
+}
+.root.radius input[data-title=input],
+.root.radius textarea {
+  border-radius: 6.25rem;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.75rem;
+}
+.wrapper label {
+  color: var(--black);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.input,
+textarea {
+  padding: 1.125rem 1rem;
+  color: var(--navy-dark);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 0.9375rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 1.40625rem */
+  letter-spacing: 0.05625rem;
+  border-radius: 0.625rem;
+  background: var(--gray-lightest);
+  border: 1px solid transparent;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.input::placeholder,
+textarea::placeholder {
+  color: var(--gray-light);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 0.9375rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 1.40625rem */
+  letter-spacing: 0.05625rem;
+}
+.input:focus,
+textarea:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 1px var(--primary-blue);
+}
+
+textarea {
+  resize: none;
+}
+
+.error__message {
+  display: inline-block;
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1rem;
+  color: var(--red);
+  margin-top: 0.3rem;
+  font-style: normal;
+}
+
+.icon .input-wrapper {
+  position: relative;
+}
+.icon .input-wrapper .input {
+  padding-left: 3.5rem !important;
+}
+.icon .input-wrapper .icon-wrapper {
+  user-select: none;
+  padding: 0.4rem;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-52%);
+  cursor: pointer;
+}
+.icon .right .input {
+  padding-right: 3.5rem !important;
+  padding-left: 1rem !important;
+}
+.icon .right .icon-wrapper {
+  right: 1rem;
+  left: auto;
+}
+
+/*# sourceMappingURL=styles.module.css.map */

@@ -1,0 +1,76 @@
+.root {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+.root ul {
+  display: flex;
+  gap: 0.2rem;
+  user-select: none;
+}
+.root ul li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.root ul li a {
+  color: var(--dark-slate);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%; /* 1.3125rem */
+  letter-spacing: -0.0175rem;
+  cursor: pointer;
+  padding: 0.3rem 0.7rem;
+  text-align: center;
+  transition: color 0.15s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.root ul li a:hover {
+  color: var(--teal);
+}
+.root ul li[class=selected] a {
+  cursor: not-allowed;
+  pointer-events: none;
+  color: var(--teal);
+}
+.root ul li[class="previous disabled"] a,
+.root ul li[class="next disabled"] a {
+  border-radius: 0.5rem;
+  border: 1px solid var(--light-gray-3);
+  background: var(--white);
+  padding: 0.625rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.root ul li[class="previous disabled"] a svg path,
+.root ul li[class="next disabled"] a svg path {
+  stroke: silver;
+}
+.root ul li[class=previous] a,
+.root ul li[class=next] a {
+  border-radius: 0.5rem;
+  border: 1px solid var(--light-gray-3);
+  background: var(--white);
+  padding: 0.625rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.root ul li[class=previous] a svg,
+.root ul li[class="previous disabled"] a svg {
+  transform: rotate(90deg);
+}
+.root ul li[class=next] a svg,
+.root ul li[class="next disabled"] a svg {
+  transform: rotate(-90deg);
+}
+
+/*# sourceMappingURL=styles.module.css.map */
