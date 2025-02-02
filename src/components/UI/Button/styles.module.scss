@@ -1,58 +1,99 @@
 .button {
   cursor: pointer;
-  border: none;
   outline: none;
   transition: all 0.2s ease-in-out;
   text-align: center;
+  color: var(--white);
+  font-feature-settings: 'liga' off, 'clig' off;
   font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-weight: 400;
   font-size: 1rem;
   font-style: normal;
-  font-weight: 600;
-  line-height: 150%; /* 1.5rem */
-  //letter-spacing: -0.02rem;
-  border-radius: 0.875rem;
+  line-height: 140%; /* 1.5rem */
   display: flex;
   height: 3rem;
-  padding: 0.75rem 1.5rem;
   justify-content: center;
   align-items: center;
-  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  gap: 0.5rem;
+  border-radius: 0.625rem;
+  background: #146DF3;
+  border: 1px solid transparent;
 
+  svg {
+    max-width: 1rem !important;
+    min-width: 1rem !important;
+  }
 
   &--primary {
-    background: var(--teal-green);
+    background: var(--primary-blue);
     color: var(--white);
+
+    svg {
+      path {
+        stroke: var(--white) !important;
+      }
+    }
   }
 
   &--primary-outline {
-    background: transparent;
-    border: 1px solid var(--light-gray-2);
-    color: var(--dark-slate);
+    background: var(--gray-pale);
+    border: 1px solid transparent;
+    color: var(--gray-dark);
+
+    svg {
+      path {
+        stroke: var(--gray-dark) !important;
+      }
+    }
   }
 
   &--danger {
     background: var(--red);
     color: var(--white);
+
+    svg {
+      path {
+        stroke: var(--white) !important;
+      }
+    }
   }
 
   &--danger-outline {
-    background: transparent;
-    border: 1px solid var(--teal-green);
-    color: var(--white);
+    background: var(--gray-pale);
+    border: 1px solid var(--red);
+    color: var(--gray-dark);
+
+    svg {
+      path {
+        stroke: var(--gray-dark) !important;
+      }
+    }
   }
 
   &--outline {
-    background: transparent;
-    border: 1px solid var(--light-gray-2);
-    color: var(--teal-green);
-    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0, rgba(27, 31, 35, 0.15) 0 0 0 1px;
+    background: var(--white);
+    border: 1px solid var(--gray-dark);
+    color: var(--gray-dark);
+
+    svg {
+      path {
+        stroke: var(--gray-dark) !important;
+      }
+    }
   }
 
   &--disabled {
-    background: var(--silver);
-    color: var(--white);
+    background: var(--gray-lightest);
+    color: var(--gray-muted);
     cursor: not-allowed;
     pointer-events: none;
+
+    svg {
+      path {
+        stroke: var(--gray-muted) !important;
+      }
+    }
   }
 
   &__icon {
@@ -71,6 +112,10 @@
 }
 
 .mini {
-  padding: 0.75rem;
+  padding: 0.25rem 1rem;
   gap: 0.25rem;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.25rem;
 }

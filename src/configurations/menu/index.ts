@@ -1,56 +1,26 @@
+import {User, Users} from 'assets/icons'
 import {IMenuItem} from 'interfaces/configuration.interface'
 import {ROLE_LIST} from 'constants/roles'
 
 
 export const menu: IMenuItem[] = [
 	{
-		id: '/home',
-		label: 'Home',
-		href: '/admin/home',
+		id: 'employees',
+		label: 'Employees',
+		href: '/employees',
+		icon: Users,
 		allowedRoles: [
-			ROLE_LIST.ADMIN
+			ROLE_LIST.HEAD_DEPARTMENT
 		],
 		order: {
-			[ROLE_LIST.ADMIN]: 1
+			[ROLE_LIST.HEAD_DEPARTMENT]: 1
 		}
 	},
 	{
-		id: '/clients',
-		label: 'Clients',
-		href: '/admin/clients',
-		allowedRoles: [
-			ROLE_LIST.ADMIN
-		],
-		order: {
-			[ROLE_LIST.ADMIN]: 1
-		}
-	},
-	{
-		id: '/products',
-		label: 'Products',
-		href: '/admin/products',
-		allowedRoles: [
-			ROLE_LIST.ADMIN
-		],
-		order: {
-			[ROLE_LIST.ADMIN]: 1
-		}
-	},
-	{
-		id: '/stores',
-		label: 'Stores',
-		href: '/admin/stores',
-		allowedRoles: [
-			ROLE_LIST.ADMIN
-		],
-		order: {
-			[ROLE_LIST.ADMIN]: 1
-		}
-	},
-	{
-		id: '/database',
-		label: 'Database',
-		href: '/admin/database',
+		id: 'roles',
+		label: 'Roles',
+		href: '/roles',
+		icon: User,
 		allowedRoles: [
 			ROLE_LIST.ADMIN
 		],

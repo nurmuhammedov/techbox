@@ -35,7 +35,7 @@
 }
 
 .background {
-  background: var(--primary-blue);
+  background: var(--primary-gradient);
 }
 .background .spinner::after {
   border-color: var(--white) transparent var(--white) transparent;

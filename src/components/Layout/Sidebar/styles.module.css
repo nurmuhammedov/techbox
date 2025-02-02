@@ -1,0 +1,33 @@
+.sidebar {
+  background: var(--white);
+  max-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--gray-softer);
+}
+.sidebar .header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5625rem;
+  padding: 1.5rem;
+}
+.sidebar .header p {
+  color: var(--blue-deep);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 1.5625rem;
+  font-style: normal;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: normal;
+}
+.sidebar .menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.875rem 0 1rem 0;
+  flex: 1;
+}
+
+/*# sourceMappingURL=styles.module.css.map */

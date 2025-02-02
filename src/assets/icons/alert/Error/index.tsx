@@ -6,7 +6,7 @@ const Index = () => {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			viewBox="0 0 24 24"
-			stroke="#F42829"
+			stroke="var(--red)"
 			strokeWidth="2"
 			fill="none"
 		>

@@ -1,0 +1,58 @@
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1rem 1rem 1.5rem;
+  text-decoration: none;
+  transition: all 0.1s ease-in;
+
+
+  .title {
+    color: var(--gray-medium);
+    font-family: Poppins, Arial, Helvetica, sans-serif;
+    font-size: 1.125rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    transition: color 0.1s ease-in;
+  }
+
+  .icon {
+    svg {
+      path {
+        fill: var(--gray-medium);
+        transition: all 0.1s ease-in;
+      }
+    }
+  }
+
+  &:hover {
+    .title {
+      color: var(--primary-blue);
+    }
+
+    .icon {
+      svg {
+        path {
+          fill: var(--primary-blue);
+        }
+      }
+    }
+
+  }
+}
+
+
+.active {
+  .icon {
+    svg {
+      path {
+        fill: var(--primary-blue);
+      }
+    }
+  }
+
+  .title {
+    color: var(--primary-blue);
+  }
+}

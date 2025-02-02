@@ -1,100 +1,55 @@
 .root {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 3fr 2fr;
   width: 100%;
   min-height: 100vh;
-  background: var(--light-gray-2);
 
   .left {
-    background: var(--dark-slate);
+    background: var(--primary-gradient);
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    gap: 3.5rem;
 
-    .top {
-      background: var(--teal);
-      flex: 1;
-    }
-
-    .bottom {
-      padding: 3rem 3rem 4.7rem 3rem;
-
-      .logo {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: .75rem;
-        margin-bottom: 2.5rem;
-
-        span {
-          color: var(--white);
-          font-family: Poppins, Arial, Helvetica, sans-serif;
-          font-size: 1.75rem;
-          font-style: normal;
-          //text-align: center;
-          font-weight: 500;
-          line-height: normal;
-        }
-      }
-
-      .slogan {
-        color: var(--white);
-        font-family: Poppins, Arial, Helvetica, sans-serif;
-        font-size: 2.5rem;
-        font-style: normal;
-        font-weight: 700;
-        line-height: 150%; /* 3.75rem */
-        //letter-spacing: -0.075rem;
-        //text-align: center;
-        margin-bottom: 1rem;
-      }
-
-      .tagline {
-        color: var(--light-gray-3, #DCE4E8);
-        font-family: Poppins, Arial, Helvetica, sans-serif;
-        font-size: 1.25rem;
-        font-style: normal;
-        //text-align: center;
-        font-weight: 500;
-        line-height: 150%; /* 1.875rem */
-        //letter-spacing: -0.02rem;
-      }
+    .slogan {
+      color: var(--white);
+      font-family: Poppins, Arial, Helvetica, sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      text-align: center;
+      font-size: 2rem;
+      line-height: 130%; /* 2.6rem */
+      text-transform: uppercase;
     }
   }
 
   .wrapper {
+    background: var(--white);
     display: flex;
     align-items: center;
+    flex-direction: column;
+    gap: 1rem;
     justify-content: center;
     padding: 2rem 1.5rem;
 
-    .form {
+    h1 {
+      color: var(--gray-deep);
+      font-family: Poppins, Arial, Helvetica, sans-serif;
+      text-align: center;
+      font-size: 1.625rem;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+    }
+
+    form {
+      width: 100%;
+      max-width: 20rem;
       display: flex;
-      align-items: center;
       flex-direction: column;
-      border-radius: 1rem;
-      background: var(--white);
-      width: 30rem;
-      padding: 2rem;
-      gap: 2rem;
-
-
-      h1 {
-        color: var(--dark-slate);
-        font-family: Poppins, Arial, Helvetica, sans-serif;
-        font-size: 2rem;
-        font-style: normal;
-        font-weight: 700;
-        line-height: 150%; /* 3rem */
-        //letter-spacing: -0.06rem;
-        text-align: center;
-      }
-
-      form {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-      }
+      gap: 1rem;
     }
   }
 }

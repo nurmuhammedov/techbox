@@ -1,0 +1,23 @@
+.root {
+  display: grid;
+  grid-template-columns: 16.5rem 1fr;
+  position: relative;
+  height: 100vh;
+  max-height: 100vh;
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    height: 100%;
+
+    .wrapper {
+      margin-top: 4.8rem;
+      flex: 1;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+  }
+}

@@ -2,16 +2,16 @@ import React from 'react'
 
 
 interface RoleOrder {
-	[key: string]: number;
+	[key: string]: number
 }
 
 interface IMenuItem {
-	id: string;
-	label: string;
-	icon?: () => React.ReactNode;
-	href: string;
-	allowedRoles: string[];
-	order: RoleOrder;
+	id: string
+	label: string
+	icon?: () => React.ReactNode
+	href: string
+	allowedRoles: string[]
+	order: RoleOrder
 }
 
 interface IListResponse<T> {

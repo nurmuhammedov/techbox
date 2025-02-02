@@ -17,6 +17,7 @@
   --red: #F00;
   --yellow-bright: #FFCC47;
   --green-bright: #2CA800;
+  --primary-gradient: linear-gradient(180deg, #146DF3 0%, #02298A 84.79%, #021B79 100%);
 }
 
 .flex {
@@ -455,6 +456,11 @@ template {
 /* HTML */
 html {
   box-sizing: border-box;
+}
+
+/* BODY */
+body {
+  background: var(--gray-lightest);
 }
 
 /* Images */

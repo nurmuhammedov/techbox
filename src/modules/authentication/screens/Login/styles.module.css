@@ -1,84 +1,52 @@
 .root {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 3fr 2fr;
   width: 100%;
   min-height: 100vh;
-  background: var(--light-gray-2);
 }
 .root .left {
-  background: var(--dark-slate);
+  background: var(--primary-gradient);
   display: flex;
   flex-direction: column;
-}
-.root .left .top {
-  background: var(--teal);
-  flex: 1;
-}
-.root .left .bottom {
-  padding: 3rem 3rem 4.7rem 3rem;
-}
-.root .left .bottom .logo {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.75rem;
-  margin-bottom: 2.5rem;
-}
-.root .left .bottom .logo span {
-  color: var(--white);
-  font-family: Poppins, Arial, Helvetica, sans-serif;
-  font-size: 1.75rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-}
-.root .left .bottom .slogan {
-  color: var(--white);
-  font-family: Poppins, Arial, Helvetica, sans-serif;
-  font-size: 2.5rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 150%; /* 3.75rem */
-  margin-bottom: 1rem;
-}
-.root .left .bottom .tagline {
-  color: var(--light-gray-3, #DCE4E8);
-  font-family: Poppins, Arial, Helvetica, sans-serif;
-  font-size: 1.25rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 150%; /* 1.875rem */
-}
-.root .wrapper {
-  display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1.5rem;
+  gap: 3.5rem;
 }
-.root .wrapper .form {
+.root .left .slogan {
+  color: var(--white);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  text-align: center;
+  font-size: 2rem;
+  line-height: 130%; /* 2.6rem */
+  text-transform: uppercase;
+}
+.root .wrapper {
+  background: var(--white);
   display: flex;
   align-items: center;
   flex-direction: column;
-  border-radius: 1rem;
-  background: var(--white);
-  width: 30rem;
-  padding: 2rem;
-  gap: 2rem;
+  gap: 1rem;
+  justify-content: center;
+  padding: 2rem 1.5rem;
 }
-.root .wrapper .form h1 {
-  color: var(--dark-slate);
+.root .wrapper h1 {
+  color: var(--gray-deep);
   font-family: Poppins, Arial, Helvetica, sans-serif;
-  font-size: 2rem;
+  text-align: center;
+  font-size: 1.625rem;
   font-style: normal;
   font-weight: 700;
-  line-height: 150%; /* 3rem */
-  text-align: center;
+  line-height: normal;
 }
-.root .wrapper .form form {
+.root .wrapper form {
   width: 100%;
+  max-width: 20rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 /*# sourceMappingURL=styles.module.css.map */

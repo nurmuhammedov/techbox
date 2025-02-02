@@ -5,15 +5,15 @@ import {interceptor} from 'libraries'
 
 export const AuthenticationService = {
 	async login(credentials: ILoginForm) {
-		const response = await interceptor.post<ILogin>('accounts/login/', credentials)
+		const response = await interceptor.post<ILogin>('accounts/login', credentials)
 		return response.data
 	},
 
 	async me() {
-		return await interceptor.get<ILogin>('accounts/me/')
+		return await interceptor.get<ILogin>('accounts/me')
 	},
 
 	async logout() {
-		return await interceptor.get('accounts/logout/')
+		return await interceptor.get('accounts/logout')
 	}
 }

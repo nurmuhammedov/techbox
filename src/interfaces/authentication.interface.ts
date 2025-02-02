@@ -1,16 +1,25 @@
-import {ROLE_LIST} from 'constants/roles'
+import {PERMISSIONS_LIST, ROLE_LIST} from 'constants/roles'
 
 
-type IRole = ROLE_LIST.USER | ROLE_LIST.ADMIN
+type IRole = ROLE_LIST.EMPLOYEE | ROLE_LIST.ADMIN | ROLE_LIST.HEAD_DEPARTMENT
+
+interface IRoleType {
+	label: string
+	value: IRole
+	categories: PERMISSIONS_LIST[]
+}
 
 interface ILogin {
-	full_name: string;
-	role: IRole;
+	id: number
+	fullname: string
+	role: IRoleType
 }
 
 interface IUser {
-	fullName: string;
-	role: IRole;
+	fullName: string
+	role: IRole
+	roleLabel: string
+	permissions: PERMISSIONS_LIST[]
 }
 
 export type{

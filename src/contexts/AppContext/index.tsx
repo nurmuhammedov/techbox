@@ -27,6 +27,7 @@ function AppContextProvider({children}: PropsWithChildren) {
 		}
 	}, [isPending])
 
+	console.log(user)
 
 	if (isPending || isLoading || !user) {
 		return <Loader screen background/>

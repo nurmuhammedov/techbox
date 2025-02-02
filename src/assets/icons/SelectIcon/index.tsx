@@ -1,18 +1,18 @@
 const Index = () => {
 	return (
 		<svg
-			style={{maxWidth: '1.5rem', minWidth: '1.5rem', width: '100%', height: 'auto'}}
+			style={{maxWidth: '1rem', minWidth: '1rem', width: '100%', height: 'auto'}}
 			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 24 24"
+			viewBox="0 0 16 17"
 			fill="none"
 		>
 			<path
-				d="M19.92 8.9502L13.4 15.4702C12.63 16.2402 11.37 16.2402 10.6 15.4702L4.08002 8.9502"
-				strokeLinejoin="round"
-				strokeLinecap="round"
-				strokeMiterlimit="10"
+				d="M13.2787 6.4668L8.93208 10.8135C8.41875 11.3268 7.57875 11.3268 7.06542 10.8135L2.71875 6.4668"
+				stroke="#10384F"
 				strokeWidth="1.5"
-				stroke="#1A1C1E"
+				strokeMiterlimit="10"
+				strokeLinecap="round"
+				strokeLinejoin="round"
 			/>
 		</svg>
 	)

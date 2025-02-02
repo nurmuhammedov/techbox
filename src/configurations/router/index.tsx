@@ -14,8 +14,12 @@ export const router = createBrowserRouter([
 		element: <App/>,
 		children: [
 			{
-				index: true,
+				path: 'employees',
 				element: <EmployeesTable/>
+			},
+			{
+				path: 'roles',
+				element: <></>
 			}
 		],
 		errorElement: <h1>Error</h1>
@@ -27,7 +31,7 @@ export const router = createBrowserRouter([
 	},
 	{
 		path: '*',
-		element: <Navigate to="/login"/>,
+		element: <Navigate to="/"/>,
 		errorElement: <h1>Error</h1>
 	}
 ])

@@ -1,5 +1,4 @@
 import NumberFormattedInput from './UI/NumberFormattedInput'
-import AdminLayout from './layouts/AdminLayout'
 import DeleteButton from './DeleteButton'
 import DeleteModal from './DeleteModal'
 import MaskInput from './UI/MaskInput'
@@ -13,15 +12,16 @@ import Button from './UI/Button'
 import Select from './UI/Select'
 import Input from './UI/Input'
 import Modal from './UI/Modal'
+import Layout from './Layout'
 import Loader from './Loader'
 import Alert from './Alert'
 import Card from './Card'
 import App from './App'
+import HR from './HR'
 
 
 export {
 	NumberFormattedInput,
-	AdminLayout,
 	DeleteButton,
 	DeleteModal,
 	Pagination,
@@ -31,6 +31,7 @@ export {
 	PageTitle,
 	AlertItem,
 	EditModal,
+	Layout,
 	Button,
 	Select,
 	Loader,
@@ -38,5 +39,6 @@ export {
 	Modal,
 	Input,
 	Card,
-	App
+	App,
+	HR
 }
