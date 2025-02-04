@@ -1,16 +1,26 @@
+import {roleOptions} from 'helpers/options'
 import {ISelectOption} from 'interfaces/form.interface'
 import {ISearchParams} from 'interfaces/params.interface'
+import {showMessage} from 'utilities/alert'
+import {TFunction} from 'i18next'
 
 
 const noop = (): void => {}
 const noopAsync = async (): Promise<undefined> => {}
 
-// function ensureHttps(url: string | undefined | null): string | undefined | null {
-// 	if (url?.startsWith('http://')) {
-// 		return url.replace('http://', 'https://')
-// 	}
-// 	return url
-// }
+function joinArray(arr: string[], t: TFunction) {
+	if (!Array.isArray(arr)) {
+		showMessage('Data must be an array of strings', 'error')
+	}
+	if (arr.length !== 0) {
+		const newArr = arr.map(item => {
+			return t(roleOptions?.find(i => i.value == item)?.label?.toString() || '')
+		})
+		return newArr?.join(' | ')
+	}
+
+	return ''
+}
 
 const cleanParams = (params: ISearchParams) => {
 	const filteredParams: ISearchParams = {}
@@ -21,10 +31,6 @@ const cleanParams = (params: ISearchParams) => {
 		}
 	})
 	return filteredParams
-}
-
-function isString(val: unknown): val is string {
-	return typeof val === 'string'
 }
 
 function isObject(val: unknown): val is ISearchParams {
@@ -40,11 +46,9 @@ function getSelectValue(options: ISelectOption[], value: string | number | boole
 
 export {
 	noop,
-	isString,
 	isObject,
 	noopAsync,
 	cleanParams,
-	getSelectValue
-
-	// ensureHttps
+	getSelectValue,
+	joinArray
 }

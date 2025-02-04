@@ -18,6 +18,7 @@ const Index: FC<IMenuItem> = ({href, label, icon}) => {
 		>
 			<span className={classNames(styles.icon)}>{icon ? icon() : null}</span>
 			<span className={styles.title}>{t(label)}</span>
+			<div className={styles.right}></div>
 		</NavLink>
 	)
 }

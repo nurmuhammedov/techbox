@@ -16,7 +16,7 @@ const Index = () => {
 	return (
 		<div className={styles.root}>
 			<div className={styles['role-label']}>
-				{user?.roleLabel}
+				{t(user?.roleLabel ?? 'Employee')}
 			</div>
 			<div className={styles['profile-container']}>
 				<div

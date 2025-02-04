@@ -51,5 +51,14 @@
   "Password can only contain letters, numbers, and special characters (!@#$%^&*)": "Parol faqat lotin harflari (a-z va A-Z), raqamlar (0-9) va maxsus belgilar bo‘lishi mumkin (!@#$%^&*)",
   "Passwords did not match": "Parollar mos kelmadi",
   "Confirm password": "Parolni takror kiriting",
-  "This field is required": "Ushbu maydon to‘ldirilishi shart"
+  "This field is required": "Ushbu maydon to‘ldirilishi shart",
+  "Add employee": "Xodim qo‘shish",
+  "Role": "Rol",
+  "Add role": "Rol qo‘shish",
+  "Add position": "Lavozim qo‘shish",
+  "Positions": "Lavozimlar",
+  "Position": "Lavozim",
+  "Comment": "Izoh",
+  "Allowed sections": "Ruxsat etilgan bo‘limlar",
+  "Experience": "Tajriba"
 }

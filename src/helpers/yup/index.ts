@@ -36,7 +36,21 @@ const loginSchema = yup.object().shape({
 	password: passwordSchema
 })
 
+// ROLES && POSITIONS
+const rolesSchema = yup.object().shape({
+	name: yup.string().trim().required('This field is required'),
+	categories: yup.array().required('This field is required'),
+	comment: yup.string().transform(v => !v ? null : v).nullable()
+})
+
+const positionsSchema = yup.object().shape({
+	name: yup.string().trim().required('This field is required'),
+	experience: yup.string().trim().required('This field is required')
+})
+
 export {
 	loginSchema,
-	confirmPasswordSchema
+	confirmPasswordSchema,
+	positionsSchema,
+	rolesSchema
 }

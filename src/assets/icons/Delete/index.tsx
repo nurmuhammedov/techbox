@@ -1,48 +1,25 @@
-const Index = () => {
+const TrashIcon = () => {
 	return (
 		<svg
-			style={{maxWidth: '1.5rem', minWidth: '1.5rem', width: '100%', height: 'auto'}}
 			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 24 24"
+			viewBox="0 0 17 20"
 			fill="none"
+			style={{maxWidth: '1.25rem', minWidth: '1.25rem', width: '100%', height: 'auto'}}
 		>
 			<path
-				d="M21 5.98047C17.67 5.65047 14.32 5.48047 10.98 5.48047C9 5.48047 7.02 5.58047 5.04 5.78047L3 5.98047"
-				stroke="var(--red)"
-				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="M6.86962 20.0001H10.7014C12.14 20.0001 13.364 19.5191 14.1801 18.4321C15.184 17.095 14.9245 16.2333 15.1745 14.333L15.4669 10.8404C15.5215 9.73594 15.6879 8.40264 15.7496 7.2901C15.7734 6.86132 15.7965 6.64994 15.5277 6.34202C15.319 6.10289 15.0107 5.98145 14.5799 5.98145H2.99112C1.45736 5.98145 1.83281 7.35455 1.9133 8.41443C1.97798 9.26641 2.17975 11.2366 2.19673 11.916L2.60283 16.6034C2.94865 18.72 4.66113 20.0001 6.86962 20.0001Z"
+				fill="#FFA0A0"
 			/>
 			<path
-				d="M8.5 4.97L8.72 3.66C8.88 2.71 9 2 10.69 2H13.31C15 2 15.13 2.75 15.28 3.67L15.5 4.97"
-				stroke="var(--red)"
-				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<path
-				d="M18.85 9.13965L18.2 19.2096C18.09 20.7796 18 21.9996 15.21 21.9996H8.79002C6.00002 21.9996 5.91002 20.7796 5.80002 19.2096L5.15002 9.13965"
-				stroke="var(--red)"
-				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<path
-				d="M10.33 16.5H13.66"
-				stroke="var(--red)"
-				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<path
-				d="M9.5 12.5H14.5"
-				stroke="var(--red)"
-				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="M0.794922 2.99066C0.794922 3.55431 1.22038 4.01871 1.72949 4.01871H15.8416C16.7519 4.01871 17.092 2.74943 16.4048 2.24055C16.1243 2.03283 15.9588 2.00728 15.4679 2.00923C14.6892 2.01231 13.9101 2.00889 13.1313 2.00937C12.6717 2.00967 12.4535 2.06156 12.2056 1.8136C11.9236 1.53165 12.0629 1.32089 11.9352 0.915751C11.7655 0.376791 11.2143 0 10.5145 0H7.0566C5.40205 0 5.68374 1.46538 5.38885 1.79022C5.14544 2.05836 4.91232 2.00967 4.43979 2.00937C3.67655 2.00889 2.91318 2.01111 2.14999 2.00931C1.64621 2.0081 1.51237 2.0018 1.19392 2.22145C1.0014 2.35422 0.794922 2.68781 0.794922 2.99066Z"
+				fill="#FFA0A0"
 			/>
 		</svg>
 	)
 }
 
-export default Index
+export default TrashIcon

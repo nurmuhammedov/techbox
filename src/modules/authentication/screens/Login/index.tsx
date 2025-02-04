@@ -1,26 +1,18 @@
+import {useLogin} from 'modules/authentication/hooks'
+import {ILoginForm} from 'interfaces/yup.interface'
+import {yupResolver} from '@hookform/resolvers/yup'
+import {useTranslation} from 'react-i18next'
+import styles from './styles.module.scss'
+import {Button, Input} from 'components'
+import {useForm} from 'react-hook-form'
+import {loginSchema} from 'helpers/yup'
 import {LoginLogo} from 'assets/icons'
 import {FIELD} from 'constants/fields'
-import {loginSchema} from 'helpers/yup'
-import {ILoginForm} from 'interfaces/yup.interface'
-import {useLogin} from 'modules/authentication/hooks'
-import {routeByRole} from 'utilities/authentication'
-import styles from './styles.module.scss'
-import {useTranslation} from 'react-i18next'
-import {useForm} from 'react-hook-form'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {useUser} from 'hooks'
-import {useEffect, useState} from 'react'
-import {useNavigate} from 'react-router-dom'
-import {Loader, Button, Input} from 'components'
 
 
 const Index = () => {
 	const {t} = useTranslation()
-	const navigate = useNavigate()
-	const {user, isPending: isUserPending} = useUser()
-	const [isLoading, setIsLoading] = useState(true)
 	const {isPending, login} = useLogin()
-
 
 	const {
 		register,
@@ -34,22 +26,6 @@ const Index = () => {
 		},
 		resolver: yupResolver(loginSchema)
 	})
-
-	useEffect(() => {
-		if (!isUserPending) {
-			if (user) {
-				navigate(routeByRole(user.role))
-			} else {
-				const timer = setTimeout(() => setIsLoading(false), 1250)
-				return () => clearTimeout(timer)
-			}
-		}
-	}, [isUserPending])
-
-
-	if (isUserPending || isLoading) {
-		return <Loader screen background/>
-	}
 
 	return (
 		<div className={styles.root}>

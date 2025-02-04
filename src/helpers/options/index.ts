@@ -9,7 +9,13 @@ const paginationOptions: ISelectOption[] = [
 	{value: 100, label: '100'}
 ]
 
+const roleOptions: ISelectOption[] = [
+	{value: 'human_resources', label: 'Human resources department'},
+	{value: 'role', label: 'Roles'}
+]
+
 
 export {
-	paginationOptions
+	paginationOptions,
+	roleOptions
 }

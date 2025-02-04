@@ -1,10 +1,9 @@
 .root {
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  background: var(--white);
   border-radius: 0.625rem;
-  border: 1px solid var(--gray-soft);
+  border: 1px solid var(--gray-pale);
+  background: var(--white);
 }
 
 .screen {

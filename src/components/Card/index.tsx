@@ -10,7 +10,7 @@ interface IProperties {
 	shadow?: boolean;
 }
 
-const Index: FC<IProperties> = ({children, screen = false, shadow = true, className = ''}) => {
+const Index: FC<IProperties> = ({children, screen = true, shadow = false, className = ''}) => {
 	return (
 		<div className={classNames(styles.root, className, {[styles.screen]: screen, [styles.shadow]: shadow})}>
 			{children ?? null}

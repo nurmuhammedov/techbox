@@ -1,9 +1,9 @@
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
-import {RouterProvider} from 'react-router-dom'
-import {router} from 'configurations/router'
+import {AppContextProvider} from 'contexts/AppContext'
+import {BrowserRouter} from 'react-router-dom'
 import {createRoot} from 'react-dom/client'
+import {Alert, Router} from 'components'
 import 'assets/fonts/typography.css'
-import {Alert} from 'components'
 import 'styles/index.scss'
 import 'i18n'
 
@@ -21,7 +21,11 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById('root')!)
 	.render(
 		<QueryClientProvider client={queryClient}>
-			<Alert/>
-			<RouterProvider router={router}/>
+			<BrowserRouter basename="/">
+				<AppContextProvider>
+					<Router/>
+				</AppContextProvider>
+				<Alert/>
+			</BrowserRouter>
 		</QueryClientProvider>
 	)

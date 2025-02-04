@@ -7,6 +7,7 @@ import {useTranslation} from 'react-i18next'
 
 const usePaginatedData = <T>(endpoint: string, params?: ISearchParams, enabled: boolean = true) => {
 	const {i18n} = useTranslation()
+
 	const queryMethods = useQuery<IListResponse<T>, Error>({
 		queryKey: [endpoint, params, i18n.language],
 		queryFn: () => CommonService.getPaginatedData<T>(endpoint, params),

@@ -14,7 +14,7 @@ import 'rodal/lib/rodal.css'
 const customStyles = {
 	maxHeight: '98vh',
 	maxWidth: '98vw',
-	width: '40rem',
+	width: '45rem',
 	height: '30rem'
 }
 

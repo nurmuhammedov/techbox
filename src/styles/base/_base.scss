@@ -16,7 +16,7 @@
 
 *::-webkit-scrollbar-thumb {
   border-radius: 0.8rem;
-  background-color: var(--gray-soft);
+  background-color: var(--gray-medium);
 }
 
 *::-webkit-scrollbar-button {
@@ -65,4 +65,9 @@ ol {
   flex-direction: column !important;
   border-radius: 1rem !important;
   background: var(--gray-lightest) !important;
+}
+
+button:focus-visible, a:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 2px var(--primary-blue) !important;
 }

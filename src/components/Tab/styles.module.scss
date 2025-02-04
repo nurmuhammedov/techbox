@@ -1,0 +1,34 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+
+  .tab {
+    padding: 1rem 0.5rem;
+    color: var(--navy-dark);
+    text-align: center;
+    font-feature-settings: 'salt' on, 'liga' off;
+    font-family: Poppins, Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 112%; /* 0.98rem */
+    letter-spacing: 0.0175rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    border-bottom: 0.1875rem solid transparent;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--primary-blue);
+      border-bottom-color: var(--primary-blue);
+    }
+  }
+
+  .active {
+    color: var(--primary-blue);
+    border-bottom-color: var(--primary-blue);
+  }
+}

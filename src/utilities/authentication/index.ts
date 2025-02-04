@@ -15,9 +15,11 @@ function buildUser(userData: ILogin | undefined): IUser | null {
 const routeByRole = (role: IRole = ROLE_LIST.EMPLOYEE): string => {
 	switch (role) {
 		case ROLE_LIST.HEAD_DEPARTMENT:
+			return '/employees'
 		case ROLE_LIST.EMPLOYEE:
-		case ROLE_LIST.ADMIN:
 			return '/'
+		case ROLE_LIST.ADMIN:
+			return '/roles'
 		default:
 			return '/'
 	}

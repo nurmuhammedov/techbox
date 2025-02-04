@@ -1,44 +1,38 @@
-import NumberFormattedInput from './UI/NumberFormattedInput'
 import DeleteButton from './DeleteButton'
 import DeleteModal from './DeleteModal'
-import MaskInput from './UI/MaskInput'
 import Pagination from './Pagination'
 import EditButton from './EditButton'
 import ReactTable from './ReactTable'
 import PageTitle from './PageTitle'
-import EditModal from './EditModal'
 import AlertItem from './AlertItem'
-import Button from './UI/Button'
-import Select from './UI/Select'
-import Input from './UI/Input'
-import Modal from './UI/Modal'
+import EditModal from './EditModal'
+import Router from './Router'
 import Layout from './Layout'
 import Loader from './Loader'
 import Alert from './Alert'
 import Card from './Card'
-import App from './App'
+import Form from './Form'
+import Tab from './Tab'
 import HR from './HR'
 
 
+export * from './UI'
+
 export {
-	NumberFormattedInput,
 	DeleteButton,
 	DeleteModal,
 	Pagination,
 	ReactTable,
 	EditButton,
-	MaskInput,
 	PageTitle,
 	AlertItem,
 	EditModal,
 	Layout,
-	Button,
-	Select,
+	Router,
 	Loader,
 	Alert,
-	Modal,
-	Input,
+	Form,
 	Card,
-	App,
+	Tab,
 	HR
 }

@@ -5,6 +5,17 @@
   padding: 1rem 1rem 1rem 1.5rem;
   text-decoration: none;
   transition: all 0.1s ease-in;
+  position: relative;
+}
+.navItem .right {
+  border-radius: 0 0.625rem 0.625rem 0;
+  background: transparent;
+  width: 0.375rem;
+  height: 100%;
+  position: absolute;
+  transition: color 0.1s ease-in;
+  top: 0;
+  left: 0;
 }
 .navItem .title {
   color: var(--gray-medium);
@@ -22,10 +33,16 @@
 .navItem:hover .title {
   color: var(--primary-blue);
 }
+.navItem:hover .right {
+  background: var(--primary-blue);
+}
 .navItem:hover .icon svg path {
   fill: var(--primary-blue);
 }
 
+.active .right {
+  background: var(--primary-blue);
+}
 .active .icon svg path {
   fill: var(--primary-blue);
 }

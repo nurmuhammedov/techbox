@@ -16,7 +16,7 @@ const Index: FC = () => {
 
 	return (
 		<aside className={styles.sidebar}>
-			<div className={styles.header} onClick={() => navigate(routeByRole(user.role))}>
+			<div className={styles.header} onClick={() => navigate(routeByRole(user?.role))}>
 				<Logo/>
 				<p>{t('TechBox')}</p>
 			</div>
