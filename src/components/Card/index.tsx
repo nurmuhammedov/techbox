@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import styles from './styles.module.scss'
-import {FC, ReactNode} from 'react'
+import {CSSProperties, FC, ReactNode} from 'react'
 
 
 interface IProperties {
@@ -8,11 +8,15 @@ interface IProperties {
 	screen?: boolean;
 	className?: string;
 	shadow?: boolean;
+	style?: CSSProperties;
 }
 
-const Index: FC<IProperties> = ({children, screen = true, shadow = false, className = ''}) => {
+const Index: FC<IProperties> = ({children, screen = true, shadow = false, className = '', style}) => {
 	return (
-		<div className={classNames(styles.root, className, {[styles.screen]: screen, [styles.shadow]: shadow})}>
+		<div
+			className={classNames(styles.root, className, {[styles.screen]: screen, [styles.shadow]: shadow})}
+			style={style}
+		>
 			{children ?? null}
 		</div>
 	)

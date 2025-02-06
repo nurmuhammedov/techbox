@@ -20,12 +20,36 @@ export const menu: IMenuItem[] = [
 		id: 'roles',
 		label: 'Roles',
 		href: '/roles',
-		icon: User,
+		icon: Users,
 		allowedRoles: [
 			ROLE_LIST.ADMIN
 		],
 		order: {
 			[ROLE_LIST.ADMIN]: 1
+		}
+	},
+	{
+		id: 'materials',
+		label: 'Material types',
+		href: '/materials',
+		icon: Users,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 2
+		}
+	},
+	{
+		id: 'permissions',
+		label: 'Permissions',
+		href: '/permissions',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 3
 		}
 	}
 ]

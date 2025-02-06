@@ -9,7 +9,7 @@ interface IProperties {
 	id: string
 	label?: string
 	error?: string
-	placeholder: string
+	placeholder?: string
 	value?: string | number
 	mask?: string
 	disabled?: boolean
@@ -20,7 +20,7 @@ interface IProperties {
 const Index = forwardRef<HTMLInputElement, IProperties>(({
 	                                                         id,
 	                                                         label,
-	                                                         placeholder = '',
+	                                                         placeholder = 'Enter value',
 	                                                         mask = '+\\9\\98 99 999 99 99',
 	                                                         error,
 	                                                         disabled,

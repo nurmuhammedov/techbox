@@ -10,14 +10,14 @@ import {
 	Modal,
 	Pagination,
 	ReactTable,
-	Form
+	Form, NumberFormattedInput
 } from 'components'
 import {FIELD} from 'constants/fields'
 import {positionsSchema} from 'helpers/yup'
 import {useAdd, useDetail, usePaginatedData, usePagination, useSearchParams, useUpdate} from 'hooks'
 import {IPositionDetail} from 'interfaces/roles.interface'
 import {useEffect, useMemo} from 'react'
-import {useForm} from 'react-hook-form'
+import {Controller, useForm} from 'react-hook-form'
 import {useTranslation} from 'react-i18next'
 import {Column} from 'react-table'
 
@@ -39,6 +39,7 @@ const Index = () => {
 		handleSubmit: handleAddSubmit,
 		register: registerAdd,
 		reset: resetAdd,
+		control: controlAdd,
 		formState: {errors: addErrors}
 	} = useForm({
 		mode: 'onTouched',
@@ -61,8 +62,8 @@ const Index = () => {
 					accessor: (row: IPositionDetail) => row.name
 				},
 				{
-					Header: t('Experience'),
-					accessor: (row: IPositionDetail) => row.experience
+					Header: `${t('Experience')} (${t('year')})`,
+					accessor: (row: IPositionDetail) => `${row.experience} ${t('year')}`
 
 				},
 				{
@@ -81,6 +82,7 @@ const Index = () => {
 		handleSubmit: handleEditSubmit,
 		register: registerEdit,
 		reset: resetEdit,
+		control: controlEdit,
 		formState: {errors: editErrors}
 	} = useForm({
 		mode: 'onTouched',
@@ -127,13 +129,31 @@ const Index = () => {
 						{...registerAdd('name')}
 					/>
 
-					<Input
-						id="experience"
-						type={FIELD.TEXT}
-						label="Experience"
-						error={addErrors?.experience?.message}
-						{...registerAdd('experience')}
-					/>
+					{/*<Input*/}
+					{/*	id="experience"*/}
+					{/*	type={FIELD.TEXT}*/}
+					{/*	label="Experience"*/}
+					{/*	error={addErrors?.experience?.message}*/}
+					{/*	{...registerAdd('experience')}*/}
+					{/*/>*/}
+
+					<div className="span-4">
+						<Controller
+							control={controlAdd}
+							name="experience"
+							render={({field}) => (
+								<NumberFormattedInput
+									id="experience"
+									maxLength={2}
+									disableGroupSeparators={true}
+									allowDecimals={false}
+									label={`${t('Experience')} (${t('year')})`}
+									error={addErrors?.experience?.message}
+									{...field}
+								/>
+							)}
+						/>
+					</div>
 
 					<Button
 						style={{marginTop: 'auto'}}
@@ -165,13 +185,31 @@ const Index = () => {
 						{...registerEdit('name')}
 					/>
 
-					<Input
-						id="experience"
-						type={FIELD.TEXT}
-						label="Experience"
-						error={editErrors?.experience?.message}
-						{...registerEdit('experience')}
-					/>
+					{/*<Input*/}
+					{/*	id="experience"*/}
+					{/*	type={FIELD.TEXT}*/}
+					{/*	label="Experience"*/}
+					{/*	error={editErrors?.experience?.message}*/}
+					{/*	{...registerEdit('experience')}*/}
+					{/*/>*/}
+
+					<div className="span-4">
+						<Controller
+							control={controlEdit}
+							name="experience"
+							render={({field}) => (
+								<NumberFormattedInput
+									id="experience"
+									maxLength={2}
+									disableGroupSeparators={true}
+									allowDecimals={false}
+									label={`${t('Experience')} (${t('year')})`}
+									error={editErrors?.experience?.message}
+									{...field}
+								/>
+							)}
+						/>
+					</div>
 
 					<Button
 						style={{marginTop: 'auto'}}

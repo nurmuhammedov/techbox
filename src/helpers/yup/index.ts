@@ -23,6 +23,27 @@ const passwordSchema = yup
 	.matches(/^\S*$/, 'You cannot leave a space in the password')
 	.matches(/^[a-zA-Z0-9!@#$%^&*()]+$/, 'Password can only contain letters, numbers, and special characters (!@#$%^&*)')
 
+const birthday = yup
+	.string()
+	.required('This field is required')
+	.length(10, 'The entered date is not valid')
+	.transform((value) => {
+		if (!value) return value
+		const [day, month, year] = value.split('.')
+		return `${year}-${month}-${day}`
+	})
+	.test('isValidDate', 'The entered date is not valid', (value) => {
+		if (!value) return false
+		const [year, month, day] = value.split('-').map(Number)
+		const date = new Date(year, month - 1, day)
+		return (
+			date.getFullYear() === year &&
+			date.getMonth() === month - 1 &&
+			date.getDate() === day
+		)
+	})
+
+
 // Confirm password validation
 const confirmPasswordSchema = yup
 	.string()
@@ -48,9 +69,89 @@ const positionsSchema = yup.object().shape({
 	experience: yup.string().trim().required('This field is required')
 })
 
+
+// EMPLOYEES
+const employeeSchema = yup.object().shape({
+	lastname: yup.string().trim().required('This field is required'),
+	firstname: yup.string().trim().required('This field is required'),
+	middle_name: yup.string().trim().required('This field is required'),
+	pinfl: yup.string().trim().required('This field is required').length(14, 'The entered date is not valid'),
+	card_number: yup
+		.string()
+		.trim()
+		.required('This field is required')
+		.length(16, 'The entered date is not valid')
+		.transform((value) => {
+			if (typeof value === 'string') {
+				return value.split(' ').join('')
+			}
+			return value
+		}),
+	passport: yup
+		.string()
+		.trim()
+		.required('This field is required')
+		.length(10, 'The entered date is not valid')
+		.transform((value) => {
+			if (typeof value === 'string') {
+				return value.toUpperCase()
+			}
+			return value
+		}),
+	address: yup.string().trim().required('This field is required'),
+	phone: yup.string().trim().required('This field is required').length(17, 'The entered date is not valid'),
+	position: yup.number().required('This field is required'),
+	birthday: birthday.test('isNotFutureDate', 'How are you going to include someone who is not born?', (value) => {
+		if (!value) return false
+		const [year, month, day] = value.split('-').map(Number)
+		const inputDate = new Date(year, month - 1, day)
+		const today = new Date()
+		today.setHours(0, 0, 0, 0)
+		return inputDate <= today
+	})
+})
+
+const userSchema = yup.object().shape({
+	employee: yup.number().required('This field is required'),
+	role: yup.number().required('This field is required'),
+	username: usernameSchema,
+	password: passwordSchema,
+	password_confirm: confirmPasswordSchema
+})
+
+const userUpdateSchema = yup.object().shape({
+	role: yup.number().required('This field is required'),
+	username: usernameSchema
+})
+
+// MATERIALS
+const materialSchema = yup.object().shape({
+	name: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	weight_1x1: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	weight: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	format: yup
+		.string()
+		.trim()
+		.required('This field is required')
+})
+
+
 export {
-	loginSchema,
 	confirmPasswordSchema,
+	userUpdateSchema,
 	positionsSchema,
-	rolesSchema
+	employeeSchema,
+	materialSchema,
+	loginSchema,
+	rolesSchema,
+	userSchema
 }

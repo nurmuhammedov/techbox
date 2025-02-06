@@ -4,7 +4,7 @@ import {routeByRole} from 'utilities/authentication'
 import {ROLE_LIST} from 'constants/roles'
 import {useAppContext} from 'hooks'
 import {Layout} from 'components'
-import {EmployeesTable, Login} from 'modules'
+import {AddEmployee, EmployeesTable, Login, MaterialsTable} from 'modules'
 
 
 function useAppRoutes() {
@@ -26,6 +26,24 @@ function useAppRoutes() {
 							{
 								index: true,
 								element: <RolesTable/>
+							}
+						]
+					},
+					{
+						path: 'permissions',
+						children: [
+							{
+								index: true,
+								element: <EmployeesTable/>
+							}
+						]
+					},
+					{
+						path: 'materials',
+						children: [
+							{
+								index: true,
+								element: <MaterialsTable/>
 							}
 						]
 					}
@@ -51,6 +69,14 @@ function useAppRoutes() {
 							{
 								index: true,
 								element: <EmployeesTable/>
+							},
+							{
+								path: 'add',
+								element: <AddEmployee/>
+							},
+							{
+								path: 'edit/:id',
+								element: <AddEmployee edit={true}/>
 							}
 						]
 					}
