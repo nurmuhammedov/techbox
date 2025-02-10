@@ -1,6 +1,6 @@
-import {User, Users} from 'assets/icons'
-import {IMenuItem} from 'interfaces/configuration.interface'
+import {User} from 'assets/icons'
 import {ROLE_LIST} from 'constants/roles'
+import {IMenuItem} from 'interfaces/configuration.interface'
 
 
 export const menu: IMenuItem[] = [
@@ -8,7 +8,7 @@ export const menu: IMenuItem[] = [
 		id: 'employees',
 		label: 'Employees',
 		href: '/employees',
-		icon: Users,
+		icon: User,
 		allowedRoles: [
 			ROLE_LIST.HEAD_DEPARTMENT
 		],
@@ -20,7 +20,7 @@ export const menu: IMenuItem[] = [
 		id: 'roles',
 		label: 'Roles',
 		href: '/roles',
-		icon: Users,
+		icon: User,
 		allowedRoles: [
 			ROLE_LIST.ADMIN
 		],
@@ -32,7 +32,7 @@ export const menu: IMenuItem[] = [
 		id: 'materials',
 		label: 'Material types',
 		href: '/materials',
-		icon: Users,
+		icon: User,
 		allowedRoles: [
 			ROLE_LIST.ADMIN
 		],
@@ -50,6 +50,30 @@ export const menu: IMenuItem[] = [
 		],
 		order: {
 			[ROLE_LIST.ADMIN]: 3
+		}
+	},
+	{
+		id: 'warehouses',
+		label: 'Warehouses',
+		href: '/warehouses',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 4
+		}
+	},
+	{
+		id: 'products',
+		label: 'Products',
+		href: '/products',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 5
 		}
 	}
 ]

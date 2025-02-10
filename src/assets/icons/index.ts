@@ -1,5 +1,6 @@
 import SelectIcon from './SelectIcon'
 import LoginLogo from './LoginLogo'
+import Download from './Download'
 import Password from './Password'
 import Delete from './Delete'
 import Status from './Status'
@@ -19,6 +20,7 @@ export {
 	SelectIcon,
 	LoginLogo,
 	Password,
+	Download,
 	Status,
 	Delete,
 	Logout,

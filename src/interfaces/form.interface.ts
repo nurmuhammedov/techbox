@@ -4,7 +4,7 @@ import {Props as SelectProps} from 'react-select'
 
 // Input Interface
 interface IFieldProperties {
-	id: string;
+	id: string | number;
 	type?: string;
 	error?: string | React.ReactNode;
 	label?: string;
@@ -50,7 +50,7 @@ interface ISelect extends SelectProps<ISelectOption> {
 
 interface IFIle {
 	name: string;
-	id: string | number;
+	id: number;
 	file: string;
 }
 

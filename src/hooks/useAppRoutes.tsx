@@ -4,7 +4,8 @@ import {routeByRole} from 'utilities/authentication'
 import {ROLE_LIST} from 'constants/roles'
 import {useAppContext} from 'hooks'
 import {Layout} from 'components'
-import {AddEmployee, EmployeesTable, Login, MaterialsTable} from 'modules'
+import {AddEmployee, EmployeesTable, Login, MaterialsTable, AddProduct, ProductsTable} from 'modules'
+import {WarehouseTable} from 'modules/warehouse'
 
 
 function useAppRoutes() {
@@ -44,6 +45,32 @@ function useAppRoutes() {
 							{
 								index: true,
 								element: <MaterialsTable/>
+							}
+						]
+					},
+					{
+						path: 'warehouses',
+						children: [
+							{
+								index: true,
+								element: <WarehouseTable/>
+							}
+						]
+					},
+					{
+						path: 'products',
+						children: [
+							{
+								index: true,
+								element: <ProductsTable/>
+							},
+							{
+								path: 'add',
+								element: <AddProduct/>
+							},
+							{
+								path: 'edit/:id',
+								element: <AddProduct edit={true}/>
 							}
 						]
 					}

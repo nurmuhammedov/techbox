@@ -56,6 +56,10 @@
   flex: 1 !important;
 }
 
+.flex-0 {
+  flex: 0 !important;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);

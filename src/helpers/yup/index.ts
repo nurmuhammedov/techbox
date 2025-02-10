@@ -1,3 +1,4 @@
+import {IFIle} from 'interfaces/form.interface'
 import * as yup from 'yup'
 
 // Login validation
@@ -144,13 +145,98 @@ const materialSchema = yup.object().shape({
 		.required('This field is required')
 })
 
+// WAREHOUSE
+const warehouseSchema = yup.object().shape({
+	name: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	address: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	area: yup
+		.string()
+		.trim()
+		.required('This field is required')
+})
+
+const semiFinishedWarehouseSchema = yup.object().shape({
+	name: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	area: yup
+		.string()
+		.trim()
+		.required('This field is required')
+})
+
+
+// PRODUCTS
+
+const productSchema = yup.object().shape({
+	name: yup
+		.string()
+		.trim()
+		.required('This field is required')
+		.max(100, 'Must not exceed 100 characters'),
+	width: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	height: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	length: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	box_ear: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	format: yup
+		.string()
+		.required('This field is required'),
+	logo: yup
+		.object<IFIle>()
+		.shape({
+			name: yup.string().required(),
+			id: yup.number().required(),
+			file: yup.string().required()
+		})
+		.nullable()
+		.notRequired(),
+	layerCount: yup
+		.string()
+		.trim()
+		.transform(value => !value ? '1' : value)
+		.required('This field is required'),
+	layers: yup
+		.array()
+		.of(
+			yup.object().shape({
+				material: yup
+					.number()
+					.transform(value => !value ? undefined : value)
+					.required('This field is required'),
+				queue: yup.number().required('This field is required')
+			})
+		)
+		.required('This field is required')
+})
 
 export {
+	semiFinishedWarehouseSchema,
 	confirmPasswordSchema,
 	userUpdateSchema,
 	positionsSchema,
+	warehouseSchema,
 	employeeSchema,
 	materialSchema,
+	productSchema,
 	loginSchema,
 	rolesSchema,
 	userSchema

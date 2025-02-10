@@ -146,7 +146,7 @@ const Index = () => {
 								id="weight_1x1"
 								label="Weight in 1x1 (in grams)"
 								disableGroupSeparators={true}
-								maxLength={3}
+								maxLength={5}
 								allowDecimals={false}
 								error={addErrors?.weight_1x1?.message}
 								{...field}
@@ -223,7 +223,7 @@ const Index = () => {
 								id="weight_1x1"
 								label="Weight in 1x1 (in grams)"
 								disableGroupSeparators={true}
-								maxLength={3}
+								maxLength={5}
 								allowDecimals={false}
 								error={editErrors?.weight_1x1?.message}
 								{...field}

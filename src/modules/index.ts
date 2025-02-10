@@ -1,4 +1,5 @@
 export * from './authentication'
 export * from './materials'
 export * from './employees'
+export * from './products'
 export * from './roles'
