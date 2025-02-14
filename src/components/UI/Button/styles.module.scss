@@ -87,10 +87,9 @@
     background: var(--gray-lightest);
     color: var(--gray-muted);
     cursor: not-allowed;
-    pointer-events: none;
 
     svg {
-      path {
+      path, rect {
         stroke: var(--gray-muted) !important;
       }
     }

@@ -203,29 +203,26 @@ const productSchema = yup.object().shape({
 	logo: yup
 		.object<IFIle>()
 		.shape({
-			name: yup.string().required(),
-			id: yup.number().required(),
-			file: yup.string().required()
+			name: yup.string().nullable(),
+			id: yup.number().nullable(),
+			file: yup.string().nullable()
 		})
 		.nullable()
 		.notRequired(),
-	layerCount: yup
-		.string()
-		.trim()
-		.transform(value => !value ? '1' : value)
-		.required('This field is required'),
-	layers: yup
+	layer: yup
 		.array()
-		.of(
-			yup.object().shape({
-				material: yup
-					.number()
-					.transform(value => !value ? undefined : value)
-					.required('This field is required'),
-				queue: yup.number().required('This field is required')
-			})
-		)
-		.required('This field is required')
+		.of(yup.string().trim().required('This field is required'))
+		.nullable()
+		.transform(value => value?.length > 0 ? value : null)
+})
+
+// CLIENTS
+const clientsSchema = yup.object().shape({
+	company_name: yup.string().trim().required('This field is required'),
+	fullname: yup.string().trim().required('This field is required'),
+	stir: yup.string().trim().nullable().transform(value => value ? value : null).length(9, 'The entered date is not valid'),
+	phone: yup.string().trim().required('This field is required').length(17, 'The entered date is not valid'),
+	partnership_year: yup.string().trim().required('This field is required')
 })
 
 export {
@@ -237,6 +234,7 @@ export {
 	employeeSchema,
 	materialSchema,
 	productSchema,
+	clientsSchema,
 	loginSchema,
 	rolesSchema,
 	userSchema

@@ -1,6 +1,6 @@
-import {BUTTON_THEME} from 'constants/fields'
 import React, {InputHTMLAttributes, TextareaHTMLAttributes, ButtonHTMLAttributes} from 'react'
 import {Props as SelectProps} from 'react-select'
+import {BUTTON_THEME} from 'constants/fields'
 
 // Input Interface
 interface IFieldProperties {
@@ -15,6 +15,7 @@ interface IFieldProperties {
 	icon?: React.ReactNode;
 	iconPosition?: 'right' | 'left';
 	handleIcon?: () => void;
+	handleDelete?: () => void;
 }
 
 type IField = InputHTMLAttributes<HTMLInputElement> & TextareaHTMLAttributes<HTMLTextAreaElement> & IFieldProperties;
@@ -44,6 +45,7 @@ interface ISelect extends SelectProps<ISelectOption> {
 	handleOnChange?: (e: string | number | boolean | string[] | number[] | boolean[] | null) => void;
 	disabled?: boolean;
 	label?: string;
+	handleDelete?: () => void;
 	error?: string;
 	top?: boolean;
 }

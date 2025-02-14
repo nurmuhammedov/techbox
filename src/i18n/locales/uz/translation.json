@@ -107,5 +107,20 @@
   "Loading...": "yuklanmoqda",
   "Products": "Mahsulotlar",
   "Product": "Mahsulot",
-  "Add product": "Mahsulot qo‘shish"
+  "Add product": "Mahsulot qo‘shish",
+  "Edit product": "Mahsulotni tahrirlash",
+  "Box ear": "Quti qulog‘i",
+  "mm": "mm",
+  "sm": "sm",
+  "Sizes": "O‘lchamlari",
+  "Size": "O‘lcham",
+  "Layer": "Qatlam",
+  "layer": "qatlam",
+  "Add layer": "Qatlam qo‘shish",
+  "Add client": "Mijoz qo‘shish",
+  "Client": "Mijoz",
+  "Clients": "Mijozlar",
+  "Partnership year": "Hamkorlik yili",
+  "TIN": "STIR",
+  "Company name": "Firma nomi"
 }

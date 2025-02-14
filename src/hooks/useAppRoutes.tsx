@@ -6,6 +6,7 @@ import {useAppContext} from 'hooks'
 import {Layout} from 'components'
 import {AddEmployee, EmployeesTable, Login, MaterialsTable, AddProduct, ProductsTable} from 'modules'
 import {WarehouseTable} from 'modules/warehouse'
+import {AddClient, ClientsTable} from 'modules/clients'
 
 
 function useAppRoutes() {
@@ -71,6 +72,23 @@ function useAppRoutes() {
 							{
 								path: 'edit/:id',
 								element: <AddProduct edit={true}/>
+							}
+						]
+					},
+					{
+						path: 'clients',
+						children: [
+							{
+								index: true,
+								element: <ClientsTable/>
+							},
+							{
+								path: 'add',
+								element: <AddClient/>
+							},
+							{
+								path: 'edit/:id',
+								element: <AddClient edit={true}/>
 							}
 						]
 					}

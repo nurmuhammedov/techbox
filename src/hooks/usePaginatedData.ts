@@ -14,11 +14,11 @@ const usePaginatedData = <T>(endpoint: string, params?: ISearchParams, enabled: 
 		enabled
 	})
 
-	const {results = [], num_pages = 1} = queryMethods.data || {}
+	const {results, num_pages = 1} = queryMethods.data || {}
 
 	return {
 		...queryMethods,
-		data: results,
+		data: results ? results : Array.isArray(queryMethods.data) ? queryMethods.data : [],
 		totalPages: num_pages
 	}
 }

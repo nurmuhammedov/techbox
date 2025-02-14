@@ -6,6 +6,7 @@ import ReactTable from './ReactTable'
 import PageTitle from './PageTitle'
 import AlertItem from './AlertItem'
 import EditModal from './EditModal'
+import Wrapper from './Wrapper'
 import Router from './Router'
 import Layout from './Layout'
 import Loader from './Loader'
@@ -27,6 +28,7 @@ export {
 	PageTitle,
 	AlertItem,
 	EditModal,
+	Wrapper,
 	Layout,
 	Router,
 	Loader,

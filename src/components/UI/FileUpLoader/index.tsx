@@ -218,11 +218,19 @@ const Index = forwardRef<HTMLInputElement, FileUploaderProps>(({
 							value ?
 								<div className={styles.values}>
 									<div className={styles.value}>
-										<Input
-											id={value.id as unknown as string}
-											value={value.name}
-											disabled={true}
-										/>
+										{
+											type === 'image' ?
+												<img
+													style={{width: '250px', maxWidth: '100%', height: 'auto'}}
+													src={value.file}
+													alt="Image"
+												/> :
+												<Input
+													id={value.id as unknown as string}
+													value={value.name}
+													disabled={true}
+												/>
+										}
 									</div>
 									{
 										!!onChange &&

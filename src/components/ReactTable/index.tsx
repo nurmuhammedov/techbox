@@ -1,5 +1,5 @@
 import {Loader} from 'components/index'
-import {CSSProperties} from 'react'
+import {CSSProperties, ReactNode} from 'react'
 import classes from './styles.module.scss'
 import {useTable, TableOptions, ColumnInstance, HeaderGroup, Column} from 'react-table'
 import classNames from 'classnames'
@@ -75,7 +75,7 @@ const Index = <T extends object & { id: string | number }>({
 										rowSpan={column.headerRowSpan}
 										key={index}
 									>
-										{column.render('Header')}
+										{column.render('Header') as ReactNode}
 									</th>
 								))
 							}
@@ -93,13 +93,13 @@ const Index = <T extends object & { id: string | number }>({
 						</tr>
 					) : data && data.length ? (
 						<>
-						{
-							spacing && (
-								<tr className={classes.spacing}>
-									<td colSpan={columns.length}></td>
-								</tr>
-							)
-						}
+							{
+								spacing && (
+									<tr className={classes.spacing}>
+										<td colSpan={columns.length}></td>
+									</tr>
+								)
+							}
 							{
 								rows.map((row, index) => {
 									prepareRow(row)
@@ -119,7 +119,7 @@ const Index = <T extends object & { id: string | number }>({
 															style={{...customColumn.style}}
 															key={index}
 														>
-															{cell.render('Cell')}
+															{cell.render('Cell') as ReactNode}
 														</td>
 													)
 												})

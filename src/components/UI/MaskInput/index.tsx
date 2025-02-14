@@ -49,6 +49,7 @@ const Index = forwardRef<HTMLInputElement, IProperties>(({
 				placeholder={t(placeholder)}
 				inputRef={ref}
 				className={classes.input}
+				alwaysShowMask={true}
 			/>
 		</Input>
 	)

@@ -20,7 +20,7 @@ const Index: FC<IProperties> = ({tabs, fallbackValue, query = 'tab', style}) => 
 
 
 	const handleTabChange = (value: string | number | boolean) => {
-		addParams({[query]: String(value)}, 'updateId', 'deleteId', 'modal')
+		addParams({[query]: String(value)}, 'updateId', 'deleteId', 'modal', 'page', 'limit')
 	}
 
 	return (

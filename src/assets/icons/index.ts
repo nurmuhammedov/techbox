@@ -11,6 +11,7 @@ import Times from './Times'
 import Plus from './Plus'
 import Logo from './Logo'
 import Edit from './Edit'
+import Box from './Box'
 
 
 export * from './sidebar'
@@ -28,6 +29,7 @@ export {
 	Login,
 	Times,
 	Plus,
+	Logo,
 	Edit,
-	Logo
+	Box
 }

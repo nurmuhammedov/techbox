@@ -11,11 +11,11 @@ import {
 	usePaginatedData,
 	usePagination
 } from 'hooks'
-import {IProductDetail} from 'interfaces/products.interface'
 import {useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
+import {IClientDetail} from 'interfaces/clients.interface'
 
 
 const Index = () => {
@@ -23,8 +23,8 @@ const Index = () => {
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
 
-	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IProductDetail[]>(
-		'products/',
+	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IClientDetail[]>(
+		'services/customers',
 		{
 			page: page,
 			page_size: pageSize
@@ -32,35 +32,39 @@ const Index = () => {
 	)
 
 
-	const columns: Column<IProductDetail>[] = useMemo(
+	const columns: Column<IClientDetail>[] = useMemo(
 		() => [
 			{
 				Header: t('№'),
-				accessor: (_: IProductDetail, index: number) => (page - 1) * pageSize + (index + 1),
+				accessor: (_: IClientDetail, index: number) => (page - 1) * pageSize + (index + 1),
 				style: {
 					width: '3rem',
 					textAlign: 'center'
 				}
 			},
 			{
+				Header: t('Company name'),
+				accessor: (row: IClientDetail) => row.company_name
+			},
+			{
 				Header: t('Full name'),
-				accessor: (row: IProductDetail) => row.name
+				accessor: (row: IClientDetail) => row.fullname
 			},
 			{
-				Header: `${t('Sizes')}(${t('mm')})`,
-				accessor: (row: IProductDetail) => row.size
+				Header: t('Phone number'),
+				accessor: (row: IClientDetail) => row.phone
 			},
 			{
-				Header: t('Format(sm)'),
-				accessor: (row: IProductDetail) => row.format
+				Header: t('Partnership year'),
+				accessor: (row: IClientDetail) => row.partnership_year
 			},
 			{
-				Header: t('Layer'),
-				accessor: (row: IProductDetail) => row.layers || 0
+				Header: t('TIN'),
+				accessor: (row: IClientDetail) => row.stir
 			},
 			{
 				Header: t('Actions'),
-				accessor: (row: IProductDetail) => (
+				accessor: (row: IClientDetail) => (
 					<div className="flex items-start gap-lg">
 						<EditButton onClick={() => navigate(`edit/${row.id}`)}/>
 						<DeleteButton id={row.id}/>
@@ -73,9 +77,9 @@ const Index = () => {
 
 	return (
 		<>
-			<PageTitle title="Products">
+			<PageTitle title="Clients">
 				<Button icon={<Plus/>} onClick={() => navigate(`add`)}>
-					Add product
+					Add client
 				</Button>
 			</PageTitle>
 			<Card>
@@ -86,7 +90,7 @@ const Index = () => {
 				/>
 			</Card>
 			<Pagination totalPages={totalPages}/>
-			<DeleteModal endpoint="products/" onDelete={() => refetch()}/>
+			<DeleteModal endpoint="services/customers/" onDelete={() => refetch()}/>
 		</>
 	)
 }

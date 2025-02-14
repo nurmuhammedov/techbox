@@ -119,3 +119,20 @@ textarea {
     }
   }
 }
+
+.delete {
+  padding-right: 3.5rem !important;
+
+  .delete-wrapper {
+    user-select: none;
+    padding: .4rem;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    right: .7rem;
+    top: 2.5rem;
+    cursor: pointer;
+  }
+}
+

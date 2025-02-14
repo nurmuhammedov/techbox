@@ -16,7 +16,7 @@ const Index = ({title = 'Should it really be deleted?', endpoint, onDelete}: IPr
 	const {mutateAsync, isPending} = useDelete(endpoint, paramsObject['deleteId'])
 
 	const handleClose = () => {
-		removeParams('modal', 'deleteId')
+		removeParams('modal', 'deleteId', 'page', 'limit')
 	}
 
 	return (
@@ -27,7 +27,7 @@ const Index = ({title = 'Should it really be deleted?', endpoint, onDelete}: IPr
 					style={{flex: 1}}
 					disabled={isPending}
 					onClick={() => mutateAsync().then(() => {
-						removeParams('modal', 'deleteId')
+						removeParams('modal', 'deleteId', 'page', 'limit')
 						onDelete?.()
 					})}
 				>

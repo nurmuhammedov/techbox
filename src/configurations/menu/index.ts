@@ -75,5 +75,17 @@ export const menu: IMenuItem[] = [
 		order: {
 			[ROLE_LIST.ADMIN]: 5
 		}
+	},
+	{
+		id: 'clients',
+		label: 'Clients',
+		href: '/clients',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 6
+		}
 	}
 ]

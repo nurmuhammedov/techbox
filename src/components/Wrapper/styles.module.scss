@@ -1,0 +1,14 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.625rem;
+  background: var(--gray-lightest);
+}
+
+.screen {
+  flex: 1;
+}
+
+.shadow {
+  box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;
+}

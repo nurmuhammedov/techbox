@@ -1,7 +1,7 @@
-import {roleOptions} from 'helpers/options'
-import {ISelectOption} from 'interfaces/form.interface'
+import {IFIle, ISelectOption} from 'interfaces/form.interface'
 import {ISearchParams} from 'interfaces/params.interface'
 import {showMessage} from 'utilities/alert'
+import {roleOptions} from 'helpers/options'
 import {TFunction} from 'i18next'
 
 
@@ -44,11 +44,24 @@ function getSelectValue(options: ISelectOption[], value: string | number | boole
 	return options.find((item) => item?.value == value) ?? null
 }
 
+function modifyObjectField(obj: ISearchParams, key: string): ISearchParams {
+	const updatedObj = {...obj}
+
+	if (updatedObj[key]) {
+		const field = updatedObj[key] as unknown as IFIle
+
+		updatedObj[key] = field && typeof field === 'object' && 'id' in field ? field.id ?? null : null
+	}
+
+	return updatedObj
+}
+
 export {
 	noop,
 	isObject,
 	noopAsync,
+	joinArray,
 	cleanParams,
 	getSelectValue,
-	joinArray
+	modifyObjectField
 }
