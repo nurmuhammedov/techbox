@@ -24,7 +24,7 @@ const passwordSchema = yup
 	.matches(/^\S*$/, 'You cannot leave a space in the password')
 	.matches(/^[a-zA-Z0-9!@#$%^&*()]+$/, 'Password can only contain letters, numbers, and special characters (!@#$%^&*)')
 
-const birthday = yup
+const dateField = yup
 	.string()
 	.required('This field is required')
 	.length(10, 'The entered date is not valid')
@@ -102,7 +102,7 @@ const employeeSchema = yup.object().shape({
 	address: yup.string().trim().required('This field is required'),
 	phone: yup.string().trim().required('This field is required').length(17, 'The entered date is not valid'),
 	position: yup.number().required('This field is required'),
-	birthday: birthday.test('isNotFutureDate', 'How are you going to include someone who is not born?', (value) => {
+	birthday: dateField.test('isNotFutureDate', 'How are you going to include someone who is not born?', (value) => {
 		if (!value) return false
 		const [year, month, day] = value.split('-').map(Number)
 		const inputDate = new Date(year, month - 1, day)
@@ -174,7 +174,6 @@ const semiFinishedWarehouseSchema = yup.object().shape({
 
 
 // PRODUCTS
-
 const productSchema = yup.object().shape({
 	name: yup
 		.string()
@@ -216,6 +215,31 @@ const productSchema = yup.object().shape({
 		.transform(value => value?.length > 0 ? value : null)
 })
 
+// ORDERS
+const ordersSchema = yup.object().shape({
+	product: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	count: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	comment: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	price: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	money_paid: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	deadline: dateField
+})
+
 // CLIENTS
 const clientsSchema = yup.object().shape({
 	company_name: yup.string().trim().required('This field is required'),
@@ -235,6 +259,7 @@ export {
 	materialSchema,
 	productSchema,
 	clientsSchema,
+	ordersSchema,
 	loginSchema,
 	rolesSchema,
 	userSchema

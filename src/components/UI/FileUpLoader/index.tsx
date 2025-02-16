@@ -16,6 +16,7 @@ interface FileUploaderProps {
 	value: IFIle | IFIle[] | undefined | null
 	multi?: boolean
 	id: string
+	disabled?: boolean
 	label?: string
 	error?: string
 	type?: 'pdf' | 'image'
@@ -26,14 +27,15 @@ const Index = forwardRef<HTMLInputElement, FileUploaderProps>(({
 	                                                               onChange,
 	                                                               value,
 	                                                               label,
+	                                                               disabled = false,
 	                                                               error,
 	                                                               id,
 	                                                               type = 'pdf',
 	                                                               multi = false
                                                                }, ref) => {
 		const {t} = useTranslation()
-		const [isLoading, setIsLoading] = useState<boolean>(false)
-		const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(false)
+		const [isLoading, setIsLoading] = useState<boolean>(disabled)
+		const [isDeleteLoading, setIsDeleteLoading] = useState<boolean>(disabled)
 		const [percentage, setPercentage] = useState<number>(0)
 
 		const onDrop = useCallback(
@@ -156,7 +158,8 @@ const Index = forwardRef<HTMLInputElement, FileUploaderProps>(({
 					className={
 						classNames(styles.root, {
 							[styles.isLoading]: isLoading || !onChange,
-							[styles.error]: !!error
+							[styles.error]: !!error,
+							[styles.disabled]: disabled
 						})
 					}
 				>

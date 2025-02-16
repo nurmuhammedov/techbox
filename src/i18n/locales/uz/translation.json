@@ -122,5 +122,17 @@
   "Clients": "Mijozlar",
   "Partnership year": "Hamkorlik yili",
   "TIN": "STIR",
-  "Company name": "Firma nomi"
+  "Company name": "Firma nomi",
+  "Orders": "Buyurtmalar",
+  "company orders": "firmasining buyurtmalari",
+  "Add order": "Buyurtma qo‘shish",
+  "Edit order": "Buyurtmani tahrirlash",
+  "Create order": "Buyurtma yaratish",
+  "Count": "Soni",
+  "Deadline": "Muddati",
+  "Price": "Narxi",
+  "Paid money": "To‘langan summa",
+  "Width": "Eni",
+  "Height": "Bo‘yi",
+  "Length": "Uzunligi"
 }

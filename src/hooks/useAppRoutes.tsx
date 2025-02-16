@@ -1,12 +1,13 @@
-import {RolesTable} from 'modules/roles'
+import {AddEmployee, EmployeesTable, Login, MaterialsTable, AddProduct, ProductsTable} from 'modules'
+import {AddClient, ClientsTable} from 'modules/clients'
 import {Navigate, useRoutes} from 'react-router-dom'
 import {routeByRole} from 'utilities/authentication'
+import {WarehouseTable} from 'modules/warehouse'
 import {ROLE_LIST} from 'constants/roles'
+import {RolesTable} from 'modules/roles'
+import {AddOrder, OrdersTable} from 'modules/orders'
 import {useAppContext} from 'hooks'
 import {Layout} from 'components'
-import {AddEmployee, EmployeesTable, Login, MaterialsTable, AddProduct, ProductsTable} from 'modules'
-import {WarehouseTable} from 'modules/warehouse'
-import {AddClient, ClientsTable} from 'modules/clients'
 
 
 function useAppRoutes() {
@@ -89,6 +90,32 @@ function useAppRoutes() {
 							{
 								path: 'edit/:id',
 								element: <AddClient edit={true}/>
+							}
+						]
+					},
+					{
+						path: 'orders',
+						children: [
+							{
+								index: true,
+								element: <ClientsTable order={true}/>
+							},
+							{
+								path: ':id',
+								children: [
+									{
+										index: true,
+										element: <OrdersTable/>
+									},
+									{
+										path: 'add',
+										element: <AddOrder/>
+									},
+									{
+										path: 'edit/:orderId',
+										element: <AddOrder edit={true}/>
+									}
+								]
 							}
 						]
 					}

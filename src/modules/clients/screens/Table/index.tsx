@@ -1,7 +1,9 @@
 import {Plus} from 'assets/icons'
 import {
 	Button,
-	Card, DeleteButton, DeleteModal,
+	Card,
+	DeleteButton,
+	DeleteModal,
 	EditButton,
 	PageTitle,
 	Pagination,
@@ -11,14 +13,18 @@ import {
 	usePaginatedData,
 	usePagination
 } from 'hooks'
-import {useMemo} from 'react'
+import {FC, useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {IClientDetail} from 'interfaces/clients.interface'
 
 
-const Index = () => {
+interface IProperties {
+	order?: boolean
+}
+
+const Index: FC<IProperties> = ({order = false}) => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
@@ -66,21 +72,32 @@ const Index = () => {
 				Header: t('Actions'),
 				accessor: (row: IClientDetail) => (
 					<div className="flex items-start gap-lg">
-						<EditButton onClick={() => navigate(`edit/${row.id}`)}/>
-						<DeleteButton id={row.id}/>
+						{
+							order ?
+								<Button onClick={() => navigate(`${row.id}`)}>
+									Orders
+								</Button> :
+								<>
+									<EditButton onClick={() => navigate(`edit/${row.id}`)}/>
+									<DeleteButton id={row.id}/>
+								</>
+						}
 					</div>
 				)
 			}
 		],
-		[t, page, pageSize]
+		[t, page, pageSize, order]
 	)
 
 	return (
 		<>
 			<PageTitle title="Clients">
-				<Button icon={<Plus/>} onClick={() => navigate(`add`)}>
-					Add client
-				</Button>
+				{
+					!order &&
+					<Button icon={<Plus/>} onClick={() => navigate(`add`)}>
+						Add client
+					</Button>
+				}
 			</PageTitle>
 			<Card>
 				<ReactTable
@@ -90,7 +107,10 @@ const Index = () => {
 				/>
 			</Card>
 			<Pagination totalPages={totalPages}/>
-			<DeleteModal endpoint="services/customers/" onDelete={() => refetch()}/>
+			{
+				!order &&
+				<DeleteModal endpoint="services/customers/" onDelete={() => refetch()}/>
+			}
 		</>
 	)
 }

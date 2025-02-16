@@ -56,6 +56,30 @@ function modifyObjectField(obj: ISearchParams, key: string): ISearchParams {
 	return updatedObj
 }
 
+const getSelectOptionsByKey = (data: ISearchParams[], key: string = 'name'): ISelectOption[] => {
+	return data.map((item) => ({value: Number(item?.id || 0), label: String(item?.[key] || '')}))
+}
+
+
+function decimalToInteger(value?: string | number): string {
+	console.log(value)
+	const intValue = Math.floor(Number(value || 0))
+	console.log(intValue.toLocaleString('en-US').split(',').join(' '))
+	return intValue.toLocaleString('en-US').split(',').join(' ')
+}
+
+function decimalToNumber(value?: string | number): string {
+	const intValue = Math.floor(Number(value || 0))
+	return intValue.toLocaleString('en-US').split(',').join('')
+}
+
+function decimalToPrice(value?: string | number): string {
+	return new Intl.NumberFormat('de-DE', {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2
+	}).format(Number(value || 0))
+}
+
 export {
 	noop,
 	isObject,
@@ -63,5 +87,9 @@ export {
 	joinArray,
 	cleanParams,
 	getSelectValue,
-	modifyObjectField
+	decimalToPrice,
+	decimalToNumber,
+	decimalToInteger,
+	modifyObjectField,
+	getSelectOptionsByKey
 }
