@@ -28,6 +28,7 @@ import {
 	useSearchParams,
 	useUpdate
 } from 'hooks'
+import {decimalToInteger} from 'utilities/common'
 
 
 const Index = () => {
@@ -72,8 +73,8 @@ const Index = () => {
 			accessor: (row: IWarehouseDetail) => row.address
 		},
 		{
-			Header: t('Area'),
-			accessor: (row: IWarehouseDetail) => row.area
+			Header: `${t('Area')} (${t('m²')})`,
+			accessor: (row: IWarehouseDetail) => decimalToInteger(row.area || '')
 		},
 		{
 			Header: t('Actions'),
@@ -160,10 +161,10 @@ const Index = () => {
 						render={({field}) => (
 							<NumberFormattedInput
 								id="area"
-								maxLength={5}
-								disableGroupSeparators
+								maxLength={4}
+								disableGroupSeparators={false}
 								allowDecimals={false}
-								label="Area"
+								label={`${t('Area')} (${t('m²')})`}
 								error={addErrors?.area?.message}
 								{...field}
 							/>
@@ -214,10 +215,10 @@ const Index = () => {
 						render={({field}) => (
 							<NumberFormattedInput
 								id="area"
-								maxLength={5}
-								disableGroupSeparators
+								maxLength={4}
+								disableGroupSeparators={false}
 								allowDecimals={false}
-								label="Area"
+								label={`${t('Area')} (${t('m²')})`}
 								error={editErrors?.area?.message}
 								{...field}
 							/>

@@ -37,6 +37,7 @@
       "modules/*": ["modules/*"],
       "assets/*": ["assets/*"],
       "styles/*": ["styles/*"],
+      "store/*": ["store/*"],
       "hooks/*": ["hooks/*"],
       "i18n/*": ["i18n/*"],
     }

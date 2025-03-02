@@ -23,6 +23,8 @@ const Index: FC<IProps> = ({totalPages = 1, pageName, pageSizeName, mini = false
 		onPageChange(event.selected + 1)
 	}
 
+	console.log(page, 'page')
+
 	return (
 		<div className={styles.root}>
 			<ReactPaginate
@@ -30,7 +32,7 @@ const Index: FC<IProps> = ({totalPages = 1, pageName, pageSizeName, mini = false
 				nextLabel={<SelectIcon/>}
 				onPageChange={handlePageClick}
 				pageRangeDisplayed={mini ? 2 : 4}
-				forcePage={page === 1 || totalPages === 1 ? 0 : page - 2}
+				forcePage={(page <= 1 || totalPages <= 1) ? 0 : page - 1}
 				marginPagesDisplayed={mini ? 1 : 3}
 				pageCount={totalPages <= 0 ? 1 : totalPages}
 				previousLabel={<SelectIcon/>}

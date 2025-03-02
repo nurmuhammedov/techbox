@@ -1,4 +1,4 @@
-import {IWarehouseDetail} from 'interfaces/warehouse.interface'
+import {IWarehouseDetail as IReadyMadeWarehouseDetail, IWarehouseDetail} from 'interfaces/warehouse.interface'
 import {Controller, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {useTranslation} from 'react-i18next'
@@ -28,6 +28,7 @@ import {
 	useSearchParams,
 	useUpdate
 } from 'hooks'
+import {decimalToInteger} from 'utilities/common'
 
 
 const Index = () => {
@@ -74,8 +75,8 @@ const Index = () => {
 				accessor: (row: IWarehouseDetail) => row.name
 			},
 			{
-				Header: t('Area'),
-				accessor: (row: IWarehouseDetail) => row.area
+				Header: `${t('Area')} (${t('m²')})`,
+				accessor: (row: IReadyMadeWarehouseDetail) => decimalToInteger(row.area || '')
 			},
 			{
 				Header: t('Actions'),
@@ -155,9 +156,9 @@ const Index = () => {
 								<NumberFormattedInput
 									id="area"
 									maxLength={5}
-									disableGroupSeparators
+									disableGroupSeparators={false}
 									allowDecimals={false}
-									label="Area"
+									label={`${t('Area')} (${t('m²')})`}
 									error={addErrors?.area?.message}
 									{...field}
 								/>
@@ -196,9 +197,9 @@ const Index = () => {
 								<NumberFormattedInput
 									id="area"
 									maxLength={5}
-									disableGroupSeparators
+									disableGroupSeparators={false}
 									allowDecimals={false}
-									label="Area"
+									label={`${t('Area')} (${t('m²')})`}
 									error={editErrors?.area?.message}
 									{...field}
 								/>

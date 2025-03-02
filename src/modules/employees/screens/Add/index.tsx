@@ -70,7 +70,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 
 
 	if (isDetailLoading && edit) {
-		return <Loader screen/>
+		return <Loader/>
 	}
 
 	return (

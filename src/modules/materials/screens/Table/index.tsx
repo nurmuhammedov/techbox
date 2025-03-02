@@ -1,5 +1,4 @@
 import {yupResolver} from '@hookform/resolvers/yup'
-import {Plus} from 'assets/icons'
 import {
 	Button,
 	Card,
@@ -11,7 +10,9 @@ import {
 	Modal,
 	Pagination,
 	ReactTable,
-	Form, PageTitle, NumberFormattedInput
+	Form,
+	NumberFormattedInput,
+	PageTitle
 } from 'components'
 import {FIELD} from 'constants/fields'
 import {materialSchema} from 'helpers/yup'
@@ -21,6 +22,8 @@ import {useEffect, useMemo} from 'react'
 import {Controller, useForm} from 'react-hook-form'
 import {useTranslation} from 'react-i18next'
 import {Column} from 'react-table'
+import {Plus} from 'assets/icons'
+import {decimalToInteger} from 'utilities/common'
 
 
 const Index = () => {
@@ -44,7 +47,7 @@ const Index = () => {
 		formState: {errors: addErrors}
 	} = useForm({
 		mode: 'onTouched',
-		defaultValues: {name: '', weight_1x1: '', weight: '', format: ''},
+		defaultValues: {name: '', weight_1x1: '', weight: ''},
 		resolver: yupResolver(materialSchema)
 	})
 
@@ -63,17 +66,17 @@ const Index = () => {
 					accessor: (row: IMaterialItemDetail) => row.name
 				},
 				{
-					Header: t('Weight in 1x1 (in grams)'),
-					accessor: (row: IMaterialItemDetail) => row.weight_1x1
+					Header: `${t('Weight 1x1')} (${t('gr')})`,
+					accessor: (row: IMaterialItemDetail) => decimalToInteger(row.weight_1x1 || '')
 				},
 				{
-					Header: t('Weight(kg)'),
-					accessor: (row: IMaterialItemDetail) => row.weight
+					Header: `${t('Weight')} (${t('kg')})`,
+					accessor: (row: IMaterialItemDetail) => decimalToInteger(row.weight || '')
 				},
-				{
-					Header: t('Format(sm)'),
-					accessor: (row: IMaterialItemDetail) => row.format
-				},
+				// {
+				// 	Header: t('Formats(sm)'),
+				// 	accessor: (row: IMaterialItemDetail) => row.format
+				// },
 				{
 					Header: t('Actions'),
 					accessor: (row: IMaterialItemDetail) => <div className="flex items-start gap-lg">
@@ -82,7 +85,7 @@ const Index = () => {
 					</div>
 				}
 			],
-		[t, page, pageSize]
+		[page, pageSize]
 	)
 
 	const {
@@ -93,7 +96,7 @@ const Index = () => {
 		formState: {errors: editErrors}
 	} = useForm({
 		mode: 'onTouched',
-		defaultValues: {name: '', weight_1x1: '', weight: '', format: ''},
+		defaultValues: {name: '', weight_1x1: '', weight: ''},
 		resolver: yupResolver(materialSchema)
 	})
 
@@ -103,14 +106,14 @@ const Index = () => {
 
 	useEffect(() => {
 		if (detail) {
-			resetEdit({name: detail.name, weight_1x1: detail.weight_1x1, weight: detail.weight, format: detail.format})
+			resetEdit({name: detail.name, weight_1x1: detail.weight_1x1, weight: detail.weight})
 		}
 	}, [detail, resetEdit])
 
 	return (
 		<>
 			<PageTitle title="Material types">
-				<Button icon={<Plus/>} onClick={() => addParams({modal: 'material'})}>
+				<Button icon={<Plus/>} onClick={() => addParams({modal: 'materialTypes'})}>
 					Add material type
 				</Button>
 			</PageTitle>
@@ -120,7 +123,7 @@ const Index = () => {
 			</Card>
 			<Pagination totalPages={totalPages}/>
 
-			<Modal title="Add material type" id="material" style={{height: '50rem'}}>
+			<Modal title="Add material type" id="materialTypes" style={{height: '40rem'}}>
 				<Form
 					onSubmit={
 						handleAddSubmit((data) => mutateAsync(data).then(async () => {
@@ -144,9 +147,9 @@ const Index = () => {
 						render={({field}) => (
 							<NumberFormattedInput
 								id="weight_1x1"
-								label="Weight in 1x1 (in grams)"
-								disableGroupSeparators={true}
-								maxLength={5}
+								label={`${t('Weight 1x1')} (${t('gr')})`}
+								disableGroupSeparators={false}
+								maxLength={4}
 								allowDecimals={false}
 								error={addErrors?.weight_1x1?.message}
 								{...field}
@@ -160,9 +163,9 @@ const Index = () => {
 						render={({field}) => (
 							<NumberFormattedInput
 								id="weight"
-								label="Weight(kg)"
-								disableGroupSeparators={true}
-								maxLength={3}
+								label={`${t('Weight')} (${t('kg')})`}
+								disableGroupSeparators={false}
+								maxLength={5}
 								allowDecimals={false}
 								error={addErrors?.weight?.message}
 								{...field}
@@ -170,21 +173,21 @@ const Index = () => {
 						)}
 					/>
 
-					<Controller
-						control={controlAdd}
-						name="format"
-						render={({field}) => (
-							<NumberFormattedInput
-								id="format"
-								label="Format(sm)"
-								disableGroupSeparators={true}
-								maxLength={3}
-								allowDecimals={false}
-								error={addErrors?.format?.message}
-								{...field}
-							/>
-						)}
-					/>
+					{/*<Controller*/}
+					{/*	control={controlAdd}*/}
+					{/*	name="format"*/}
+					{/*	render={({field}) => (*/}
+					{/*		<NumberFormattedInput*/}
+					{/*			id="format"*/}
+					{/*			label="Formats(sm)"*/}
+					{/*			disableGroupSeparators={true}*/}
+					{/*			maxLength={3}*/}
+					{/*			allowDecimals={false}*/}
+					{/*			error={addErrors?.format?.message}*/}
+					{/*			{...field}*/}
+					{/*		/>*/}
+					{/*	)}*/}
+					{/*/>*/}
 
 					<Button
 						style={{marginTop: 'auto'}}
@@ -196,7 +199,7 @@ const Index = () => {
 				</Form>
 			</Modal>
 
-			<EditModal isLoading={isDetailLoading && !detail} style={{height: '50rem'}}>
+			<EditModal isLoading={isDetailLoading && !detail} style={{height: '40rem'}}>
 				<Form
 					onSubmit={
 						handleEditSubmit((data) => update(data).then(async () => {
@@ -221,9 +224,9 @@ const Index = () => {
 						render={({field}) => (
 							<NumberFormattedInput
 								id="weight_1x1"
-								label="Weight in 1x1 (in grams)"
-								disableGroupSeparators={true}
-								maxLength={5}
+								label={`${t('Weight 1x1')} (${t('gr')})`}
+								disableGroupSeparators={false}
+								maxLength={4}
 								allowDecimals={false}
 								error={editErrors?.weight_1x1?.message}
 								{...field}
@@ -237,9 +240,9 @@ const Index = () => {
 						render={({field}) => (
 							<NumberFormattedInput
 								id="weight"
-								label="Weight(kg)"
-								disableGroupSeparators={true}
-								maxLength={3}
+								label={`${t('Weight')} (${t('kg')})`}
+								disableGroupSeparators={false}
+								maxLength={5}
 								allowDecimals={false}
 								error={editErrors?.weight?.message}
 								{...field}
@@ -247,21 +250,21 @@ const Index = () => {
 						)}
 					/>
 
-					<Controller
-						control={controlEdit}
-						name="format"
-						render={({field}) => (
-							<NumberFormattedInput
-								id="format"
-								label="Format(sm)"
-								disableGroupSeparators={true}
-								maxLength={3}
-								allowDecimals={false}
-								error={editErrors?.format?.message}
-								{...field}
-							/>
-						)}
-					/>
+					{/*<Controller*/}
+					{/*	control={controlEdit}*/}
+					{/*	name="format"*/}
+					{/*	render={({field}) => (*/}
+					{/*		<NumberFormattedInput*/}
+					{/*			id="format"*/}
+					{/*			label="Formats(sm)"*/}
+					{/*			disableGroupSeparators={true}*/}
+					{/*			maxLength={3}*/}
+					{/*			allowDecimals={false}*/}
+					{/*			error={editErrors?.format?.message}*/}
+					{/*			{...field}*/}
+					{/*		/>*/}
+					{/*	)}*/}
+					{/*/>*/}
 
 					<Button
 						style={{marginTop: 'auto'}}

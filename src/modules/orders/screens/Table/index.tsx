@@ -19,9 +19,10 @@ import {useNavigate, useParams} from 'react-router-dom'
 import {Column} from 'react-table'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {getDate} from 'utilities/date'
-import {decimalToPrice} from 'utilities/common'
+import {decimalToInteger, decimalToPrice} from 'utilities/common'
 import {IClientDetail} from 'interfaces/clients.interface'
 import {Plus} from 'assets/icons'
+import {BUTTON_THEME} from 'constants/fields'
 
 
 const Index = () => {
@@ -56,12 +57,12 @@ const Index = () => {
 				}
 			},
 			{
-				Header: t('Product'),
-				accessor: (row: IOrderDetail) => row.product as unknown as string
+				Header: t('Name'),
+				accessor: (row: IOrderDetail) => row.name
 			},
 			{
 				Header: t('Count'),
-				accessor: (row: IOrderDetail) => row.count
+				accessor: (row: IOrderDetail) => decimalToInteger(row.count || '')
 			},
 			{
 				Header: t('Deadline'),
@@ -92,14 +93,19 @@ const Index = () => {
 		[t, page, pageSize]
 	)
 
-	if (isDetailLoading) return <Loader screen/>
+	if (isDetailLoading) return <Loader/>
 
 	return (
 		<>
 			<PageTitle title={detail?.company_name ? `${detail?.company_name} ${t('company orders')}` : ''}>
-				<Button icon={<Plus/>} onClick={() => navigate(`add`)}>
-					Create order
-				</Button>
+				<div className="flex gap-lg align-center">
+					<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
+						Back
+					</Button>
+					<Button icon={<Plus/>} onClick={() => navigate(`add`)}>
+						Create order
+					</Button>
+				</div>
 			</PageTitle>
 			<Card>
 				<ReactTable

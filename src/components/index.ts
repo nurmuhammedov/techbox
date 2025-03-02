@@ -7,6 +7,7 @@ import PageTitle from './PageTitle'
 import AlertItem from './AlertItem'
 import EditModal from './EditModal'
 import Wrapper from './Wrapper'
+import Diagram from './Diagram'
 import Router from './Router'
 import Layout from './Layout'
 import Loader from './Loader'
@@ -28,6 +29,7 @@ export {
 	PageTitle,
 	AlertItem,
 	EditModal,
+	Diagram,
 	Wrapper,
 	Layout,
 	Router,

@@ -10,6 +10,8 @@ interface IFieldProperties {
 	label?: string;
 	textarea?: boolean;
 	autocomplete?: boolean;
+	mini?: boolean;
+	err?: boolean;
 	required?: boolean;
 	radius?: boolean,
 	icon?: React.ReactNode;

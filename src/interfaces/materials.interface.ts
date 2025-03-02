@@ -7,6 +7,19 @@ interface IMaterialItemDetail {
 	format: string;
 }
 
+
+interface IBaseMaterialList {
+	id: number;
+	material: IMaterialItemDetail;
+	count: string;
+	weight: string;
+	format: {
+		id: number;
+		format: string;
+	};
+}
+
 export type {
-	IMaterialItemDetail
+	IMaterialItemDetail,
+	IBaseMaterialList
 }

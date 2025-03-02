@@ -3,6 +3,7 @@ import {ISearchParams} from 'interfaces/params.interface'
 import {showMessage} from 'utilities/alert'
 import {roleOptions} from 'helpers/options'
 import {TFunction} from 'i18next'
+import {IOrderDetail} from 'interfaces/orders.interface'
 
 
 const noop = (): void => {}
@@ -61,16 +62,10 @@ const getSelectOptionsByKey = (data: ISearchParams[], key: string = 'name'): ISe
 }
 
 
-function decimalToInteger(value?: string | number): string {
-	console.log(value)
+function decimalToInteger(value?: string | number | null | undefined): string {
+	if (!value) return ''
 	const intValue = Math.floor(Number(value || 0))
-	console.log(intValue.toLocaleString('en-US').split(',').join(' '))
 	return intValue.toLocaleString('en-US').split(',').join(' ')
-}
-
-function decimalToNumber(value?: string | number): string {
-	const intValue = Math.floor(Number(value || 0))
-	return intValue.toLocaleString('en-US').split(',').join('')
 }
 
 function decimalToPrice(value?: string | number): string {
@@ -78,6 +73,18 @@ function decimalToPrice(value?: string | number): string {
 		minimumFractionDigits: 2,
 		maximumFractionDigits: 2
 	}).format(Number(value || 0))
+}
+
+
+function areAllFieldsPresent(orders: IOrderDetail[]): boolean {
+	return orders.every(order =>
+		!order.l0 ||
+		!order.l1 ||
+		!order.l2 ||
+		!order.l3 ||
+		!order.l4 ||
+		!order.l5
+	)
 }
 
 export {
@@ -88,8 +95,8 @@ export {
 	cleanParams,
 	getSelectValue,
 	decimalToPrice,
-	decimalToNumber,
 	decimalToInteger,
 	modifyObjectField,
+	areAllFieldsPresent,
 	getSelectOptionsByKey
 }

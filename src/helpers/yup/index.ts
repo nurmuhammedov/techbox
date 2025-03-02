@@ -44,7 +44,6 @@ const dateField = yup
 		)
 	})
 
-
 // Confirm password validation
 const confirmPasswordSchema = yup
 	.string()
@@ -138,7 +137,14 @@ const materialSchema = yup.object().shape({
 	weight: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.required('This field is required')
+	// format: yup
+	// 	.string()
+	// 	.trim()
+	// 	.required('This field is required')
+})
+
+const formatSchema = yup.object().shape({
 	format: yup
 		.string()
 		.trim()
@@ -172,6 +178,24 @@ const semiFinishedWarehouseSchema = yup.object().shape({
 		.required('This field is required')
 })
 
+const warehouseOrdersSchema = yup.object().shape({
+	material: yup
+		.number()
+		.transform(value => value ? Number(value) : null)
+		.required('This field is required'),
+	count: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	// weight: yup
+	// 	.string()
+	// 	.trim()
+	// 	.required('This field is required'),
+	format: yup
+		.number()
+		.required('This field is required')
+})
+
 
 // PRODUCTS
 const productSchema = yup.object().shape({
@@ -197,7 +221,7 @@ const productSchema = yup.object().shape({
 		.trim()
 		.required('This field is required'),
 	format: yup
-		.string()
+		.number()
 		.required('This field is required'),
 	logo: yup
 		.object<IFIle>()
@@ -218,9 +242,8 @@ const productSchema = yup.object().shape({
 // ORDERS
 const ordersSchema = yup.object().shape({
 	product: yup
-		.string()
-		.trim()
-		.required('This field is required'),
+		.number()
+		.nullable(),
 	count: yup
 		.string()
 		.trim()
@@ -237,7 +260,162 @@ const ordersSchema = yup.object().shape({
 		.string()
 		.trim()
 		.required('This field is required'),
+	name: yup
+		.string()
+		.trim()
+		.required('This field is required')
+		.max(100, 'Must not exceed 100 characters'),
+	width: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	height: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	length: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	box_ear: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	format: yup
+		.number()
+		.required('This field is required'),
+	logo: yup
+		.object<IFIle>()
+		.shape({
+			name: yup.string().nullable(),
+			id: yup.number().nullable(),
+			file: yup.string().nullable()
+		})
+		.nullable()
+		.notRequired(),
+	layer: yup
+		.array()
+		.of(yup.string().trim().required('This field is required'))
+		.nullable()
+		.transform(value => value?.length > 0 ? value : null),
 	deadline: dateField
+})
+
+const groupOrdersSchema = yup.object().shape({
+	has_addition: yup.boolean().nullable(),
+	gofra: yup.boolean().nullable(),
+	ymo1: yup.boolean().nullable(),
+	fleksa: yup.boolean().nullable(),
+	ymo2: yup.boolean().nullable(),
+	tikish: yup.boolean().nullable(),
+	yelimlash: yup.boolean().nullable(),
+	x: yup
+		.string()
+		.trim()
+		.transform(value => value ? value : null)
+		.when('has_addition', {
+			is: true,
+			then: (schema) => schema.required('This field is required'),
+			otherwise: (schema) => schema.nullable()
+		}),
+	y: yup
+		.string()
+		.trim()
+		.transform(value => value ? value : null)
+		.when('has_addition', {
+			is: true,
+			then: (schema) => schema.required('This field is required'),
+			otherwise: (schema) => schema.nullable()
+		}),
+	deadline: yup
+		.string()
+		.trim()
+		.when('has_addition', {
+			is: true,
+			then: (schema) => schema
+				.transform(value => value ? value : null)
+				.nullable(),
+			otherwise: (schema) => schema
+				.transform(value => value ? value : null)
+				.nullable()
+		}),
+	separated_raw_materials_format: yup
+		.number()
+		.required('This field is required')
+})
+
+const temporaryOrderSchema = yup.object().shape({
+	// count: yup
+	// 	.string()
+	// 	.trim()
+	// 	.required('This field is required'),
+	gofra: yup.boolean().nullable(),
+	ymo1: yup.boolean().nullable(),
+	fleksa: yup.boolean().nullable(),
+	ymo2: yup.boolean().nullable(),
+	tikish: yup.boolean().nullable(),
+	yelimlash: yup.boolean().nullable(),
+	l0: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	l1: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	l2: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	l3: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	l4: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	l5: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	layer: yup
+		.array()
+		.of(yup.string().trim().required('This field is required'))
+		.nullable(),
+	deadline: dateField
+})
+
+const operatorOrderSchema = yup.object().shape({
+	data: yup
+		.array()
+		.of(yup.object().shape({
+			material: yup.number().required('This field is required'),
+			weight: yup.string().trim().required('This field is required')
+		}))
+		.required('This field is required')
+})
+
+const operatorsOrderSchema = yup.object().shape({
+	percentage: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	weight: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	area: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	data: yup
+		.array()
+		.of(yup.object().shape({
+			order: yup.number().required('This field is required'),
+			count: yup.string().trim().required('This field is required')
+		}))
+		.required('This field is required')
 })
 
 // CLIENTS
@@ -252,6 +430,11 @@ const clientsSchema = yup.object().shape({
 export {
 	semiFinishedWarehouseSchema,
 	confirmPasswordSchema,
+	warehouseOrdersSchema,
+	operatorsOrderSchema,
+	temporaryOrderSchema,
+	operatorOrderSchema,
+	groupOrdersSchema,
 	userUpdateSchema,
 	positionsSchema,
 	warehouseSchema,
@@ -259,6 +442,7 @@ export {
 	materialSchema,
 	productSchema,
 	clientsSchema,
+	formatSchema,
 	ordersSchema,
 	loginSchema,
 	rolesSchema,

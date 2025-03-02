@@ -9,7 +9,8 @@ import {
 	PageTitle,
 	FileUpLoader,
 	NumberFormattedInput,
-	Select, Wrapper
+	Select,
+	Wrapper
 } from 'components'
 import {IProductDetail} from 'interfaces/products.interface'
 import {useNavigate, useParams} from 'react-router-dom'
@@ -33,6 +34,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const {t} = useTranslation()
 	const {id} = useParams()
 	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
+	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
 
 	const {
 		handleSubmit,
@@ -50,8 +52,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			height: '',
 			length: '',
 			box_ear: '',
-			format: '',
-			layer: [],
+			format: undefined,
+			layer: [' '],
 			logo: undefined
 		}
 	})
@@ -75,14 +77,14 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				box_ear: data.box_ear,
 				format: data.format,
 				logo: data.logo || undefined,
-				layer: data?.layer || []
+				layer: data?.layer || [' ']
 			})
 		}
 	}, [data, edit, reset])
 
 
 	if (isDetailLoading && edit) {
-		return <Loader screen/>
+		return <Loader/>
 	}
 
 	return (
@@ -136,15 +138,17 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							name="format"
 							control={control}
-							render={({field}) => (
-								<NumberFormattedInput
+							render={({field: {value, ref, onChange, onBlur}}) => (
+								<Select
 									id="format"
-									maxLength={3}
-									disableGroupSeparators
-									allowDecimals={false}
-									label={`${t('Format')} (${t('sm')})`}
+									label="Format"
+									options={formats}
 									error={errors?.format?.message}
-									{...field}
+									value={getSelectValue(formats, value)}
+									ref={ref}
+									onBlur={onBlur}
+									defaultValue={getSelectValue(formats, value)}
+									handleOnChange={(e) => onChange(e as string)}
 								/>
 							)}
 						/>
@@ -273,7 +277,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Button
 							theme={BUTTON_THEME.PRIMARY}
 							type="button"
-							disabled={watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === ''}
+							disabled={watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '' || fields.length >= 5}
 							icon={<Plus/>}
 							onClick={() => append('')}
 						>

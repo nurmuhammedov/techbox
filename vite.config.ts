@@ -24,6 +24,7 @@ export default defineConfig({
 			'assets': '/src/assets',
 			'styles': '/src/styles',
 			'hooks': '/src/hooks',
+			'store': '/src/store',
 			'i18n': '/src/i18n'
 		}
 	}

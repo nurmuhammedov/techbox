@@ -18,6 +18,7 @@ interface FileUploaderProps {
 	id: string
 	disabled?: boolean
 	label?: string
+	url?: string
 	error?: string
 	type?: 'pdf' | 'image'
 }
@@ -27,6 +28,7 @@ const Index = forwardRef<HTMLInputElement, FileUploaderProps>(({
 	                                                               onChange,
 	                                                               value,
 	                                                               label,
+	                                                               url = 'products/product-logo',
 	                                                               disabled = false,
 	                                                               error,
 	                                                               id,
@@ -47,7 +49,7 @@ const Index = forwardRef<HTMLInputElement, FileUploaderProps>(({
 						formData.append('file', item)
 						formData.append('name', item.name)
 						interceptor
-							.post(`products/product-logo`, formData, {
+							.post(url, formData, {
 								headers: {
 									'Content-Type': 'multipart/form-data'
 								},
@@ -123,7 +125,7 @@ const Index = forwardRef<HTMLInputElement, FileUploaderProps>(({
 				setIsDeleteLoading(true)
 				setIsLoading(true)
 				interceptor
-					.delete(`products/product-logo/${id}`)
+					.delete(`${url}/${id}`)
 					.then(() => {
 						if (Array.isArray(value)) {
 							const newValue = value.filter(i => i.id !== id)

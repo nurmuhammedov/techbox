@@ -41,6 +41,18 @@ export const menu: IMenuItem[] = [
 		}
 	},
 	{
+		id: 'formats',
+		label: 'Formats',
+		href: '/formats',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 3
+		}
+	},
+	{
 		id: 'permissions',
 		label: 'Permissions',
 		href: '/permissions',
@@ -49,7 +61,7 @@ export const menu: IMenuItem[] = [
 			ROLE_LIST.ADMIN
 		],
 		order: {
-			[ROLE_LIST.ADMIN]: 3
+			[ROLE_LIST.ADMIN]: 4
 		}
 	},
 	{
@@ -61,7 +73,7 @@ export const menu: IMenuItem[] = [
 			ROLE_LIST.ADMIN
 		],
 		order: {
-			[ROLE_LIST.ADMIN]: 4
+			[ROLE_LIST.ADMIN]: 5
 		}
 	},
 	{
@@ -73,7 +85,7 @@ export const menu: IMenuItem[] = [
 			ROLE_LIST.ADMIN
 		],
 		order: {
-			[ROLE_LIST.ADMIN]: 5
+			[ROLE_LIST.ADMIN]: 6
 		}
 	},
 	{
@@ -85,7 +97,7 @@ export const menu: IMenuItem[] = [
 			ROLE_LIST.ADMIN
 		],
 		order: {
-			[ROLE_LIST.ADMIN]: 6
+			[ROLE_LIST.ADMIN]: 7
 		}
 	},
 	{
@@ -97,7 +109,92 @@ export const menu: IMenuItem[] = [
 			ROLE_LIST.ADMIN
 		],
 		order: {
-			[ROLE_LIST.ADMIN]: 6
+			[ROLE_LIST.ADMIN]: 8
+		}
+	},
+	{
+		id: 'warehouses-man',
+		label: 'Materials',
+		href: '/warehouses-man',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 9
+		}
+	},
+	{
+		id: 'director-orders',
+		label: 'Director orders',
+		href: '/director-orders',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 10
+		}
+	},
+	{
+		id: 'operator-orders',
+		label: 'Operator orders',
+		href: '/operator-orders',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 11
+		}
+	},
+	{
+		id: 'corrugation-orders',
+		label: 'Corrugation orders',
+		href: '/corrugation-orders',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 12
+		}
+	},
+	{
+		id: 'flex-orders',
+		label: 'Flex orders',
+		href: '/flex-orders',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 13
+		}
+	},
+	{
+		id: 'sewing-orders',
+		label: 'Sewing orders',
+		href: '/sewing-orders',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 14
+		}
+	},
+	{
+		id: 'gluing-orders',
+		label: 'Gluing orders',
+		href: '/gluing-orders',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.ADMIN
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 15
 		}
 	}
 ]
+

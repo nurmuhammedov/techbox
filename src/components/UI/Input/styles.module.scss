@@ -136,3 +136,21 @@ textarea {
   }
 }
 
+
+.mini {
+  width: auto;
+
+
+  .input {
+    width: 5rem !important;
+    font-size: 0.9375rem !important;
+    letter-spacing: 0.05625rem !important;
+    padding: 0 .625rem !important;
+    border-radius: 0.625rem !important;
+
+    &::placeholder {
+      font-size: 0.9375rem !important;
+      letter-spacing: 0.05625rem !important;
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import {ISelectOption} from 'interfaces/form.interface'
+import {ISearchParams} from 'interfaces/params.interface'
 
 
 const paginationOptions: ISelectOption[] = [
@@ -14,8 +15,36 @@ const roleOptions: ISelectOption[] = [
 	{value: 'role', label: 'Roles'}
 ]
 
+const statusOptions: ISelectOption[] = [
+	{value: 'new', label: 'New orders'},
+	{value: 'in_line', label: 'Queued orders'},
+	{value: 'in_proces', label: 'In progress orders'},
+	{value: 'finished', label: 'Finished orders'}
+]
+const operatorsStatusOptions: ISelectOption[] = [
+	{value: 'False', label: 'New orders'},
+	{value: 'True', label: 'Orders sent'}
+]
+
+const booleanOptions: ISearchParams[] = [
+	{value: true, label: 'Has'},
+	{value: false, label: 'No'}
+]
+
+const activityOptions: ISelectOption[] = [
+	{value: 'gofra', label: 'Corrugation'},
+	{value: 'ymo1', label: 'YMO'},
+	{value: 'fleksa', label: 'Flex'},
+	{value: 'ymo2', label: 'YMO'},
+	{value: 'tikish', label: 'Sewing'},
+	{value: 'yelimlash', label: 'Gluing'}
+]
 
 export {
+	operatorsStatusOptions,
 	paginationOptions,
+	activityOptions,
+	booleanOptions,
+	statusOptions,
 	roleOptions
 }

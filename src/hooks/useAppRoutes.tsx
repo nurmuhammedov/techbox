@@ -1,11 +1,29 @@
-import {AddEmployee, EmployeesTable, Login, MaterialsTable, AddProduct, ProductsTable} from 'modules'
-import {AddClient, ClientsTable} from 'modules/clients'
+import {
+	AddEmployee,
+	EmployeesTable,
+	Login,
+	MaterialsTable,
+	AddProduct,
+	ProductsTable,
+	WarehouseManTable,
+	WarehouseOrder,
+	FormatsTable,
+	RolesTable,
+	WarehouseTable,
+	ClientsTable,
+	AddClient,
+	OrdersTable,
+	AddOrder,
+	DirectorOrdersTable,
+	AddDirectorOrder,
+	OperatorOrdersTable,
+	EditOperatorOrder,
+	OperatorsTable,
+	OperatorsForm
+} from 'modules'
 import {Navigate, useRoutes} from 'react-router-dom'
 import {routeByRole} from 'utilities/authentication'
-import {WarehouseTable} from 'modules/warehouse'
 import {ROLE_LIST} from 'constants/roles'
-import {RolesTable} from 'modules/roles'
-import {AddOrder, OrdersTable} from 'modules/orders'
 import {useAppContext} from 'hooks'
 import {Layout} from 'components'
 
@@ -51,6 +69,15 @@ function useAppRoutes() {
 						]
 					},
 					{
+						path: 'formats',
+						children: [
+							{
+								index: true,
+								element: <FormatsTable/>
+							}
+						]
+					},
+					{
 						path: 'warehouses',
 						children: [
 							{
@@ -73,6 +100,100 @@ function useAppRoutes() {
 							{
 								path: 'edit/:id',
 								element: <AddProduct edit={true}/>
+							}
+						]
+					},
+					{
+						path: 'director-orders',
+						children: [
+							{
+								index: true,
+								element: <DirectorOrdersTable/>
+							},
+							{
+								path: 'add',
+								element: <AddDirectorOrder/>
+							}
+						]
+					},
+					{
+						path: 'operator-orders',
+						children: [
+							{
+								index: true,
+								element: <OperatorOrdersTable/>
+							},
+							{
+								path: 'edit/:id',
+								element: <EditOperatorOrder/>
+							}
+						]
+					},
+					{
+						path: 'corrugation-orders',
+						children: [
+							{
+								index: true,
+								element: <OperatorsTable/>
+							},
+							{
+								path: 'edit/:id',
+								element: <OperatorsForm type="corrugation"/>
+							},
+							{
+								path: 'detail/:id',
+								element: <OperatorsForm retrieve={true} type="corrugation"/>
+							}
+						]
+					},
+					{
+						path: 'flex-orders',
+						children: [
+							{
+								index: true,
+								element: <OperatorsTable/>
+							},
+							{
+								path: 'edit/:id',
+								element: <OperatorsForm type="flex"/>
+							},
+							{
+								path: 'detail/:id',
+								element: <OperatorsForm retrieve={true} type="flex"/>
+							}
+						]
+					},
+					{
+						path: 'sewing-orders',
+						children: [
+							{
+								index: true,
+								element: <OperatorsTable/>
+							},
+							{
+								path: 'edit/:id',
+								element: <OperatorsForm type="sewing"/>
+							},
+							{
+								path: 'detail/:id',
+								element: <OperatorsForm retrieve={true} type="sewing"/>
+							}
+						]
+					},
+					{
+						path: 'gluing-orders',
+						children: [
+							{
+								index: true,
+								element: <OperatorsTable/>
+							},
+							{
+								path: 'edit/:id',
+								element: <OperatorsForm type="gluing"/>
+							},
+							{
+								path: 'detail/:id',
+								element: <OperatorsForm retrieve={true} type="gluing"/>
 							}
 						]
 					},
@@ -116,6 +237,23 @@ function useAppRoutes() {
 										element: <AddOrder edit={true}/>
 									}
 								]
+							}
+						]
+					},
+					{
+						path: 'warehouses-man',
+						children: [
+							{
+								index: true,
+								element: <WarehouseManTable/>
+							},
+							{
+								path: 'add',
+								element: <WarehouseOrder/>
+							},
+							{
+								path: 'edit/:orderId',
+								element: <WarehouseOrder edit={true}/>
 							}
 						]
 					}

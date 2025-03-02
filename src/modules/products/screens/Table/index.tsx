@@ -1,7 +1,9 @@
 import {Plus} from 'assets/icons'
 import {
 	Button,
-	Card, DeleteButton, DeleteModal,
+	Card,
+	DeleteButton,
+	DeleteModal,
 	EditButton,
 	PageTitle,
 	Pagination,
@@ -47,11 +49,11 @@ const Index = () => {
 				accessor: (row: IProductDetail) => row.name
 			},
 			{
-				Header: `${t('Sizes')}(${t('mm')})`,
+				Header: `${t('Sizes')} (${t('mm')})`,
 				accessor: (row: IProductDetail) => row.size
 			},
 			{
-				Header: t('Format(sm)'),
+				Header: `${t('Format')} (${t('mm')})`,
 				accessor: (row: IProductDetail) => row.format
 			},
 			{

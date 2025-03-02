@@ -16,15 +16,14 @@ import {useNavigate, useParams} from 'react-router-dom'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {useForm, Controller, useFieldArray} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
-import {useAdd, useData, useDetail, usePaginatedData, useUpdate} from 'hooks'
-import {ordersSchema, productSchema} from 'helpers/yup'
-import {getSelectOptionsByKey, getSelectValue} from 'utilities/common'
-import {Box} from 'assets/icons'
-// import {Box, Plus} from 'assets/icons'
-import {ISearchParams} from 'interfaces/params.interface'
+import {useAdd, useData, useDetail, useUpdate} from 'hooks'
+import {ordersSchema} from 'helpers/yup'
+import {getSelectValue, modifyObjectField} from 'utilities/common'
+import {Box, Plus} from 'assets/icons'
 import {useTranslation} from 'react-i18next'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {getDate} from 'utilities/date'
+import {ISearchParams} from 'interfaces/params.interface'
 
 
 interface IProperties {
@@ -35,37 +34,17 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {orderId: id = undefined, id: customer = undefined} = useParams()
-	const {data: products = []} = usePaginatedData<ISearchParams[]>('products/')
+	const {data: products = []} = useData<ISelectOption[]>('products/select')
+	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
+	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
 
 	const {
-		// handleSubmit,
+		handleSubmit,
 		control,
 		register,
 		reset,
-		// watch,
+		watch,
 		formState: {errors}
-	} = useForm({
-		resolver: yupResolver(productSchema),
-		mode: 'onTouched',
-		defaultValues: {
-			name: '',
-			width: '',
-			height: '',
-			length: '',
-			box_ear: '',
-			format: '',
-			layer: [],
-			logo: undefined
-		}
-	})
-
-	const {
-		handleSubmit: orderHandleSubmit,
-		control: orderControl,
-		register: orderRegister,
-		reset: orderReset,
-		watch: orderWatch,
-		formState: {errors: orderErrors}
 	} = useForm({
 		resolver: yupResolver(ordersSchema),
 		mode: 'onTouched',
@@ -75,19 +54,20 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			price: '',
 			deadline: '',
 			money_paid: '',
-			count: ''
+			count: '',
+			// product
+			name: '',
+			width: '',
+			height: '',
+			length: '',
+			box_ear: '',
+			format: undefined,
+			layer: [' '],
+			logo: undefined
 		}
 	})
 
-	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select', !!orderWatch('product'))
-
-
-	// const {fields, append, remove} = useFieldArray({
-	// 	control,
-	// 	name: 'layer' as never
-	// })
-
-	const {fields} = useFieldArray({
+	const {fields, append, remove} = useFieldArray({
 		control,
 		name: 'layer' as never
 	})
@@ -103,11 +83,12 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const {
 		data: productDetail,
 		isPending: isProductDetailLoading
-	} = useDetail<IProductDetail>('products/', orderWatch('product'), !!orderWatch('product'))
+	} = useDetail<IProductDetail>('products/', watch('product'), !!watch('product'))
 
 	useEffect(() => {
 		if (productDetail && !isProductDetailLoading) {
-			reset({
+			reset((prev) => ({
+				...prev,
 				name: productDetail.name,
 				width: productDetail.width,
 				height: productDetail.height,
@@ -115,27 +96,36 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				box_ear: productDetail.box_ear,
 				format: productDetail.format,
 				logo: productDetail.logo || undefined,
-				layer: productDetail?.layer || []
-			})
+				layer: productDetail?.layer || [' ']
+			}))
 		}
-	}, [productDetail, edit, reset])
+	}, [productDetail, edit])
 
 	useEffect(() => {
 		if (detail && edit) {
-			orderReset({
-				product: detail.product?.id as unknown as string,
+			reset({
+				// product: undefined,
 				count: detail.count,
 				money_paid: detail.money_paid,
 				deadline: getDate(detail.deadline),
 				price: detail.price,
-				comment: detail.comment
+				comment: detail.comment,
+				// product
+				name: detail.name,
+				width: detail.width,
+				height: detail.height,
+				length: detail.length,
+				box_ear: detail.box_ear,
+				format: detail.format?.id,
+				logo: detail.logo || undefined,
+				layer: detail?.layer || [' ']
 			})
 		}
-	}, [detail, edit, orderReset])
+	}, [detail, edit])
 
 
 	if (isDetailLoading && edit) {
-		return <Loader screen/>
+		return <Loader/>
 	}
 
 	return (
@@ -151,31 +141,49 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						disabled={isAdding || isUpdating}
 						onClick={() => {
 							if (!edit) {
-								orderHandleSubmit((data) =>
-									addOrder({...data, customer})
+								handleSubmit((data) =>
+									addOrder(modifyObjectField({...data, customer} as ISearchParams, 'logo'))
 										.then(async () => {
-											orderReset({
+											reset({
 												product: undefined,
 												comment: '',
 												price: '',
 												deadline: '',
 												money_paid: '',
-												count: ''
+												count: '',
+												// product
+												name: '',
+												width: '',
+												height: '',
+												length: '',
+												box_ear: '',
+												format: undefined,
+												layer: [],
+												logo: undefined
 											})
 											navigate(-1)
 										})
 								)()
 							} else {
-								orderHandleSubmit((data) =>
-									updateOrder({...data, customer})
+								handleSubmit((data) =>
+									updateOrder(modifyObjectField({...data, customer} as ISearchParams, 'logo'))
 										.then(async () => {
-											orderReset({
+											reset({
 												product: undefined,
 												comment: '',
 												price: '',
 												deadline: '',
 												money_paid: '',
-												count: ''
+												count: '',
+												// product
+												name: '',
+												width: '',
+												height: '',
+												length: '',
+												box_ear: '',
+												format: undefined,
+												layer: [],
+												logo: undefined
 											})
 											navigate(-1)
 										})
@@ -189,40 +197,208 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			</PageTitle>
 			<Card style={{padding: '1.5rem'}}>
 				<Form className="grid gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
-					<div className="grid span-12 gap-xl flex-0">
-						<div className="span-4">
-							<Controller
-								name="product"
-								control={orderControl}
-								render={({field: {value, ref, onChange, onBlur}}) => (
-									<Select
-										id="product"
-										label="Product"
-										// top={true}
-										options={getSelectOptionsByKey(products)}
-										error={orderErrors?.product?.message}
-										value={getSelectValue(getSelectOptionsByKey(products), value)}
-										ref={ref}
-										onBlur={onBlur}
-										defaultValue={getSelectValue(getSelectOptionsByKey(products), value)}
-										handleOnChange={(e) => onChange(e as string)}
-									/>
-								)}
-							/>
+					{
+						!edit &&
+						<div className="grid span-12 gap-xl flex-0">
+							<div className="span-4">
+								<Controller
+									name="product"
+									control={control}
+									render={({field: {value, ref, onChange, onBlur}}) => (
+										<Select
+											id="product"
+											label="Product"
+											options={products}
+											error={errors?.product?.message}
+											value={getSelectValue(products, value)}
+											ref={ref}
+											onBlur={onBlur}
+											defaultValue={getSelectValue(products, value)}
+											handleOnChange={(e) => onChange(e as string)}
+										/>
+									)}
+								/>
+							</div>
 						</div>
+					}
 
+					<div className="span-4">
+						<Input
+							id="name"
+							type={FIELD.TEXT}
+							label="Name"
+							error={errors?.name?.message}
+							{...register('name')}
+						/>
+					</div>
+
+					<div className="span-4">
+						<Controller
+							name="format"
+							control={control}
+							render={({field: {value, ref, onChange, onBlur}}) => (
+								<Select
+									id="format"
+									label="Format"
+									options={formats}
+									error={errors?.format?.message}
+									value={getSelectValue(formats, value)}
+									ref={ref}
+									onBlur={onBlur}
+									defaultValue={getSelectValue(formats, value)}
+									handleOnChange={(e) => onChange(e as string)}
+								/>
+							)}
+						/>
+					</div>
+
+					<div className="span-4">
+						<Controller
+							control={control}
+							name="box_ear"
+							render={({field}) => (
+								<NumberFormattedInput
+									id="box_ear"
+									maxLength={3}
+									disableGroupSeparators
+									allowDecimals={false}
+									label={`${t('Box ear')} (${t('mm')})`}
+									error={errors?.box_ear?.message}
+									{...field}
+								/>
+							)}
+						/>
+					</div>
+
+					<div className="span-4">
+						<Controller
+							name="logo"
+							control={control}
+							render={({field: {value, ref, onChange, onBlur}}) => (
+								<FileUpLoader
+									id="logo"
+									ref={ref}
+									type="image"
+									value={value as IFIle}
+									onBlur={onBlur}
+									onChange={onChange}
+									label="Logo"
+									error={errors?.logo?.message}
+								/>
+							)}
+						/>
+					</div>
+
+					<div className="span-4 flex flex-col gap-lg">
+						<Controller
+							control={control}
+							name="width"
+							render={({field}) => (
+								<NumberFormattedInput
+									id="width"
+									label={`${t('Sizes')} (${t('mm')})`}
+									maxLength={3}
+									disableGroupSeparators={true}
+									allowDecimals={false}
+									placeholder={`a (${t('mm')})`}
+									error={errors?.width?.message}
+									{...field}
+								/>
+							)}
+						/>
+
+						<Controller
+							control={control}
+							name="length"
+							render={({field}) => (
+								<NumberFormattedInput
+									id="length"
+									maxLength={3}
+									disableGroupSeparators
+									allowDecimals={false}
+									placeholder={`b (${t('mm')})`}
+									error={errors?.length?.message}
+									{...field}
+								/>
+							)}
+						/>
+
+						<Controller
+							control={control}
+							name="height"
+							render={({field}) => (
+								<NumberFormattedInput
+									id="height"
+									maxLength={3}
+									disableGroupSeparators
+									allowDecimals={false}
+									placeholder={`c (${t('mm')})`}
+									error={errors?.height?.message}
+									{...field}
+								/>
+							)}
+						/>
+					</div>
+
+					<Wrapper className="span-4 align-center justify-center">
+						<Box/>
+					</Wrapper>
+
+					<div className="span-12 grid gap-lg">
+						{
+							fields?.map((field, index) => (
+								<div className="span-4" key={field.id}>
+									<Controller
+										name={`layer.${index}`}
+										control={control}
+										render={({field: {value, ref, onChange, onBlur}}) => (
+											<Select
+												id={`layer-${index + 1}`}
+												label={`${index + 1}-${t('layer')}`}
+												options={materials}
+												top={true}
+												handleDelete={() => remove(index)}
+												value={getSelectValue(materials, value)}
+												error={errors?.layer?.[index]?.message}
+												ref={ref}
+												onBlur={onBlur}
+												defaultValue={getSelectValue(materials, value)}
+												handleOnChange={(e) => onChange(e as string)}
+											/>
+										)}
+									/>
+								</div>
+							))
+						}
+
+
+						<div className="span-4" style={{marginTop: '2rem'}}>
+							<Button
+								theme={BUTTON_THEME.PRIMARY}
+								type="button"
+								disabled={(watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
+								icon={<Plus/>}
+								onClick={() => append('')}
+							>
+								Add layer
+							</Button>
+						</div>
+					</div>
+
+
+					<div className="span-12 grid gap-xl flex-0">
 						<div className="span-4">
 							<Controller
 								name="count"
-								control={orderControl}
+								control={control}
 								render={({field}) => (
 									<NumberFormattedInput
 										id="count"
 										maxLength={4}
-										disableGroupSeparators
+										disableGroupSeparators={false}
 										allowDecimals={false}
 										label="Count"
-										error={orderErrors?.count?.message}
+										error={errors?.count?.message}
 										{...field}
 									/>
 								)}
@@ -232,199 +408,24 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<div className="span-4">
 							<Controller
 								name="deadline"
-								control={orderControl}
+								control={control}
 								render={({field}) => (
 									<MaskInput
 										id="deadline"
 										label="Deadline"
 										placeholder={getDate()}
 										mask="99.99.9999"
-										error={orderErrors?.deadline?.message}
+										error={errors?.deadline?.message}
 										{...field}
 									/>
 								)}
 							/>
 						</div>
-					</div>
 
-					{
-						(orderWatch('product') && productDetail) &&
-						<>
-							<div className="span-4">
-								<Input
-									id="name"
-									type={FIELD.TEXT}
-									disabled={true}
-									label="Name"
-									error={errors?.name?.message}
-									{...register('name')}
-								/>
-							</div>
-
-							<div className="span-4">
-								<Controller
-									name="format"
-									control={control}
-									render={({field}) => (
-										<NumberFormattedInput
-											id="format"
-											maxLength={3}
-											disabled={true}
-											disableGroupSeparators
-											allowDecimals={false}
-											label={`${t('Format')} (${t('sm')})`}
-											error={errors?.format?.message}
-											{...field}
-										/>
-									)}
-								/>
-							</div>
-
-							<div className="span-4">
-								<Controller
-									control={control}
-									name="box_ear"
-									render={({field}) => (
-										<NumberFormattedInput
-											id="box_ear"
-											maxLength={3}
-											disabled={true}
-											disableGroupSeparators
-											allowDecimals={false}
-											label={`${t('Box ear')} (${t('mm')})`}
-											error={errors?.box_ear?.message}
-											{...field}
-										/>
-									)}
-								/>
-							</div>
-
-							<div className="span-4">
-								<Controller
-									name="logo"
-									control={control}
-									render={({field: {value, ref, onChange, onBlur}}) => (
-										<FileUpLoader
-											id="logo"
-											ref={ref}
-											type="image"
-											value={value as IFIle}
-											disabled={true}
-											onBlur={onBlur}
-											onChange={onChange}
-											label="Logo"
-											error={errors?.logo?.message}
-										/>
-									)}
-								/>
-							</div>
-
-							<div className="span-4 flex flex-col gap-lg">
-								<Controller
-									control={control}
-									name="width"
-									render={({field}) => (
-										<NumberFormattedInput
-											id="width"
-											label={`${t('Sizes')} (${t('mm')})`}
-											maxLength={3}
-											disableGroupSeparators
-											disabled={true}
-											allowDecimals={false}
-											placeholder={`a (${t('mm')})`}
-											error={errors?.width?.message}
-											{...field}
-										/>
-									)}
-								/>
-
-								<Controller
-									control={control}
-									name="length"
-									render={({field}) => (
-										<NumberFormattedInput
-											id="length"
-											maxLength={3}
-											disableGroupSeparators
-											allowDecimals={false}
-											disabled={true}
-											placeholder={`b (${t('mm')})`}
-											error={errors?.length?.message}
-											{...field}
-										/>
-									)}
-								/>
-
-								<Controller
-									control={control}
-									name="height"
-									render={({field}) => (
-										<NumberFormattedInput
-											id="height"
-											maxLength={3}
-											disableGroupSeparators
-											allowDecimals={false}
-											disabled={true}
-											placeholder={`c (${t('mm')})`}
-											error={errors?.height?.message}
-											{...field}
-										/>
-									)}
-								/>
-							</div>
-
-							<Wrapper className="span-4 align-center justify-center">
-								<Box/>
-							</Wrapper>
-
-							<>
-								{
-									fields?.map((field, index) => (
-										<div className="span-4" key={field.id}>
-											<Controller
-												name={`layer.${index}`}
-												control={control}
-												render={({field: {value, ref, onChange, onBlur}}) => (
-													<Select
-														id={`layer-${index + 1}`}
-														label={`${index + 1}-${t('layer')}`}
-														top={true}
-														options={materials}
-														isDisabled={true}
-														error={errors?.layer?.[index]?.message}
-														// handleDelete={() => remove(index)}
-														value={getSelectValue(materials, value)}
-														ref={ref}
-														onBlur={onBlur}
-														defaultValue={getSelectValue(materials, value)}
-														handleOnChange={(e) => onChange(e as string)}
-													/>
-												)}
-											/>
-										</div>
-									))
-								}
-							</>
-
-							{/*<div className="span-4" style={{marginTop: '2rem'}}>*/}
-							{/*	<Button*/}
-							{/*		theme={BUTTON_THEME.PRIMARY}*/}
-							{/*		type="button"*/}
-							{/*		disabled={(watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '') || !!orderWatch('product')}*/}
-							{/*		icon={<Plus/>}*/}
-							{/*		onClick={() => append('')}*/}
-							{/*	>*/}
-							{/*		Add layer*/}
-							{/*	</Button>*/}
-							{/*</div>*/}
-						</>
-					}
-
-					<div className="span-12 grid gap-xl flex-0">
 						<div className="span-4">
 							<Controller
 								name="price"
-								control={orderControl}
+								control={control}
 								render={({field}) => (
 									<NumberFormattedInput
 										id="price"
@@ -432,7 +433,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 										disableGroupSeparators={false}
 										allowDecimals={true}
 										label="Price"
-										error={orderErrors?.price?.message}
+										error={errors?.price?.message}
 										{...field}
 									/>
 								)}
@@ -442,7 +443,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<div className="span-4">
 							<Controller
 								name="money_paid"
-								control={orderControl}
+								control={control}
 								render={({field}) => (
 									<NumberFormattedInput
 										id="money_paid"
@@ -450,7 +451,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 										disableGroupSeparators={false}
 										allowDecimals={true}
 										label="Paid money"
-										error={orderErrors?.money_paid?.message}
+										error={errors?.money_paid?.message}
 										{...field}
 									/>
 								)}
@@ -461,11 +462,12 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							<Input
 								id="comment"
 								label={`Comment`}
-								error={orderErrors?.comment?.message}
-								{...orderRegister(`comment`)}
+								error={errors?.comment?.message}
+								{...register(`comment`)}
 							/>
 						</div>
 					</div>
+
 				</Form>
 			</Card>
 		</>
