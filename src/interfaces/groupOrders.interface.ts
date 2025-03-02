@@ -1,3 +1,4 @@
+import {IIDName} from 'interfaces/configuration.interface'
 import {IOrderDetail} from 'interfaces/orders.interface'
 
 
@@ -31,6 +32,8 @@ interface IGroupOrder {
 	count_after_bet: string;
 	percentage_after_bet: string;
 	mkv_after_bet: string;
+
+	weight_material: { material: IIDName, weight: string }[]
 }
 
 export type {

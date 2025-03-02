@@ -102,4 +102,34 @@ textarea {
   left: auto;
 }
 
+.delete {
+  padding-right: 3.5rem !important;
+}
+.delete .delete-wrapper {
+  user-select: none;
+  padding: 0.4rem;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  right: 0.7rem;
+  top: 2.5rem;
+  cursor: pointer;
+}
+
+.mini {
+  width: auto;
+}
+.mini .input {
+  width: 5rem !important;
+  font-size: 0.9375rem !important;
+  letter-spacing: 0.05625rem !important;
+  padding: 0 0.625rem !important;
+  border-radius: 0.625rem !important;
+}
+.mini .input::placeholder {
+  font-size: 0.9375rem !important;
+  letter-spacing: 0.05625rem !important;
+}
+
 /*# sourceMappingURL=styles.module.css.map */

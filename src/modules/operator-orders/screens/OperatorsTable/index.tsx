@@ -21,21 +21,22 @@ import {IGroupOrder} from 'interfaces/groupOrders.interface'
 
 
 interface IProperties {
-	url?: string
+	type?: 'gofra' | 'fleksa' | 'tikish' | 'yelimlash'
 }
 
-const Index: FC<IProperties> = ({url = 'services/group-orders'}) => {
+const Index: FC<IProperties> = ({type = 'gofra'}) => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
 	const {paramsObject: {status = operatorsStatusOptions[0].value}} = useSearchParams()
 
 	const {data, totalPages, isPending: isLoading} = usePaginatedData<IGroupOrder[]>(
-		url,
+		'services/group-orders',
 		{
 			page: page,
 			page_size: pageSize,
-			activity: status
+			activity: status == operatorsStatusOptions[0].value ? type : null,
+			pass_activity: status == operatorsStatusOptions[1].value ? type : null
 		}
 	)
 
@@ -182,7 +183,7 @@ const Index: FC<IProperties> = ({url = 'services/group-orders'}) => {
 				)
 			}
 		],
-		[page, pageSize, status, url]
+		[page, pageSize, status, type]
 	)
 
 	return (

@@ -1,8 +1,9 @@
 import {
 	Button,
-	Card, PageTitle,
+	Card,
+	EditButton,
 	Pagination,
-	ReactTable
+	ReactTable, Tab
 } from 'components'
 import {
 	usePaginatedData,
@@ -14,7 +15,7 @@ import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {getDate} from 'utilities/date'
 import {decimalToInteger} from 'utilities/common'
-import {statusOptions} from 'helpers/options'
+import {operatorsStatusOptions} from 'helpers/options'
 import {IGroupOrder} from 'interfaces/groupOrders.interface'
 
 
@@ -22,14 +23,14 @@ const Index = () => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
-	const {paramsObject: {status = statusOptions[0].value}} = useSearchParams()
+	const {paramsObject: {status = operatorsStatusOptions[0].value}} = useSearchParams()
 
 	const {data, totalPages, isPending: isLoading} = usePaginatedData<IGroupOrder[]>(
 		`services/group-orders`,
 		{
 			page: page,
 			page_size: pageSize,
-			status
+			is_separated: status
 		}
 	)
 
@@ -168,14 +169,18 @@ const Index = () => {
 				Header: t('Actions'),
 				accessor: (row: IGroupOrder) => (
 					<div className="flex items-start gap-lg">
-						<Button
-							mini={true}
-							onClick={() => {
-								navigate(`edit/${row.id}`)
-							}}
-						>
-							Choosing
-						</Button>
+						{
+							status == operatorsStatusOptions[0].value ?
+								<Button
+									mini={true}
+									onClick={() => {
+										navigate(`edit/${row.id}`)
+									}}
+								>
+									Choosing
+								</Button> :
+								<EditButton onClick={() => navigate(`detail/${row.id}`)}/>
+						}
 					</div>
 				)
 			}
@@ -186,7 +191,9 @@ const Index = () => {
 
 	return (
 		<>
-			<PageTitle title="Orders"/>
+			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
+				<Tab query="status" fallbackValue={operatorsStatusOptions[0].value} tabs={operatorsStatusOptions}/>
+			</div>
 			<Card>
 				<ReactTable
 					columns={columns}

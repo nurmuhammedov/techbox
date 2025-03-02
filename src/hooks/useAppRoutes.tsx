@@ -126,6 +126,10 @@ function useAppRoutes() {
 							{
 								path: 'edit/:id',
 								element: <EditOperatorOrder/>
+							},
+							{
+								path: 'detail/:id',
+								element: <EditOperatorOrder retrieve={true}/>
 							}
 						]
 					},
@@ -134,7 +138,7 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <OperatorsTable/>
+								element: <OperatorsTable type="gofra"/>
 							},
 							{
 								path: 'edit/:id',
@@ -151,7 +155,7 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <OperatorsTable/>
+								element: <OperatorsTable type="fleksa"/>
 							},
 							{
 								path: 'edit/:id',
@@ -168,7 +172,7 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <OperatorsTable/>
+								element: <OperatorsTable type="tikish"/>
 							},
 							{
 								path: 'edit/:id',
@@ -185,7 +189,7 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <OperatorsTable/>
+								element: <OperatorsTable type="yelimlash"/>
 							},
 							{
 								path: 'edit/:id',

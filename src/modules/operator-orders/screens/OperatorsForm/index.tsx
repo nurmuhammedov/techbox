@@ -1,27 +1,17 @@
-import {
-	useUpdate
-} from 'hooks'
-import {
-	Button,
-	Card,
-	Form,
-	Input,
-	NumberFormattedInput,
-	PageTitle,
-	Select
-} from 'components'
-import {GroupOrderDetail} from 'components/HOC'
-import {Controller, useFieldArray, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
-import {operatorsOrderSchema} from 'helpers/yup'
-import {decimalToInteger, getSelectValue} from 'utilities/common'
-import {ISelectOption} from 'interfaces/form.interface'
-import {useTranslation} from 'react-i18next'
+import {Button, Card, Form, Input, NumberFormattedInput, PageTitle, Select} from 'components'
+import {GroupOrderDetail} from 'components/HOC'
 import {BUTTON_THEME} from 'constants/fields'
-import {FC, useEffect} from 'react'
 import {booleanOptions} from 'helpers/options'
-import {useNavigate, useParams} from 'react-router-dom'
+import {operatorsOrderSchema} from 'helpers/yup'
+import {useUpdate} from 'hooks'
+import {ISelectOption} from 'interfaces/form.interface'
 import {IGroupOrder} from 'interfaces/groupOrders.interface'
+import {FC, useEffect} from 'react'
+import {Controller, useFieldArray, useForm} from 'react-hook-form'
+import {useTranslation} from 'react-i18next'
+import {useNavigate, useParams} from 'react-router-dom'
+import {decimalToInteger, getSelectValue} from 'utilities/common'
 
 
 interface IProperties {
@@ -66,15 +56,47 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 
 	useEffect(() => {
 		if (retrieve) {
-			reset({
-				percentage: '',
-				weight: '',
-				area: '',
-				data: [...new Set(detail?.orders?.flatMap(order => order.id) || [])].map(item => ({
-					order: Number(item),
-					count: ''
-				}))
-			})
+			if (type === 'corrugation') {
+				reset({
+					percentage: detail?.percentage_after_processing,
+					weight: detail?.invalid_material_in_processing,
+					area: detail?.mkv_after_processing,
+					data: detail?.orders?.map(order => ({
+						order: order.id,
+						count: order.count_after_processing
+					}))
+				})
+			} else if (type === 'flex') {
+				reset({
+					percentage: detail?.percentage_after_flex,
+					weight: detail?.invalid_material_in_flex,
+					area: detail?.mkv_after_flex,
+					data: detail?.orders?.map(order => ({
+						order: order.id,
+						count: order.count_after_flex
+					}))
+				})
+			} else if (type === 'sewing') {
+				reset({
+					percentage: detail?.percentage_after_bet,
+					weight: detail?.invalid_material_in_bet,
+					area: detail?.mkv_after_bet,
+					data: detail?.orders?.map(order => ({
+						order: order.id,
+						count: order.count_after_bet
+					}))
+				})
+			} else if (type === 'gluing') {
+				reset({
+					percentage: detail?.percentage_after_gluing,
+					weight: detail?.invalid_material_in_gluing,
+					area: detail?.mkv_after_gluing,
+					data: detail?.orders?.map(order => ({
+						order: order.id,
+						count: order.count_after_gluing
+					}))
+				})
+			}
 		} else if (detail) {
 			reset({
 				percentage: '',
@@ -96,62 +118,65 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 					<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
 						Back
 					</Button>
-					<Button
-						onClick={
-							handleSubmit((data) => {
-								let newData = undefined
-								if (type === 'corrugation') {
-									newData = {
-										invalid_material_in_processing: data?.weight,
-										percentage_after_processing: data?.percentage,
-										mkv_after_processing: data?.area,
-										count_after_processing: data?.data
+					{
+						!retrieve &&
+						<Button
+							onClick={
+								handleSubmit((data) => {
+									let newData = undefined
+									if (type === 'corrugation') {
+										newData = {
+											invalid_material_in_processing: data?.weight,
+											percentage_after_processing: data?.percentage,
+											mkv_after_processing: data?.area,
+											count_after_processing: data?.data
+										}
+									} else if (type === 'flex') {
+										newData = {
+											invalid_material_in_flex: data?.weight,
+											percentage_after_flex: data?.percentage,
+											mkv_after_flex: data?.area,
+											count_after_flex: data?.data
+										}
+									} else if (type === 'sewing') {
+										newData = {
+											invalid_material_in_bet: data?.weight,
+											percentage_after_bet: data?.percentage,
+											mkv_after_bet: data?.area,
+											count_after_bet: data?.data
+										}
+									} else if (type === 'gluing') {
+										newData = {
+											invalid_material_in_gluing: data?.weight,
+											percentage_after_gluing: data?.percentage,
+											mkv_after_gluing: data?.area,
+											count_after_gluing: data?.data
+										}
 									}
-								} else if (type === 'flex') {
-									newData = {
-										invalid_material_in_flex: data?.weight,
-										percentage_after_flex: data?.percentage,
-										mkv_after_flex: data?.area,
-										count_after_flex: data?.data
-									}
-								} else if (type === 'sewing') {
-									newData = {
-										invalid_material_in_bet: data?.weight,
-										percentage_after_bet: data?.percentage,
-										count_after_bet: data?.area,
-										count_after_flex: data?.data
-									}
-								} else if (type === 'gluing') {
-									newData = {
-										invalid_material_in_gluing: data?.weight,
-										percentage_after_gluing: data?.percentage,
-										mkv_after_gluing: data?.area,
-										count_after_gluing: data?.data
-									}
-								}
 
 
-								update(newData)
-									.then(() => {
-										navigate(-1)
-										reset({
-											percentage: '',
-											weight: '',
-											area: '',
-											data: [
-												{
-													order: undefined,
-													count: ''
-												}
-											]
+									update(newData)
+										.then(() => {
+											navigate(-1)
+											reset({
+												percentage: '',
+												weight: '',
+												area: '',
+												data: [
+													{
+														order: undefined,
+														count: ''
+													}
+												]
+											})
 										})
-									})
-							})
-						}
-						disabled={isUpdate}
-					>
-						Send
-					</Button>
+								})
+							}
+							disabled={isUpdate}
+						>
+							Send
+						</Button>
+					}
 				</div>
 			</PageTitle>
 			<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>

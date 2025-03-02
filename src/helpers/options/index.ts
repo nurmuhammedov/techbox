@@ -22,8 +22,8 @@ const statusOptions: ISelectOption[] = [
 	{value: 'finished', label: 'Finished orders'}
 ]
 const operatorsStatusOptions: ISelectOption[] = [
-	{value: 'False', label: 'New orders'},
-	{value: 'True', label: 'Orders sent'}
+	{value: 1, label: 'New orders'},
+	{value: 2, label: 'Orders sent'}
 ]
 
 const booleanOptions: ISearchParams[] = [

@@ -1,0 +1,95 @@
+.root .diagram {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.root .diagram .container {
+  min-height: 2.5rem;
+  border: 1.5px solid var(--primary-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem;
+}
+.root .diagram .container:nth-child(1) {
+  border: none;
+}
+.root .diagram .container:nth-child(2) {
+  grid-column: span 4;
+  border-top-style: dashed;
+  border-right: none;
+  border-left-style: dashed;
+  border-bottom: none;
+}
+.root .diagram .container:nth-child(3) {
+  grid-column: span 2;
+  border-top-style: dashed;
+  border-right-style: dashed;
+  border-left-style: dashed;
+  border-bottom: none;
+}
+.root .diagram .container:nth-child(4) {
+  grid-row: span 3;
+  border-top-style: dashed;
+  border-left-style: dashed;
+  border-bottom-style: dashed;
+  border-right: none;
+}
+.root .diagram .container:nth-child(4) input {
+  transform: rotate(-90deg);
+}
+.root .diagram .container:nth-child(5) {
+  grid-column: span 4;
+  border-bottom: none;
+}
+.root .diagram .container:nth-child(6) {
+  grid-column: span 2;
+  border-top-style: dashed;
+  border-left: none;
+  border-bottom: none;
+  border-right-style: dashed;
+}
+.root .diagram .container:nth-child(7) {
+  grid-column: span 6;
+  border-bottom: none;
+}
+.root .diagram .container:nth-child(8) {
+  grid-column: span 4;
+}
+.root .diagram .container:nth-child(9) {
+  grid-column: span 2;
+  border-bottom-style: dashed;
+  border-left: none;
+  border-right-style: dashed;
+}
+.root .second {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.root .second .container {
+  min-height: 3.5rem;
+  border: 1.5px solid var(--primary-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem;
+}
+.root .second .container:nth-child(1) {
+  grid-row: span 2;
+  border-top-style: dashed;
+  border-left-style: dashed;
+  border-bottom-style: dashed;
+  border-right: none;
+}
+.root .second .container:nth-child(1) input {
+  transform: rotate(-90deg);
+}
+.root .second .container:nth-child(2) {
+  grid-column: span 6;
+  border-bottom: none;
+}
+.root .second .container:nth-child(3) {
+  grid-column: span 6;
+  border-top-style: dashed;
+}
+
+/*# sourceMappingURL=styles.module.css.map */

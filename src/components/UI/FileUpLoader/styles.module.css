@@ -80,4 +80,8 @@
   box-shadow: 0 0 0 1px var(--red);
 }
 
+.disabled .input {
+  pointer-events: none;
+}
+
 /*# sourceMappingURL=styles.module.css.map */

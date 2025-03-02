@@ -62,7 +62,14 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 	const {mutateAsync: addGroupOrder, isPending: isAddLoading} = useAdd('services/weight-material')
 
 	useEffect(() => {
-		if (detail) {
+		if (retrieve) {
+			reset({
+				data: detail?.weight_material?.map(item => ({
+					material: item?.material?.id || undefined,
+					weight: item?.weight || ''
+				})) || []
+			})
+		} else if (detail) {
 			reset({
 				data: [...new Set(detail?.orders?.flatMap(order => order.layer) || [])].map(item => ({
 					material: Number(item),
@@ -80,32 +87,35 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 					<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
 						Back
 					</Button>
-					<Button
-						onClick={
-							handleSubmit((data) => {
-								const newData = {
-									group_order: id,
-									data: data?.data
-								}
+					{
+						!retrieve &&
+						<Button
+							onClick={
+								handleSubmit((data) => {
+									const newData = {
+										group_order: id,
+										data: data?.data
+									}
 
-								addGroupOrder(newData)
-									.then(() => {
-										navigate(-1)
-										reset({
-											data: [
-												{
-													material: undefined,
-													weight: ''
-												}
-											]
+									addGroupOrder(newData)
+										.then(() => {
+											navigate(-1)
+											reset({
+												data: [
+													{
+														material: undefined,
+														weight: ''
+													}
+												]
+											})
 										})
-									})
-							})
-						}
-						disabled={isAddLoading}
-					>
-						Send
-					</Button>
+								})
+							}
+							disabled={isAddLoading}
+						>
+							Send
+						</Button>
+					}
 				</div>
 			</PageTitle>
 			<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
