@@ -141,7 +141,7 @@ const Index = () => {
 						render={({field: {value, ref, onChange, onBlur}}) => (
 							<Select
 								ref={ref}
-								top={true}
+								// top={true}
 								id="categories"
 								options={roleOptions}
 								isMulti={true}
@@ -198,9 +198,9 @@ const Index = () => {
 						render={({field: {value, ref, onChange, onBlur}}) => (
 							<Select
 								ref={ref}
-								disabled={true}
+								// disabled={true}
 								isMulti={true}
-								top={true}
+								// top={true}
 								id="categories"
 								options={roleOptions}
 								onBlur={onBlur}

@@ -11,9 +11,24 @@ const paginationOptions: ISelectOption[] = [
 ]
 
 const roleOptions: ISelectOption[] = [
-	{value: 'human_resources', label: 'Human resources department'},
-	{value: 'role', label: 'Roles'}
+	{value: 'human_resources', label: 'Employees'},
+	{value: 'role', label: 'Roles'},
+	{value: 'material_type', label: 'Material types'},
+	{value: 'format', label: 'Formats'},
+	{value: 'permissions', label: 'Permissions'},
+	{value: 'storekeeper', label: 'Warehouses'},
+	{value: 'products', label: 'Products'},
+	{value: 'customers', label: 'Clients'},
+	{value: 'orders', label: 'Orders'},
+	{value: 'materials', label: 'Materials'},
+	{value: 'leader', label: 'Director orders'},
+	{value: 'operator', label: 'Operator orders'},
+	{value: 'operator_gofra', label: 'Corrugation orders'},
+	{value: 'operator_fleksa', label: 'Flex orders'},
+	{value: 'operator_tikish', label: 'Sewing orders'},
+	{value: 'operator_yelimlash', label: 'Gluing orders'}
 ]
+
 
 const statusOptions: ISelectOption[] = [
 	{value: 'new', label: 'New orders'},

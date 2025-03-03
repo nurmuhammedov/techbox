@@ -1,11 +1,12 @@
 import {Logo} from 'assets/icons'
+import {ROLE_LIST} from 'constants/roles'
+import {useAppContext, useSideMenu} from 'hooks'
 import {FC} from 'react'
 import {useTranslation} from 'react-i18next'
-import {useAppContext, useSideMenu} from 'hooks'
 import {useNavigate} from 'react-router-dom'
 import {routeByRole} from 'utilities/authentication'
-import styles from './styles.module.scss'
 import SidebarItem from './SidebarItem'
+import styles from './styles.module.scss'
 
 
 const Index: FC = () => {
@@ -22,11 +23,17 @@ const Index: FC = () => {
 			</div>
 			<ul className={styles.menu}>
 				{
-					sideMenu?.map((item) => (
-						<li key={item?.id}>
-							<SidebarItem {...item}/>
-						</li>
-					))
+					[ROLE_LIST.EMPLOYEE].includes(user?.role || ROLE_LIST.EMPLOYEE) ?
+						sideMenu?.filter(item => user?.permissions?.includes(item.id))?.map((item) => (
+							<li key={item?.id}>
+								<SidebarItem {...item}/>
+							</li>
+						)) :
+						sideMenu?.map((item) => (
+							<li key={item?.id}>
+								<SidebarItem {...item}/>
+							</li>
+						))
 				}
 			</ul>
 		</aside>

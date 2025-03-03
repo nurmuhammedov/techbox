@@ -53,7 +53,7 @@ const Index = () => {
 			page: page,
 			page_size: pageSize
 		},
-		user?.role === ROLE_LIST.HEAD_DEPARTMENT
+		user?.role === ROLE_LIST.HEAD_DEPARTMENT || user?.role === ROLE_LIST.EMPLOYEE
 	)
 
 	const {

@@ -1,7 +1,7 @@
 import {
 	Button,
 	Card,
-	DeleteButton, DeleteModal,
+	// DeleteButton, DeleteModal,
 	EditButton,
 	Loader,
 	PageTitle,
@@ -31,7 +31,7 @@ const Index = () => {
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
 
-	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IOrderDetail[]>(
+	const {data, totalPages, isPending: isLoading} = usePaginatedData<IOrderDetail[]>(
 		`services/order-list-by-customer/${id}`,
 		{
 			page: page,
@@ -85,7 +85,7 @@ const Index = () => {
 				accessor: (row: IOrderDetail) => (
 					<div className="flex items-start gap-lg">
 						<EditButton onClick={() => navigate(`edit/${row.id}`)}/>
-						<DeleteButton id={row.id}/>
+						{/*<DeleteButton id={row.id}/>*/}
 					</div>
 				)
 			}
@@ -115,7 +115,7 @@ const Index = () => {
 				/>
 			</Card>
 			<Pagination totalPages={totalPages}/>
-			<DeleteModal endpoint="services/orders/" onDelete={() => refetch()}/>
+			{/*<DeleteModal endpoint="services/orders/" onDelete={() => refetch()}/>*/}
 		</>
 	)
 }

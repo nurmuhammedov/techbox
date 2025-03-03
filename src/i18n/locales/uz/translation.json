@@ -172,5 +172,11 @@
   "Waste paper percentage": "Yaroqsiz qog‘oz foizi",
   "Waste paper area": "Yaroqsiz qog‘oz yuzi",
   "Select at least one order": "Kamida bitta buyurtmani tanlang",
-  "Draw a complete diagram of all selected orders": "Barcha tanlangan buyurtmalarni chizmasini to‘liq chizing"
+  "Draw a complete diagram of all selected orders": "Barcha tanlangan buyurtmalarni chizmasini to‘liq chizing",
+  "Director orders": "Monitoring",
+  "Operator orders": "Buyurtmalar (operator)",
+  "Corrugation orders": "Gofra",
+  "Flex orders": "Fleksa",
+  "Sewing orders": "Tikish",
+  "Gluing orders": "Yelimlash"
 }

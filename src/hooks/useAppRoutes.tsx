@@ -31,6 +31,260 @@ import {Layout} from 'components'
 function useAppRoutes() {
 	const {user} = useAppContext()
 
+	const userPermissions = user?.permissions || []
+
+	const employeeRoutes = [
+		{
+			id: 'human_resources',
+			path: 'employees',
+			children: [
+				{
+					index: true,
+					element: <EmployeesTable/>
+				},
+				{
+					path: 'add',
+					element: <AddEmployee/>
+				},
+				{
+					path: 'edit/:id',
+					element: <AddEmployee edit={true}/>
+				}
+			]
+		},
+		{
+			id: 'role',
+			path: 'roles',
+			children: [
+				{
+					index: true,
+					element: <RolesTable/>
+				}
+			]
+		},
+		{
+			id: 'material_type',
+			path: 'materials',
+			children: [
+				{
+					index: true,
+					element: <MaterialsTable/>
+				}
+			]
+		},
+		{
+			id: 'format',
+			path: 'formats',
+			children: [
+				{
+					index: true,
+					element: <FormatsTable/>
+				}
+			]
+		},
+		{
+			id: 'storekeeper',
+			path: 'warehouses',
+			children: [
+				{
+					index: true,
+					element: <WarehouseTable/>
+				}
+			]
+		},
+		{
+			id: 'products',
+			path: 'products',
+			children: [
+				{
+					index: true,
+					element: <ProductsTable/>
+				},
+				{
+					path: 'add',
+					element: <AddProduct/>
+				},
+				{
+					path: 'edit/:id',
+					element: <AddProduct edit={true}/>
+				}
+			]
+		},
+		{
+			id: 'leader',
+			path: 'director-orders',
+			children: [
+				{
+					index: true,
+					element: <DirectorOrdersTable/>
+				},
+				{
+					path: 'add',
+					element: <AddDirectorOrder/>
+				}
+			]
+		},
+		{
+			id: 'operator',
+			path: 'operator-orders',
+			children: [
+				{
+					index: true,
+					element: <OperatorOrdersTable/>
+				},
+				{
+					path: 'edit/:id',
+					element: <EditOperatorOrder/>
+				},
+				{
+					path: 'detail/:id',
+					element: <EditOperatorOrder retrieve={true}/>
+				}
+			]
+		},
+		{
+			id: 'operator_gofra',
+			path: 'corrugation-orders',
+			children: [
+				{
+					index: true,
+					element: <OperatorsTable type="gofra"/>
+				},
+				{
+					path: 'edit/:id',
+					element: <OperatorsForm type="corrugation"/>
+				},
+				{
+					path: 'detail/:id',
+					element: <OperatorsForm retrieve={true} type="corrugation"/>
+				}
+			]
+		},
+		{
+			id: 'operator_fleksa',
+			path: 'flex-orders',
+			children: [
+				{
+					index: true,
+					element: <OperatorsTable type="fleksa"/>
+				},
+				{
+					path: 'edit/:id',
+					element: <OperatorsForm type="flex"/>
+				},
+				{
+					path: 'detail/:id',
+					element: <OperatorsForm retrieve={true} type="flex"/>
+				}
+			]
+		},
+		{
+			id: 'operator_tikish',
+			path: 'sewing-orders',
+			children: [
+				{
+					index: true,
+					element: <OperatorsTable type="tikish"/>
+				},
+				{
+					path: 'edit/:id',
+					element: <OperatorsForm type="sewing"/>
+				},
+				{
+					path: 'detail/:id',
+					element: <OperatorsForm retrieve={true} type="sewing"/>
+				}
+			]
+		},
+		{
+			id: 'operator_yelimlash',
+			path: 'gluing-orders',
+			children: [
+				{
+					index: true,
+					element: <OperatorsTable type="yelimlash"/>
+				},
+				{
+					path: 'edit/:id',
+					element: <OperatorsForm type="gluing"/>
+				},
+				{
+					path: 'detail/:id',
+					element: <OperatorsForm retrieve={true} type="gluing"/>
+				}
+			]
+		},
+		{
+			id: 'customers',
+			path: 'clients',
+			children: [
+				{
+					index: true,
+					element: <ClientsTable/>
+				},
+				{
+					path: 'add',
+					element: <AddClient/>
+				},
+				{
+					path: 'edit/:id',
+					element: <AddClient edit={true}/>
+				}
+			]
+		},
+		{
+			id: 'orders',
+			path: 'orders',
+			children: [
+				{
+					index: true,
+					element: <ClientsTable order={true}/>
+				},
+				{
+					path: ':id',
+					children: [
+						{
+							index: true,
+							element: <OrdersTable/>
+						},
+						{
+							path: 'add',
+							element: <AddOrder/>
+						},
+						{
+							path: 'edit/:orderId',
+							element: <AddOrder edit={true}/>
+						}
+					]
+				}
+			]
+		},
+		{
+			id: 'materials',
+			path: 'warehouses-man',
+			children: [
+				{
+					index: true,
+					element: <WarehouseManTable/>
+				},
+				{
+					path: 'add',
+					element: <WarehouseOrder/>
+				},
+				{
+					path: 'edit/:orderId',
+					element: <WarehouseOrder edit={true}/>
+				}
+			]
+		}
+	]
+
+	const filteredEmployeeRoutes = employeeRoutes.filter(route => userPermissions.includes(route?.id))
+	let url = routeByRole(user?.role)
+	if (user?.role === ROLE_LIST.EMPLOYEE && filteredEmployeeRoutes?.length) {
+		url = '/' + filteredEmployeeRoutes[0].path
+	}
+
 	const routes = {
 		[ROLE_LIST.ADMIN]: [
 			{
@@ -103,104 +357,104 @@ function useAppRoutes() {
 							}
 						]
 					},
-					{
-						path: 'director-orders',
-						children: [
-							{
-								index: true,
-								element: <DirectorOrdersTable/>
-							},
-							{
-								path: 'add',
-								element: <AddDirectorOrder/>
-							}
-						]
-					},
-					{
-						path: 'operator-orders',
-						children: [
-							{
-								index: true,
-								element: <OperatorOrdersTable/>
-							},
-							{
-								path: 'edit/:id',
-								element: <EditOperatorOrder/>
-							},
-							{
-								path: 'detail/:id',
-								element: <EditOperatorOrder retrieve={true}/>
-							}
-						]
-					},
-					{
-						path: 'corrugation-orders',
-						children: [
-							{
-								index: true,
-								element: <OperatorsTable type="gofra"/>
-							},
-							{
-								path: 'edit/:id',
-								element: <OperatorsForm type="corrugation"/>
-							},
-							{
-								path: 'detail/:id',
-								element: <OperatorsForm retrieve={true} type="corrugation"/>
-							}
-						]
-					},
-					{
-						path: 'flex-orders',
-						children: [
-							{
-								index: true,
-								element: <OperatorsTable type="fleksa"/>
-							},
-							{
-								path: 'edit/:id',
-								element: <OperatorsForm type="flex"/>
-							},
-							{
-								path: 'detail/:id',
-								element: <OperatorsForm retrieve={true} type="flex"/>
-							}
-						]
-					},
-					{
-						path: 'sewing-orders',
-						children: [
-							{
-								index: true,
-								element: <OperatorsTable type="tikish"/>
-							},
-							{
-								path: 'edit/:id',
-								element: <OperatorsForm type="sewing"/>
-							},
-							{
-								path: 'detail/:id',
-								element: <OperatorsForm retrieve={true} type="sewing"/>
-							}
-						]
-					},
-					{
-						path: 'gluing-orders',
-						children: [
-							{
-								index: true,
-								element: <OperatorsTable type="yelimlash"/>
-							},
-							{
-								path: 'edit/:id',
-								element: <OperatorsForm type="gluing"/>
-							},
-							{
-								path: 'detail/:id',
-								element: <OperatorsForm retrieve={true} type="gluing"/>
-							}
-						]
-					},
+					// {
+					// 	path: 'director-orders',
+					// 	children: [
+					// 		{
+					// 			index: true,
+					// 			element: <DirectorOrdersTable/>
+					// 		},
+					// 		{
+					// 			path: 'add',
+					// 			element: <AddDirectorOrder/>
+					// 		}
+					// 	]
+					// },
+					// {
+					// 	path: 'operator-orders',
+					// 	children: [
+					// 		{
+					// 			index: true,
+					// 			element: <OperatorOrdersTable/>
+					// 		},
+					// 		{
+					// 			path: 'edit/:id',
+					// 			element: <EditOperatorOrder/>
+					// 		},
+					// 		{
+					// 			path: 'detail/:id',
+					// 			element: <EditOperatorOrder retrieve={true}/>
+					// 		}
+					// 	]
+					// },
+					// {
+					// 	path: 'corrugation-orders',
+					// 	children: [
+					// 		{
+					// 			index: true,
+					// 			element: <OperatorsTable type="gofra"/>
+					// 		},
+					// 		{
+					// 			path: 'edit/:id',
+					// 			element: <OperatorsForm type="corrugation"/>
+					// 		},
+					// 		{
+					// 			path: 'detail/:id',
+					// 			element: <OperatorsForm retrieve={true} type="corrugation"/>
+					// 		}
+					// 	]
+					// },
+					// {
+					// 	path: 'flex-orders',
+					// 	children: [
+					// 		{
+					// 			index: true,
+					// 			element: <OperatorsTable type="fleksa"/>
+					// 		},
+					// 		{
+					// 			path: 'edit/:id',
+					// 			element: <OperatorsForm type="flex"/>
+					// 		},
+					// 		{
+					// 			path: 'detail/:id',
+					// 			element: <OperatorsForm retrieve={true} type="flex"/>
+					// 		}
+					// 	]
+					// },
+					// {
+					// 	path: 'sewing-orders',
+					// 	children: [
+					// 		{
+					// 			index: true,
+					// 			element: <OperatorsTable type="tikish"/>
+					// 		},
+					// 		{
+					// 			path: 'edit/:id',
+					// 			element: <OperatorsForm type="sewing"/>
+					// 		},
+					// 		{
+					// 			path: 'detail/:id',
+					// 			element: <OperatorsForm retrieve={true} type="sewing"/>
+					// 		}
+					// 	]
+					// },
+					// {
+					// 	path: 'gluing-orders',
+					// 	children: [
+					// 		{
+					// 			index: true,
+					// 			element: <OperatorsTable type="yelimlash"/>
+					// 		},
+					// 		{
+					// 			path: 'edit/:id',
+					// 			element: <OperatorsForm type="gluing"/>
+					// 		},
+					// 		{
+					// 			path: 'detail/:id',
+					// 			element: <OperatorsForm retrieve={true} type="gluing"/>
+					// 		}
+					// 	]
+					// },
 					{
 						path: 'clients',
 						children: [
@@ -217,50 +471,50 @@ function useAppRoutes() {
 								element: <AddClient edit={true}/>
 							}
 						]
-					},
-					{
-						path: 'orders',
-						children: [
-							{
-								index: true,
-								element: <ClientsTable order={true}/>
-							},
-							{
-								path: ':id',
-								children: [
-									{
-										index: true,
-										element: <OrdersTable/>
-									},
-									{
-										path: 'add',
-										element: <AddOrder/>
-									},
-									{
-										path: 'edit/:orderId',
-										element: <AddOrder edit={true}/>
-									}
-								]
-							}
-						]
-					},
-					{
-						path: 'warehouses-man',
-						children: [
-							{
-								index: true,
-								element: <WarehouseManTable/>
-							},
-							{
-								path: 'add',
-								element: <WarehouseOrder/>
-							},
-							{
-								path: 'edit/:orderId',
-								element: <WarehouseOrder edit={true}/>
-							}
-						]
 					}
+					// {
+					// 	path: 'orders',
+					// 	children: [
+					// 		{
+					// 			index: true,
+					// 			element: <ClientsTable order={true}/>
+					// 		},
+					// 		{
+					// 			path: ':id',
+					// 			children: [
+					// 				{
+					// 					index: true,
+					// 					element: <OrdersTable/>
+					// 				},
+					// 				{
+					// 					path: 'add',
+					// 					element: <AddOrder/>
+					// 				},
+					// 				{
+					// 					path: 'edit/:orderId',
+					// 					element: <AddOrder edit={true}/>
+					// 				}
+					// 			]
+					// 		}
+					// 	]
+					// },
+					// {
+					// 	path: 'warehouses-man',
+					// 	children: [
+					// 		{
+					// 			index: true,
+					// 			element: <WarehouseManTable/>
+					// 		},
+					// 		{
+					// 			path: 'add',
+					// 			element: <WarehouseOrder/>
+					// 		},
+					// 		{
+					// 			path: 'edit/:orderId',
+					// 			element: <WarehouseOrder edit={true}/>
+					// 		}
+					// 	]
+					// }
 				]
 			},
 			{
@@ -305,16 +559,26 @@ function useAppRoutes() {
 			{
 				path: '/',
 				element: <Layout/>,
-				children: [
+				children: filteredEmployeeRoutes?.length ? [
 					{
 						index: true,
-						element: <Navigate to={routeByRole(user?.role)} replace/>
+						element: <Navigate to={url} replace/>
+					},
+					...filteredEmployeeRoutes
+				] : [
+					{
+						index: true,
+						element: <></>
 					}
 				]
 			},
 			{
 				path: '*',
-				element: <Navigate to={routeByRole(user?.role)} replace/>
+				element:
+					<Navigate
+						to={url}
+						replace
+					/>
 			}
 		],
 		default: [
