@@ -122,7 +122,6 @@ export const menu: IMenuItem[] = [
 		href: '/orders',
 		icon: User,
 		allowedRoles: [
-			// ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
@@ -136,7 +135,6 @@ export const menu: IMenuItem[] = [
 		href: '/warehouses-man',
 		icon: User,
 		allowedRoles: [
-			// ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
@@ -150,7 +148,6 @@ export const menu: IMenuItem[] = [
 		href: '/director-orders',
 		icon: User,
 		allowedRoles: [
-			// ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
@@ -164,7 +161,6 @@ export const menu: IMenuItem[] = [
 		href: '/operator-orders',
 		icon: User,
 		allowedRoles: [
-			// ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
@@ -178,7 +174,6 @@ export const menu: IMenuItem[] = [
 		href: '/corrugation-orders',
 		icon: User,
 		allowedRoles: [
-			// ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
@@ -192,7 +187,6 @@ export const menu: IMenuItem[] = [
 		href: '/flex-orders',
 		icon: User,
 		allowedRoles: [
-			// ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
@@ -206,7 +200,6 @@ export const menu: IMenuItem[] = [
 		href: '/sewing-orders',
 		icon: User,
 		allowedRoles: [
-			// ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
@@ -220,7 +213,6 @@ export const menu: IMenuItem[] = [
 		href: '/gluing-orders',
 		icon: User,
 		allowedRoles: [
-			// ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {

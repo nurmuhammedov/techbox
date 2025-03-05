@@ -215,9 +215,10 @@ const Index = () => {
 						<Button icon={<Plus/>} onClick={() => addParams({modal: 'permission'})}>
 							Granting a permission
 						</Button> :
-						<Button icon={<Plus/>} onClick={() => navigate(`add`)}>
-							Add employee
-						</Button>
+						user?.role === ROLE_LIST.HEAD_DEPARTMENT ?
+							<Button icon={<Plus/>} onClick={() => navigate(`add`)}>
+								Add employee
+							</Button> : null
 				}
 			</PageTitle>
 			{

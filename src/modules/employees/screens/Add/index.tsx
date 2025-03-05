@@ -1,13 +1,14 @@
-import {Button, Card, Form, Input, Loader, MaskInput, NumberFormattedInput, PageTitle, Select} from 'components'
 import {yupResolver} from '@hookform/resolvers/yup'
+import {Button, Card, Form, Input, Loader, MaskInput, NumberFormattedInput, PageTitle, Select} from 'components'
+import {BUTTON_THEME, FIELD} from 'constants/fields'
+import {ROLE_LIST} from 'constants/roles'
 import {employeeSchema} from 'helpers/yup'
-import {useAdd, useData, useDetail, useUpdate} from 'hooks'
+import {useAdd, useAppContext, useData, useDetail, useUpdate} from 'hooks'
 import {IEmployeesItemDetail} from 'interfaces/employees.interface'
 import {ISelectOption} from 'interfaces/form.interface'
 import {FC, useEffect} from 'react'
 import {Controller, useForm} from 'react-hook-form'
 import {useNavigate, useParams} from 'react-router-dom'
-import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {getSelectValue} from 'utilities/common'
 import {getDate} from 'utilities/date'
 
@@ -18,6 +19,7 @@ interface IProperties {
 
 const Index: FC<IProperties> = ({edit = false}) => {
 	const navigate = useNavigate()
+	const {user} = useAppContext()
 	const {id = undefined} = useParams()
 	const {data: positions = []} = useData<ISelectOption[]>('accounts/positions/select')
 
@@ -80,32 +82,35 @@ const Index: FC<IProperties> = ({edit = false}) => {
 					<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
 						Back
 					</Button>
-					<Button
-						type={FIELD.BUTTON}
-						theme={BUTTON_THEME.PRIMARY}
-						disabled={isAdding || isUpdating}
-						onClick={() => {
-							if (!edit) {
-								handleSubmit((data) =>
-									mutateAsync(data)
-										.then(async () => {
-											reset()
-											navigate(-1)
-										})
-								)()
-							} else {
-								handleSubmit((data) =>
-									update(data)
-										.then(async () => {
-											reset()
-											navigate(-1)
-										})
-								)()
-							}
-						}}
-					>
-						{edit ? 'Edit' : 'Save'}
-					</Button>
+					{
+						user?.role == ROLE_LIST.HEAD_DEPARTMENT &&
+						<Button
+							type={FIELD.BUTTON}
+							theme={BUTTON_THEME.PRIMARY}
+							disabled={isAdding || isUpdating}
+							onClick={() => {
+								if (!edit) {
+									handleSubmit((data) =>
+										mutateAsync(data)
+											.then(async () => {
+												reset()
+												navigate(-1)
+											})
+									)()
+								} else {
+									handleSubmit((data) =>
+										update(data)
+											.then(async () => {
+												reset()
+												navigate(-1)
+											})
+									)()
+								}
+							}}
+						>
+							{edit ? 'Edit' : 'Save'}
+						</Button>
+					}
 				</div>
 			</PageTitle>
 			<Card style={{padding: '1.5rem'}}>
@@ -114,6 +119,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 						<Input
 							id="lastname"
 							type={FIELD.TEXT}
+							disabled={user?.role === ROLE_LIST.EMPLOYEE}
 							label="LastName"
 							error={errors?.lastname?.message}
 							{...register('lastname')}
@@ -124,6 +130,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 							id="firstname"
 							type={FIELD.TEXT}
 							label="FirstName"
+							disabled={user?.role === ROLE_LIST.EMPLOYEE}
 							error={errors?.firstname?.message}
 							{...register('firstname')}
 						/>
@@ -133,6 +140,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 							id="middle_name"
 							type={FIELD.TEXT}
 							label="MiddleName"
+							disabled={user?.role === ROLE_LIST.EMPLOYEE}
 							error={errors?.middle_name?.message}
 							{...register('middle_name')}
 						/>
@@ -147,6 +155,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 									maxLength={14}
 									disableGroupSeparators={true}
 									allowDecimals={false}
+									disabled={user?.role === ROLE_LIST.EMPLOYEE}
 									label="Pinfl"
 									error={errors?.pinfl?.message}
 									{...field}
@@ -165,6 +174,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 									options={positions}
 									onBlur={onBlur}
 									label="Position"
+									isDisabled={user?.role === ROLE_LIST.EMPLOYEE}
 									error={errors?.position?.message}
 									value={getSelectValue(positions, value)}
 									defaultValue={getSelectValue(positions, value)}
@@ -178,6 +188,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 							id="address"
 							type={FIELD.TEXT}
 							label="Address"
+							disabled={user?.role === ROLE_LIST.EMPLOYEE}
 							error={errors?.address?.message}
 							{...register('address')}
 						/>
@@ -190,6 +201,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 								<MaskInput
 									id="birthday"
 									label="Birthday"
+									disabled={user?.role === ROLE_LIST.EMPLOYEE}
 									placeholder={getDate()}
 									mask="99.99.9999"
 									error={errors?.birthday?.message}
@@ -205,6 +217,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 							render={({field}) => (
 								<MaskInput
 									id="phone"
+									disabled={user?.role === ROLE_LIST.EMPLOYEE}
 									label="Phone number"
 									error={errors?.phone?.message}
 									{...field}
@@ -219,6 +232,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 							render={({field: {onChange: change, ...rest}}) => (
 								<MaskInput
 									id="passport"
+									disabled={user?.role === ROLE_LIST.EMPLOYEE}
 									label="Passport"
 									mask="aa 9999999"
 									placeholder="AA 7777777"
@@ -237,6 +251,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 								<MaskInput
 									id="card_number"
 									label="Card number"
+									disabled={user?.role === ROLE_LIST.EMPLOYEE}
 									mask="9999 9999 9999 9999"
 									error={errors?.card_number?.message}
 									{...field}
