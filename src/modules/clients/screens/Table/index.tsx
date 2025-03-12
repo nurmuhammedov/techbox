@@ -93,10 +93,12 @@ const Index: FC<IProperties> = ({order = false}) => {
 		<>
 			<PageTitle title="Clients">
 				{
-					!order &&
-					<Button icon={<Plus/>} onClick={() => navigate(`add`)}>
-						Add client
-					</Button>
+					order ? <Button icon={<Plus/>} onClick={() => navigate(`add`)}>
+							Add order
+						</Button> :
+						<Button icon={<Plus/>} onClick={() => navigate(`add`)}>
+							Add client
+						</Button>
 				}
 			</PageTitle>
 			<Card>

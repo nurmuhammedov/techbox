@@ -19,7 +19,7 @@ import {
 	OperatorOrdersTable,
 	EditOperatorOrder,
 	OperatorsTable,
-	OperatorsForm
+	OperatorsForm, ClientAndOrderAdd
 } from 'modules'
 import {Navigate, useRoutes} from 'react-router-dom'
 import {routeByRole} from 'utilities/authentication'
@@ -239,6 +239,10 @@ function useAppRoutes() {
 				{
 					index: true,
 					element: <ClientsTable order={true}/>
+				},
+				{
+					path: 'add',
+					element: <ClientAndOrderAdd/>
 				},
 				{
 					path: ':id',

@@ -47,7 +47,7 @@ const Index = () => {
 		formState: {errors: addErrors}
 	} = useForm({
 		mode: 'onTouched',
-		defaultValues: {name: '', weight_1x1: '', weight: ''},
+		defaultValues: {name: '', weight_1x1: ''},
 		resolver: yupResolver(materialSchema)
 	})
 
@@ -69,10 +69,10 @@ const Index = () => {
 					Header: `${t('Weight 1x1')} (${t('gr')})`,
 					accessor: (row: IMaterialItemDetail) => decimalToInteger(row.weight_1x1 || '')
 				},
-				{
-					Header: `${t('Weight')} (${t('kg')})`,
-					accessor: (row: IMaterialItemDetail) => decimalToInteger(row.weight || '')
-				},
+				// {
+				// 	Header: `${t('Weight')} (${t('kg')})`,
+				// 	accessor: (row: IMaterialItemDetail) => decimalToInteger(row.weight || '')
+				// },
 				// {
 				// 	Header: t('Formats(sm)'),
 				// 	accessor: (row: IMaterialItemDetail) => row.format
@@ -157,21 +157,21 @@ const Index = () => {
 						)}
 					/>
 
-					<Controller
-						control={controlAdd}
-						name="weight"
-						render={({field}) => (
-							<NumberFormattedInput
-								id="weight"
-								label={`${t('Weight')} (${t('kg')})`}
-								disableGroupSeparators={false}
-								maxLength={5}
-								allowDecimals={false}
-								error={addErrors?.weight?.message}
-								{...field}
-							/>
-						)}
-					/>
+					{/*<Controller*/}
+					{/*	control={controlAdd}*/}
+					{/*	name="weight"*/}
+					{/*	render={({field}) => (*/}
+					{/*		<NumberFormattedInput*/}
+					{/*			id="weight"*/}
+					{/*			label={`${t('Weight')} (${t('kg')})`}*/}
+					{/*			disableGroupSeparators={false}*/}
+					{/*			maxLength={5}*/}
+					{/*			allowDecimals={false}*/}
+					{/*			error={addErrors?.weight?.message}*/}
+					{/*			{...field}*/}
+					{/*		/>*/}
+					{/*	)}*/}
+					{/*/>*/}
 
 					{/*<Controller*/}
 					{/*	control={controlAdd}*/}
@@ -234,21 +234,21 @@ const Index = () => {
 						)}
 					/>
 
-					<Controller
-						control={controlEdit}
-						name="weight"
-						render={({field}) => (
-							<NumberFormattedInput
-								id="weight"
-								label={`${t('Weight')} (${t('kg')})`}
-								disableGroupSeparators={false}
-								maxLength={5}
-								allowDecimals={false}
-								error={editErrors?.weight?.message}
-								{...field}
-							/>
-						)}
-					/>
+					{/*<Controller*/}
+					{/*	control={controlEdit}*/}
+					{/*	name="weight"*/}
+					{/*	render={({field}) => (*/}
+					{/*		<NumberFormattedInput*/}
+					{/*			id="weight"*/}
+					{/*			label={`${t('Weight')} (${t('kg')})`}*/}
+					{/*			disableGroupSeparators={false}*/}
+					{/*			maxLength={5}*/}
+					{/*			allowDecimals={false}*/}
+					{/*			error={editErrors?.weight?.message}*/}
+					{/*			{...field}*/}
+					{/*		/>*/}
+					{/*	)}*/}
+					{/*/>*/}
 
 					{/*<Controller*/}
 					{/*	control={controlEdit}*/}
