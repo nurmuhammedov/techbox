@@ -4,14 +4,14 @@ import {
 	Card,
 	DeleteButton,
 	DeleteModal,
-	EditButton,
+	EditButton, FilterInput,
 	PageTitle,
 	Pagination,
 	ReactTable
 } from 'components'
 import {
 	usePaginatedData,
-	usePagination
+	usePagination, useSearchParams
 } from 'hooks'
 import {IProductDetail} from 'interfaces/products.interface'
 import {useMemo} from 'react'
@@ -24,12 +24,14 @@ const Index = () => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
+	const {paramsObject: {search}} = useSearchParams()
 
 	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IProductDetail[]>(
 		'products/',
 		{
 			page: page,
-			page_size: pageSize
+			page_size: pageSize,
+			search
 		}
 	)
 
@@ -81,6 +83,13 @@ const Index = () => {
 				</Button>
 			</PageTitle>
 			<Card>
+				<div className="flex gap-lg" style={{padding: '.8rem .8rem .3rem .8rem'}}>
+					<FilterInput
+						id="search"
+						query="search"
+						placeholder="Full name"
+					/>
+				</div>
 				<ReactTable
 					columns={columns}
 					data={data}

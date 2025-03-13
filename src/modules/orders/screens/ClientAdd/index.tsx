@@ -470,7 +470,7 @@ const CombinedCreatePage: FC = () => {
 										maxLength={13}
 										disableGroupSeparators={false}
 										allowDecimals={true}
-										label="Price"
+										label={`${t('Price')} (${t('Item')?.toLowerCase()})`}
 										error={errors?.price?.message}
 										{...field}
 									/>
@@ -488,7 +488,7 @@ const CombinedCreatePage: FC = () => {
 										maxLength={13}
 										disableGroupSeparators={false}
 										allowDecimals={true}
-										label="Paid money"
+										label="Total paid money"
 										error={errors?.money_paid?.message}
 										{...field}
 									/>

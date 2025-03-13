@@ -2,7 +2,7 @@ import {
 	Button,
 	Card,
 	// DeleteButton, DeleteModal,
-	EditButton,
+	EditButton, FilterInput,
 	Loader,
 	PageTitle,
 	Pagination,
@@ -11,7 +11,7 @@ import {
 import {
 	useDetail,
 	usePaginatedData,
-	usePagination
+	usePagination, useSearchParams
 } from 'hooks'
 import {useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
@@ -30,12 +30,15 @@ const Index = () => {
 	const {id = undefined} = useParams()
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
+	const {paramsObject: {search = '', company = ''}} = useSearchParams()
 
 	const {data, totalPages, isPending: isLoading} = usePaginatedData<IOrderDetail[]>(
 		`services/order-list-by-customer/${id}`,
 		{
 			page: page,
-			page_size: pageSize
+			page_size: pageSize,
+			search,
+			company
 		},
 		!!id
 	)
@@ -69,16 +72,18 @@ const Index = () => {
 				accessor: (row: IOrderDetail) => row.deadline ? getDate(row.deadline) : null
 			},
 			{
-				Header: t('Price'),
+				Header: `${t('Price')} (${t('Item')?.toLowerCase()})`,
 				accessor: (row: IOrderDetail) => decimalToPrice(row.price)
 			},
 			{
-				Header: t('Paid money'),
-				accessor: (row: IOrderDetail) => decimalToPrice(row.money_paid)
+				Header: t('Total paid money'),
+				accessor: (row: IOrderDetail) => <span
+					style={{color: 'var(--green-bright)'}}>{decimalToPrice(row.money_paid)}</span>
 			},
 			{
-				Header: t('Comment'),
-				accessor: (row: IOrderDetail) => row.comment
+				Header: t('Indebtedness'),
+				accessor: (row: IOrderDetail) => <span
+					style={{color: row.backlog > 0 ? 'var(--red)' : 'var(--green-bright)'}}>{decimalToPrice(row.backlog)}</span>
 			},
 			{
 				Header: t('Actions'),
@@ -108,6 +113,18 @@ const Index = () => {
 				</div>
 			</PageTitle>
 			<Card>
+				<div className="flex gap-lg" style={{padding: '.8rem .8rem .3rem .8rem'}}>
+					<FilterInput
+						id="company"
+						query="company"
+						placeholder="Company name"
+					/>
+					<FilterInput
+						id="search"
+						query="search"
+						placeholder="Name"
+					/>
+				</div>
 				<ReactTable
 					columns={columns}
 					data={data}
@@ -115,7 +132,6 @@ const Index = () => {
 				/>
 			</Card>
 			<Pagination totalPages={totalPages}/>
-			{/*<DeleteModal endpoint="services/orders/" onDelete={() => refetch()}/>*/}
 		</>
 	)
 }

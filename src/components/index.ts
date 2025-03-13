@@ -1,5 +1,6 @@
 import DeleteButton from './DeleteButton'
 import DeleteModal from './DeleteModal'
+import FilterInput from './FilterInput'
 import Pagination from './Pagination'
 import EditButton from './EditButton'
 import ReactTable from './ReactTable'
@@ -25,6 +26,7 @@ export {
 	DeleteModal,
 	Pagination,
 	ReactTable,
+	FilterInput,
 	EditButton,
 	PageTitle,
 	AlertItem,

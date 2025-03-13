@@ -300,6 +300,77 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 											}
 										/>
 									</div>
+									<div
+										className="span-12 flex gap-md"
+										style={{marginTop: '.7rem', marginBottom: '1.5rem'}}
+									>
+										<div className="span-4 flex gap-md align-end justify-start">
+											<input
+												id={activityOptions[0].value as string}
+												type="checkbox"
+												className="checkbox"
+												checked={detail?.stages_to_passed?.includes(activityOptions[0].value as string) || false}
+											/>
+											<p className="checkbox-label">
+												{t(activityOptions[0].label as string)}
+											</p>
+										</div>
+										<div className="span-4 flex gap-md align-end justify-start">
+											<input
+												id={activityOptions[1].value as string}
+												type="checkbox"
+												className="checkbox"
+												checked={detail?.stages_to_passed?.includes(activityOptions[1].value as string) || false}
+											/>
+											<p className="checkbox-label">
+												{t(activityOptions[1].label as string)}
+											</p>
+										</div>
+										<div className="span-4 flex gap-md align-end justify-start">
+											<input
+												id={activityOptions[2].value as string}
+												type="checkbox"
+												className="checkbox"
+												checked={detail?.stages_to_passed?.includes(activityOptions[2].value as string) || false}
+											/>
+											<p className="checkbox-label">
+												{t(activityOptions[2].label as string)}
+											</p>
+										</div>
+										<div className="span-4 flex gap-md align-end justify-start">
+											<input
+												id={activityOptions[3].value as string}
+												type="checkbox"
+												className="checkbox"
+												checked={detail?.stages_to_passed?.includes(activityOptions[3].value as string) || false}
+											/>
+											<p className="checkbox-label">
+												{t(activityOptions[3].label as string)}
+											</p>
+										</div>
+										<div className="span-4 flex gap-md align-end justify-start">
+											<input
+												id={activityOptions[4].value as string}
+												type="checkbox"
+												className="checkbox"
+												checked={detail?.stages_to_passed?.includes(activityOptions[4].value as string) || false}
+											/>
+											<p className="checkbox-label">
+												{t(activityOptions[4].label as string)}
+											</p>
+										</div>
+										<div className="span-4 flex gap-md align-end justify-start">
+											<input
+												id={activityOptions[5].value as string}
+												type="checkbox"
+												className="checkbox"
+												checked={detail?.stages_to_passed?.includes(activityOptions[5].value as string) || false}
+											/>
+											<p className="checkbox-label">
+												{t(activityOptions[5].label as string)}
+											</p>
+										</div>
+									</div>
 								</Card>
 							</div>
 						}

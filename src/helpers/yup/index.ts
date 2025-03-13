@@ -183,14 +183,18 @@ const warehouseOrdersSchema = yup.object().shape({
 		.number()
 		.transform(value => value ? Number(value) : null)
 		.required('This field is required'),
+	warehouse: yup
+		.number()
+		.transform(value => value ? Number(value) : null)
+		.required('This field is required'),
 	count: yup
 		.string()
 		.trim()
 		.required('This field is required'),
-	// weight: yup
-	// 	.string()
-	// 	.trim()
-	// 	.required('This field is required'),
+	weight: yup
+		.string()
+		.trim()
+		.required('This field is required'),
 	format: yup
 		.number()
 		.required('This field is required')
@@ -332,9 +336,17 @@ const groupOrdersSchema = yup.object().shape({
 		.trim()
 		.when('has_addition', {
 			is: true,
-			then: (schema) => schema
+			then: (schema) => schema.required('This field is required'),
+			otherwise: (schema) => schema
 				.transform(value => value ? value : null)
-				.nullable(),
+				.nullable()
+		}),
+	count: yup
+		.string()
+		.trim()
+		.when('has_addition', {
+			is: true,
+			then: (schema) => schema.required('This field is required'),
 			otherwise: (schema) => schema
 				.transform(value => value ? value : null)
 				.nullable()

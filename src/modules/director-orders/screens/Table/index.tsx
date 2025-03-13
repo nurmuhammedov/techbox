@@ -1,6 +1,6 @@
 import {
 	Button,
-	Card,
+	Card, FilterInput,
 	Pagination,
 	ReactTable, Tab
 } from 'components'
@@ -24,14 +24,16 @@ const Index = () => {
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
 	const {addOrder} = useActions()
-	const {paramsObject: {status = statusOptions[0].value}} = useSearchParams()
+	const {paramsObject: {status = statusOptions[0].value, search = '', company = ''}} = useSearchParams()
 
 	const {data, totalPages, isPending: isLoading} = usePaginatedData<IOrderDetail[]>(
 		`/services/orders-with-detail`,
 		{
 			page: page,
 			page_size: pageSize,
-			status
+			status,
+			search,
+			company
 		}
 	)
 
@@ -107,6 +109,18 @@ const Index = () => {
 				<Tab query="status" fallbackValue={statusOptions[0].value} tabs={statusOptions}/>
 			</div>
 			<Card>
+				<div className="flex gap-lg" style={{padding: '.8rem .8rem .3rem .8rem'}}>
+					<FilterInput
+						id="company"
+						query="company"
+						placeholder="Company name"
+					/>
+					<FilterInput
+						id="search"
+						query="search"
+						placeholder="Full name"
+					/>
+				</div>
 				<ReactTable
 					columns={columns}
 					data={data}

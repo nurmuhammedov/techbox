@@ -7,11 +7,12 @@ import {
 	EditButton,
 	PageTitle,
 	Pagination,
+	FilterInput,
 	ReactTable
 } from 'components'
 import {
 	usePaginatedData,
-	usePagination
+	usePagination, useSearchParams
 } from 'hooks'
 import {FC, useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
@@ -28,12 +29,15 @@ const Index: FC<IProperties> = ({order = false}) => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
+	const {paramsObject: {search = '', company = ''}} = useSearchParams()
 
 	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IClientDetail[]>(
 		'services/customers',
 		{
 			page: page,
-			page_size: pageSize
+			page_size: pageSize,
+			search,
+			company
 		}
 	)
 
@@ -102,6 +106,18 @@ const Index: FC<IProperties> = ({order = false}) => {
 				}
 			</PageTitle>
 			<Card>
+				<div className="flex gap-lg" style={{padding: '.8rem .8rem .3rem .8rem'}}>
+					<FilterInput
+						id="company"
+						query="company"
+						placeholder="Company name"
+					/>
+					<FilterInput
+						id="search"
+						query="search"
+						placeholder="Full name"
+					/>
+				</div>
 				<ReactTable
 					columns={columns}
 					data={data}

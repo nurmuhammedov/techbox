@@ -1,13 +1,5 @@
-import {
-	useActions, useAdd,
-	useData,
-	useDetail,
-	usePaginatedData,
-	usePagination,
-	useSearchParams,
-	useTypedSelector,
-	useUpdate
-} from 'hooks'
+import {yupResolver} from '@hookform/resolvers/yup'
+import classNames from 'classnames'
 import {
 	Button,
 	Card,
@@ -16,28 +8,38 @@ import {
 	Form,
 	Input,
 	MaskInput,
+	NumberFormattedInput,
 	PageTitle,
 	Pagination,
 	ReactTable,
 	Select
 } from 'components'
-import {Controller, useFieldArray, useForm} from 'react-hook-form'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {groupOrdersSchema, temporaryOrderSchema} from 'helpers/yup'
-import {areAllFieldsPresent, decimalToInteger, getSelectValue} from 'utilities/common'
-import {ISelectOption} from 'interfaces/form.interface'
-import {useTranslation} from 'react-i18next'
 import styles from 'components/HOC/GroupOrderDetail/styles.module.scss'
-import classNames from 'classnames'
-import {ISearchParams} from 'interfaces/params.interface'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {getDate} from 'utilities/date'
-import {useEffect, useMemo, useState} from 'react'
-import {IOrderDetail} from 'interfaces/orders.interface'
-import {Column} from 'react-table'
 import {activityOptions, booleanOptions, statusOptions} from 'helpers/options'
+import {groupOrdersSchema, temporaryOrderSchema} from 'helpers/yup'
+import {
+	useActions,
+	useAdd,
+	useData,
+	useDetail,
+	usePaginatedData,
+	usePagination,
+	useSearchParams,
+	useTypedSelector,
+	useUpdate
+} from 'hooks'
+import {ISelectOption} from 'interfaces/form.interface'
+import {IOrderDetail} from 'interfaces/orders.interface'
+import {ISearchParams} from 'interfaces/params.interface'
+import {useEffect, useMemo, useState} from 'react'
+import {Controller, useFieldArray, useForm} from 'react-hook-form'
+import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
+import {Column} from 'react-table'
 import {showMessage} from 'utilities/alert'
+import {areAllFieldsPresent, decimalToInteger, getSelectValue, noop} from 'utilities/common'
+import {getDate} from 'utilities/date'
 
 
 const Index = () => {
@@ -123,6 +125,7 @@ const Index = () => {
 		control: controlAdd,
 		register,
 		reset,
+		setValue,
 		watch,
 		formState: {errors}
 	} = useForm({
@@ -133,6 +136,7 @@ const Index = () => {
 			y: '',
 			x: '',
 			deadline: '',
+			count: '',
 			gofra: false,
 			ymo1: false,
 			fleksa: false,
@@ -148,6 +152,7 @@ const Index = () => {
 		handleSubmit: handleEditSubmit,
 		register: registerEdit,
 		reset: resetEdit,
+		setValue: setValueEdit,
 		control,
 		formState: {errors: editErrors}
 	} = useForm({
@@ -223,7 +228,10 @@ const Index = () => {
 				orders: orders?.map(order => order.id),
 				y: data?.y,
 				x: data?.x,
-				has_addition: data?.has_addition
+				has_addition: data?.has_addition,
+				stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true)?.reverse(),
+				deadline: data?.deadline,
+				count: data?.count
 			}
 
 			addGroupOrder(newData)
@@ -235,6 +243,7 @@ const Index = () => {
 						y: '',
 						x: '',
 						deadline: '',
+						count: '',
 						gofra: false,
 						ymo1: false,
 						fleksa: false,
@@ -315,17 +324,6 @@ const Index = () => {
 									</Button>
 							}
 						</div>
-						{/*<div className="span-4 flex gap-md align-end justify-start">*/}
-						{/*	<input*/}
-						{/*		type="checkbox"*/}
-						{/*		className="checkbox"*/}
-						{/*		id="has_addition"*/}
-						{/*		{...register('has_addition')}*/}
-						{/*	/>*/}
-						{/*	<p className="checkbox-label">*/}
-						{/*		{t('Cutting')}*/}
-						{/*	</p>*/}
-						{/*</div>*/}
 					</Form>
 				</Card>
 
@@ -618,77 +616,195 @@ const Index = () => {
 											/>
 										</div>
 
-										{/*<div*/}
-										{/*	className="span-12 flex gap-md"*/}
-										{/*	style={{marginTop: '.75rem', marginBottom: '1.5rem'}}*/}
-										{/*>*/}
-										{/*	<div className="span-4 flex gap-md align-end justify-start">*/}
-										{/*		<input*/}
-										{/*			id={activityOptions[0].value as string}*/}
-										{/*			type="checkbox"*/}
-										{/*			className="checkbox"*/}
-										{/*			{...register('gofra')}*/}
-										{/*		/>*/}
-										{/*		<p className="checkbox-label">*/}
-										{/*			{t(activityOptions[0].label as string)}*/}
-										{/*		</p>*/}
-										{/*	</div>*/}
-										{/*	<div className="span-4 flex gap-md align-end justify-start">*/}
-										{/*		<input*/}
-										{/*			id={activityOptions[1].value as string}*/}
-										{/*			type="checkbox"*/}
-										{/*			className="checkbox"*/}
-										{/*			{...register('ymo1')}*/}
-										{/*		/>*/}
-										{/*		<p className="checkbox-label">*/}
-										{/*			{t(activityOptions[1].label as string)}*/}
-										{/*		</p>*/}
-										{/*	</div>*/}
-										{/*	<div className="span-4 flex gap-md align-end justify-start">*/}
-										{/*		<input*/}
-										{/*			id={activityOptions[2].value as string}*/}
-										{/*			type="checkbox"*/}
-										{/*			className="checkbox"*/}
-										{/*			{...register('fleksa')}*/}
-										{/*		/>*/}
-										{/*		<p className="checkbox-label">*/}
-										{/*			{t(activityOptions[2].label as string)}*/}
-										{/*		</p>*/}
-										{/*	</div>*/}
-										{/*	<div className="span-4 flex gap-md align-end justify-start">*/}
-										{/*		<input*/}
-										{/*			id={activityOptions[3].value as string}*/}
-										{/*			type="checkbox"*/}
-										{/*			className="checkbox"*/}
-										{/*			{...register('ymo2')}*/}
-										{/*		/>*/}
-										{/*		<p className="checkbox-label">*/}
-										{/*			{t(activityOptions[3].label as string)}*/}
-										{/*		</p>*/}
-										{/*	</div>*/}
-										{/*	<div className="span-4 flex gap-md align-end justify-start">*/}
-										{/*		<input*/}
-										{/*			id={activityOptions[4].value as string}*/}
-										{/*			type="checkbox"*/}
-										{/*			className="checkbox"*/}
-										{/*			{...register('tikish')}*/}
-										{/*		/>*/}
-										{/*		<p className="checkbox-label">*/}
-										{/*			{t(activityOptions[4].label as string)}*/}
-										{/*		</p>*/}
-										{/*	</div>*/}
-										{/*	<div className="span-4 flex gap-md align-end justify-start">*/}
-										{/*		<input*/}
-										{/*			id={activityOptions[5].value as string}*/}
-										{/*			type="checkbox"*/}
-										{/*			className="checkbox"*/}
-										{/*			{...register('yelimlash')}*/}
-										{/*		/>*/}
-										{/*		<p className="checkbox-label">*/}
-										{/*			{t(activityOptions[5].label as string)}*/}
-										{/*		</p>*/}
-										{/*	</div>*/}
-										{/*</div>*/}
+										<div className="span-4">
+											<Controller
+												name="count"
+												control={controlAdd}
+												render={({field}) => (
+													<NumberFormattedInput
+														id="count"
+														maxLength={4}
+														disableGroupSeparators={false}
+														allowDecimals={false}
+														label="Count"
+														error={errors?.count?.message}
+														{...field}
+													/>
+												)}
+											/>
+										</div>
+
+										<div className="span-4">
+											<Controller
+												name="deadline"
+												control={controlAdd}
+												render={({field}) => (
+													<MaskInput
+														id="deadline"
+														label="Deadline"
+														placeholder={getDate()}
+														mask="99.99.9999"
+														error={errors?.deadline?.message}
+														{...field}
+													/>
+												)}
+											/>
+										</div>
+
+
+										<div
+											className="span-12 flex gap-md"
+											style={{marginTop: '.75rem', marginBottom: '1.5rem'}}
+										>
+											<div className="span-4 flex gap-md align-end justify-start">
+												<input
+													id={activityOptions[0].value as string}
+													type="checkbox"
+													className="checkbox"
+													{...register('gofra')}
+													onChange={(e) => {
+														if (e.target.checked) {
+															setValue('ymo1', true)
+															setValue('fleksa', false)
+															setValue('ymo2', false)
+															setValue('tikish', false)
+															setValue('yelimlash', false)
+														} else {
+															setValue('ymo1', false)
+															setValue('fleksa', false)
+															setValue('ymo2', false)
+															setValue('tikish', false)
+															setValue('yelimlash', false)
+														}
+														register('gofra')?.onChange(e)
+													}}
+												/>
+												<p className="checkbox-label">
+													{t(activityOptions[0].label as string)}
+												</p>
+											</div>
+											<div className="span-4 flex gap-md align-end justify-start">
+												<input
+													id={activityOptions[1].value as string}
+													type="checkbox"
+													className="checkbox"
+													{...register('ymo1')}
+													onChange={(e) => {
+														if (e.target.checked) {
+															setValue('gofra', true)
+															setValue('ymo1', true)
+														} else {
+															setValue('ymo1', true)
+														}
+													}}
+												/>
+												<p className="checkbox-label">
+													{t(activityOptions[1].label as string)}
+												</p>
+											</div>
+											<div className="span-4 flex gap-md align-end justify-start">
+												<input
+													id={activityOptions[2].value as string}
+													type="checkbox"
+													className="checkbox"
+													{...register('fleksa')}
+													onChange={(e) => {
+														if (e.target.checked) {
+															setValue('gofra', true)
+															setValue('ymo1', true)
+															setValue('ymo2', true)
+															setValue('tikish', false)
+															setValue('yelimlash', false)
+														} else {
+															// setValue('gofra', true)
+															// setValue('ymo1', true)
+															setValue('ymo2', false)
+															setValue('tikish', false)
+															setValue('yelimlash', false)
+														}
+														register('fleksa')?.onChange(e)
+													}}
+												/>
+												<p className="checkbox-label">
+													{t(activityOptions[2].label as string)}
+												</p>
+											</div>
+											<div className="span-4 flex gap-md align-end justify-start">
+												<input
+													id={activityOptions[3].value as string}
+													type="checkbox"
+													className="checkbox"
+													{...register('ymo2')}
+													onChange={(e) => {
+														if (e.target.checked) {
+															setValue('gofra', true)
+															setValue('ymo1', true)
+															setValue('fleksa', true)
+															setValue('ymo2', true)
+														} else {
+															setValue('ymo2', true)
+														}
+													}}
+												/>
+												<p className="checkbox-label">
+													{t(activityOptions[3].label as string)}
+												</p>
+											</div>
+											<div className="span-4 flex gap-md align-end justify-start">
+												<input
+													id={activityOptions[4].value as string}
+													type="checkbox"
+													className="checkbox"
+													{...register('tikish')}
+													onChange={(e) => {
+														if (e.target.checked) {
+															setValue('gofra', true)
+															setValue('ymo1', true)
+															setValue('fleksa', true)
+															setValue('ymo2', true)
+															setValue('yelimlash', false)
+														} else {
+															// setValue('gofra', false)
+															// setValue('ymo1', false)
+															// setValue('fleksa', false)
+															// setValue('ymo2', false)
+															setValue('yelimlash', false)
+														}
+														register('tikish')?.onChange(e)
+													}}
+												/>
+												<p className="checkbox-label">
+													{t(activityOptions[4].label as string)}
+												</p>
+											</div>
+											<div className="span-4 flex gap-md align-end justify-start">
+												<input
+													id={activityOptions[5].value as string}
+													type="checkbox"
+													className="checkbox"
+													{...register('yelimlash')}
+													onChange={(e) => {
+														if (e.target.checked) {
+															setValue('gofra', true)
+															setValue('ymo1', true)
+															setValue('fleksa', true)
+															setValue('ymo2', true)
+															setValue('tikish', false)
+														} else {
+															// setValue('gofra', false)
+															// setValue('ymo1', false)
+															// setValue('fleksa', false)
+															// setValue('ymo2', false)
+															// setValue('tikish', false)
+														}
+														register('yelimlash')?.onChange(e)
+													}}
+												/>
+												<p className="checkbox-label">
+													{t(activityOptions[5].label as string)}
+												</p>
+											</div>
+										</div>
 
 										{/*<div className="span-12">*/}
 										{/*	<Controller*/}
@@ -842,6 +958,22 @@ const Index = () => {
 								type="checkbox"
 								className="checkbox"
 								{...registerEdit('gofra')}
+								onChange={(e) => {
+									if (e.target.checked) {
+										setValueEdit('ymo1', true)
+										setValueEdit('fleksa', false)
+										setValueEdit('ymo2', false)
+										setValueEdit('tikish', false)
+										setValueEdit('yelimlash', false)
+									} else {
+										setValueEdit('ymo1', false)
+										setValueEdit('fleksa', false)
+										setValueEdit('ymo2', false)
+										setValueEdit('tikish', false)
+										setValueEdit('yelimlash', false)
+									}
+									registerEdit('gofra')?.onChange(e)
+								}}
 							/>
 							<p className="checkbox-label">
 								{t(activityOptions[0].label as string)}
@@ -852,7 +984,16 @@ const Index = () => {
 								id={activityOptions[1].value as string}
 								type="checkbox"
 								className="checkbox"
+								disabled={true}
 								{...registerEdit('ymo1')}
+								onChange={(e) => {
+									if (e.target.checked) {
+										setValueEditsetValueEdit('gofra', true)
+										setValueEditsetValueEdit('ymo1', true)
+									} else {
+										setValueEditsetValueEdit('ymo1', true)
+									}
+								}}
 							/>
 							<p className="checkbox-label">
 								{t(activityOptions[1].label as string)}
@@ -864,6 +1005,22 @@ const Index = () => {
 								type="checkbox"
 								className="checkbox"
 								{...registerEdit('fleksa')}
+								onChange={(e) => {
+									if (e.target.checked) {
+										setValueEditsetValueEditsetValueEdit('gofra', true)
+										setValueEditsetValueEditsetValueEdit('ymo1', true)
+										setValueEditsetValueEditsetValueEdit('ymo2', true)
+										setValueEditsetValueEditsetValueEdit('tikish', false)
+										setValueEditsetValueEditsetValueEdit('yelimlash', false)
+									} else {
+										// setValue('gofra', true)
+										// setValue('ymo1', true)
+										setValueEditsetValueEditsetValueEdit('ymo2', false)
+										setValueEditsetValueEditsetValueEdit('tikish', false)
+										setValueEditsetValueEditsetValueEdit('yelimlash', false)
+									}
+									registerEdit('fleksa')?.onChange(e)
+								}}
 							/>
 							<p className="checkbox-label">
 								{t(activityOptions[2].label as string)}
@@ -874,7 +1031,18 @@ const Index = () => {
 								id={activityOptions[3].value as string}
 								type="checkbox"
 								className="checkbox"
+								disabled={true}
 								{...registerEdit('ymo2')}
+								onChange={(e) => {
+									if (e.target.checked) {
+										setValueEditsetValueEditsetValueEditsetValueEdit('gofra', true)
+										setValueEditsetValueEditsetValueEditsetValueEdit('ymo1', true)
+										setValueEditsetValueEditsetValueEditsetValueEdit('fleksa', true)
+										setValueEditsetValueEditsetValueEditsetValueEdit('ymo2', true)
+									} else {
+										setValueEditsetValueEditsetValueEditsetValueEdit('ymo2', true)
+									}
+								}}
 							/>
 							<p className="checkbox-label">
 								{t(activityOptions[3].label as string)}
@@ -886,6 +1054,22 @@ const Index = () => {
 								type="checkbox"
 								className="checkbox"
 								{...registerEdit('tikish')}
+								onChange={(e) => {
+									if (e.target.checked) {
+										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('gofra', true)
+										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('ymo1', true)
+										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('fleksa', true)
+										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('ymo2', true)
+										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('yelimlash', false)
+									} else {
+										// setValue('gofra', false)
+										// setValue('ymo1', false)
+										// setValue('fleksa', false)
+										// setValue('ymo2', false)
+										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('yelimlash', false)
+									}
+									registerEdit('tikish')?.onChange(e)
+								}}
 							/>
 							<p className="checkbox-label">
 								{t(activityOptions[4].label as string)}
@@ -897,6 +1081,22 @@ const Index = () => {
 								type="checkbox"
 								className="checkbox"
 								{...registerEdit('yelimlash')}
+								onChange={(e) => {
+									if (e.target.checked) {
+										setValueEditsetValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('gofra', true)
+										setValueEditsetValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('ymo1', true)
+										setValueEditsetValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('fleksa', true)
+										setValueEditsetValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('ymo2', true)
+										setValueEditsetValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('tikish', false)
+									} else {
+										// setValue('gofra', false)
+										// setValue('ymo1', false)
+										// setValue('fleksa', false)
+										// setValue('ymo2', false)
+										// setValue('tikish', false)
+									}
+									registerEdit('yelimlash')?.onChange(e)
+								}}
 							/>
 							<p className="checkbox-label">
 								{t(activityOptions[5].label as string)}

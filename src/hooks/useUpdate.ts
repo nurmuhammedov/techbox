@@ -8,7 +8,7 @@ const useDynamicUpdateMutation = <TVariables, TData, TError>(
 	id?: string | number | boolean | null,
 	method: 'put' | 'patch' = 'put',
 	successMessage: string = 'Updated successfully',
-	errorMessage?: string
+	errorMessage: string = 'Internal server error'
 ) => {
 	return useMutation<TData, TError, TVariables>({
 		mutationFn: async (data: TVariables) => {

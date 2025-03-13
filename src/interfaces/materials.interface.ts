@@ -1,3 +1,6 @@
+import {IIDName} from 'interfaces/configuration.interface'
+
+
 interface IMaterialItemDetail {
 	id: number;
 	warehouse?: number | null;
@@ -17,6 +20,7 @@ interface IBaseMaterialList {
 		id: number;
 		format: string;
 	};
+	warehouse: IIDName;
 }
 
 export type {

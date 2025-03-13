@@ -30,6 +30,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const {orderId: id = undefined, id: customer = undefined} = useParams()
 	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
 	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
+	const {data: warehouses = []} = useData<ISelectOption[]>('accounts/warehouses-select')
 
 
 	const {
@@ -43,8 +44,9 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		mode: 'onTouched',
 		defaultValues: {
 			material: undefined,
+			warehouse: undefined,
 			format: undefined,
-			// weight: '',
+			weight: '',
 			count: ''
 		}
 	})
@@ -55,13 +57,13 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		formState: {errors: addErrors}
 	} = useForm({
 		mode: 'onTouched',
-		defaultValues: {weight_1x1: '', weight: ''},
+		defaultValues: {weight_1x1: ''},
 		resolver: yupResolver(materialSchema)
 	})
 
 
 	const {mutateAsync: addOrder, isPending: isAdding} = useAdd('products/base-materials')
-	const {mutateAsync: updateOrder, isPending: isUpdating} = useUpdate('products/base-materials/', id)
+	const {mutateAsync: updateOrder, isPending: isUpdating} = useUpdate('products/base-materials/', id, 'patch')
 
 	const {
 		data: detail,
@@ -76,10 +78,10 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	useEffect(() => {
 		if (productDetail && !isProductDetailLoading) {
 			resetAdd({
+				weight_1x1: productDetail.weight_1x1
 				// name: productDetail.name,
-				weight_1x1: productDetail.weight_1x1,
 				// format: productDetail.format,
-				weight: productDetail.weight
+				// weight: productDetail.weight
 			})
 		}
 	}, [productDetail, edit, resetAdd])
@@ -88,7 +90,9 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		if (detail && edit) {
 			orderReset({
 				material: detail.material?.id,
+				warehouse: detail.warehouse?.id,
 				count: detail.count,
+				weight: detail.weight,
 				format: detail.format?.id
 			})
 		}
@@ -118,7 +122,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 											orderReset({
 												material: undefined,
 												format: undefined,
-												// weight: '',
+												warehouse: undefined,
+												weight: '',
 												count: ''
 											})
 											navigate(-1)
@@ -130,8 +135,9 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 										.then(async () => {
 											orderReset({
 												material: undefined,
+												warehouse: undefined,
 												format: undefined,
-												// weight: '',
+												weight: '',
 												count: ''
 											})
 											navigate(-1)
@@ -146,84 +152,101 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			</PageTitle>
 			<Card style={{padding: '1.5rem'}}>
 				<Form className="grid gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
-					<div className="grid span-12 gap-xl flex-0">
-						<div className="span-4">
-							<Controller
-								name="material"
-								control={orderControl}
-								render={({field: {value, ref, onChange, onBlur}}) => (
-									<Select
-										id="material"
-										label="Material"
-										options={materials}
-										error={orderErrors?.material?.message}
-										value={getSelectValue(materials, value)}
-										ref={ref}
-										onBlur={onBlur}
-										defaultValue={getSelectValue(materials, value)}
-										handleOnChange={(e) => onChange(e as string)}
-									/>
-								)}
-							/>
-						</div>
-
-						<div className="span-4">
-							<Controller
-								name="format"
-								control={orderControl}
-								render={({field: {value, ref, onChange, onBlur}}) => (
-									<Select
-										id="format"
-										label="Format"
-										options={formats}
-										error={orderErrors?.format?.message}
-										value={getSelectValue(formats, value)}
-										ref={ref}
-										onBlur={onBlur}
-										defaultValue={getSelectValue(formats, value)}
-										handleOnChange={(e) => onChange(e as string)}
-									/>
-								)}
-							/>
-						</div>
-
-						<div className="span-4">
-							<Controller
-								name="count"
-								control={orderControl}
-								render={({field}) => (
-									<NumberFormattedInput
-										id="count"
-										maxLength={9}
-										disableGroupSeparators={false}
-										allowDecimals={false}
-										label="Count"
-										error={orderErrors?.count?.message}
-										{...field}
-									/>
-								)}
-							/>
-						</div>
-
-						{/*<div className="span-3">*/}
-						{/*	<Controller*/}
-						{/*		control={orderControl}*/}
-						{/*		name="weight"*/}
-						{/*		render={({field}) => (*/}
-						{/*			<NumberFormattedInput*/}
-						{/*				id="weight"*/}
-						{/*				label={`${t('Weight')} (${t('kg')})`}*/}
-						{/*				disableGroupSeparators={false}*/}
-						{/*				maxLength={5}*/}
-						{/*				allowDecimals={false}*/}
-						{/*				error={orderErrors?.weight?.message}*/}
-						{/*				{...field}*/}
-						{/*			/>*/}
-						{/*		)}*/}
-						{/*	/>*/}
-						{/*</div>*/}
+					<div className="span-4">
+						<Controller
+							name="material"
+							control={orderControl}
+							render={({field: {value, ref, onChange, onBlur}}) => (
+								<Select
+									id="material"
+									label="Material"
+									options={materials}
+									error={orderErrors?.material?.message}
+									value={getSelectValue(materials, value)}
+									ref={ref}
+									onBlur={onBlur}
+									defaultValue={getSelectValue(materials, value)}
+									handleOnChange={(e) => onChange(e as string)}
+								/>
+							)}
+						/>
 					</div>
 
+					<div className="span-4">
+						<Controller
+							name="warehouse"
+							control={orderControl}
+							render={({field: {value, ref, onChange, onBlur}}) => (
+								<Select
+									id="warehouse"
+									label="Material warehouse"
+									options={warehouses}
+									error={orderErrors?.warehouse?.message}
+									value={getSelectValue(warehouses, value)}
+									ref={ref}
+									onBlur={onBlur}
+									defaultValue={getSelectValue(warehouses, value)}
+									handleOnChange={(e) => onChange(e as string)}
+								/>
+							)}
+						/>
+					</div>
+
+					<div className="span-4">
+						<Controller
+							name="format"
+							control={orderControl}
+							render={({field: {value, ref, onChange, onBlur}}) => (
+								<Select
+									id="format"
+									label="Format"
+									options={formats}
+									error={orderErrors?.format?.message}
+									value={getSelectValue(formats, value)}
+									ref={ref}
+									onBlur={onBlur}
+									defaultValue={getSelectValue(formats, value)}
+									handleOnChange={(e) => onChange(e as string)}
+								/>
+							)}
+						/>
+					</div>
+
+					<div className="span-4">
+						<Controller
+							name="count"
+							control={orderControl}
+							render={({field}) => (
+								<NumberFormattedInput
+									id="count"
+									maxLength={9}
+									disableGroupSeparators={false}
+									allowDecimals={false}
+									label="Count"
+									error={orderErrors?.count?.message}
+									{...field}
+								/>
+							)}
+						/>
+					</div>
+
+					<div className="span-4">
+						<Controller
+							control={orderControl}
+							name="weight"
+							render={({field}) => (
+								<NumberFormattedInput
+									id="weight"
+									label={`${t('Item weight')} (${t('kg')})`}
+									disableGroupSeparators={false}
+									maxLength={5}
+									allowDecimals={false}
+									error={orderErrors?.weight?.message}
+									{...field}
+								/>
+							)}
+						/>
+					</div>
 
 					{
 						(orderWatch('material') && productDetail) &&
@@ -241,25 +264,6 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 											disabled={true}
 											allowDecimals={false}
 											error={addErrors?.weight_1x1?.message}
-											{...field}
-										/>
-									)}
-								/>
-							</div>
-
-							<div className="span-4">
-								<Controller
-									control={controlAdd}
-									name="weight"
-									render={({field}) => (
-										<NumberFormattedInput
-											id="weight"
-											label={`${t('Weight')} (${t('kg')})`}
-											disableGroupSeparators={false}
-											disabled={true}
-											maxLength={5}
-											allowDecimals={false}
-											error={addErrors?.weight?.message}
 											{...field}
 										/>
 									)}

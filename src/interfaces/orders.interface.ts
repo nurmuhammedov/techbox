@@ -12,6 +12,7 @@ interface IOrderDetail {
 	price: string;
 	deadline: string;
 	money_paid: string;
+	backlog: number;
 
 	logo?: IFIle;
 	name: string;
