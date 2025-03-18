@@ -12,12 +12,22 @@ import Plus from './Plus'
 import Logo from './Logo'
 import Edit from './Edit'
 import Box from './Box'
+import Corrugation from './Corrugation'
+import LargeBox from './LargeBox'
+import RightArrow from './RightArrow'
+import Flex from './Flex'
+import YMO from './YMO'
 
 
 export * from './sidebar'
 export * from './alert'
 
 export {
+	Corrugation,
+	Flex,
+	RightArrow,
+	LargeBox,
+	YMO,
 	SelectIcon,
 	LoginLogo,
 	Password,

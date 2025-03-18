@@ -1,6 +1,6 @@
 import {
 	Button,
-	Card, FilterInput,
+	Card, EditButton, FilterInput,
 	Pagination,
 	ReactTable, Tab
 } from 'components'
@@ -16,7 +16,7 @@ import {Column} from 'react-table'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {getDate} from 'utilities/date'
 import {decimalToInteger} from 'utilities/common'
-import {statusOptions} from 'helpers/options'
+import {activityOptions, statusOptions} from 'helpers/options'
 
 
 const Index = () => {
@@ -76,10 +76,12 @@ const Index = () => {
 				Header: `${t('Format')} (${t('mm')})`,
 				accessor: (row: IOrderDetail) => decimalToInteger(row.format?.name)
 			},
-			{
-				Header: t('Layer'),
-				accessor: (row: IOrderDetail) => row.layer?.length || 0
-			},
+			...status == statusOptions[1].value ? [
+				{
+					Header: t('Status'),
+					accessor: (row: IOrderDetail) => t(activityOptions?.find(i => row.activity === i?.value)?.label?.toString() || '')
+				}
+			] : [],
 			...status == statusOptions[0].value ? [
 				{
 					Header: t('Actions'),
@@ -97,7 +99,16 @@ const Index = () => {
 						</div>
 					)
 				}
-			] : []
+			] : [
+				{
+					Header: t('Actions'),
+					accessor: (row: IOrderDetail) => (
+						<div className="flex items-start gap-lg">
+							<EditButton onClick={() => navigate(`process/${row.id}`)}/>
+						</div>
+					)
+				}
+			]
 		],
 		[page, pageSize, status]
 	)

@@ -32,13 +32,20 @@ const roleOptions: ISelectOption[] = [
 
 const statusOptions: ISelectOption[] = [
 	{value: 'new', label: 'New orders'},
-	{value: 'in_line', label: 'Queued orders'},
+	// {value: 'in_line', label: 'Queued orders'},
 	{value: 'in_proces', label: 'In progress orders'},
 	{value: 'finished', label: 'Finished orders'}
 ]
+
 const operatorsStatusOptions: ISelectOption[] = [
 	{value: 1, label: 'New orders'},
-	{value: 2, label: 'Orders sent'}
+	{value: 2, label: 'History'}
+]
+
+const flexOperatorsStatusOptions: ISelectOption[] = [
+	{value: 'new', label: 'New orders'},
+	{value: 'procces', label: 'In progress orders'},
+	{value: 'history', label: 'History'}
 ]
 
 const booleanOptions: ISearchParams[] = [
@@ -56,6 +63,7 @@ const activityOptions: ISelectOption[] = [
 ]
 
 export {
+	flexOperatorsStatusOptions,
 	operatorsStatusOptions,
 	paginationOptions,
 	activityOptions,

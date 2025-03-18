@@ -49,14 +49,10 @@ const Index = () => {
 				Header: t('Name'),
 				accessor: (row: IBaseMaterialList) => row.material?.name
 			},
-			// {
-			// 	Header: `${t('Weight 1x1')} (${t('gr')})`,
-			// 	accessor: (row: IBaseMaterialList) => decimalToInteger(row.material?.weight_1x1 || '')
-			// },
-			// {
-			// 	Header: `${t('Weight')} (${t('kg')})`,
-			// 	accessor: (row: IBaseMaterialList) => decimalToInteger(row.material?.weight || '')
-			// },
+			{
+				Header: `${t('Warehouse')}`,
+				accessor: (row: IBaseMaterialList) => row.warehouse?.name || ''
+			},
 			{
 				Header: `${t('Format')} (${t('mm')})`,
 				accessor: (row: IBaseMaterialList) => decimalToInteger(row?.format?.format || '')
@@ -68,6 +64,10 @@ const Index = () => {
 			{
 				Header: `${t('Total weight')} (${t('kg')})`,
 				accessor: (row: IBaseMaterialList) => decimalToInteger(row.weight || '')
+			},
+			{
+				Header: `${t('Date')}`,
+				accessor: (row: IBaseMaterialList) => row.created_at || ''
 			},
 			{
 				Header: t('Actions'),

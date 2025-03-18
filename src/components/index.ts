@@ -20,6 +20,7 @@ import HR from './HR'
 
 
 export * from './UI'
+export * from './HOC'
 
 export {
 	DeleteButton,

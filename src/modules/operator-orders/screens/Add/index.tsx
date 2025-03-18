@@ -35,6 +35,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 	const {id} = useParams()
 	const navigate = useNavigate()
 	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
+	const {data: warehouses = []} = useData<ISelectOption[]>('accounts/warehouses-select')
 
 	const {
 		reset,
@@ -49,7 +50,8 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 					material: undefined,
 					weight: ''
 				}
-			]
+			],
+			warehouse: undefined
 		},
 		resolver: yupResolver(operatorOrderSchema)
 	})
@@ -64,6 +66,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 	useEffect(() => {
 		if (retrieve) {
 			reset({
+				warehouse: detail?.warehouse?.id,
 				data: detail?.weight_material?.map(item => ({
 					material: item?.material?.id || undefined,
 					weight: item?.weight || ''
@@ -93,8 +96,9 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 							onClick={
 								handleSubmit((data) => {
 									const newData = {
-										group_order: id,
-										data: data?.data
+										group_order: Number(id),
+										data: data?.data,
+										warehouse: data?.warehouse,
 									}
 
 									addGroupOrder(newData)
@@ -106,7 +110,8 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 														material: undefined,
 														weight: ''
 													}
-												]
+												],
+												warehouse: undefined
 											})
 										})
 								})
@@ -121,14 +126,16 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 			<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
 				<Form className="grid  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 					<div className="grid gap-lg span-12">
-						<div className="span-4">
-							<Input
-								id="count"
-								disabled={true}
-								label={`${t('Total')} (${t('Count')?.toLowerCase()})`}
-								value={decimalToInteger(detail?.orders?.reduce((acc, order) => acc + Number(order.count || 0), 0) || 0)}
-							/>
-						</div>
+
+						{/*<div className="span-4">*/}
+						{/*	<Input*/}
+						{/*		id="count"*/}
+						{/*		disabled={true}*/}
+						{/*		label={`${t('Total')} (${t('Count')?.toLowerCase()})`}*/}
+						{/*		value={decimalToInteger(detail?.orders?.reduce((acc, order) => acc + Number(order.count || 0), 0) || 0)}*/}
+						{/*	/>*/}
+						{/*</div>*/}
+
 						<div className="span-4">
 							<Input
 								id="format"
@@ -147,6 +154,26 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 								defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], detail?.has_addition)}
 							/>
 						</div>
+						<div className="span-4">
+							<Controller
+								name="warehouse"
+								control={control}
+								render={({field: {value, ref, onChange, onBlur}}) => (
+									<Select
+										id="warehouse"
+										label="Material warehouse"
+										options={warehouses}
+										disabled={retrieve}
+										error={errors?.warehouse?.message}
+										value={getSelectValue(warehouses, value)}
+										ref={ref}
+										onBlur={onBlur}
+										defaultValue={getSelectValue(warehouses, value)}
+										handleOnChange={(e) => onChange(e as string)}
+									/>
+								)}
+							/>
+						</div>
 					</div>
 					{
 						fields?.map((field, index) => (
@@ -160,7 +187,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 												ref={ref}
 												top={true}
 												id={`payment.${index}.material`}
-												label={`${t('Format')} (${t('mm')})`}
+												label={`${t('Layer')}`}
 												options={materials}
 												onBlur={onBlur}
 												isDisabled={true}

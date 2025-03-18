@@ -38,7 +38,7 @@ import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {showMessage} from 'utilities/alert'
-import {areAllFieldsPresent, decimalToInteger, getSelectValue, noop} from 'utilities/common'
+import {areAllFieldsPresent, decimalToInteger, getSelectValue} from 'utilities/common'
 import {getDate} from 'utilities/date'
 
 
@@ -216,7 +216,6 @@ const Index = () => {
 		}
 	}, [detail, updateId])
 
-
 	const onSubmit = (data: ISearchParams) => {
 		if ((orders?.length || 0) <= 0) {
 			showMessage('Select at least one order', 'error')
@@ -229,8 +228,8 @@ const Index = () => {
 				y: data?.y,
 				x: data?.x,
 				has_addition: data?.has_addition,
-				stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true)?.reverse(),
-				deadline: data?.deadline,
+				stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true)?.filter(i => i !== 'has_addition')?.reverse(),
+				deadline: data?.deadline || null,
 				count: data?.count
 			}
 
@@ -255,6 +254,8 @@ const Index = () => {
 				})
 		}
 	}
+
+	console.log(errors)
 
 
 	return (
@@ -670,13 +671,13 @@ const Index = () => {
 															setValue('tikish', false)
 															setValue('yelimlash', false)
 														} else {
+															setValue('gofra', false)
 															setValue('ymo1', false)
 															setValue('fleksa', false)
 															setValue('ymo2', false)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
 														}
-														register('gofra')?.onChange(e)
 													}}
 												/>
 												<p className="checkbox-label">
@@ -716,13 +717,11 @@ const Index = () => {
 															setValue('tikish', false)
 															setValue('yelimlash', false)
 														} else {
-															// setValue('gofra', true)
-															// setValue('ymo1', true)
+															setValue('fleksa', false)
 															setValue('ymo2', false)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
 														}
-														register('fleksa')?.onChange(e)
 													}}
 												/>
 												<p className="checkbox-label">
@@ -764,13 +763,8 @@ const Index = () => {
 															setValue('ymo2', true)
 															setValue('yelimlash', false)
 														} else {
-															// setValue('gofra', false)
-															// setValue('ymo1', false)
-															// setValue('fleksa', false)
-															// setValue('ymo2', false)
-															setValue('yelimlash', false)
+															setValue('tikish', false)
 														}
-														register('tikish')?.onChange(e)
 													}}
 												/>
 												<p className="checkbox-label">
@@ -791,13 +785,8 @@ const Index = () => {
 															setValue('ymo2', true)
 															setValue('tikish', false)
 														} else {
-															// setValue('gofra', false)
-															// setValue('ymo1', false)
-															// setValue('fleksa', false)
-															// setValue('ymo2', false)
-															// setValue('tikish', false)
+															setValue('yelimlash', false)
 														}
-														register('yelimlash')?.onChange(e)
 													}}
 												/>
 												<p className="checkbox-label">
@@ -966,13 +955,13 @@ const Index = () => {
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
 									} else {
+										setValueEdit('gofra', false)
 										setValueEdit('ymo1', false)
 										setValueEdit('fleksa', false)
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
 									}
-									registerEdit('gofra')?.onChange(e)
 								}}
 							/>
 							<p className="checkbox-label">
@@ -984,14 +973,13 @@ const Index = () => {
 								id={activityOptions[1].value as string}
 								type="checkbox"
 								className="checkbox"
-								disabled={true}
 								{...registerEdit('ymo1')}
 								onChange={(e) => {
 									if (e.target.checked) {
-										setValueEditsetValueEdit('gofra', true)
-										setValueEditsetValueEdit('ymo1', true)
+										setValueEdit('gofra', true)
+										setValueEdit('ymo1', true)
 									} else {
-										setValueEditsetValueEdit('ymo1', true)
+										setValueEdit('ymo1', true)
 									}
 								}}
 							/>
@@ -1007,19 +995,17 @@ const Index = () => {
 								{...registerEdit('fleksa')}
 								onChange={(e) => {
 									if (e.target.checked) {
-										setValueEditsetValueEditsetValueEdit('gofra', true)
-										setValueEditsetValueEditsetValueEdit('ymo1', true)
-										setValueEditsetValueEditsetValueEdit('ymo2', true)
-										setValueEditsetValueEditsetValueEdit('tikish', false)
-										setValueEditsetValueEditsetValueEdit('yelimlash', false)
+										setValueEdit('gofra', true)
+										setValueEdit('ymo1', true)
+										setValueEdit('ymo2', true)
+										setValueEdit('tikish', false)
+										setValueEdit('yelimlash', false)
 									} else {
-										// setValue('gofra', true)
-										// setValue('ymo1', true)
-										setValueEditsetValueEditsetValueEdit('ymo2', false)
-										setValueEditsetValueEditsetValueEdit('tikish', false)
-										setValueEditsetValueEditsetValueEdit('yelimlash', false)
+										setValueEdit('fleksa', false)
+										setValueEdit('ymo2', false)
+										setValueEdit('tikish', false)
+										setValueEdit('yelimlash', false)
 									}
-									registerEdit('fleksa')?.onChange(e)
 								}}
 							/>
 							<p className="checkbox-label">
@@ -1031,16 +1017,15 @@ const Index = () => {
 								id={activityOptions[3].value as string}
 								type="checkbox"
 								className="checkbox"
-								disabled={true}
 								{...registerEdit('ymo2')}
 								onChange={(e) => {
 									if (e.target.checked) {
-										setValueEditsetValueEditsetValueEditsetValueEdit('gofra', true)
-										setValueEditsetValueEditsetValueEditsetValueEdit('ymo1', true)
-										setValueEditsetValueEditsetValueEditsetValueEdit('fleksa', true)
-										setValueEditsetValueEditsetValueEditsetValueEdit('ymo2', true)
+										setValueEdit('gofra', true)
+										setValueEdit('ymo1', true)
+										setValueEdit('fleksa', true)
+										setValueEdit('ymo2', true)
 									} else {
-										setValueEditsetValueEditsetValueEditsetValueEdit('ymo2', true)
+										setValueEdit('ymo2', true)
 									}
 								}}
 							/>
@@ -1056,19 +1041,14 @@ const Index = () => {
 								{...registerEdit('tikish')}
 								onChange={(e) => {
 									if (e.target.checked) {
-										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('gofra', true)
-										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('ymo1', true)
-										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('fleksa', true)
-										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('ymo2', true)
-										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('yelimlash', false)
+										setValueEdit('gofra', true)
+										setValueEdit('ymo1', true)
+										setValueEdit('fleksa', true)
+										setValueEdit('ymo2', true)
+										setValueEdit('yelimlash', false)
 									} else {
-										// setValue('gofra', false)
-										// setValue('ymo1', false)
-										// setValue('fleksa', false)
-										// setValue('ymo2', false)
-										setValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('yelimlash', false)
+										setValueEdit('tikish', false)
 									}
-									registerEdit('tikish')?.onChange(e)
 								}}
 							/>
 							<p className="checkbox-label">
@@ -1083,19 +1063,14 @@ const Index = () => {
 								{...registerEdit('yelimlash')}
 								onChange={(e) => {
 									if (e.target.checked) {
-										setValueEditsetValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('gofra', true)
-										setValueEditsetValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('ymo1', true)
-										setValueEditsetValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('fleksa', true)
-										setValueEditsetValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('ymo2', true)
-										setValueEditsetValueEditsetValueEditsetValueEditsetValueEditsetValueEdit('tikish', false)
+										setValueEdit('gofra', true)
+										setValueEdit('ymo1', true)
+										setValueEdit('fleksa', true)
+										setValueEdit('ymo2', true)
+										setValueEdit('tikish', false)
 									} else {
-										// setValue('gofra', false)
-										// setValue('ymo1', false)
-										// setValue('fleksa', false)
-										// setValue('ymo2', false)
-										// setValue('tikish', false)
+										setValueEdit('yelimlash', false)
 									}
-									registerEdit('yelimlash')?.onChange(e)
 								}}
 							/>
 							<p className="checkbox-label">

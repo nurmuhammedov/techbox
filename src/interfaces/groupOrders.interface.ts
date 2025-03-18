@@ -16,7 +16,7 @@ interface IGroupOrder {
 	deadline: string;
 	count: string;
 	invalid_material_in_processing: string;
-	count_after_processing: string;
+	warehouse_same_finished: IIDName;
 	percentage_after_processing: string;
 	mkv_after_processing: string;
 
@@ -34,6 +34,8 @@ interface IGroupOrder {
 	count_after_bet: string;
 	percentage_after_bet: string;
 	mkv_after_bet: string;
+	warehouse: IIDName;
+	count_after_processing: { order: number, count: string }[];
 
 	stages_to_passed?: 'gofra' | 'ym01' | 'fleksa' | 'tikish' | 'yelimlash';
 

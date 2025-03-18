@@ -1,0 +1,29 @@
+.root .title {
+  color: var(--navy-dark);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 150%; /* 1.875rem */
+  letter-spacing: 0.075rem;
+}
+.root .number {
+  color: var(--navy-dark);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 1.125rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%; /* 1.6875rem */
+  letter-spacing: 0.0675rem;
+}
+.root .order {
+  color: var(--navy-dark);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 150%; /* 1.3125rem */
+  letter-spacing: 0.0525rem;
+}
+
+/*# sourceMappingURL=styles.module.css.map */

@@ -5,7 +5,8 @@ import {
 import {
 	Card,
 	Diagram,
-	Input, Loader,
+	Input,
+	Loader,
 	Select
 } from 'components'
 import {decimalToInteger, getSelectValue} from 'utilities/common'
@@ -298,6 +299,24 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 													value={detail?.y || ''}
 												/>
 											}
+										/>
+									</div>
+
+									<div className="span-4">
+										<Input
+											id="count"
+											disabled={true}
+											label="Count"
+											value={decimalToInteger(detail?.count || '0')}
+										/>
+									</div>
+
+									<div className="span-4">
+										<Input
+											id="count"
+											disabled={true}
+											label="Deadline"
+											value={getDate(detail?.deadline || '')}
 										/>
 									</div>
 									<div

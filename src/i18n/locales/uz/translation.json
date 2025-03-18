@@ -166,10 +166,14 @@
   "Queued orders": "Navbatdagi buyurtmalar",
   "Orders sent": "Jo‘natilgan buyurtmalar",
   "Order number": "Buyurtma raqami",
+  "Status": "Holati",
+  "Recycling": "Qayta ishlash",
+  "Sewing/Gluing": "Tikish/Yelimlash",
   "Sewing": "Tikish",
   "YMO": "YMO",
   "Flex": "Fleksa",
   "Corrugation": "Gofra",
+  "Date": "Sana",
   "Gluing": "Yelimlash",
   "Waste paper": "Yaroqsiz qog‘oz",
   "Waste paper percentage": "Yaroqsiz qog‘oz foizi",
@@ -181,5 +185,7 @@
   "Corrugation orders": "Gofra",
   "Flex orders": "Fleksa",
   "Sewing orders": "Tikish",
+  "History": "Tarix",
+  "Transfer to process": "Jarayonga o‘tkazish",
   "Gluing orders": "Yelimlash"
 }

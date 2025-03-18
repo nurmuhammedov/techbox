@@ -19,7 +19,7 @@ import {
 	OperatorOrdersTable,
 	EditOperatorOrder,
 	OperatorsTable,
-	OperatorsForm, ClientAndOrderAdd
+	OperatorsForm, ClientAndOrderAdd, FlexTable, FlexOrderForm, Process
 } from 'modules'
 import {Navigate, useRoutes} from 'react-router-dom'
 import {routeByRole} from 'utilities/authentication'
@@ -121,6 +121,10 @@ function useAppRoutes() {
 				{
 					path: 'add',
 					element: <AddDirectorOrder/>
+				},
+				{
+					path: 'process/:id',
+					element: <Process/>
 				}
 			]
 		},
@@ -166,15 +170,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <OperatorsTable type="fleksa"/>
+					element: <FlexTable type="fleksa"/>
 				},
 				{
 					path: 'edit/:id',
-					element: <OperatorsForm type="flex"/>
+					element: <FlexOrderForm type="flex"/>
 				},
 				{
 					path: 'detail/:id',
-					element: <OperatorsForm retrieve={true} type="flex"/>
+					element: <FlexOrderForm retrieve={true} type="flex"/>
 				}
 			]
 		},
@@ -184,15 +188,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <OperatorsTable type="tikish"/>
+					element: <FlexTable type="tikish"/>
 				},
 				{
 					path: 'edit/:id',
-					element: <OperatorsForm type="sewing"/>
+					element: <FlexOrderForm type="sewing"/>
 				},
 				{
 					path: 'detail/:id',
-					element: <OperatorsForm retrieve={true} type="sewing"/>
+					element: <FlexOrderForm retrieve={true} type="sewing"/>
 				}
 			]
 		},
@@ -202,15 +206,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <OperatorsTable type="yelimlash"/>
+					element: <FlexTable type="yelimlash"/>
 				},
 				{
 					path: 'edit/:id',
-					element: <OperatorsForm type="gluing"/>
+					element: <FlexOrderForm type="gluing"/>
 				},
 				{
 					path: 'detail/:id',
-					element: <OperatorsForm retrieve={true} type="gluing"/>
+					element: <FlexOrderForm retrieve={true} type="gluing"/>
 				}
 			]
 		},

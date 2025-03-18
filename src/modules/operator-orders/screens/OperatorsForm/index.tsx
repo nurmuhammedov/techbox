@@ -1,10 +1,11 @@
 import {yupResolver} from '@hookform/resolvers/yup'
 import {Button, Card, Form, Input, NumberFormattedInput, PageTitle, Select} from 'components'
 import {GroupOrderDetail} from 'components/HOC'
+import OrderDetail from 'components/HOC/OrderDetail'
 import {BUTTON_THEME} from 'constants/fields'
 import {booleanOptions} from 'helpers/options'
 import {operatorsOrderSchema} from 'helpers/yup'
-import {useUpdate} from 'hooks'
+import {useData, useUpdate} from 'hooks'
 import {ISelectOption} from 'interfaces/form.interface'
 import {IGroupOrder} from 'interfaces/groupOrders.interface'
 import {FC, useEffect} from 'react'
@@ -24,6 +25,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 	const {id} = useParams()
 	const {t} = useTranslation()
 	const navigate = useNavigate()
+	const {data: warehouses = []} = useData<ISelectOption[]>((type === 'corrugation' || type === 'flex') ? 'accounts/warehouses/same-finished-select' : 'accounts/warehouses/finished-select')
 
 	const {
 		reset,
@@ -37,6 +39,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 			percentage: '',
 			weight: '',
 			area: '',
+			warehouse: undefined,
 			data: [
 				{
 					order: undefined,
@@ -52,7 +55,10 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 		name: 'data' as never
 	})
 
-	const {mutateAsync: update, isPending: isUpdate} = useUpdate('services/group-orders/', id, 'patch')
+	const {
+		mutateAsync: update,
+		isPending: isUpdate
+	} = useUpdate(type === 'corrugation' ? 'services/group-orders/' : 'services/orders/', id, 'patch')
 
 	useEffect(() => {
 		if (retrieve) {
@@ -61,16 +67,15 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 					percentage: detail?.percentage_after_processing,
 					weight: detail?.invalid_material_in_processing,
 					area: detail?.mkv_after_processing,
-					data: detail?.orders?.map(order => ({
-						order: order.id,
-						count: order.count_after_processing
-					}))
+					warehouse: detail?.warehouse_same_finished?.id,
+					data: detail?.count_after_processing ? detail?.count_after_processing : []
 				})
 			} else if (type === 'flex') {
 				reset({
 					percentage: detail?.percentage_after_flex,
 					weight: detail?.invalid_material_in_flex,
 					area: detail?.mkv_after_flex,
+					warehouse: detail?.warehouse_same_finished?.id,
 					data: detail?.orders?.map(order => ({
 						order: order.id,
 						count: order.count_after_flex
@@ -80,6 +85,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 				reset({
 					percentage: detail?.percentage_after_bet,
 					weight: detail?.invalid_material_in_bet,
+					warehouse: detail?.warehouse?.id,
 					area: detail?.mkv_after_bet,
 					data: detail?.orders?.map(order => ({
 						order: order.id,
@@ -90,6 +96,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 				reset({
 					percentage: detail?.percentage_after_gluing,
 					weight: detail?.invalid_material_in_gluing,
+					warehouse: detail?.warehouse?.id,
 					area: detail?.mkv_after_gluing,
 					data: detail?.orders?.map(order => ({
 						order: order.id,
@@ -102,6 +109,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 				percentage: '',
 				weight: '',
 				area: '',
+				warehouse: undefined,
 				data: [...new Set(detail?.orders?.flatMap(order => order.id) || [])].map(item => ({
 					order: Number(item),
 					count: ''
@@ -129,18 +137,21 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 											invalid_material_in_processing: data?.weight,
 											percentage_after_processing: data?.percentage,
 											mkv_after_processing: data?.area,
+											warehouse_same_finished: data?.warehouse,
 											count_after_processing: data?.data
 										}
 									} else if (type === 'flex') {
 										newData = {
 											invalid_material_in_flex: data?.weight,
 											percentage_after_flex: data?.percentage,
+											warehouse_same_finished: data?.warehouse,
 											mkv_after_flex: data?.area,
 											count_after_flex: data?.data
 										}
 									} else if (type === 'sewing') {
 										newData = {
 											invalid_material_in_bet: data?.weight,
+											warehouse_finished: data?.warehouse,
 											percentage_after_bet: data?.percentage,
 											mkv_after_bet: data?.area,
 											count_after_bet: data?.data
@@ -148,6 +159,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 									} else if (type === 'gluing') {
 										newData = {
 											invalid_material_in_gluing: data?.weight,
+											warehouse_finished: data?.warehouse,
 											percentage_after_gluing: data?.percentage,
 											mkv_after_gluing: data?.area,
 											count_after_gluing: data?.data
@@ -162,6 +174,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 												percentage: '',
 												weight: '',
 												area: '',
+												warehouse: undefined,
 												data: [
 													{
 														order: undefined,
@@ -182,14 +195,14 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 			<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
 				<Form className="grid  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 					<div className="grid gap-lg span-12">
-						<div className="span-4">
-							<Input
-								id="totoal"
-								disabled={true}
-								label={`${t('Total')} (${t('Count')?.toLowerCase()})`}
-								value={decimalToInteger(detail?.orders?.reduce((acc, order) => acc + Number(order.count || 0), 0) || 0)}
-							/>
-						</div>
+						{/*<div className="span-4">*/}
+						{/*	<Input*/}
+						{/*		id="totoal"*/}
+						{/*		disabled={true}*/}
+						{/*		label={`${t('Total')} (${t('Count')?.toLowerCase()})`}*/}
+						{/*		value={decimalToInteger(detail?.orders?.reduce((acc, order) => acc + Number(order.count || 0), 0) || 0)}*/}
+						{/*	/>*/}
+						{/*</div>*/}
 						<div className="span-4">
 							<Input
 								id="format"
@@ -206,6 +219,26 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 								options={booleanOptions as unknown as ISelectOption[]}
 								value={getSelectValue(booleanOptions as unknown as ISelectOption[], detail?.has_addition)}
 								defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], detail?.has_addition)}
+							/>
+						</div>
+						<div className="span-4">
+							<Controller
+								name="warehouse"
+								control={control}
+								render={({field: {value, ref, onChange, onBlur}}) => (
+									<Select
+										id="warehouse"
+										label="Semi-finished warehouse"
+										options={warehouses}
+										disabled={retrieve}
+										error={errors?.warehouse?.message}
+										value={getSelectValue(warehouses, value)}
+										ref={ref}
+										onBlur={onBlur}
+										defaultValue={getSelectValue(warehouses, value)}
+										handleOnChange={(e) => onChange(e as string)}
+									/>
+								)}
 							/>
 						</div>
 					</div>
@@ -306,5 +339,10 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 
 
 const HOF = GroupOrderDetail<IProperties>(Index)
+const OrderHOF = OrderDetail<IProperties>(Index)
 
 export default HOF
+
+export {
+	OrderHOF
+}

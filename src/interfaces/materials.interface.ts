@@ -15,6 +15,7 @@ interface IBaseMaterialList {
 	id: number;
 	material: IMaterialItemDetail;
 	count: string;
+	created_at: string;
 	weight: string;
 	format: {
 		id: number;

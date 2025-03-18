@@ -26,7 +26,6 @@ const passwordSchema = yup
 
 const dateField = yup
 	.string()
-	.required('This field is required')
 	.length(10, 'The entered date is not valid')
 	.transform((value) => {
 		if (!value) return value
@@ -101,7 +100,7 @@ const employeeSchema = yup.object().shape({
 	address: yup.string().trim().required('This field is required'),
 	phone: yup.string().trim().required('This field is required').length(17, 'The entered date is not valid'),
 	position: yup.number().required('This field is required'),
-	birthday: dateField.test('isNotFutureDate', 'How are you going to include someone who is not born?', (value) => {
+	birthday: dateField.required('This field is required').test('isNotFutureDate', 'How are you going to include someone who is not born?', (value) => {
 		if (!value) return false
 		const [year, month, day] = value.split('-').map(Number)
 		const inputDate = new Date(year, month - 1, day)
@@ -302,7 +301,7 @@ const ordersSchema = yup.object().shape({
 		.of(yup.string().trim().required('This field is required'))
 		.nullable()
 		.transform(value => value?.length > 0 ? value : null),
-	deadline: dateField
+	deadline: dateField.required('This field is required')
 })
 
 const groupOrdersSchema = yup.object().shape({
@@ -333,13 +332,29 @@ const groupOrdersSchema = yup.object().shape({
 		}),
 	deadline: yup
 		.string()
-		.trim()
 		.when('has_addition', {
 			is: true,
-			then: (schema) => schema.required('This field is required'),
+			then: (schema) => schema
+				.required('This field is required')
+				.length(10, 'The entered date is not valid')
+				.transform((value) => {
+					if (!value) return value
+					const [day, month, year] = value.split('.')
+					return `${year}-${month}-${day}`
+				})
+				.test('isValidDate', 'The entered date is not valid', (value) => {
+					if (!value) return false
+					const [year, month, day] = value.split('-').map(Number)
+					const date = new Date(year, month - 1, day)
+					return (
+						date.getFullYear() === year &&
+						date.getMonth() === month - 1 &&
+						date.getDate() === day
+					)
+				}),
 			otherwise: (schema) => schema
-				.transform(value => value ? value : null)
 				.nullable()
+				.optional()
 		}),
 	count: yup
 		.string()
@@ -395,10 +410,14 @@ const temporaryOrderSchema = yup.object().shape({
 		.array()
 		.of(yup.string().trim().required('This field is required'))
 		.nullable(),
-	deadline: dateField
+	deadline: dateField.required('This field is required')
 })
 
 const operatorOrderSchema = yup.object().shape({
+	warehouse: yup
+		.number()
+		.transform(value => value ? Number(value) : null)
+		.required('This field is required'),
 	data: yup
 		.array()
 		.of(yup.object().shape({
@@ -417,6 +436,10 @@ const operatorsOrderSchema = yup.object().shape({
 		.string()
 		.trim()
 		.required('This field is required'),
+	warehouse: yup
+		.number()
+		.transform(value => value ? Number(value) : null)
+		.required('This field is required'),
 	area: yup
 		.string()
 		.trim()
@@ -430,6 +453,26 @@ const operatorsOrderSchema = yup.object().shape({
 		.required('This field is required')
 })
 
+const flexOperatorsOrderSchema = yup.object().shape({
+	percentage: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	weight: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	warehouse: yup
+		.number()
+		.transform(value => value ? Number(value) : null)
+		.required('This field is required'),
+	area: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	count: yup.string().trim().required('This field is required')
+})
+
 // CLIENTS
 const clientsSchema = yup.object().shape({
 	company_name: yup.string().trim().required('This field is required'),
@@ -441,6 +484,7 @@ const clientsSchema = yup.object().shape({
 
 export {
 	semiFinishedWarehouseSchema,
+	flexOperatorsOrderSchema,
 	confirmPasswordSchema,
 	warehouseOrdersSchema,
 	operatorsOrderSchema,

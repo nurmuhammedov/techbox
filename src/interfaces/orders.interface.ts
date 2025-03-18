@@ -1,3 +1,4 @@
+import {IIDName} from 'interfaces/configuration.interface'
 import {IProductDetail} from 'interfaces/products.interface'
 import {IFIle} from 'interfaces/form.interface'
 
@@ -24,6 +25,30 @@ interface IOrderDetail {
 	layers: number;
 	box_ear: string;
 
+
+	invalid_material_in_processing: string;
+	warehouse_same_finished: IIDName;
+	warehouse_finished: IIDName;
+	percentage_after_processing: string;
+	mkv_after_processing: string;
+
+	invalid_material_in_flex: string;
+	count_after_flex: string;
+	percentage_after_flex: string;
+	mkv_after_flex: string;
+
+	invalid_material_in_gluing: string;
+	count_after_gluing: string;
+	percentage_after_gluing: string;
+	mkv_after_gluing: string;
+
+	invalid_material_in_bet: string;
+	count_after_bet: string;
+	percentage_after_bet: string;
+	mkv_after_bet: string;
+	warehouse: IIDName;
+
+
 	format: {
 		id: number;
 		format: string;
@@ -31,9 +56,6 @@ interface IOrderDetail {
 	};
 
 	count_after_processing: string;
-	count_after_flex: string;
-	count_after_gluing: string;
-	count_after_bet: string;
 
 	status?: 'new' | 'in_process' | 'finished' | 'in_line';
 	l0: string;
