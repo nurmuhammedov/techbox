@@ -13,6 +13,7 @@ import Logo from './Logo'
 import Edit from './Edit'
 import Box from './Box'
 import Corrugation from './Corrugation'
+import Info from './Info'
 import LargeBox from './LargeBox'
 import RightArrow from './RightArrow'
 import Flex from './Flex'
@@ -25,6 +26,7 @@ export * from './alert'
 export {
 	Corrugation,
 	Flex,
+	Info,
 	RightArrow,
 	LargeBox,
 	YMO,

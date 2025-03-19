@@ -1,15 +1,36 @@
-.root {
-  overflow-x: scroll;
-  max-width: calc(100vw - 19.5rem);
-  padding-bottom: 1rem;
 
-  .titles {
-    display: flex;
-    gap: 4rem;
-    align-items: center;
-    justify-content: flex-start;
+.titles {
+  display: flex;
+  gap: 3.5rem;
+  align-items: center;
+  justify-content: flex-start;
+
+  h1 {
+    color: var(--blue-deep);
+    min-width: 15rem;
+    text-align: center;
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    font-size: 1.375rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+  }
+}
+
+.icons {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  .item {
+    position: relative;
 
     h1 {
+      position: absolute;
+      top: -80%;
       color: var(--blue-deep);
       min-width: 15rem;
       text-align: center;
@@ -20,18 +41,16 @@
       line-height: normal;
     }
   }
-
-  .icons {
+  div {
+    min-width: 10rem;
     display: flex;
-    flex-direction: row;
-    gap: 3rem;
     align-items: center;
-
-    div {
-      min-width: 10rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    justify-content: center;
   }
+}
+
+.inputs {
+  display: flex;
+  gap: 5rem;
+  flex-direction: row;
 }

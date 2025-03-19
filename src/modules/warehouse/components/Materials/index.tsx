@@ -1,9 +1,12 @@
 import {yupResolver} from '@hookform/resolvers/yup'
+import DetailButton from 'components/DetailButton'
+import {ROLE_LIST} from 'constants/roles'
 import {warehouseSchema} from 'helpers/yup'
 import {IWarehouseDetail} from 'interfaces/warehouse.interface'
 import {useEffect, useMemo} from 'react'
 import {Controller, useForm} from 'react-hook-form'
 import {useTranslation} from 'react-i18next'
+import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {
 	Card,
@@ -21,7 +24,7 @@ import {
 } from 'components'
 import {FIELD} from 'constants/fields'
 import {
-	useAdd,
+	useAdd, useAppContext,
 	useDetail,
 	usePaginatedData,
 	usePagination,
@@ -33,6 +36,8 @@ import {decimalToInteger} from 'utilities/common'
 
 const Index = () => {
 	const {t} = useTranslation()
+	const {user} = useAppContext()
+	const navigate = useNavigate()
 	const {page, pageSize} = usePagination()
 	const {removeParams, paramsObject: {updateId = undefined}} = useSearchParams()
 
@@ -76,16 +81,26 @@ const Index = () => {
 			Header: `${t('Area')} (${t('m²')})`,
 			accessor: (row: IWarehouseDetail) => decimalToInteger(row.area || '')
 		},
-		{
-			Header: t('Actions'),
-			accessor: (row: IWarehouseDetail) => (
-				<div className="flex items-start gap-lg">
-					<EditButton id={row.id}/>
-					<DeleteButton id={row.id}/>
-				</div>
-			)
-		}
-	], [page, pageSize])
+		...(user?.role === ROLE_LIST.ADMIN ? [
+				{
+					Header: t('Actions'),
+					accessor: (row: IWarehouseDetail) => (
+						<div className="flex items-start gap-lg">
+							<EditButton id={row.id}/>
+							<DeleteButton id={row.id}/>
+						</div>
+					)
+				}
+			] : [{
+				Header: t('Actions'),
+				accessor: (row: IWarehouseDetail) => (
+					<div className="flex items-start gap-lg">
+						<DetailButton onClick={() => navigate(`warehouse-detail/${row.id}`)}/>
+					</div>
+				)
+			}]
+		)
+	], [page, pageSize, user?.role])
 
 	const {
 		handleSubmit: handleEditSubmit,

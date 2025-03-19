@@ -1,10 +1,13 @@
-import {IWarehouseDetail as IReadyMadeWarehouseDetail} from 'interfaces/warehouse.interface'
+import DetailButton from 'components/DetailButton'
+import {ROLE_LIST} from 'constants/roles'
+import {IWarehouseDetail, IWarehouseDetail as IReadyMadeWarehouseDetail} from 'interfaces/warehouse.interface'
 import {semiFinishedWarehouseSchema as readyMadeWarehouseSchema} from 'helpers/yup'
 import {Controller, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {useTranslation} from 'react-i18next'
 import {useEffect, useMemo} from 'react'
 import {FIELD} from 'constants/fields'
+import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {
 	Card,
@@ -22,6 +25,7 @@ import {
 } from 'components'
 import {
 	useAdd,
+	useAppContext,
 	useDetail,
 	usePaginatedData,
 	usePagination,
@@ -34,6 +38,8 @@ import {decimalToInteger} from 'utilities/common'
 const Index = () => {
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
+	const {user} = useAppContext()
+	const navigate = useNavigate()
 	const {
 		removeParams,
 		paramsObject: {updateId = undefined}
@@ -77,15 +83,25 @@ const Index = () => {
 				Header: `${t('Area')} (${t('m²')})`,
 				accessor: (row: IReadyMadeWarehouseDetail) => decimalToInteger(row.area || '')
 			},
-			{
-				Header: t('Actions'),
-				accessor: (row: IReadyMadeWarehouseDetail) => (
-					<div className="flex items-start gap-lg">
-						<EditButton id={row.id}/>
-						<DeleteButton id={row.id}/>
-					</div>
-				)
-			}
+			...(user?.role === ROLE_LIST.ADMIN ? [
+					{
+						Header: t('Actions'),
+						accessor: (row: IWarehouseDetail) => (
+							<div className="flex items-start gap-lg">
+								<EditButton id={row.id}/>
+								<DeleteButton id={row.id}/>
+							</div>
+						)
+					}
+				] : [{
+					Header: t('Actions'),
+					accessor: (row: IWarehouseDetail) => (
+						<div className="flex items-start gap-lg">
+							<DetailButton onClick={() => navigate(`finished-detail/${row.id}`)}/>
+						</div>
+					)
+				}]
+			)
 		],
 		[page, pageSize]
 	)

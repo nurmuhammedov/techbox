@@ -19,7 +19,14 @@ import {
 	OperatorOrdersTable,
 	EditOperatorOrder,
 	OperatorsTable,
-	OperatorsForm, ClientAndOrderAdd, FlexTable, FlexOrderForm, Process
+	OperatorsForm,
+	ClientAndOrderAdd,
+	FlexTable,
+	FlexOrderForm,
+	Process,
+	WarehouseDetail,
+	SemiFinishedDetail,
+	FinishedDetail
 } from 'modules'
 import {Navigate, useRoutes} from 'react-router-dom'
 import {routeByRole} from 'utilities/authentication'
@@ -89,6 +96,18 @@ function useAppRoutes() {
 				{
 					index: true,
 					element: <WarehouseTable/>
+				},
+				{
+					path: 'warehouse-detail/:id',
+					element: <WarehouseDetail/>
+				},
+				{
+					path: 'semi-finished-detail/:id',
+					element: <SemiFinishedDetail/>
+				},
+				{
+					path: 'finished-detail/:id',
+					element: <FinishedDetail/>
 				}
 			]
 		},
