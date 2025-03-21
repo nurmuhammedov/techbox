@@ -133,10 +133,10 @@ const materialSchema = yup.object().shape({
 		.string()
 		.trim()
 		.required('This field is required'),
-	weight: yup
-		.string()
-		.trim()
-		.required('This field is required')
+	// weight: yup
+	// 	.string()
+	// 	.trim()
+	// 	.required('This field is required')
 	// format: yup
 	// 	.string()
 	// 	.trim()

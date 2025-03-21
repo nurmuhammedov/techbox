@@ -40,7 +40,7 @@ const Index = <T extends object & { id: string | number }>({
 	                                                           isLoading,
 	                                                           className,
 	                                                           screen = true,
-	                                                           spacing = true,
+	                                                           spacing = false,
 	                                                           handleRow
                                                            }: ITableOptions<T>) => {
 	const {

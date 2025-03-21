@@ -1,11 +1,11 @@
 import {FC} from 'react'
-// import {Select} from 'components'
+import {Select} from 'components'
 import {usePagination} from 'hooks'
 import {SelectIcon} from 'assets/icons'
 import styles from './styles.module.scss'
 import ReactPaginate from 'react-paginate'
-// import {getSelectValue} from 'utilities/common'
-// import {paginationOptions} from 'helpers/options'
+import {getSelectValue} from 'utilities/common'
+import {paginationOptions} from 'helpers/options'
 
 
 interface IProps {
@@ -16,8 +16,7 @@ interface IProps {
 }
 
 const Index: FC<IProps> = ({totalPages = 1, pageName, pageSizeName, mini = false}) => {
-	// const {onPageChange, onPageSizeChange, pageSize, page} = usePagination({page: pageSizeName, pageSize: pageName})
-	const {onPageChange, page} = usePagination({page: pageSizeName, pageSize: pageName})
+	const {onPageChange, onPageSizeChange, pageSize, page} = usePagination({page: pageSizeName, pageSize: pageName})
 
 	const handlePageClick = (event: { selected: number }): void => {
 		onPageChange(event.selected + 1)
@@ -49,14 +48,14 @@ const Index: FC<IProps> = ({totalPages = 1, pageName, pageSizeName, mini = false
 				activeClassName={styles.active}
 			/>
 
-			{/*<Select*/}
-			{/*	top={true}*/}
-			{/*	id="pagination"*/}
-			{/*	options={paginationOptions}*/}
-			{/*	value={getSelectValue(paginationOptions, pageSize)}*/}
-			{/*	defaultValue={getSelectValue(paginationOptions, pageSize)}*/}
-			{/*	handleOnChange={(e) => onPageSizeChange(e as number)}*/}
-			{/*/>*/}
+			<Select
+				top={true}
+				id="pagination"
+				options={paginationOptions}
+				value={getSelectValue(paginationOptions, pageSize)}
+				defaultValue={getSelectValue(paginationOptions, pageSize)}
+				handleOnChange={(e) => onPageSizeChange(e as number)}
+			/>
 		</div>
 	)
 }

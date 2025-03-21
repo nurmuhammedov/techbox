@@ -2,6 +2,7 @@
   background: var(--white);
   width: 100%;
   border-radius: 0.625rem;
+  overflow: hidden;
 }
 .root table {
   width: 100%;
@@ -19,9 +20,7 @@
   color: var(--navy-dark);
   font-family: Poppins, Arial, Helvetica, sans-serif;
   font-size: 0.875rem;
-  font-style: normal;
   font-weight: 600;
-  line-height: normal;
   letter-spacing: 0.0525rem;
   text-transform: uppercase;
   border-bottom: 1px solid var(--gray-pale);
@@ -29,19 +28,24 @@
 .root table tbody {
   transition: color 0.15s ease-in-out;
 }
+.root table tbody tr {
+  border-bottom: 1px solid var(--gray-pale);
+}
 .root table tbody tr td {
   padding: 1.25rem 1rem;
   max-width: 15rem;
   font-family: Poppins, Arial, Helvetica, sans-serif;
   color: var(--navy-dark);
   font-size: 0.9375rem;
-  font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 1.40625rem */
+  line-height: 150%;
   letter-spacing: 0.05625rem;
 }
-.root table tbody tr:hover {
-  background: var(--light-gray-1);
+.root table tbody tr:nth-child(even) {
+  background: var(--gray-lightest);
+}
+.root table tbody tr:last-child {
+  border-bottom: none !important;
 }
 
 .empty table {
@@ -57,6 +61,9 @@
 
 .loader table {
   height: 100%;
+}
+.loader table tbody tr {
+  background: var(--white) !important;
 }
 .loader table tbody tr:hover {
   background: var(--white) !important;

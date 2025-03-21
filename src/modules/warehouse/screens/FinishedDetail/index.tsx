@@ -1,5 +1,6 @@
 import {BUTTON_THEME} from 'constants/fields'
-import {IBaseMaterialList} from 'interfaces/materials.interface'
+import {activityOptions} from 'helpers/options'
+import {IOrderDetail} from 'interfaces/orders.interface'
 import {useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate, useParams} from 'react-router-dom'
@@ -27,42 +28,58 @@ const Index = () => {
 		data: dataList,
 		totalPages,
 		isPending: isLoading
-	} = usePaginatedData<IBaseMaterialList[]>('products/finished-orders', {
+	} = usePaginatedData<IOrderDetail[]>('products/finished-orders', {
 		page,
 		page_size: pageSize,
 		warehouse_finished: id
 	})
 
-	const columns: Column<IBaseMaterialList>[] = useMemo(
+	const columns: Column<IOrderDetail>[] = useMemo(
 		() => [
-
 			{
 				Header: t('№'),
-				accessor: (_: IBaseMaterialList, index: number) => ((page - 1) * pageSize) + (index + 1),
+				accessor: (_: IOrderDetail, index: number) => (page - 1) * pageSize + (index + 1),
 				style: {
-					width: '3rem',
+					width: '1.5rem',
 					textAlign: 'center'
 				}
 			},
+			// {
+			// 	Header: t('Company name'),
+			// 	accessor: (row: IOrderDetail) => row?.company_name
+			// },
 			{
 				Header: t('Name'),
-				accessor: (row: IBaseMaterialList) => row.material?.name
+				accessor: (row: IOrderDetail) => row?.name
 			},
 			{
-				Header: `${t('Warehouse')}`,
-				accessor: (row: IBaseMaterialList) => row.warehouse?.name || ''
+				Header: `${t('Sizes')} (${t('mm')})`,
+				accessor: (row: IOrderDetail) => `${row?.width}*${row?.height}*${row?.length}`
 			},
 			{
-				Header: `${t('Format')} (${t('mm')})`,
-				accessor: (row: IBaseMaterialList) => decimalToInteger(row?.format?.format || '')
+				Header: t('Layer'),
+				accessor: (row: IOrderDetail) => row?.layer?.length || 0
 			},
 			{
-				Header: `${t('Total weight')} (${t('kg')})`,
-				accessor: (row: IBaseMaterialList) => decimalToInteger(row.weight || '')
+				Header: t('Count'),
+				accessor: (row: IOrderDetail) => decimalToInteger(row?.count || 0)
+			},
+			{
+				Header: t('Sewing'),
+				accessor: (row: IOrderDetail) => decimalToInteger(row?.count_after_bet || 0)
+			},
+			{
+				Header: t('Gluing'),
+				accessor: (row: IOrderDetail) => decimalToInteger(row?.count_after_gluing || 0)
+			},
+			{
+				Header: t('Status'),
+				accessor: (row: IOrderDetail) => t(activityOptions?.find(i => row.activity === i?.value)?.label?.toString() || '')
 			}
 		],
-		[t, page, pageSize]
+		[page, pageSize]
 	)
+
 	return (
 		<>
 			<PageTitle title="Ready-made warehouse">

@@ -90,6 +90,7 @@ const Index = () => {
 							<div className="flex items-start gap-lg">
 								<EditButton id={row.id}/>
 								<DeleteButton id={row.id}/>
+								<DetailButton onClick={() => navigate(`semi-finished-detail/${row.id}`)}/>
 							</div>
 						)
 					}

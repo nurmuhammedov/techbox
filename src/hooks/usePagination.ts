@@ -9,7 +9,7 @@ interface IProperties {
 function usePagination({page = 'page', pageSize = 'pageSize'}: IProperties = {}) {
 	const {paramsObject, removeParams, addParams} = useSearchParams()
 	const currentPage = Number(paramsObject[page]) || 1
-	const currentPageSize = Number(paramsObject[pageSize]) || 5
+	const currentPageSize = Number(paramsObject[pageSize]) || 20
 
 	const onPageChange = (selectedValue: number): void => {
 		if (selectedValue <= 1) {
@@ -20,7 +20,7 @@ function usePagination({page = 'page', pageSize = 'pageSize'}: IProperties = {})
 	}
 
 	const onPageSizeChange = (selectedValue: number | undefined | null | string): void => {
-		if (selectedValue === 5 || !selectedValue) {
+		if (selectedValue === 20 || !selectedValue) {
 			removeParams(pageSize, page)
 		} else {
 			addParams({[pageSize]: selectedValue}, page)

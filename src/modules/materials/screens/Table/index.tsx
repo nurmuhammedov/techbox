@@ -96,7 +96,7 @@ const Index = () => {
 		formState: {errors: editErrors}
 	} = useForm({
 		mode: 'onTouched',
-		defaultValues: {name: '', weight_1x1: '', weight: ''},
+		defaultValues: {name: '', weight_1x1: ''},
 		resolver: yupResolver(materialSchema)
 	})
 
@@ -106,7 +106,7 @@ const Index = () => {
 
 	useEffect(() => {
 		if (detail) {
-			resetEdit({name: detail.name, weight_1x1: detail.weight_1x1, weight: detail.weight})
+			resetEdit({name: detail.name, weight_1x1: detail.weight_1x1})
 		}
 	}, [detail, resetEdit])
 

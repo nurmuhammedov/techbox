@@ -364,6 +364,18 @@ function useAppRoutes() {
 							{
 								index: true,
 								element: <WarehouseTable/>
+							},
+							{
+								path: 'warehouse-detail/:id',
+								element: <WarehouseDetail/>
+							},
+							{
+								path: 'semi-finished-detail/:id',
+								element: <SemiFinishedDetail/>
+							},
+							{
+								path: 'finished-detail/:id',
+								element: <FinishedDetail/>
 							}
 						]
 					},

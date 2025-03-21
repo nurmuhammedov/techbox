@@ -1,8 +1,11 @@
 import {
 	Button,
-	Card, EditButton, FilterInput,
+	Card,
+	EditButton,
+	FilterInput,
 	Pagination,
-	ReactTable, Tab
+	ReactTable,
+	Tab
 } from 'components'
 import {
 	useActions,
