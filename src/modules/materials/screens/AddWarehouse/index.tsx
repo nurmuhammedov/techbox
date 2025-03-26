@@ -1,3 +1,4 @@
+import {Plus} from 'assets/icons'
 import {FC, useEffect} from 'react'
 import {
 	Button,
@@ -10,9 +11,9 @@ import {
 } from 'components'
 import {useNavigate, useParams} from 'react-router-dom'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {useForm, Controller} from 'react-hook-form'
+import {useForm, Controller, useFieldArray} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
-import {useAdd, useData, useDetail, useUpdate} from 'hooks'
+import {useAdd, useData, useDetail, useSearchParams, useUpdate} from 'hooks'
 import {materialSchema, warehouseOrdersSchema} from 'helpers/yup'
 import {getSelectValue} from 'utilities/common'
 import {IBaseMaterialList, IMaterialItemDetail} from 'interfaces/materials.interface'
@@ -26,6 +27,7 @@ interface IProperties {
 
 const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const navigate = useNavigate()
+	const {paramsObject: {created_at, format, material, warehouse}} = useSearchParams()
 	const {t} = useTranslation()
 	const {orderId: id = undefined, id: customer = undefined} = useParams()
 	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
@@ -35,7 +37,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 
 	const {
 		handleSubmit: orderHandleSubmit,
-		control: orderControl,
+		control,
 		reset: orderReset,
 		watch: orderWatch,
 		formState: {errors: orderErrors}
@@ -46,9 +48,14 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			material: undefined,
 			warehouse: undefined,
 			format: undefined,
-			weight: '',
-			count: ''
+			weight: ['0']
+			// count: ''
 		}
+	})
+
+	const {fields, append, remove} = useFieldArray({
+		control,
+		name: 'weight' as never
 	})
 
 	const {
@@ -68,7 +75,12 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const {
 		data: detail,
 		isPending: isDetailLoading
-	} = useDetail<IBaseMaterialList>('products/base-materials/', id, edit)
+	} = useDetail<IBaseMaterialList>('products/base-materials/', id, edit, {
+		created_at,
+		format_: format,
+		material,
+		warehouse
+	})
 
 	const {
 		data: productDetail,
@@ -91,7 +103,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			orderReset({
 				material: detail.material?.id,
 				warehouse: detail.warehouse?.id,
-				count: detail.count,
+				// count: detail.count,
 				weight: detail.weight,
 				format: detail.format?.id
 			})
@@ -110,44 +122,47 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
 						Back
 					</Button>
-					<Button
-						type={FIELD.BUTTON}
-						theme={BUTTON_THEME.PRIMARY}
-						disabled={isAdding || isUpdating}
-						onClick={() => {
-							if (!edit) {
-								orderHandleSubmit((data) =>
-									addOrder({...data, customer})
-										.then(async () => {
-											orderReset({
-												material: undefined,
-												format: undefined,
-												warehouse: undefined,
-												weight: '',
-												count: ''
+					{
+						!edit &&
+						<Button
+							type={FIELD.BUTTON}
+							theme={BUTTON_THEME.PRIMARY}
+							disabled={isAdding || isUpdating}
+							onClick={() => {
+								if (!edit) {
+									orderHandleSubmit((data) =>
+										addOrder({...data, customer})
+											.then(async () => {
+												orderReset({
+													material: undefined,
+													format: undefined,
+													warehouse: undefined,
+													weight: ['0']
+													// count: ''
+												})
+												navigate(-1)
 											})
-											navigate(-1)
-										})
-								)()
-							} else {
-								orderHandleSubmit((data) =>
-									updateOrder({...data, customer})
-										.then(async () => {
-											orderReset({
-												material: undefined,
-												warehouse: undefined,
-												format: undefined,
-												weight: '',
-												count: ''
+									)()
+								} else {
+									orderHandleSubmit((data) =>
+										updateOrder({...data, customer})
+											.then(async () => {
+												orderReset({
+													material: undefined,
+													warehouse: undefined,
+													format: undefined,
+													weight: ['0']
+													// count: ''
+												})
+												navigate(-1)
 											})
-											navigate(-1)
-										})
-								)()
-							}
-						}}
-					>
-						{edit ? 'Edit' : 'Save'}
-					</Button>
+									)()
+								}
+							}}
+						>
+							{edit ? 'Edit' : 'Save'}
+						</Button>
+					}
 				</div>
 			</PageTitle>
 			<Card style={{padding: '1.5rem'}}>
@@ -155,7 +170,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					<div className="span-4">
 						<Controller
 							name="material"
-							control={orderControl}
+							control={control}
 							render={({field: {value, ref, onChange, onBlur}}) => (
 								<Select
 									id="material"
@@ -175,7 +190,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					<div className="span-4">
 						<Controller
 							name="warehouse"
-							control={orderControl}
+							control={control}
 							render={({field: {value, ref, onChange, onBlur}}) => (
 								<Select
 									id="warehouse"
@@ -195,7 +210,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					<div className="span-4">
 						<Controller
 							name="format"
-							control={orderControl}
+							control={control}
 							render={({field: {value, ref, onChange, onBlur}}) => (
 								<Select
 									id="format"
@@ -212,42 +227,6 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						/>
 					</div>
 
-					<div className="span-4">
-						<Controller
-							name="count"
-							control={orderControl}
-							render={({field}) => (
-								<NumberFormattedInput
-									id="count"
-									maxLength={9}
-									disableGroupSeparators={false}
-									allowDecimals={false}
-									label="Count"
-									error={orderErrors?.count?.message}
-									{...field}
-								/>
-							)}
-						/>
-					</div>
-
-					<div className="span-4">
-						<Controller
-							control={orderControl}
-							name="weight"
-							render={({field}) => (
-								<NumberFormattedInput
-									id="weight"
-									label={`${t('Item weight')} (${t('kg')})`}
-									disableGroupSeparators={false}
-									maxLength={5}
-									allowDecimals={false}
-									error={orderErrors?.weight?.message}
-									{...field}
-								/>
-							)}
-						/>
-					</div>
-
 					{
 						(orderWatch('material') && productDetail) &&
 						<>
@@ -258,7 +237,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 									render={({field}) => (
 										<NumberFormattedInput
 											id="weight_1x1"
-											label={`${t('Weight')} (${t('gr')})`}
+											label={`${t('Weight 1x1')} (${t('gr')})`}
 											disableGroupSeparators={true}
 											maxLength={5}
 											disabled={true}
@@ -271,6 +250,78 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							</div>
 						</>
 					}
+					{/*<div className="span-4">*/}
+					{/*	<Controller*/}
+					{/*		name="count"*/}
+					{/*		control={control}*/}
+					{/*		render={({field}) => (*/}
+					{/*			<NumberFormattedInput*/}
+					{/*				id="count"*/}
+					{/*				maxLength={9}*/}
+					{/*				disableGroupSeparators={false}*/}
+					{/*				allowDecimals={false}*/}
+					{/*				label="Count"*/}
+					{/*				error={orderErrors?.count?.message}*/}
+					{/*				{...field}*/}
+					{/*			/>*/}
+					{/*		)}*/}
+					{/*	/>*/}
+					{/*</div>*/}
+
+
+					{/*<div className="span-4">*/}
+					{/*	<Controller*/}
+					{/*		control={control}*/}
+					{/*		name="weight"*/}
+					{/*		render={({field}) => (*/}
+					{/*			<NumberFormattedInput*/}
+					{/*				id="weight"*/}
+					{/*				label={`${t('Item weight')} (${t('kg')})`}*/}
+					{/*				disableGroupSeparators={false}*/}
+					{/*				maxLength={5}*/}
+					{/*				allowDecimals={false}*/}
+					{/*				error={orderErrors?.weight?.message}*/}
+					{/*				{...field}*/}
+					{/*			/>*/}
+					{/*		)}*/}
+					{/*	/>*/}
+					{/*</div>*/}
+
+
+					{
+						fields?.map((field, index) => (
+							<div className="span-4" key={field.id}>
+								<Controller
+									control={control}
+									name={`weight.${index}`}
+									render={({field}) => (
+										<NumberFormattedInput
+											id={`weight-${index + 1}`}
+											label={`${index + 1}-${t('Roll weight')?.toLowerCase()} (${t('kg')})`}
+											disableGroupSeparators={false}
+											maxLength={5}
+											allowDecimals={false}
+											error={orderErrors?.weight?.[index]?.message}
+											handleDelete={() => remove(fields.length !== 1 ? index : 1)}
+											{...field}
+										/>
+									)}
+								/>
+							</div>
+						))
+					}
+
+					<div className="span-4" style={{marginTop: '2rem'}}>
+						<Button
+							theme={BUTTON_THEME.PRIMARY}
+							type="button"
+							disabled={orderWatch('weight')?.length !== 0 && orderWatch('weight')?.[(orderWatch('weight')?.length ?? 1) - 1]?.toString()?.trim() === ''}
+							icon={<Plus/>}
+							onClick={() => append('')}
+						>
+							Add roll
+						</Button>
+					</div>
 				</Form>
 			</Card>
 		</>

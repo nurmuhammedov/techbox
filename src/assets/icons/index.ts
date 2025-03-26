@@ -18,6 +18,7 @@ import LargeBox from './LargeBox'
 import RightArrow from './RightArrow'
 import Flex from './Flex'
 import YMO from './YMO'
+import Loader from './Loader'
 
 
 export * from './sidebar'
@@ -28,6 +29,7 @@ export {
 	Flex,
 	Info,
 	RightArrow,
+	Loader,
 	LargeBox,
 	YMO,
 	SelectIcon,

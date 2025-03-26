@@ -1,0 +1,52 @@
+.root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.4rem;
+}
+.root .icon-wrapper {
+  animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+}
+.root .icon {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  display: inline-block;
+  -webkit-animation: spin 0.75s linear infinite;
+  -moz-animation: spin 0.75s linear infinite;
+  animation: spin 0.75s linear infinite;
+}
+.root .icon svg {
+  fill: var(--gray-dark);
+}
+
+.screen {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.background {
+  background: var(--primary-blue);
+}
+.background svg {
+  fill: var(--white) !important;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/*# sourceMappingURL=styles.module.css.map */

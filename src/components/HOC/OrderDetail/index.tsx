@@ -109,7 +109,6 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 												value={getSelectValue(materials, layer)}
 												defaultValue={getSelectValue(materials, layer)}
 											/>
-
 										</div>
 									))
 								}

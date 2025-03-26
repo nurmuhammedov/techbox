@@ -1,17 +1,19 @@
 import {BUTTON_THEME} from 'constants/fields'
 import {activityOptions} from 'helpers/options'
 import {IOrderDetail} from 'interfaces/orders.interface'
+import {IWarehouseDetail as IReadyMadeWarehouseDetail} from 'interfaces/warehouse.interface'
 import {useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate, useParams} from 'react-router-dom'
 import {Column} from 'react-table'
 import {
 	Button,
-	Card, PageTitle,
+	Card, Loader, PageTitle,
 	Pagination,
 	ReactTable
 } from 'components'
 import {
+	useDetail,
 	usePaginatedData,
 	usePagination
 } from 'hooks'
@@ -33,6 +35,11 @@ const Index = () => {
 		page_size: pageSize,
 		warehouse_finished: id
 	})
+
+	const {
+		data: detail,
+		isPending: isDetailLoading
+	} = useDetail<IReadyMadeWarehouseDetail>('accounts/warehouses/finished/', id)
 
 	const columns: Column<IOrderDetail>[] = useMemo(
 		() => [
@@ -80,9 +87,14 @@ const Index = () => {
 		[page, pageSize]
 	)
 
+	if (isDetailLoading && !detail) {
+		return <Loader/>
+	}
+
+
 	return (
 		<>
-			<PageTitle title="Ready-made warehouse">
+			<PageTitle title={`${t('Ready-made warehouse')} - ${detail?.name}`}>
 				<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
 					Back
 				</Button>

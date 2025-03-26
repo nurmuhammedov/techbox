@@ -19,6 +19,7 @@ import {Column} from 'react-table'
 import {Plus} from 'assets/icons'
 import {IBaseMaterialList} from 'interfaces/materials.interface'
 import {decimalToInteger} from 'utilities/common'
+import {getDate} from 'utilities/date'
 
 
 const Index = () => {
@@ -57,22 +58,23 @@ const Index = () => {
 				Header: `${t('Format')} (${t('mm')})`,
 				accessor: (row: IBaseMaterialList) => decimalToInteger(row?.format?.format || '')
 			},
-			{
-				Header: t('Count'),
-				accessor: (row: IBaseMaterialList) => decimalToInteger(row.count || '')
-			},
+			// {
+			// 	Header: t('Count'),
+			// 	accessor: (row: IBaseMaterialList) => decimalToInteger(row.count || '')
+			// },
 			{
 				Header: `${t('Total weight')} (${t('kg')})`,
-				accessor: (row: IBaseMaterialList) => decimalToInteger(row.weight || '')
+				accessor: (row: IBaseMaterialList) => decimalToInteger(row.weight as unknown as string || '')
 			},
 			{
 				Header: `${t('Date')}`,
-				accessor: (row: IBaseMaterialList) => row.created_at || ''
+				accessor: (row: IBaseMaterialList) => getDate(row.created_at) || ''
 			},
 			{
 				Header: t('Actions'),
 				accessor: (row: IBaseMaterialList) => <div className="flex items-start gap-lg">
-					<EditButton onClick={() => navigate(`edit/${row.id}`)}/>
+					<EditButton
+						onClick={() => navigate(`edit/${row.id || 'detail'}?created_at=${row?.created_at}&warehouse=${row?.warehouse?.id}&format=${row?.format?.id}&material=${row?.material?.id}`)}/>
 					<DeleteButton id={row.id}/>
 				</div>
 			}

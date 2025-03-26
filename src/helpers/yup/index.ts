@@ -132,7 +132,7 @@ const materialSchema = yup.object().shape({
 	weight_1x1: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.required('This field is required')
 	// weight: yup
 	// 	.string()
 	// 	.trim()
@@ -186,13 +186,14 @@ const warehouseOrdersSchema = yup.object().shape({
 		.number()
 		.transform(value => value ? Number(value) : null)
 		.required('This field is required'),
-	count: yup
-		.string()
-		.trim()
-		.required('This field is required'),
+	// count: yup
+	// 	.string()
+	// 	.trim()
+	// 	.required('This field is required'),
 	weight: yup
-		.string()
-		.trim()
+		.array()
+		.default(['0'])
+		.of(yup.string().trim().required('This field is required'))
 		.required('This field is required'),
 	format: yup
 		.number()

@@ -1,16 +1,18 @@
 import {BUTTON_THEME} from 'constants/fields'
 import {IBaseMaterialList} from 'interfaces/materials.interface'
+import {IWarehouseDetail} from 'interfaces/warehouse.interface'
 import {useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate, useParams} from 'react-router-dom'
 import {Column} from 'react-table'
 import {
 	Button,
-	Card, PageTitle,
+	Card, Loader, PageTitle,
 	Pagination,
 	ReactTable
 } from 'components'
 import {
+	useDetail,
 	usePaginatedData,
 	usePagination
 } from 'hooks'
@@ -32,6 +34,12 @@ const Index = () => {
 		page_size: pageSize,
 		warehouse: id
 	})
+
+	const {
+		data: detail,
+		isPending: isDetailLoading
+	} = useDetail<IWarehouseDetail>('accounts/warehouses/', id)
+
 
 	const columns: Column<IBaseMaterialList>[] = useMemo(
 		() => [
@@ -58,14 +66,19 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Total weight')} (${t('kg')})`,
-				accessor: (row: IBaseMaterialList) => decimalToInteger(row.weight || '')
+				accessor: (row: IBaseMaterialList) => decimalToInteger(row.weight as unknown as string || '')
 			}
 		],
 		[t, page, pageSize]
 	)
+
+	if (isDetailLoading && !detail) {
+		return <Loader/>
+	}
+
 	return (
 		<>
-			<PageTitle title="Material warehouse">
+			<PageTitle title={`${t('Material warehouse')} - ${detail?.name}`}>
 				<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
 					Back
 				</Button>
