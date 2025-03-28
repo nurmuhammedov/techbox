@@ -96,7 +96,7 @@ const Index = () => {
 						row?.orders?.map((order, index) => (
 							<>
 								<div>
-									{`${order?.width}*${order?.height}*${order?.length}`}
+									{`${order.length}*${order.width}*${order.height}`}
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&

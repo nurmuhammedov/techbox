@@ -15,7 +15,7 @@ import {GroupOrderDetail} from 'components/HOC'
 import {Controller, useFieldArray, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {operatorOrderSchema} from 'helpers/yup'
-import {decimalToInteger, getSelectValue} from 'utilities/common'
+import {decimalToInteger, formatSelectOptions, getSelectValue} from 'utilities/common'
 import {ISelectOption} from 'interfaces/form.interface'
 import {useTranslation} from 'react-i18next'
 import {BUTTON_THEME} from 'constants/fields'
@@ -41,16 +41,12 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 		reset,
 		control,
 		handleSubmit,
+		watch,
 		formState: {errors}
 	} = useForm({
 		mode: 'onTouched',
 		defaultValues: {
-			data: [
-				{
-					material: undefined,
-					weight: ''
-				}
-			],
+			data: [],
 			warehouse: undefined
 		},
 		resolver: yupResolver(operatorOrderSchema)
@@ -75,13 +71,18 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 		} else if (detail) {
 			reset({
 				data: [...new Set(detail?.orders?.flatMap(order => order.layer) || [])].map(item => ({
-					material: Number(item),
+					material: undefined,
+					layer: Number(item),
 					weight: ''
 				}))
 			})
 		}
 	}, [detail])
 
+	const {data: rolls = []} = useData<ISelectOption[]>('products/base-materials/select', !!watch('warehouse') && !!detail?.separated_raw_materials_format?.id, {
+		format_: detail?.separated_raw_materials_format?.id,
+		warehouse: watch('warehouse')
+	})
 
 	return (
 		<>
@@ -97,20 +98,15 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 								handleSubmit((data) => {
 									const newData = {
 										group_order: Number(id),
-										data: data?.data,
-										warehouse: data?.warehouse,
+										data: data?.data?.map(i => ({material: i?.material, weight: i?.weight})),
+										warehouse: data?.warehouse
 									}
 
 									addGroupOrder(newData)
 										.then(() => {
 											navigate(-1)
 											reset({
-												data: [
-													{
-														material: undefined,
-														weight: ''
-													}
-												],
+												data: [],
 												warehouse: undefined
 											})
 										})
@@ -180,18 +176,18 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 							<div className="grid gap-lg span-12" key={field.id}>
 								<div className="span-4">
 									<Controller
-										name={`data.${index}.material`}
+										name={`data.${index}.layer`}
 										control={control}
 										render={({field: {value, ref, onChange, onBlur}}) => (
 											<Select
 												ref={ref}
 												top={true}
-												id={`payment.${index}.material`}
+												id={`payment.${index}.layer`}
 												label={`${t('Layer')}`}
 												options={materials}
 												onBlur={onBlur}
 												isDisabled={true}
-												error={errors?.data?.[index]?.material?.message}
+												error={errors?.data?.[index]?.layer?.message}
 												value={getSelectValue(materials, value)}
 												defaultValue={getSelectValue(materials, value)}
 												handleOnChange={(e) => onChange(e as string)}
@@ -214,6 +210,26 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 												label={`${t('Weight')} (${t('kg')})`}
 												error={errors?.data?.[index]?.weight?.message}
 												{...field}
+											/>
+										)}
+									/>
+								</div>
+
+								<div className="span-4">
+									<Controller
+										name={`data.${index}.material`}
+										control={control}
+										render={({field: {value, ref, onChange, onBlur}}) => (
+											<Select
+												ref={ref}
+												id={`payment.${index}.material`}
+												label={`${t('Roll')}`}
+												options={formatSelectOptions(rolls, watch(`data.${index}.layer`))}
+												onBlur={onBlur}
+												error={errors?.data?.[index]?.material?.message}
+												value={getSelectValue(formatSelectOptions(rolls, watch(`data.${index}.layer`)), value)}
+												defaultValue={getSelectValue(formatSelectOptions(rolls, watch(`data.${index}.layer`)), value)}
+												handleOnChange={(e) => onChange(e as string)}
 											/>
 										)}
 									/>

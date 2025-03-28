@@ -60,7 +60,7 @@ const loginSchema = yup.object().shape({
 const rolesSchema = yup.object().shape({
 	name: yup.string().trim().required('This field is required'),
 	categories: yup.array().required('This field is required'),
-	comment: yup.string().transform(v => !v ? null : v).nullable()
+	comment: yup.string().transform(v => v ? v : '').nullable().optional()
 })
 
 const positionsSchema = yup.object().shape({
@@ -255,7 +255,9 @@ const ordersSchema = yup.object().shape({
 	comment: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.transform(v => v ? v : '')
+		.optional()
+		.nullable(),
 	price: yup
 		.string()
 		.trim()
@@ -263,7 +265,9 @@ const ordersSchema = yup.object().shape({
 	money_paid: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.transform(v => v ? v : '0')
+		.optional()
+		.nullable(),
 	name: yup
 		.string()
 		.trim()
@@ -423,6 +427,7 @@ const operatorOrderSchema = yup.object().shape({
 		.array()
 		.of(yup.object().shape({
 			material: yup.number().required('This field is required'),
+			layer: yup.number().required('This field is required'),
 			weight: yup.string().trim().required('This field is required')
 		}))
 		.required('This field is required')

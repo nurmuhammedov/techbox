@@ -88,7 +88,7 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Sizes')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => `${row.width}*${row.height}*${row.length}`
+				accessor: (row: IOrderDetail) => `${row.length}*${row.width}*${row.height}`
 			},
 			{
 				Header: `${t('Format')} (${t('mm')})`,
@@ -372,7 +372,7 @@ const Index = () => {
 													id="sizes"
 													disabled={true}
 													label={`${t('Sizes')} (${t('mm')})`}
-													value={`${order.width}*${order.height}*${order.length}`}
+													value={`${order.length}*${order.width}*${order.height}`}
 												/>
 											</div>
 											<div className="span-4">
@@ -380,7 +380,7 @@ const Index = () => {
 													id="L"
 													disabled={true}
 													label="L"
-													value={`${order.width + order.height + order.length}`}
+													value={`${2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0)}`}
 												/>
 											</div>
 											<div className="span-4">

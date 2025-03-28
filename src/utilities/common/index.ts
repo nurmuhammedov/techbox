@@ -87,6 +87,13 @@ function areAllFieldsPresent(orders: IOrderDetail[]): boolean {
 	)
 }
 
+const formatSelectOptions = (options: ISelectOption[], id?: number | string): ISelectOption[] => {
+	return options?.filter(option => option?.material == id)?.map(option => ({
+		value: option.value,
+		label: `${decimalToInteger(option?.label)} kg`
+	})) || []
+}
+
 export {
 	noop,
 	isObject,
@@ -97,6 +104,7 @@ export {
 	decimalToPrice,
 	decimalToInteger,
 	modifyObjectField,
+	formatSelectOptions,
 	areAllFieldsPresent,
 	getSelectOptionsByKey
 }

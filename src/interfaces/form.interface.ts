@@ -35,6 +35,7 @@ interface IButton extends ButtonHTMLAttributes<HTMLButtonElement> {
 interface ISelectOption {
 	value: string | number;
 	label: string | number;
+	material?: number;
 	icon?: React.ReactNode;
 }
 

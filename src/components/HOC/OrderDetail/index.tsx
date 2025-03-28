@@ -70,7 +70,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 										id="sizes"
 										disabled={true}
 										label={`${t('Sizes')} (${t('mm')})`}
-										value={`${order.width}*${order.height}*${order.length}`}
+										value={`${order.length}*${order.width}*${order.height}`}
 									/>
 								</div>
 								<div className="span-4">
@@ -78,7 +78,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 										id="L"
 										disabled={true}
 										label="L"
-										value={`${order.width + order.height + order.length}`}
+										value={`${2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0)}`}
 									/>
 								</div>
 								<div className="span-4">

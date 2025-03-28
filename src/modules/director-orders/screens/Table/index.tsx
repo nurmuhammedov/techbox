@@ -73,7 +73,7 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Sizes')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => `${row.width}*${row.height}*${row.length}`
+				accessor: (row: IOrderDetail) => `${row.length}*${row.width}*${row.height}`
 			},
 			{
 				Header: `${t('Format')} (${t('mm')})`,
