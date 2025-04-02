@@ -98,7 +98,7 @@ export const menu: IMenuItem[] = [
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
-			[ROLE_LIST.ADMIN]: 7,
+			[ROLE_LIST.ADMIN]: 8,
 			[ROLE_LIST.EMPLOYEE]: 7
 		}
 	},
@@ -112,7 +112,7 @@ export const menu: IMenuItem[] = [
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
-			[ROLE_LIST.ADMIN]: 8,
+			[ROLE_LIST.ADMIN]: 7,
 			[ROLE_LIST.EMPLOYEE]: 8
 		}
 	},

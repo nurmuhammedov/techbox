@@ -94,7 +94,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 										id="layer"
 										disabled={true}
 										label="Layer"
-										value={order?.layer?.length || 0}
+										value={order?.layer?.length || order?.layer_seller?.length || 0}
 									/>
 								</div>
 

@@ -33,7 +33,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {id} = useParams()
-	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
+	const {data: materials = []} = useData<ISelectOption[]>('products/material-types-seller/select')
 	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
 
 	const {
@@ -53,14 +53,14 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			length: '',
 			box_ear: '',
 			format: undefined,
-			layer: [' '],
+			layer_seller: [' '],
 			logo: undefined
 		}
 	})
 
 	const {fields, append, remove} = useFieldArray({
 		control,
-		name: 'layer' as never
+		name: 'layer_seller' as never
 	})
 
 	const {mutateAsync: addProduct, isPending: isAdding} = useAdd('products/')
@@ -77,7 +77,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				box_ear: data.box_ear,
 				format: data.format,
 				logo: data.logo || undefined,
-				layer: data?.layer || [' ']
+				layer_seller: data?.layer_seller || [' ']
 			})
 		}
 	}, [data, edit, reset])
@@ -251,15 +251,15 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						fields?.map((field, index) => (
 							<div className="span-4" key={field.id}>
 								<Controller
-									name={`layer.${index}`}
+									name={`layer_seller.${index}`}
 									control={control}
 									render={({field: {value, ref, onChange, onBlur}}) => (
 										<Select
-											id={`layer-${index + 1}`}
-											label={`${index + 1}-${t('layer')}`}
+											id={`layer_seller-${index + 1}`}
+											label={`${index + 1}-${t('layer_seller')}`}
 											top={true}
 											options={materials}
-											error={errors?.layer?.[index]?.message}
+											error={errors?.layer_seller?.[index]?.message}
 											handleDelete={() => remove(index)}
 											value={getSelectValue(materials, value)}
 											ref={ref}
@@ -277,7 +277,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Button
 							theme={BUTTON_THEME.PRIMARY}
 							type="button"
-							disabled={watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '' || fields.length >= 5}
+							disabled={watch('layer_seller')?.length !== 0 && watch('layer_seller')?.[(watch('layer_seller')?.length ?? 1) - 1]?.toString()?.trim() === '' || fields.length >= 5}
 							icon={<Plus/>}
 							onClick={() => append('')}
 						>

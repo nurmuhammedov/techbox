@@ -35,7 +35,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const {t} = useTranslation()
 	const {orderId: id = undefined, id: customer = undefined} = useParams()
 	const {data: products = []} = useData<ISelectOption[]>('products/select')
-	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
+	const {data: materials = []} = useData<ISelectOption[]>('products/material-types-seller/select')
 	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
 
 	const {
@@ -62,14 +62,14 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			length: '',
 			box_ear: '',
 			format: undefined,
-			layer: [' '],
+			layer_seller: [' '],
 			logo: undefined
 		}
 	})
 
 	const {fields, append, remove} = useFieldArray({
 		control,
-		name: 'layer' as never
+		name: 'layer_seller' as never
 	})
 
 	const {mutateAsync: addOrder, isPending: isAdding} = useAdd('services/orders')
@@ -96,7 +96,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				box_ear: productDetail.box_ear,
 				format: productDetail.format,
 				logo: productDetail.logo || undefined,
-				layer: productDetail?.layer || [' ']
+				layer_seller: productDetail?.layer_seller || [' ']
 			}))
 		}
 	}, [productDetail, edit])
@@ -118,7 +118,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				box_ear: detail.box_ear,
 				format: detail.format?.id,
 				logo: detail.logo || undefined,
-				layer: detail?.layer || [' ']
+				layer_seller: detail?.layer_seller || [' ']
 			})
 		}
 	}, [detail, edit])
@@ -158,7 +158,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 												length: '',
 												box_ear: '',
 												format: undefined,
-												layer: [],
+												layer_seller: [],
 												logo: undefined
 											})
 											navigate(-1)
@@ -182,7 +182,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 												length: '',
 												box_ear: '',
 												format: undefined,
-												layer: [],
+												layer_seller: [],
 												logo: undefined
 											})
 											navigate(-1)
@@ -349,17 +349,17 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							fields?.map((field, index) => (
 								<div className="span-4" key={field.id}>
 									<Controller
-										name={`layer.${index}`}
+										name={`layer_seller.${index}`}
 										control={control}
 										render={({field: {value, ref, onChange, onBlur}}) => (
 											<Select
-												id={`layer-${index + 1}`}
-												label={`${index + 1}-${t('layer')}`}
+												id={`layer_seller-${index + 1}`}
+												label={`${index + 1}-${t('Layer')?.toLowerCase()}`}
 												options={materials}
 												top={true}
 												handleDelete={() => remove(index)}
 												value={getSelectValue(materials, value)}
-												error={errors?.layer?.[index]?.message}
+												error={errors?.layer_seller?.[index]?.message}
 												ref={ref}
 												onBlur={onBlur}
 												defaultValue={getSelectValue(materials, value)}
@@ -376,7 +376,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							<Button
 								theme={BUTTON_THEME.PRIMARY}
 								type="button"
-								disabled={(watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
+								disabled={(watch('layer_seller')?.length !== 0 && watch('layer_seller')?.[(watch('layer_seller')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
 								icon={<Plus/>}
 								onClick={() => append('')}
 							>

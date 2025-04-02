@@ -33,7 +33,7 @@ const CombinedCreatePage: FC = () => {
 
 
 	const {data: products = []} = useData<ISelectOption[]>('products/select')
-	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
+	const {data: materials = []} = useData<ISelectOption[]>('products/material-types-seller/select')
 	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
 
 	// Customer Form
@@ -79,14 +79,14 @@ const CombinedCreatePage: FC = () => {
 			length: '',
 			box_ear: '',
 			format: undefined,
-			layer: [],
+			layer_seller: [],
 			logo: undefined
 		}
 	})
 
 	const {fields, append, remove} = useFieldArray({
 		control: control,
-		name: 'layer' as never
+		name: 'layer_seller' as never
 	})
 
 	const {
@@ -105,7 +105,7 @@ const CombinedCreatePage: FC = () => {
 				box_ear: productDetail.box_ear,
 				format: productDetail.format,
 				logo: productDetail.logo || undefined,
-				layer: productDetail?.layer || [' ']
+				layer_seller: productDetail?.layer_seller || [' ']
 			}))
 		}
 	}, [productDetail])
@@ -387,17 +387,17 @@ const CombinedCreatePage: FC = () => {
 							fields?.map((field, index) => (
 								<div className="span-4" key={field.id}>
 									<Controller
-										name={`layer.${index}`}
+										name={`layer_seller.${index}`}
 										control={control}
 										render={({field: {value, ref, onChange, onBlur}}) => (
 											<Select
-												id={`layer-${index + 1}`}
+												id={`layer_seller-${index + 1}`}
 												label={`${index + 1}-${t('layer')}`}
 												options={materials}
 												top={true}
 												handleDelete={() => remove(index)}
 												value={getSelectValue(materials, value)}
-												error={errors?.layer?.[index]?.message}
+												error={errors?.layer_seller?.[index]?.message}
 												ref={ref}
 												onBlur={onBlur}
 												defaultValue={getSelectValue(materials, value)}
@@ -414,7 +414,7 @@ const CombinedCreatePage: FC = () => {
 							<Button
 								theme={BUTTON_THEME.PRIMARY}
 								type="button"
-								disabled={(watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
+								disabled={(watch('layer_seller')?.length !== 0 && watch('layer_seller')?.[(watch('layer_seller')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
 								icon={<Plus/>}
 								onClick={() => append('')}
 							>

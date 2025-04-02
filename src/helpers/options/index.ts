@@ -59,7 +59,8 @@ const activityOptions: ISelectOption[] = [
 	{value: 'fleksa', label: 'Flex'},
 	{value: 'ymo2', label: 'YMO'},
 	{value: 'tikish', label: 'Sewing'},
-	{value: 'yelimlash', label: 'Gluing'}
+	{value: 'yelimlash', label: 'Gluing'},
+	{value: 'is_last', label: 'Warehouse'}
 ]
 
 export {

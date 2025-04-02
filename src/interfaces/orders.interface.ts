@@ -22,6 +22,7 @@ interface IOrderDetail {
 	length: string;
 	size: string;
 	layer: string[];
+	layer_seller: string[];
 	layers: number;
 	box_ear: string;
 
@@ -64,8 +65,8 @@ interface IOrderDetail {
 	l3: string;
 	l4: string;
 	l5: string;
-	activity?: 'gofra' | 'ym01' | 'fleksa' | 'tikish' | 'yelimlash';
-	stages_to_passed?: 'gofra' | 'ym01' | 'fleksa' | 'tikish' | 'yelimlash';
+	activity?: 'gofra' | 'ym01' | 'fleksa' | 'tikish' | 'yelimlash' | 'is_last';
+	stages_to_passed?: 'gofra' | 'ym01' | 'fleksa' | 'tikish' | 'yelimlash' | 'is_last';
 }
 
 

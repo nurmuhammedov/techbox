@@ -94,11 +94,17 @@ const formatSelectOptions = (options: ISelectOption[], id?: number | string): IS
 	})) || []
 }
 
+const getLayerSellerArray = (layer: string[] | null | undefined) => {
+	const length = layer?.length ?? 0
+	return length > 0 ? new Array(length).fill(undefined) : []
+}
+
 export {
 	noop,
 	isObject,
 	noopAsync,
 	joinArray,
+	getLayerSellerArray,
 	cleanParams,
 	getSelectValue,
 	decimalToPrice,

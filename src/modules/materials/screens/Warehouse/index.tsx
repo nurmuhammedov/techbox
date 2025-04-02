@@ -1,8 +1,8 @@
 import {
 	Button,
 	Card,
-	DeleteButton,
-	DeleteModal,
+	// DeleteButton,
+	// DeleteModal,
 	EditButton,
 	PageTitle,
 	Pagination,
@@ -27,7 +27,7 @@ const Index = () => {
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
 
-	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IBaseMaterialList[]>(
+	const {data, totalPages, isPending: isLoading} = usePaginatedData<IBaseMaterialList[]>(
 		`products/base-materials`,
 		{
 			page: page,
@@ -58,10 +58,6 @@ const Index = () => {
 				Header: `${t('Format')} (${t('mm')})`,
 				accessor: (row: IBaseMaterialList) => decimalToInteger(row?.format?.format || '')
 			},
-			// {
-			// 	Header: t('Count'),
-			// 	accessor: (row: IBaseMaterialList) => decimalToInteger(row.count || '')
-			// },
 			{
 				Header: `${t('Total weight')} (${t('kg')})`,
 				accessor: (row: IBaseMaterialList) => decimalToInteger(row.weight as unknown as string || '')
@@ -75,7 +71,7 @@ const Index = () => {
 				accessor: (row: IBaseMaterialList) => <div className="flex items-start gap-lg">
 					<EditButton
 						onClick={() => navigate(`edit/${row.id || 'detail'}?created_at=${row?.created_at}&warehouse=${row?.warehouse?.id}&format=${row?.format?.id}&material=${row?.material?.id}`)}/>
-					<DeleteButton id={row.id}/>
+					{/*<DeleteButton id={row.id}/>*/}
 				</div>
 			}
 		],
@@ -97,7 +93,7 @@ const Index = () => {
 				/>
 			</Card>
 			<Pagination totalPages={totalPages}/>
-			<DeleteModal endpoint="products/base-materials/" onDelete={() => refetch()}/>
+			{/*<DeleteModal endpoint="products/base-materials/" onDelete={() => refetch()}/>*/}
 		</>
 	)
 }

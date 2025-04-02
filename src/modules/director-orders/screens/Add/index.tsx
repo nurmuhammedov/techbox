@@ -32,13 +32,14 @@ import {
 import {ISelectOption} from 'interfaces/form.interface'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {ISearchParams} from 'interfaces/params.interface'
+import AddOrderModal from 'modules/director-orders/screens/AddOrderModal'
 import {useEffect, useMemo, useState} from 'react'
 import {Controller, useFieldArray, useForm} from 'react-hook-form'
 import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {showMessage} from 'utilities/alert'
-import {areAllFieldsPresent, decimalToInteger, getSelectValue} from 'utilities/common'
+import {areAllFieldsPresent, decimalToInteger, getLayerSellerArray, getSelectValue} from 'utilities/common'
 import {getDate} from 'utilities/date'
 
 
@@ -52,6 +53,7 @@ const Index = () => {
 	const {orders} = useTypedSelector(state => state.orders)
 	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
 	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
+	const {data: sellerMaterials = []} = useData<ISelectOption[]>('products/material-types-seller/select')
 
 	const {data, totalPages, isPending: isLoading} = usePaginatedData<IOrderDetail[]>(
 		`/services/orders-with-detail`,
@@ -96,7 +98,7 @@ const Index = () => {
 			},
 			{
 				Header: t('Layer'),
-				accessor: (row: IOrderDetail) => row.layer?.length || 0
+				accessor: (row: IOrderDetail) => row.layer?.length || row.layer_seller?.length || 0
 			},
 			{
 				Header: t('Actions'),
@@ -110,7 +112,7 @@ const Index = () => {
 								setIsAdding(false)
 							}}
 						>
-							Add
+							Choose
 						</Button>
 					</div>
 				)
@@ -143,6 +145,7 @@ const Index = () => {
 			ymo2: false,
 			tikish: false,
 			yelimlash: false,
+			is_last: false,
 			has_addition: false
 		}
 	})
@@ -153,6 +156,7 @@ const Index = () => {
 		register: registerEdit,
 		reset: resetEdit,
 		setValue: setValueEdit,
+		watch: watchEdit,
 		control,
 		formState: {errors: editErrors}
 	} = useForm({
@@ -171,7 +175,8 @@ const Index = () => {
 			fleksa: false,
 			ymo2: false,
 			tikish: false,
-			yelimlash: false
+			yelimlash: false,
+			is_last: false
 		},
 		resolver: yupResolver(temporaryOrderSchema)
 	})
@@ -198,7 +203,7 @@ const Index = () => {
 	useEffect(() => {
 		if (detail && updateId) {
 			resetEdit({
-				layer: detail?.layer || [],
+				layer: detail?.layer || getLayerSellerArray(detail?.layer_seller) || [],
 				deadline: getDate(detail?.deadline || ''),
 				l0: detail?.l0 || '',
 				l1: detail?.l1 || '',
@@ -211,7 +216,8 @@ const Index = () => {
 				fleksa: detail?.stages_to_passed?.includes('fleksa'),
 				ymo2: detail?.stages_to_passed?.includes('ymo2'),
 				tikish: detail?.stages_to_passed?.includes('tikish'),
-				yelimlash: detail?.stages_to_passed?.includes('yelimlash')
+				yelimlash: detail?.stages_to_passed?.includes('yelimlash'),
+				is_last: detail?.stages_to_passed?.includes('is_last')
 			})
 		}
 	}, [detail, updateId])
@@ -249,13 +255,12 @@ const Index = () => {
 						ymo2: false,
 						tikish: false,
 						yelimlash: false,
+						is_last: false,
 						has_addition: false
 					})
 				})
 		}
 	}
-
-	console.log(errors)
 
 
 	return (
@@ -314,9 +319,14 @@ const Index = () => {
 						<div className="span-4 flex gap-md align-start justify-end">
 							{
 								!isAdding ?
-									<Button onClick={() => setIsAdding(true)}>
-										Add order
-									</Button> :
+									<div className="flex flex-col gap-sm">
+										<Button onClick={() => setIsAdding(true)}>
+											Choose order
+										</Button>
+										<Button onClick={() => addParams({modal: 'addOrder'})}>
+											Add order
+										</Button>
+									</div> :
 									<Button
 										theme={BUTTON_THEME.DANGER}
 										onClick={() => setIsAdding(false)}
@@ -384,37 +394,15 @@ const Index = () => {
 												/>
 											</div>
 											<div className="span-4">
-												<Input
+												<Select
 													id="format"
 													disabled={true}
 													label="Format"
-													value={order?.format?.name}
+													options={formats}
+													value={getSelectValue(formats, order?.format?.id)}
+													defaultValue={getSelectValue(formats, order?.format?.id)}
 												/>
 											</div>
-											<div className="span-4">
-												<Input
-													id="layer"
-													disabled={true}
-													label="Layer"
-													value={order?.layer?.length || 0}
-												/>
-											</div>
-
-											{
-												order?.layer?.map((layer, index) => (
-													<div className="span-4" key={index}>
-														<Select
-															id={`layer-${index + 1}`}
-															label={`${index + 1}-${t('layer')}`}
-															options={materials}
-															disabled={true}
-															value={getSelectValue(materials, layer)}
-															defaultValue={getSelectValue(materials, layer)}
-														/>
-
-													</div>
-												))
-											}
 
 											<div className="span-4">
 												<Input
@@ -432,6 +420,43 @@ const Index = () => {
 													label="Deadline"
 													value={getDate(order?.deadline || '')}
 												/>
+											</div>
+
+											<div className="span-4">
+												<Input
+													id="layer"
+													disabled={true}
+													label="Layer"
+													value={order?.layer?.length || order?.layer_seller?.length || 0}
+												/>
+											</div>
+
+											<div className="span-12 grid gap-md">
+												{
+													!order?.layer?.length ? order?.layer_seller?.map((layer, index) => (
+														<div className="span-4" key={index}>
+															<Select
+																id={`layer-${index + 1}`}
+																label={`${index + 1}-${t('layer')}`}
+																options={sellerMaterials}
+																disabled={true}
+																value={getSelectValue(sellerMaterials, layer)}
+																defaultValue={getSelectValue(sellerMaterials, layer)}
+															/>
+														</div>
+													)) : order?.layer?.map((layer, index) => (
+														<div className="span-4" key={index}>
+															<Select
+																id={`layer-${index + 1}`}
+																label={`${index + 1}-${t('layer')}`}
+																options={materials}
+																disabled={true}
+																value={getSelectValue(materials, layer)}
+																defaultValue={getSelectValue(materials, layer)}
+															/>
+														</div>
+													))
+												}
 											</div>
 
 											<div className="grid span-12" style={{marginTop: '.75rem'}}>
@@ -564,6 +589,17 @@ const Index = () => {
 														{t(activityOptions[5].label as string)}
 													</p>
 												</div>
+												<div className="span-4 flex gap-md align-end justify-start">
+													<input
+														id={activityOptions[6].value as string}
+														type="checkbox"
+														className="checkbox"
+														checked={order?.stages_to_passed?.includes(activityOptions[6].value as string) || false}
+													/>
+													<p className="checkbox-label">
+														{t(activityOptions[6].label as string)}
+													</p>
+												</div>
 											</div>
 										</div>
 
@@ -665,11 +701,13 @@ const Index = () => {
 													{...register('gofra')}
 													onChange={(e) => {
 														if (e.target.checked) {
+															setValue('gofra', true)
 															setValue('ymo1', true)
 															setValue('fleksa', false)
 															setValue('ymo2', false)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
+															setValue('is_last', false)
 														} else {
 															setValue('gofra', false)
 															setValue('ymo1', false)
@@ -677,6 +715,7 @@ const Index = () => {
 															setValue('ymo2', false)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
+															setValue('is_last', false)
 														}
 													}}
 												/>
@@ -694,8 +733,18 @@ const Index = () => {
 														if (e.target.checked) {
 															setValue('gofra', true)
 															setValue('ymo1', true)
+															setValue('fleksa', false)
+															setValue('ymo2', false)
+															setValue('tikish', false)
+															setValue('yelimlash', false)
+															setValue('is_last', false)
 														} else {
-															setValue('ymo1', true)
+															setValue('ymo1', false)
+															setValue('fleksa', false)
+															setValue('ymo2', false)
+															setValue('tikish', false)
+															setValue('yelimlash', false)
+															setValue('is_last', true)
 														}
 													}}
 												/>
@@ -713,14 +762,17 @@ const Index = () => {
 														if (e.target.checked) {
 															setValue('gofra', true)
 															setValue('ymo1', true)
+															setValue('fleksa', true)
 															setValue('ymo2', true)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
+															setValue('is_last', false)
 														} else {
 															setValue('fleksa', false)
 															setValue('ymo2', false)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
+															setValue('is_last', false)
 														}
 													}}
 												/>
@@ -740,8 +792,14 @@ const Index = () => {
 															setValue('ymo1', true)
 															setValue('fleksa', true)
 															setValue('ymo2', true)
+															setValue('tikish', false)
+															setValue('yelimlash', false)
+															setValue('is_last', false)
 														} else {
-															setValue('ymo2', true)
+															setValue('ymo2', false)
+															setValue('tikish', false)
+															setValue('yelimlash', false)
+															setValue('is_last', true)
 														}
 													}}
 												/>
@@ -761,9 +819,13 @@ const Index = () => {
 															setValue('ymo1', true)
 															setValue('fleksa', true)
 															setValue('ymo2', true)
+															setValue('tikish', true)
 															setValue('yelimlash', false)
+															setValue('is_last', true)
 														} else {
 															setValue('tikish', false)
+															setValue('yelimlash', true)
+															setValue('is_last', true)
 														}
 													}}
 												/>
@@ -784,8 +846,12 @@ const Index = () => {
 															setValue('fleksa', true)
 															setValue('ymo2', true)
 															setValue('tikish', false)
+															setValue('yelimlash', true)
+															setValue('is_last', true)
 														} else {
+															setValue('tikish', true)
 															setValue('yelimlash', false)
+															setValue('is_last', true)
 														}
 													}}
 												/>
@@ -793,24 +859,25 @@ const Index = () => {
 													{t(activityOptions[5].label as string)}
 												</p>
 											</div>
+											<div className="span-4 flex gap-md align-end justify-start">
+												<input
+													id={activityOptions[6].value as string}
+													type="checkbox"
+													className="checkbox"
+													{...register('is_last')}
+													onChange={() => {
+														if (watch('is_last')) {
+															setValue('is_last', true)
+														} else {
+															setValue('is_last', false)
+														}
+													}}
+												/>
+												<p className="checkbox-label">
+													{t(activityOptions[6].label as string)}
+												</p>
+											</div>
 										</div>
-
-										{/*<div className="span-12">*/}
-										{/*	<Controller*/}
-										{/*		name="deadline"*/}
-										{/*		control={controlAdd}*/}
-										{/*		render={({field}) => (*/}
-										{/*			<MaskInput*/}
-										{/*				id="deadline"*/}
-										{/*				label="Deadline"*/}
-										{/*				placeholder={getDate()}*/}
-										{/*				mask="99.99.9999"*/}
-										{/*				error={errors?.deadline?.message}*/}
-										{/*				{...field}*/}
-										{/*			/>*/}
-										{/*		)}*/}
-										{/*	/>*/}
-										{/*</div>*/}
 									</Card>
 								</div>
 							}
@@ -949,11 +1016,13 @@ const Index = () => {
 								{...registerEdit('gofra')}
 								onChange={(e) => {
 									if (e.target.checked) {
+										setValueEdit('gofra', true)
 										setValueEdit('ymo1', true)
 										setValueEdit('fleksa', false)
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
+										setValueEdit('is_last', false)
 									} else {
 										setValueEdit('gofra', false)
 										setValueEdit('ymo1', false)
@@ -961,6 +1030,7 @@ const Index = () => {
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
+										setValueEdit('is_last', false)
 									}
 								}}
 							/>
@@ -978,8 +1048,18 @@ const Index = () => {
 									if (e.target.checked) {
 										setValueEdit('gofra', true)
 										setValueEdit('ymo1', true)
+										setValueEdit('fleksa', false)
+										setValueEdit('ymo2', false)
+										setValueEdit('tikish', false)
+										setValueEdit('yelimlash', false)
+										setValueEdit('is_last', false)
 									} else {
-										setValueEdit('ymo1', true)
+										setValueEdit('ymo1', false)
+										setValueEdit('fleksa', false)
+										setValueEdit('ymo2', false)
+										setValueEdit('tikish', false)
+										setValueEdit('yelimlash', false)
+										setValueEdit('is_last', true)
 									}
 								}}
 							/>
@@ -997,14 +1077,17 @@ const Index = () => {
 									if (e.target.checked) {
 										setValueEdit('gofra', true)
 										setValueEdit('ymo1', true)
+										setValueEdit('fleksa', true)
 										setValueEdit('ymo2', true)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
+										setValueEdit('is_last', false)
 									} else {
 										setValueEdit('fleksa', false)
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
+										setValueEdit('is_last', false)
 									}
 								}}
 							/>
@@ -1024,8 +1107,14 @@ const Index = () => {
 										setValueEdit('ymo1', true)
 										setValueEdit('fleksa', true)
 										setValueEdit('ymo2', true)
+										setValueEdit('tikish', false)
+										setValueEdit('yelimlash', false)
+										setValueEdit('is_last', false)
 									} else {
-										setValueEdit('ymo2', true)
+										setValueEdit('ymo2', false)
+										setValueEdit('tikish', false)
+										setValueEdit('yelimlash', false)
+										setValueEdit('is_last', true)
 									}
 								}}
 							/>
@@ -1045,9 +1134,13 @@ const Index = () => {
 										setValueEdit('ymo1', true)
 										setValueEdit('fleksa', true)
 										setValueEdit('ymo2', true)
+										setValueEdit('tikish', true)
 										setValueEdit('yelimlash', false)
+										setValueEdit('is_last', true)
 									} else {
 										setValueEdit('tikish', false)
+										setValueEdit('yelimlash', true)
+										setValueEdit('is_last', true)
 									}
 								}}
 							/>
@@ -1068,13 +1161,35 @@ const Index = () => {
 										setValueEdit('fleksa', true)
 										setValueEdit('ymo2', true)
 										setValueEdit('tikish', false)
+										setValueEdit('yelimlash', true)
+										setValueEdit('is_last', true)
 									} else {
+										setValueEdit('tikish', true)
 										setValueEdit('yelimlash', false)
+										setValueEdit('is_last', true)
 									}
 								}}
 							/>
 							<p className="checkbox-label">
 								{t(activityOptions[5].label as string)}
+							</p>
+						</div>
+						<div className="span-4 flex gap-md align-end justify-start">
+							<input
+								id={activityOptions[6].value as string}
+								type="checkbox"
+								className="checkbox"
+								{...registerEdit('is_last')}
+								onChange={() => {
+									if (watchEdit('is_last')) {
+										setValueEdit('is_last', true)
+									} else {
+										setValueEdit('is_last', false)
+									}
+								}}
+							/>
+							<p className="checkbox-label">
+								{t(activityOptions[6].label as string)}
 							</p>
 						</div>
 					</div>
@@ -1106,7 +1221,7 @@ const Index = () => {
 				</Form>
 			</EditModal>
 
-
+			<AddOrderModal/>
 		</>
 	)
 }

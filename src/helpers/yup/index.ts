@@ -133,14 +133,13 @@ const materialSchema = yup.object().shape({
 		.string()
 		.trim()
 		.required('This field is required')
-	// weight: yup
-	// 	.string()
-	// 	.trim()
-	// 	.required('This field is required')
-	// format: yup
-	// 	.string()
-	// 	.trim()
-	// 	.required('This field is required')
+})
+
+const sellerMaterialSchema = yup.object().shape({
+	name: yup
+		.string()
+		.trim()
+		.required('This field is required')
 })
 
 const formatSchema = yup.object().shape({
@@ -186,15 +185,22 @@ const warehouseOrdersSchema = yup.object().shape({
 		.number()
 		.transform(value => value ? Number(value) : null)
 		.required('This field is required'),
-	// count: yup
-	// 	.string()
-	// 	.trim()
-	// 	.required('This field is required'),
 	weight: yup
 		.array()
-		.default(['0'])
-		.of(yup.string().trim().required('This field is required'))
-		.required('This field is required'),
+		.default([{
+			made_in: null,
+			name: '',
+			supplier: null,
+			weight: undefined
+		}])
+		.of(
+			yup.object({
+				made_in: yup.string().trim().optional().nullable().transform(value => value ? value : null),
+				supplier: yup.string().trim().optional().nullable().transform(value => value ? value : null),
+				name: yup.string().trim().required('This field is required'),
+				weight: yup.string().trim().required('This field is required')
+			})
+		).required('This field is required'),
 	format: yup
 		.number()
 		.required('This field is required')
@@ -236,7 +242,7 @@ const productSchema = yup.object().shape({
 		})
 		.nullable()
 		.notRequired(),
-	layer: yup
+	layer_seller: yup
 		.array()
 		.of(yup.string().trim().required('This field is required'))
 		.nullable()
@@ -245,6 +251,71 @@ const productSchema = yup.object().shape({
 
 // ORDERS
 const ordersSchema = yup.object().shape({
+	product: yup
+		.number()
+		.nullable(),
+	count: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	comment: yup
+		.string()
+		.trim()
+		.transform(v => v ? v : '')
+		.optional()
+		.nullable(),
+	price: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	money_paid: yup
+		.string()
+		.trim()
+		.transform(v => v ? v : '0')
+		.optional()
+		.nullable(),
+	name: yup
+		.string()
+		.trim()
+		.required('This field is required')
+		.max(100, 'Must not exceed 100 characters'),
+	width: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	height: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	length: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	box_ear: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	format: yup
+		.number()
+		.required('This field is required'),
+	logo: yup
+		.object<IFIle>()
+		.shape({
+			name: yup.string().nullable(),
+			id: yup.number().nullable(),
+			file: yup.string().nullable()
+		})
+		.nullable()
+		.notRequired(),
+	layer_seller: yup
+		.array()
+		.of(yup.string().trim().required('This field is required'))
+		.nullable()
+		.transform(value => value?.length > 0 ? value : null),
+	deadline: dateField.required('This field is required')
+})
+
+const ordersSchema2 = yup.object().shape({
 	product: yup
 		.number()
 		.nullable(),
@@ -317,6 +388,7 @@ const groupOrdersSchema = yup.object().shape({
 	ymo2: yup.boolean().nullable(),
 	tikish: yup.boolean().nullable(),
 	yelimlash: yup.boolean().nullable(),
+	is_last: yup.boolean().nullable(),
 	x: yup
 		.string()
 		.trim()
@@ -377,16 +449,13 @@ const groupOrdersSchema = yup.object().shape({
 })
 
 const temporaryOrderSchema = yup.object().shape({
-	// count: yup
-	// 	.string()
-	// 	.trim()
-	// 	.required('This field is required'),
 	gofra: yup.boolean().nullable(),
 	ymo1: yup.boolean().nullable(),
 	fleksa: yup.boolean().nullable(),
 	ymo2: yup.boolean().nullable(),
 	tikish: yup.boolean().nullable(),
 	yelimlash: yup.boolean().nullable(),
+	is_last: yup.boolean().nullable(),
 	l0: yup
 		.string()
 		.trim()
@@ -492,6 +561,7 @@ export {
 	semiFinishedWarehouseSchema,
 	flexOperatorsOrderSchema,
 	confirmPasswordSchema,
+	sellerMaterialSchema,
 	warehouseOrdersSchema,
 	operatorsOrderSchema,
 	temporaryOrderSchema,
@@ -501,6 +571,7 @@ export {
 	positionsSchema,
 	warehouseSchema,
 	employeeSchema,
+	ordersSchema2,
 	materialSchema,
 	productSchema,
 	clientsSchema,
