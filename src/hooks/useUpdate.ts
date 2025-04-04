@@ -1,5 +1,5 @@
-import {useMutation} from '@tanstack/react-query'
 import {CommonService} from 'services/common.service'
+import {useMutation} from '@tanstack/react-query'
 import {showMessage} from 'utilities/alert'
 
 
@@ -8,7 +8,7 @@ const useDynamicUpdateMutation = <TVariables, TData, TError>(
 	id?: string | number | boolean | null,
 	method: 'put' | 'patch' = 'put',
 	successMessage: string = 'Updated successfully',
-	errorMessage: string = 'Internal server error'
+	errorMessage: string = ''
 ) => {
 	return useMutation<TData, TError, TVariables>({
 		mutationFn: async (data: TVariables) => {
@@ -24,7 +24,9 @@ const useDynamicUpdateMutation = <TVariables, TData, TError>(
 		},
 		onSuccess: () => showMessage(successMessage, 'success'),
 		onError: () => {
-			showMessage(errorMessage, 'error')
+			if (errorMessage) {
+				showMessage(errorMessage, 'error')
+			}
 		}
 	})
 }

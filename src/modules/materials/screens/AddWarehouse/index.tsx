@@ -33,7 +33,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
 	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
 	const {data: warehouses = []} = useData<ISelectOption[]>('accounts/warehouses-select')
-
+	const { data: countries = [] } = useData<ISelectOption[]>('products/countries/select');
+	const { data: suppliers = [] } = useData<ISelectOption[]>('products/suppliers/select');
 
 	const {
 		handleSubmit: orderHandleSubmit,
@@ -297,25 +298,64 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 											)}
 										/>
 									</div>
+									{/*<div className="span-3">*/}
+									{/*	<Input*/}
+									{/*		id={`${index}.roll.supplier`}*/}
+									{/*		type={FIELD.TEXT}*/}
+									{/*		label={`${t('Supplier')}`}*/}
+									{/*		disabled={edit}*/}
+									{/*		error={orderErrors?.weight?.[index]?.supplier?.message}*/}
+									{/*		{...orderRegister(`weight.${index}.supplier`)}*/}
+									{/*	/>*/}
+									{/*</div>*/}
+									{/*<div className="span-3">*/}
+									{/*	<Input*/}
+									{/*		id={`${index}.roll.made_in`}*/}
+									{/*		type={FIELD.TEXT}*/}
+									{/*		label={`${t('Country')}`}*/}
+									{/*		disabled={edit}*/}
+									{/*		error={orderErrors?.weight?.[index]?.made_in?.message}*/}
+									{/*		handleDelete={!edit ? () => remove(index) : undefined}*/}
+									{/*		{...orderRegister(`weight.${index}.made_in`)}*/}
+									{/*	/>*/}
+									{/*</div>*/}
 									<div className="span-3">
-										<Input
-											id={`${index}.roll.supplier`}
-											type={FIELD.TEXT}
-											label={`${t('Supplier')}`}
-											disabled={edit}
-											error={orderErrors?.weight?.[index]?.supplier?.message}
-											{...orderRegister(`weight.${index}.supplier`)}
+										<Controller
+											name={`weight.${index}.supplier`}
+											control={control}
+											render={({ field: { value, ref, onChange, onBlur } }) => (
+												<Select
+													id={`supplier-${index}`}
+													label={t('Supplier')}
+													options={suppliers}
+													error={orderErrors?.weight?.[index]?.supplier?.message}
+													value={getSelectValue(suppliers, value)}
+													ref={ref}
+													isDisabled={edit}
+													onBlur={onBlur}
+													handleOnChange={(e) => onChange(e as string)}
+												/>
+											)}
 										/>
 									</div>
 									<div className="span-3">
-										<Input
-											id={`${index}.roll.made_in`}
-											type={FIELD.TEXT}
-											label={`${t('Country')}`}
-											disabled={edit}
-											error={orderErrors?.weight?.[index]?.made_in?.message}
-											handleDelete={!edit ? () => remove(index) : undefined}
-											{...orderRegister(`weight.${index}.made_in`)}
+										<Controller
+											name={`weight.${index}.made_in`}
+											control={control}
+											render={({ field: { value, ref, onChange, onBlur } }) => (
+												<Select
+													id={`made_in-${index}`}
+													label={t('Country')}
+													options={countries}
+													error={orderErrors?.weight?.[index]?.made_in?.message}
+													value={getSelectValue(countries, value)}
+													ref={ref}
+													isDisabled={edit}
+													onBlur={onBlur}
+													handleDelete={!edit ? () => remove(index) : undefined}
+													handleOnChange={(e) => onChange(e as string)}
+												/>
+											)}
 										/>
 									</div>
 								</React.Fragment>

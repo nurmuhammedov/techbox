@@ -16,7 +16,7 @@ interface IBaseMaterialList {
 	material: IMaterialItemDetail;
 	count: string;
 	created_at: string;
-	weight: { made_in: string, supplier: string, weight: string }[];
+	weight: { made_in: number, supplier: number, weight: string, name: string }[];
 	format: {
 		id: number;
 		format: string;

@@ -142,6 +142,20 @@ const sellerMaterialSchema = yup.object().shape({
 		.required('This field is required')
 })
 
+export const countrySchema = yup.object().shape({
+	name: yup
+		.string()
+		.trim()
+		.required('This field is required')
+})
+
+export const supplierSchema = yup.object().shape({
+	name: yup
+		.string()
+		.trim()
+		.required('This field is required')
+})
+
 const formatSchema = yup.object().shape({
 	format: yup
 		.string()
@@ -195,8 +209,8 @@ const warehouseOrdersSchema = yup.object().shape({
 		}])
 		.of(
 			yup.object({
-				made_in: yup.string().trim().optional().nullable().transform(value => value ? value : null),
-				supplier: yup.string().trim().optional().nullable().transform(value => value ? value : null),
+				made_in: yup.number().optional().nullable().transform(value => value ? value : null),
+				supplier: yup.number().optional().nullable().transform(value => value ? value : null),
 				name: yup.string().trim().required('This field is required'),
 				weight: yup.string().trim().required('This field is required')
 			})
@@ -377,7 +391,29 @@ const ordersSchema2 = yup.object().shape({
 		.of(yup.string().trim().required('This field is required'))
 		.nullable()
 		.transform(value => value?.length > 0 ? value : null),
-	deadline: dateField.required('This field is required')
+	deadline: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.test('isValidDate', 'The entered date is not valid', (value) => {
+			if (!value) return true
+
+			if (value.length !== 10) return false
+
+			const [year, month, day] = value.split('-').map(Number)
+			const date = new Date(year, month - 1, day)
+			return (
+				date.getFullYear() === year &&
+				date.getMonth() === month - 1 &&
+				date.getDate() === day
+			)
+		})
+		.transform((value) => {
+			if (!value) return null
+			const [day, month, year] = value.split('.')
+			return `${year}-${month}-${day}`
+		})
 })
 
 const groupOrdersSchema = yup.object().shape({
