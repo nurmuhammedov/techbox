@@ -67,6 +67,10 @@ const Index = () => {
 			{
 				Header: `${t('Total weight')} (${t('kg')})`,
 				accessor: (row: IBaseMaterialList) => decimalToInteger(row.weight as unknown as string || '')
+			},
+			{
+				Header: `${t('Roll')} ${t('Count')?.toLowerCase()}`,
+				accessor: (row: IBaseMaterialList) => row?.count
 			}
 		],
 		[t, page, pageSize]

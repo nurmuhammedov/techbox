@@ -30,7 +30,7 @@
   --gray-deep: #333;
   --blue-deep: #343C6A;
   --red: #F00;
-  --yellow-bright: #FFCC47;
+  --yellow-bright: #F7630C; /* #FFCC47 */
   --green-bright: #2CA800;
   --primary-gradient: linear-gradient(180deg, #146DF3 0%, #02298A 84.79%, #021B79 100%);
 }
