@@ -9,6 +9,7 @@ import {
 	usePaginatedData,
 	usePagination, useSearchParams
 } from 'hooks'
+import {IOrderDetail} from 'interfaces/orders.interface'
 import {useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
@@ -45,14 +46,24 @@ const Index = () => {
 					textAlign: 'center'
 				}
 			},
-			// {
-			// 	Header: t('Order number'),
-			// 	accessor: (row: IGroupOrder) => `#${row.id}`,
-			// 	style: {
-			// 		width: '14rem',
-			// 		textAlign: 'start'
-			// 	}
-			// },
+			{
+				Header: t('Order number'),
+				accessor: (row: IGroupOrder) => <div>
+					{
+						row?.orders?.map((order: IOrderDetail, index) => (
+							<>
+								<div>
+									#{order.id}
+								</div>
+								{
+									row?.orders?.length !== index + 1 &&
+									<br/>
+								}
+							</>
+						))
+					}
+				</div>
+			},
 			{
 				Header: t('Company name'),
 				accessor: (row: IGroupOrder) => <div>

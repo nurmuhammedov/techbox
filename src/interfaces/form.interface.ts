@@ -36,6 +36,7 @@ interface ISelectOption {
 	value: string | number;
 	label: string | number;
 	material?: number;
+	weight_1x1?: string;
 	icon?: React.ReactNode;
 }
 

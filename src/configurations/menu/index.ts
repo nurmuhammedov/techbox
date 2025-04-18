@@ -157,7 +157,7 @@ export const menu: IMenuItem[] = [
 	},
 	{
 		id: 'operator',
-		label: 'Operator orders',
+		label: 'Orders',
 		href: '/operator-orders',
 		icon: User,
 		allowedRoles: [
@@ -218,6 +218,18 @@ export const menu: IMenuItem[] = [
 		order: {
 			[ROLE_LIST.ADMIN]: 16,
 			[ROLE_LIST.EMPLOYEE]: 16
+		}
+	},
+	{
+		id: 'company_operations',
+		label: 'Company operations',
+		href: '/company-operations',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.EMPLOYEE]: 17
 		}
 	}
 ]

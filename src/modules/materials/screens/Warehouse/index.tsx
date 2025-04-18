@@ -1,23 +1,11 @@
-import {
-	Button,
-	Card,
-	// DeleteButton,
-	// DeleteModal,
-	EditButton,
-	PageTitle,
-	Pagination,
-	ReactTable
-} from 'components'
-import {
-	usePaginatedData,
-	usePagination
-} from 'hooks'
+import {Plus} from 'assets/icons'
+import {Button, Card, EditButton, PageTitle, Pagination, ReactTable} from 'components'
+import {usePaginatedData, usePagination} from 'hooks'
+import {IBaseMaterialList} from 'interfaces/materials.interface'
 import {useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
-import {Plus} from 'assets/icons'
-import {IBaseMaterialList} from 'interfaces/materials.interface'
 import {decimalToInteger} from 'utilities/common'
 import {getDate} from 'utilities/date'
 
@@ -61,6 +49,10 @@ const Index = () => {
 			{
 				Header: `${t('Total weight')} (${t('kg')})`,
 				accessor: (row: IBaseMaterialList) => decimalToInteger(row.weight as unknown as string || '')
+			},
+			{
+				Header: `${t('Roll')} ${t('Count')}`,
+				accessor: (row: IBaseMaterialList) => row.count
 			},
 			{
 				Header: `${t('Date')}`,

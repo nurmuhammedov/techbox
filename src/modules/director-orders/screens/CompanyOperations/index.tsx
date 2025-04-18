@@ -1,6 +1,5 @@
 import {
-	Button,
-	Card, DeleteButton, DeleteModal,
+	Card,
 	EditButton,
 	FilterInput,
 	Pagination,
@@ -8,7 +7,6 @@ import {
 	Tab
 } from 'components'
 import {
-	useActions,
 	usePaginatedData,
 	usePagination, useSearchParams
 } from 'hooks'
@@ -19,17 +17,16 @@ import {Column} from 'react-table'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {getDate} from 'utilities/date'
 import {decimalToInteger} from 'utilities/common'
-import {activityOptions, statusOptions} from 'helpers/options'
+import {activityOptions, companyOperationsOptions} from 'helpers/options'
 
 
 const Index = () => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
-	const {addOrder} = useActions()
-	const {paramsObject: {status = statusOptions[0].value, search = '', company = ''}} = useSearchParams()
+	const {paramsObject: {status = companyOperationsOptions[0].value, search = '', company = ''}} = useSearchParams()
 
-	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IOrderDetail[]>(
+	const {data, totalPages, isPending: isLoading} = usePaginatedData<IOrderDetail[]>(
 		`/services/orders-with-detail`,
 		{
 			page: page,
@@ -79,7 +76,7 @@ const Index = () => {
 				Header: `${t('Format')} (${t('mm')})`,
 				accessor: (row: IOrderDetail) => decimalToInteger(row.format?.name)
 			},
-			...status == statusOptions[1].value ? [
+			...status == companyOperationsOptions[0].value ? [
 				{
 					Header: t('Status'),
 					accessor: (row: IOrderDetail) => t(activityOptions?.find(i => row.activity === i?.value)?.label?.toString() || '')
@@ -90,34 +87,15 @@ const Index = () => {
 					accessor: (row: IOrderDetail) => row?.count_last || 0
 				}
 			],
-			...status == statusOptions[0].value ? [
-				{
-					Header: t('Actions'),
-					accessor: (row: IOrderDetail) => (
-						<div className="flex items-start gap-lg">
-							<Button
-								mini={true}
-								onClick={() => {
-									addOrder({...row})
-									navigate(`add`)
-								}}
-							>
-								Choosing
-							</Button>
-							<DeleteButton id={row.id}/>
-						</div>
-					)
-				}
-			] : [
-				{
-					Header: t('Actions'),
-					accessor: (row: IOrderDetail) => (
-						<div className="flex items-start gap-lg">
-							<EditButton onClick={() => navigate(`process/${row.id}`)}/>
-						</div>
-					)
-				}
-			]
+			{
+				Header: t('Actions'),
+				accessor: (row: IOrderDetail) => (
+					<div className="flex items-start gap-lg">
+						<EditButton onClick={() => navigate(`process/${row.id}`)}/>
+					</div>
+				)
+			}
+
 		],
 		[page, pageSize, status]
 	)
@@ -126,7 +104,7 @@ const Index = () => {
 	return (
 		<>
 			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
-				<Tab query="status" fallbackValue={statusOptions[0].value} tabs={statusOptions}/>
+				<Tab query="status" fallbackValue={companyOperationsOptions[0].value} tabs={companyOperationsOptions}/>
 			</div>
 			<Card>
 				<div className="flex gap-lg" style={{padding: '.8rem .8rem .3rem .8rem'}}>
@@ -148,7 +126,6 @@ const Index = () => {
 				/>
 			</Card>
 			<Pagination totalPages={totalPages}/>
-			<DeleteModal endpoint="services/orders/" onDelete={() => refetch()}/>
 		</>
 	)
 }

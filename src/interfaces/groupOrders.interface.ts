@@ -13,10 +13,17 @@ interface IGroupOrder {
 	x?: number;
 	y?: number;
 
+
+	pallet_count_after_gofra: string
+	pallet_count_after_flex: string
+	pallet_count_after_gluing: string
+	pallet_count_after_bet: string
+
 	deadline: string;
 	count: string;
 	invalid_material_in_processing: string;
 	warehouse_same_finished: IIDName;
+	pallet_warehouse: IIDName;
 	percentage_after_processing: string;
 	mkv_after_processing: string;
 
@@ -39,7 +46,7 @@ interface IGroupOrder {
 
 	stages_to_passed?: 'gofra' | 'ym01' | 'fleksa' | 'tikish' | 'yelimlash';
 
-	weight_material: { material: IIDName, weight: string }[]
+	weight_material: { material: number[], weight: string, layer: number }[];
 }
 
 export type {

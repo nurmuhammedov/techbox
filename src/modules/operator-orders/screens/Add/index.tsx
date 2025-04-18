@@ -15,7 +15,7 @@ import {GroupOrderDetail} from 'components/HOC'
 import {Controller, useFieldArray, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {operatorOrderSchema} from 'helpers/yup'
-import {decimalToInteger, formatSelectOptions, getSelectValue} from 'utilities/common'
+import {calculateTotalMaterialUsageInKg, decimalToInteger, formatSelectOptions, getSelectValue} from 'utilities/common'
 import {ISelectOption} from 'interfaces/form.interface'
 import {useTranslation} from 'react-i18next'
 import {BUTTON_THEME} from 'constants/fields'
@@ -27,6 +27,7 @@ import {IGroupOrder} from 'interfaces/groupOrders.interface'
 
 interface IProperties {
 	retrieve?: boolean
+	corrugation?: boolean
 	detail?: IGroupOrder
 }
 
@@ -64,24 +65,45 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 			reset({
 				warehouse: detail?.warehouse?.id,
 				data: detail?.weight_material?.map(item => ({
-					material: item?.material?.id || undefined,
+					material: item?.material || [],
+					layer: item?.layer || undefined,
 					weight: item?.weight || ''
 				})) || []
 			})
 		} else if (detail) {
+			const initialLayers = (detail?.orders?.[0]?.layer || []).map(Number)
+			const seen: number[] = [...initialLayers]
+
+			const restLayers = detail?.orders?.slice(1)
+				.flatMap(order => (order.layer || []).map(Number)) || []
+
+			const finalLayers = [...initialLayers]
+
+			for (const layer of restLayers) {
+				if (!seen.includes(layer)) {
+					seen.push(layer)
+					finalLayers.push(layer)
+				}
+			}
+
 			reset({
-				data: [...new Set(detail?.orders?.flatMap(order => order.layer) || [])].map(item => ({
+				data: finalLayers.map(item => ({
 					material: undefined,
-					layer: Number(item),
-					weight: ''
+					layer: item,
+					weight: calculateTotalMaterialUsageInKg(detail?.orders || [], materials?.find(i => i?.value == item)?.weight_1x1 as unknown as number || 0, detail?.has_addition, {
+						x: detail?.x || 0,
+						y: detail?.y || 0,
+						count: Number(detail?.count || 0)
+					})
 				}))
 			})
 		}
 	}, [detail])
 
-	const {data: rolls = []} = useData<ISelectOption[]>('products/base-materials/select', !!watch('warehouse') && !!detail?.separated_raw_materials_format?.id, {
+	const {data: rolls = []} = useData<ISelectOption[]>(retrieve ? 'services/weight-material-list-by-group-order' : 'products/base-materials/select', !!watch('warehouse') && !!detail?.separated_raw_materials_format?.id, {
 		format_: detail?.separated_raw_materials_format?.id,
-		warehouse: watch('warehouse')
+		warehouse: watch('warehouse'),
+		group_order: detail ? id : null
 	})
 
 	return (
@@ -98,7 +120,11 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 								handleSubmit((data) => {
 									const newData = {
 										group_order: Number(id),
-										data: data?.data?.map(i => ({material: i?.material, weight: i?.weight})),
+										data: data?.data?.map(i => ({
+											material: i?.material,
+											weight: i?.weight,
+											layer: i?.layer
+										})),
 										warehouse: data?.warehouse
 									}
 
@@ -122,15 +148,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 			<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
 				<Form className="grid  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 					<div className="grid gap-lg span-12">
-
-						{/*<div className="span-4">*/}
-						{/*	<Input*/}
-						{/*		id="count"*/}
-						{/*		disabled={true}*/}
-						{/*		label={`${t('Total')} (${t('Count')?.toLowerCase()})`}*/}
-						{/*		value={decimalToInteger(detail?.orders?.reduce((acc, order) => acc + Number(order.count || 0), 0) || 0)}*/}
-						{/*	/>*/}
-						{/*</div>*/}
 
 						<div className="span-4">
 							<Input
@@ -159,7 +176,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 										id="warehouse"
 										label="Material warehouse"
 										options={warehouses}
-										disabled={retrieve}
+										isDisabled={retrieve}
 										error={errors?.warehouse?.message}
 										value={getSelectValue(warehouses, value)}
 										ref={ref}
@@ -183,7 +200,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 												ref={ref}
 												top={true}
 												id={`payment.${index}.layer`}
-												label={`${t('Layer')}`}
+												label={`${index + 1}-${t('Layer')?.toString()?.toLowerCase()}`}
 												options={materials}
 												onBlur={onBlur}
 												isDisabled={true}
@@ -226,6 +243,8 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 												label={`${t('Roll')}`}
 												options={formatSelectOptions(rolls, watch(`data.${index}.layer`))}
 												onBlur={onBlur}
+												isMulti={true}
+												isDisabled={retrieve}
 												error={errors?.data?.[index]?.material?.message}
 												value={getSelectValue(formatSelectOptions(rolls, watch(`data.${index}.layer`)), value)}
 												defaultValue={getSelectValue(formatSelectOptions(rolls, watch(`data.${index}.layer`)), value)}

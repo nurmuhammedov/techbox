@@ -42,7 +42,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 			<>
 				<WrappedComponent {...(props as P)} detail={order}/>
 				<div className={classNames(styles.root, 'grid gap-lg')} style={{marginTop: '1rem'}}>
-					<div className="grid gap-lg span-12">
+					<div className="grid gap-lg span-6">
 						<Card
 							screen={false}
 							style={{padding: '1.5rem'}}
@@ -259,6 +259,17 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 										/>
 										<p className="checkbox-label">
 											{t(activityOptions[5].label as string)}
+										</p>
+									</div>
+									<div className="span-4 flex gap-md align-end justify-start">
+										<input
+											id={activityOptions[6].value as string}
+											type="checkbox"
+											className="checkbox"
+											checked={order?.stages_to_passed?.includes(activityOptions[6].value as string) || false}
+										/>
+										<p className="checkbox-label">
+											{t(activityOptions[6].label as string)}
 										</p>
 									</div>
 								</div>

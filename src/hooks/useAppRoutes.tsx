@@ -26,7 +26,7 @@ import {
 	Process,
 	WarehouseDetail,
 	SemiFinishedDetail,
-	FinishedDetail
+	FinishedDetail, CompanyOperations
 } from 'modules'
 import {Navigate, useRoutes} from 'react-router-dom'
 import {routeByRole} from 'utilities/authentication'
@@ -157,11 +157,29 @@ function useAppRoutes() {
 				},
 				{
 					path: 'edit/:id',
-					element: <EditOperatorOrder/>
+					element: <EditOperatorOrder corrugation={true}/>
 				},
 				{
 					path: 'detail/:id',
 					element: <EditOperatorOrder retrieve={true}/>
+				}
+			]
+		},
+		{
+			id: 'company_operations',
+			path: 'company-operations',
+			children: [
+				{
+					index: true,
+					element: <CompanyOperations/>
+				},
+				{
+					path: 'add',
+					element: <AddDirectorOrder/>
+				},
+				{
+					path: 'process/:id',
+					element: <Process/>
 				}
 			]
 		},

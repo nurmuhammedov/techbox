@@ -9,9 +9,11 @@ import AlertItem from './AlertItem'
 import EditModal from './EditModal'
 import Wrapper from './Wrapper'
 import Diagram from './Diagram'
+import PageIcon from './PageIcon'
 import Router from './Router'
 import Layout from './Layout'
 import Loader from './LoaderBlock'
+import CutDiagram from './CutDiagram'
 import Alert from './Alert'
 import Card from './Card'
 import Form from './Form'
@@ -27,8 +29,10 @@ export {
 	DeleteModal,
 	Pagination,
 	ReactTable,
+	PageIcon,
 	FilterInput,
 	EditButton,
+	CutDiagram,
 	PageTitle,
 	AlertItem,
 	EditModal,

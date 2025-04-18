@@ -1,7 +1,7 @@
 import {yupResolver} from '@hookform/resolvers/yup'
-import {Button, Card, Form, Input, NumberFormattedInput, PageTitle, Select} from 'components'
+import {Corrugation} from 'assets/icons'
+import {Button, Card, Form, Input, NumberFormattedInput, PageIcon, PageTitle, Select} from 'components'
 import {GroupOrderDetail} from 'components/HOC'
-import OrderDetail from 'components/HOC/OrderDetail'
 import {BUTTON_THEME} from 'constants/fields'
 import {booleanOptions} from 'helpers/options'
 import {operatorsOrderSchema} from 'helpers/yup'
@@ -26,11 +26,13 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 	const {t} = useTranslation()
 	const navigate = useNavigate()
 	const {data: warehouses = []} = useData<ISelectOption[]>((type === 'corrugation' || type === 'flex') ? 'accounts/warehouses/same-finished-select' : 'accounts/warehouses/finished-select')
+	const {data: finished = []} = useData<ISelectOption[]>('accounts/warehouses/finished-select')
 
 	const {
 		reset,
 		control,
 		register,
+		watch,
 		handleSubmit,
 		formState: {errors}
 	} = useForm({
@@ -39,10 +41,11 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 			percentage: '',
 			weight: '',
 			area: '',
-			warehouse: undefined,
+			pallet: '0',
 			data: [
 				{
 					order: undefined,
+					warehouse: undefined,
 					count: ''
 				}
 			]
@@ -67,8 +70,9 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 					percentage: detail?.percentage_after_processing,
 					weight: detail?.invalid_material_in_processing,
 					area: detail?.mkv_after_processing,
-					warehouse: detail?.warehouse_same_finished?.id,
-					data: detail?.count_after_processing ? detail?.count_after_processing : []
+					pallet: detail?.pallet_count_after_gofra,
+					warehouse: detail?.pallet_warehouse?.id,
+					data: detail?.count_after_processing?.length ? detail?.count_after_processing : []
 				})
 			} else if (type === 'flex') {
 				reset({
@@ -118,7 +122,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 		}
 	}, [detail])
 
-
 	return (
 		<>
 			<PageTitle title="Send order">
@@ -137,7 +140,8 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 											invalid_material_in_processing: data?.weight,
 											percentage_after_processing: data?.percentage,
 											mkv_after_processing: data?.area,
-											warehouse_same_finished: data?.warehouse,
+											pallet_warehouse: data?.warehouse,
+											pallet_count_after_gofra: data?.pallet,
 											count_after_processing: data?.data
 										}
 									} else if (type === 'flex') {
@@ -178,6 +182,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 												data: [
 													{
 														order: undefined,
+														warehouse: undefined,
 														count: ''
 													}
 												]
@@ -195,14 +200,9 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 			<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
 				<Form className="grid  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 					<div className="grid gap-lg span-12">
-						{/*<div className="span-4">*/}
-						{/*	<Input*/}
-						{/*		id="totoal"*/}
-						{/*		disabled={true}*/}
-						{/*		label={`${t('Total')} (${t('Count')?.toLowerCase()})`}*/}
-						{/*		value={decimalToInteger(detail?.orders?.reduce((acc, order) => acc + Number(order.count || 0), 0) || 0)}*/}
-						{/*	/>*/}
-						{/*</div>*/}
+						<PageIcon className="span-2">
+							<Corrugation/>
+						</PageIcon>
 						<div className="span-4">
 							<Input
 								id="format"
@@ -221,26 +221,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 								defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], detail?.has_addition)}
 							/>
 						</div>
-						<div className="span-4">
-							<Controller
-								name="warehouse"
-								control={control}
-								render={({field: {value, ref, onChange, onBlur}}) => (
-									<Select
-										id="warehouse"
-										label="Semi-finished warehouse"
-										options={warehouses}
-										disabled={retrieve}
-										error={errors?.warehouse?.message}
-										value={getSelectValue(warehouses, value)}
-										ref={ref}
-										onBlur={onBlur}
-										defaultValue={getSelectValue(warehouses, value)}
-										handleOnChange={(e) => onChange(e as string)}
-									/>
-								)}
-							/>
-						</div>
 					</div>
 					{
 						fields?.map((field, index) => (
@@ -251,6 +231,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 										disabled={true}
 										label="Order number"
 										{...register(`data.${index}.order`)}
+										value={`#${watch(`data.${index}.order`) as unknown as string || ''}`}
 									/>
 								</div>
 
@@ -272,9 +253,78 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 										)}
 									/>
 								</div>
+
+								{
+									!retrieve &&
+									<div className="span-4">
+										<Controller
+											name={`data.${index}.warehouse`}
+											control={control}
+											render={({field: {value, ref, onChange, onBlur}}) => (
+												<Select
+													id="warehouse"
+													label={detail?.orders?.find(i => i.id == watch(`data.${index}.order`))?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? 'Ready-made warehouse' : 'Semi-finished warehouse'}
+													options={detail?.orders?.find(i => i.id == watch(`data.${index}.order`))?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses}
+													disabled={retrieve}
+													error={errors?.data?.[index]?.warehouse?.message}
+													value={getSelectValue(detail?.orders?.find(i => i.id == watch(`data.${index}.order`))?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses, value)}
+													ref={ref}
+													onBlur={onBlur}
+													defaultValue={getSelectValue(detail?.orders?.find(i => i.id == watch(`data.${index}.order`))?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses, value)}
+													handleOnChange={(e) => onChange(e as string)}
+												/>
+											)}
+										/>
+									</div>
+								}
 							</div>
 						))
 					}
+
+					{
+						detail?.has_addition &&
+						<div className="grid gap-lg span-12">
+							<div className="span-4">
+								<Controller
+									control={control}
+									name={`pallet`}
+									render={({field}) => (
+										<NumberFormattedInput
+											id={`pallet`}
+											maxLength={12}
+											disableGroupSeparators={false}
+											allowDecimals={true}
+											disabled={retrieve}
+											label="Pallet count"
+											error={errors?.pallet?.message}
+											{...field}
+										/>
+									)}
+								/>
+							</div>
+							<div className="span-4">
+								<Controller
+									name="warehouse"
+									control={control}
+									render={({field: {value, ref, onChange, onBlur}}) => (
+										<Select
+											id="warehouse"
+											label={detail?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? 'Ready-made warehouse' : 'Semi-finished warehouse'}
+											options={detail?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses}
+											disabled={retrieve}
+											error={errors?.warehouse?.message}
+											value={getSelectValue(detail?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses, value)}
+											ref={ref}
+											onBlur={onBlur}
+											defaultValue={getSelectValue(detail?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses, value)}
+											handleOnChange={(e) => onChange(e as string)}
+										/>
+									)}
+								/>
+							</div>
+						</div>
+					}
+
 					<div className="grid gap-lg span-12">
 						<div className="span-4">
 							<Controller
@@ -339,10 +389,5 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 
 
 const HOF = GroupOrderDetail<IProperties>(Index)
-const OrderHOF = OrderDetail<IProperties>(Index)
 
 export default HOF
-
-export {
-	OrderHOF
-}

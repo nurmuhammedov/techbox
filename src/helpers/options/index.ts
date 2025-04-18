@@ -22,16 +22,24 @@ const roleOptions: ISelectOption[] = [
 	{value: 'orders', label: 'Orders'},
 	{value: 'materials', label: 'Materials'},
 	{value: 'leader', label: 'Director orders'},
-	{value: 'operator', label: 'Operator orders'},
+	{value: 'operator', label: 'Factory manager orders'},
 	{value: 'operator_gofra', label: 'Corrugation orders'},
 	{value: 'operator_fleksa', label: 'Flex orders'},
 	{value: 'operator_tikish', label: 'Sewing orders'},
+	{value: 'company_operations', label: 'Company operations'},
 	{value: 'operator_yelimlash', label: 'Gluing orders'}
 ]
 
 
 const statusOptions: ISelectOption[] = [
 	{value: 'new', label: 'New orders'},
+	// {value: 'in_line', label: 'Queued orders'},
+	{value: 'in_proces', label: 'In progress orders'},
+	{value: 'finished', label: 'Finished orders'}
+]
+
+const companyOperationsOptions: ISelectOption[] = [
+	// {value: 'new', label: 'New orders'},
 	// {value: 'in_line', label: 'Queued orders'},
 	{value: 'in_proces', label: 'In progress orders'},
 	{value: 'finished', label: 'Finished orders'}
@@ -63,12 +71,21 @@ const activityOptions: ISelectOption[] = [
 	{value: 'is_last', label: 'Warehouse'}
 ]
 
+const cutOptions: ISelectOption[] = [
+	{value: 'total', label: '1', material: 1},
+	{value: 'half', label: '1/2', material: 2},
+	{value: 'one_third', label: '1/3', material: 3},
+	{value: 'one_fourth', label: '1/4', material: 4}
+]
+
 export {
 	flexOperatorsStatusOptions,
+	companyOperationsOptions,
 	operatorsStatusOptions,
 	paginationOptions,
 	activityOptions,
 	booleanOptions,
 	statusOptions,
+	cutOptions,
 	roleOptions
 }

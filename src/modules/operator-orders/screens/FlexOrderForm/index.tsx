@@ -1,5 +1,6 @@
 import {yupResolver} from '@hookform/resolvers/yup'
-import {Button, Card, Form, NumberFormattedInput, PageTitle, Select, OrderDetailHOC} from 'components'
+import {Corrugation, Flex} from 'assets/icons'
+import {Button, Card, Form, NumberFormattedInput, PageTitle, Select, OrderDetailHOC, PageIcon} from 'components'
 import {BUTTON_THEME} from 'constants/fields'
 import {flexOperatorsOrderSchema} from 'helpers/yup'
 import {useData, useUpdate} from 'hooks'
@@ -22,8 +23,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'flex'}) => {
 	const {id} = useParams()
 	const {t} = useTranslation()
 	const navigate = useNavigate()
-	const {data: warehouses = []} = useData<ISelectOption[]>(type === 'flex' ? 'accounts/warehouses/same-finished-select' : 'accounts/warehouses/finished-select')
-
+	const {data: warehouses = []} = useData<ISelectOption[]>((type === 'flex' && !(!detail?.stages_to_passed?.includes('ymo2') && detail?.stages_to_passed?.includes('is_last'))) ? 'accounts/warehouses/same-finished-select' : 'accounts/warehouses/finished-select')
 	const {
 		reset,
 		control,
@@ -102,7 +102,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'flex'}) => {
 										newData = {
 											invalid_material_in_flex: data?.weight,
 											percentage_after_flex: data?.percentage,
-											warehouse_same_finished: data?.warehouse,
+											warehouse: data?.warehouse,
 											mkv_after_flex: data?.area,
 											count_after_flex: data?.count
 										}
@@ -123,7 +123,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'flex'}) => {
 											count_after_gluing: data?.count
 										}
 									}
-
 
 									update(newData)
 										.then(() => {
@@ -147,7 +146,9 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'flex'}) => {
 			</PageTitle>
 			<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
 				<Form className="grid  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
-
+					<PageIcon className="span-2">
+						{type == 'flex' ? <Flex/> : <Corrugation/>}
+					</PageIcon>
 					<div className="span-4">
 						<Controller
 							name="warehouse"
@@ -155,7 +156,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'flex'}) => {
 							render={({field: {value, ref, onChange, onBlur}}) => (
 								<Select
 									id="warehouse"
-									label={type === 'flex' ? `Semi-finished warehouse` : 'Ready-made warehouse'}
+									label={(type === 'flex' && !(!detail?.stages_to_passed?.includes('ymo2') && detail?.stages_to_passed?.includes('is_last'))) ? `Semi-finished warehouse` : 'Ready-made warehouse'}
 									options={warehouses}
 									disabled={retrieve}
 									error={errors?.warehouse?.message}

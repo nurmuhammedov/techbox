@@ -2,7 +2,7 @@ import {yupResolver} from '@hookform/resolvers/yup'
 import classNames from 'classnames'
 import {
 	Button,
-	Card,
+	Card, CutDiagram, DeleteButton, DeleteModal,
 	Diagram,
 	EditModal,
 	Form,
@@ -16,7 +16,7 @@ import {
 } from 'components'
 import styles from 'components/HOC/GroupOrderDetail/styles.module.scss'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {activityOptions, booleanOptions, statusOptions} from 'helpers/options'
+import {activityOptions, booleanOptions, cutOptions, statusOptions} from 'helpers/options'
 import {groupOrdersSchema, temporaryOrderSchema} from 'helpers/yup'
 import {
 	useActions,
@@ -32,6 +32,7 @@ import {
 import {ISelectOption} from 'interfaces/form.interface'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {ISearchParams} from 'interfaces/params.interface'
+import {interceptor} from 'libraries/index'
 import AddOrderModal from 'modules/director-orders/screens/AddOrderModal'
 import {useEffect, useMemo, useState} from 'react'
 import {Controller, useFieldArray, useForm} from 'react-hook-form'
@@ -39,14 +40,20 @@ import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {showMessage} from 'utilities/alert'
-import {areAllFieldsPresent, decimalToInteger, getLayerSellerArray, getSelectValue} from 'utilities/common'
+import {
+	areAllFieldsPresent,
+	decimalToInteger,
+	getLayerSellerArray,
+	getSelectValue,
+	hasDifferentLayers
+} from 'utilities/common'
 import {getDate} from 'utilities/date'
 
 
 const Index = () => {
 	const {t} = useTranslation()
 	const navigate = useNavigate()
-	const {removeParams, addParams, paramsObject: {updateId = undefined}} = useSearchParams()
+	const {removeParams, addParams, paramsObject: {updateId = undefined, deleteId = undefined}} = useSearchParams()
 	const {deleteOrder, addOrder, updateOrder, clearOrders} = useActions()
 	const [isAdding, setIsAdding] = useState<boolean>(false)
 	const {page, pageSize} = usePagination()
@@ -55,7 +62,7 @@ const Index = () => {
 	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
 	const {data: sellerMaterials = []} = useData<ISelectOption[]>('products/material-types-seller/select')
 
-	const {data, totalPages, isPending: isLoading} = usePaginatedData<IOrderDetail[]>(
+	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IOrderDetail[]>(
 		`/services/orders-with-detail`,
 		{
 			page: page,
@@ -114,6 +121,7 @@ const Index = () => {
 						>
 							Choose
 						</Button>
+						<DeleteButton id={row.id}/>
 					</div>
 				)
 			}
@@ -129,6 +137,8 @@ const Index = () => {
 		reset,
 		setValue,
 		watch,
+		trigger,
+		setFocus,
 		formState: {errors}
 	} = useForm({
 		resolver: yupResolver(groupOrdersSchema),
@@ -163,6 +173,8 @@ const Index = () => {
 		mode: 'onTouched',
 		defaultValues: {
 			deadline: '',
+			count_entered_leader: '',
+			piece: undefined,
 			layer: [],
 			l0: '',
 			l1: '',
@@ -204,7 +216,9 @@ const Index = () => {
 		if (detail && updateId) {
 			resetEdit({
 				layer: detail?.layer || getLayerSellerArray(detail?.layer_seller) || [],
-				deadline: getDate(detail?.deadline || ''),
+				deadline: detail?.deadline ? getDate(detail?.deadline) : '',
+				count_entered_leader: detail?.count_entered_leader || detail?.count || '0',
+				piece: detail?.piece?.toString() || cutOptions[0].value?.toString() || undefined,
 				l0: detail?.l0 || '',
 				l1: detail?.l1 || '',
 				l2: detail?.l2 || '',
@@ -227,6 +241,8 @@ const Index = () => {
 			showMessage('Select at least one order', 'error')
 		} else if (areAllFieldsPresent(orders)) {
 			showMessage('Draw a complete diagram of all selected orders', 'error')
+		} else if (hasDifferentLayers(orders)) {
+			showMessage('All selected orders must have the same layers', 'error')
 		} else {
 			const newData = {
 				separated_raw_materials_format: data?.separated_raw_materials_format,
@@ -321,10 +337,10 @@ const Index = () => {
 								!isAdding ?
 									<div className="flex flex-col gap-sm">
 										<Button onClick={() => setIsAdding(true)}>
-											Choose order
+											Add order
 										</Button>
 										<Button onClick={() => addParams({modal: 'addOrder'})}>
-											Add order
+											Standing order
 										</Button>
 									</div> :
 									<Button
@@ -389,8 +405,8 @@ const Index = () => {
 												<Input
 													id="L"
 													disabled={true}
-													label="L"
-													value={`${2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0)}`}
+													label={`L (${t('mm')})`}
+													value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))}`}
 												/>
 											</div>
 											<div className="span-4">
@@ -406,24 +422,6 @@ const Index = () => {
 
 											<div className="span-4">
 												<Input
-													id="count"
-													disabled={true}
-													label="Count"
-													value={decimalToInteger(order?.count || 0)}
-												/>
-											</div>
-
-											<div className="span-4">
-												<Input
-													id="count"
-													disabled={true}
-													label="Deadline"
-													value={getDate(order?.deadline || '')}
-												/>
-											</div>
-
-											<div className="span-4">
-												<Input
 													id="layer"
 													disabled={true}
 													label="Layer"
@@ -431,33 +429,109 @@ const Index = () => {
 												/>
 											</div>
 
-											<div className="span-12 grid gap-md">
-												{
-													!order?.layer?.length ? order?.layer_seller?.map((layer, index) => (
-														<div className="span-4" key={index}>
-															<Select
-																id={`layer-${index + 1}`}
-																label={`${index + 1}-${t('layer')}`}
-																options={sellerMaterials}
-																disabled={true}
-																value={getSelectValue(sellerMaterials, layer)}
-																defaultValue={getSelectValue(sellerMaterials, layer)}
-															/>
-														</div>
-													)) : order?.layer?.map((layer, index) => (
-														<div className="span-4" key={index}>
-															<Select
-																id={`layer-${index + 1}`}
-																label={`${index + 1}-${t('layer')}`}
-																options={materials}
-																disabled={true}
-																value={getSelectValue(materials, layer)}
-																defaultValue={getSelectValue(materials, layer)}
-															/>
-														</div>
-													))
-												}
+											{
+												!order?.layer?.length ? order?.layer_seller?.map((layer, index) => (
+													<div className="span-4" key={index}>
+														<Select
+															id={`layer-${index + 1}`}
+															label={`${index + 1}-${t('layer')}`}
+															options={sellerMaterials}
+															disabled={true}
+															value={getSelectValue(sellerMaterials, layer)}
+															defaultValue={getSelectValue(sellerMaterials, layer)}
+														/>
+													</div>
+												)) : order?.layer?.map((layer, index) => (
+													<div className="span-4" key={index}>
+														<Select
+															id={`layer-${index + 1}`}
+															label={`${index + 1}-${t('layer')}`}
+															options={materials}
+															disabled={true}
+															value={getSelectValue(materials, layer)}
+															defaultValue={getSelectValue(materials, layer)}
+														/>
+													</div>
+												))
+											}
+
+
+											<div className="span-4">
+												<Input
+													id="count"
+													disabled={true}
+													label="Deadline"
+													value={order?.deadline ? getDate(order?.deadline) : ''}
+													placeholder=" "
+												/>
 											</div>
+
+											<div className="span-4">
+												<Input
+													id="count"
+													disabled={true}
+													label="Production count"
+													value={decimalToInteger(order?.count_entered_leader || order?.count || 0)}
+												/>
+											</div>
+
+											<div className="span-4">
+												<Select
+													id="piece"
+													disabled={true}
+													label="Cut"
+													options={cutOptions}
+													value={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
+													defaultValue={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
+												/>
+											</div>
+
+											{
+												(order?.piece && order?.piece != 'total') &&
+												<div className="grid span-12" style={{marginTop: '.75rem'}}>
+													<CutDiagram
+														sections={cutOptions?.find(i => i.value == order?.piece)?.material || 2}
+														length={
+															<Input
+																id="length"
+																mini={true}
+																disabled={true}
+																value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))} mm`}
+																placeholder=" "
+															/>
+														}
+														count={
+															<Input
+																id="l0"
+																mini={true}
+																disabled={true}
+																value={`${Math.ceil((order?.count_entered_leader || order?.count || 0) as unknown as number / (cutOptions?.find(i => i.value == order?.piece)?.material || 2))} tadan`}
+																placeholder=" "
+															/>
+														}
+														l1={
+															<Input
+																id="l1"
+																mini={true}
+																disabled={true}
+																value={`${formats?.find(i => i?.value == order?.format?.id)?.label || ''} mm`}
+																placeholder="mm"
+															/>
+														}
+														x={
+															<Input
+																id="l3"
+																mini={true}
+																disabled={true}
+																value={`${formats?.find(i => i?.value == watch('separated_raw_materials_format'))?.label || ''} mm`}
+																placeholder=" "
+															/>
+														}
+														className="span-12"
+													/>
+												</div>
+
+											}
 
 											<div className="grid span-12" style={{marginTop: '.75rem'}}>
 												<Diagram
@@ -517,6 +591,8 @@ const Index = () => {
 													}
 													className="span-12"
 												/>
+
+
 											</div>
 
 											<div
@@ -614,7 +690,14 @@ const Index = () => {
 											>
 												Delete
 											</Button>
-											<Button onClick={() => {addParams({updateId: order.id, modal: 'edit'})}}>
+											<Button onClick={async () => {
+												const isValid = await trigger(['separated_raw_materials_format'])
+												if (!isValid) {
+													setFocus('separated_raw_materials_format')
+												} else {
+													addParams({updateId: order.id, modal: 'edit'})
+												}
+											}}>
 												Edit
 											</Button>
 										</div>
@@ -896,7 +979,9 @@ const Index = () => {
 						handleEditSubmit((data) => {
 							const newData = {
 								deadline: data?.deadline,
+								count_entered_leader: data?.count_entered_leader,
 								layer: data?.layer,
+								piece: data?.piece,
 								l0: data?.l0,
 								l1: data?.l1,
 								l2: data?.l2,
@@ -908,7 +993,12 @@ const Index = () => {
 
 							update(newData).then(async (data) => {
 								const newData = data as unknown as IOrderDetail
-								updateOrder({...newData, id: +(updateId || 0)})
+								updateOrder({
+									...newData,
+									format: {id: newData.format as unknown as number, name: '', format: ''},
+									// deadline: newData?.deadline ? getDate(detail?.deadline) : '',
+									id: +(updateId || 0)
+								})
 								resetEdit({deadline: '', layer: [], l0: '', l1: '', l2: '', l3: '', l4: '', l5: ''})
 								removeParams('modal', 'updateId')
 							})
@@ -934,7 +1024,30 @@ const Index = () => {
 												ref={ref}
 												onBlur={onBlur}
 												defaultValue={getSelectValue(materials, value)}
-												handleOnChange={(e) => onChange(e as string)}
+												handleOnChange={(e) => {
+													if (e) {
+														interceptor
+															.get('services/get-weight-material-by-warehouse', {
+																params: {
+																	material: e,
+																	format_: watch('separated_raw_materials_format')
+																}
+															})
+															.then((res) => {
+																if (Array.isArray(res?.data)) {
+																	showMessage(t('Material alert', {
+																		material: materials?.find(i => i.value == e)?.label || '',
+																		weight: decimalToInteger(res?.data?.reduce((accumulator, currentValue) => {
+																			return accumulator + Number(currentValue?.weight || 0)
+																		}, 0)) || '0',
+																		number: `#${updateId}`,
+																		separationWeight: '0'
+																	}), 'alert', 20000)
+																}
+															})
+													}
+													onChange(e as string)
+												}}
 											/>
 										)}
 									/>
@@ -1194,21 +1307,62 @@ const Index = () => {
 						</div>
 					</div>
 
-					<div className="span-12">
-						<Controller
-							name="deadline"
-							control={control}
-							render={({field}) => (
-								<MaskInput
-									id="deadline"
-									label="Deadline"
-									placeholder={getDate()}
-									mask="99.99.9999"
-									error={editErrors?.deadline?.message}
-									{...field}
-								/>
-							)}
-						/>
+					<div className="span-12 grid gap-lg">
+						<div className="span-4">
+							<Controller
+								name="deadline"
+								control={control}
+								render={({field}) => (
+									<MaskInput
+										id="deadline"
+										label="Deadline"
+										placeholder={getDate()}
+										mask="99.99.9999"
+										error={editErrors?.deadline?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+
+						<div className="span-4">
+							<Controller
+								name="count_entered_leader"
+								control={control}
+								render={({field}) => (
+									<NumberFormattedInput
+										id="count_entered_leader"
+										maxLength={4}
+										disableGroupSeparators={false}
+										allowDecimals={false}
+										label="Production count"
+										error={editErrors?.count_entered_leader?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+
+						<div className="span-4">
+							<Controller
+								name={`piece`}
+								control={control}
+								render={({field: {value, ref, onChange, onBlur}}) => (
+									<Select
+										id={`piece`}
+										label={`Cut`}
+										top={true}
+										options={cutOptions}
+										error={editErrors?.piece?.message}
+										value={getSelectValue(cutOptions, value)}
+										ref={ref}
+										onBlur={onBlur}
+										defaultValue={getSelectValue(cutOptions, value)}
+										handleOnChange={(e) => onChange(e as string)}
+									/>
+								)}
+							/>
+						</div>
 					</div>
 
 					<Button
@@ -1216,12 +1370,16 @@ const Index = () => {
 						type={FIELD.SUBMIT}
 						disabled={isUpdating}
 					>
-						Edit
+						Save
 					</Button>
 				</Form>
 			</EditModal>
 
 			<AddOrderModal/>
+			<DeleteModal endpoint="services/orders/" onDelete={async () => {
+				await refetch()
+				deleteOrder(Number(deleteId || 0))
+			}}/>
 		</>
 	)
 }

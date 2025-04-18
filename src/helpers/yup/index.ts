@@ -520,7 +520,15 @@ const temporaryOrderSchema = yup.object().shape({
 		.array()
 		.of(yup.string().trim().required('This field is required'))
 		.nullable(),
-	deadline: dateField.required('This field is required')
+	deadline: dateField.required('This field is required'),
+	count_entered_leader: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	piece: yup
+		.string()
+		.trim()
+		.required('This field is required')
 })
 
 const operatorOrderSchema = yup.object().shape({
@@ -531,7 +539,7 @@ const operatorOrderSchema = yup.object().shape({
 	data: yup
 		.array()
 		.of(yup.object().shape({
-			material: yup.number().required('This field is required'),
+			material: yup.array().required('This field is required'),
 			layer: yup.number().required('This field is required'),
 			weight: yup.string().trim().required('This field is required')
 		}))
@@ -542,23 +550,32 @@ const operatorsOrderSchema = yup.object().shape({
 	percentage: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.optional()
+		.nullable()
+		.transform(value => value ? value : null),
 	weight: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.optional()
+		.nullable()
+		.transform(value => value ? value : null),
 	warehouse: yup
 		.number()
-		.transform(value => value ? Number(value) : null)
-		.required('This field is required'),
+		.optional()
+		.nullable()
+		.transform(value => value ? Number(value) : null),
+	pallet: yup.string().trim().optional().nullable().transform(value => value ? value : '0'),
 	area: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.optional()
+		.nullable()
+		.transform(value => value ? value : null),
 	data: yup
 		.array()
 		.of(yup.object().shape({
 			order: yup.number().required('This field is required'),
+			warehouse: yup.number().required('This field is required'),
 			count: yup.string().trim().required('This field is required')
 		}))
 		.required('This field is required')
@@ -568,19 +585,26 @@ const flexOperatorsOrderSchema = yup.object().shape({
 	percentage: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.optional()
+		.nullable()
+		.transform(value => value ? value : null),
 	weight: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.optional()
+		.nullable()
+		.transform(value => value ? value : null),
 	warehouse: yup
 		.number()
-		.transform(value => value ? Number(value) : null)
-		.required('This field is required'),
+		.optional()
+		.nullable()
+		.transform(value => value ? Number(value) : null),
 	area: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.optional()
+		.nullable()
+		.transform(value => value ? value : null),
 	count: yup.string().trim().required('This field is required')
 })
 

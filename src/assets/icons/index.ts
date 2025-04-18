@@ -9,6 +9,7 @@ import Search from './Search'
 import Login from './Login'
 import Times from './Times'
 import Plus from './Plus'
+import Gluing from './Gluing'
 import Logo from './Logo'
 import Edit from './Edit'
 import Box from './Box'
@@ -33,6 +34,7 @@ export {
 	LargeBox,
 	YMO,
 	SelectIcon,
+	Gluing,
 	LoginLogo,
 	Password,
 	Download,

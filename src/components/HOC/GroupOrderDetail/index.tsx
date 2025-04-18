@@ -3,7 +3,7 @@ import {
 	useDetail
 } from 'hooks'
 import {
-	Card,
+	Card, CutDiagram,
 	Diagram,
 	Input,
 	Loader,
@@ -16,7 +16,7 @@ import styles from './styles.module.scss'
 import classNames from 'classnames'
 import {getDate} from 'utilities/date'
 import {ComponentType} from 'react'
-import {activityOptions} from 'helpers/options'
+import {activityOptions, cutOptions} from 'helpers/options'
 import {useParams} from 'react-router-dom'
 import {IGroupOrder} from 'interfaces/groupOrders.interface'
 
@@ -80,8 +80,8 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 											<Input
 												id="L"
 												disabled={true}
-												label="L"
-												value={`${2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0)}`}
+												label={`L (${t('mm')})`}
+												value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))}`}
 											/>
 										</div>
 										<div className="span-4">
@@ -121,8 +121,9 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 											<Input
 												id="count"
 												disabled={true}
-												label="Count"
-												value={decimalToInteger(order?.count || 0)}
+												label="Deadline"
+												value={order?.deadline ? getDate(order?.deadline) : ''}
+												placeholder=" "
 											/>
 										</div>
 
@@ -130,11 +131,69 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 											<Input
 												id="count"
 												disabled={true}
-												label="Deadline"
-												value={getDate(order?.deadline || '')}
+												label="Production count"
+												value={decimalToInteger(order?.count_entered_leader || order?.count || 0)}
 											/>
 										</div>
 
+
+											<div className="span-4">
+												<Select
+													id="piece"
+													disabled={true}
+													label="Cut"
+													options={cutOptions}
+													value={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
+													defaultValue={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
+												/>
+											</div>
+
+
+										{
+											order?.piece && order?.piece != 'total' &&
+											<div className="grid span-12" style={{marginTop: '.75rem'}}>
+												<CutDiagram
+													sections={cutOptions?.find(i => i.value == order?.piece)?.material || 2}
+													length={
+														<Input
+															id="length"
+															mini={true}
+															disabled={true}
+															value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))} mm`}
+															placeholder=" "
+														/>
+													}
+													count={
+														<Input
+															id="l0"
+															mini={true}
+															disabled={true}
+															value={`${Math.ceil((order?.count_entered_leader || order?.count || 0) as unknown as number / (cutOptions?.find(i => i.value == order?.piece)?.material || 2))} tadan`}
+															placeholder=" "
+														/>
+													}
+													l1={
+														<Input
+															id="l1"
+															mini={true}
+															disabled={true}
+															value={`${order?.format?.name || ''} mm`}
+															placeholder="mm"
+														/>
+													}
+													x={
+														<Input
+															id="l3"
+															mini={true}
+															disabled={true}
+															value={`${detail?.separated_raw_materials_format?.format || ''} mm`}
+															placeholder=" "
+														/>
+													}
+													className="span-12"
+												/>
+											</div>
+										}
 										<div className="grid span-12" style={{marginTop: '.7rem'}}>
 											<Diagram
 												l0={
@@ -197,7 +256,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 
 										<div
 											className="span-12 flex gap-md"
-											style={{marginTop: '.7rem', marginBottom: '1.5rem'}}
+											style={{marginTop: '.75rem', marginBottom: '1.5rem'}}
 										>
 											<div className="span-4 flex gap-md align-end justify-start">
 												<input
@@ -263,6 +322,17 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 												/>
 												<p className="checkbox-label">
 													{t(activityOptions[5].label as string)}
+												</p>
+											</div>
+											<div className="span-4 flex gap-md align-end justify-start">
+												<input
+													id={activityOptions[6].value as string}
+													type="checkbox"
+													className="checkbox"
+													checked={order?.stages_to_passed?.includes(activityOptions[6].value as string) || false}
+												/>
+												<p className="checkbox-label">
+													{t(activityOptions[6].label as string)}
 												</p>
 											</div>
 										</div>
@@ -387,6 +457,17 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 											/>
 											<p className="checkbox-label">
 												{t(activityOptions[5].label as string)}
+											</p>
+										</div>
+										<div className="span-4 flex gap-md align-end justify-start">
+											<input
+												id={activityOptions[6].value as string}
+												type="checkbox"
+												className="checkbox"
+												checked={detail?.stages_to_passed?.includes(activityOptions[6].value as string) || false}
+											/>
+											<p className="checkbox-label">
+												{t(activityOptions[6].label as string)}
 											</p>
 										</div>
 									</div>
