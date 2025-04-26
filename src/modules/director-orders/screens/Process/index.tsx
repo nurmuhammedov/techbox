@@ -1,108 +1,229 @@
+import {yupResolver} from '@hookform/resolvers/yup'
 import {Corrugation, Flex, RightArrow, YMO} from 'assets/icons'
-import classNames from 'classnames'
-import {Button, Card, Input, Loader} from 'components'
+import {Button, Card, Input, Loader, NumberFormattedInput, PageTitle} from 'components'
 import {BUTTON_THEME} from 'constants/fields'
-import {useDetail} from 'hooks/index'
+import {orderUpdateSchema} from 'helpers/yup'
+import {useDetail, useUpdate} from 'hooks'
 import {IOrderDetail} from 'interfaces/orders.interface'
+import {FC, useEffect} from 'react'
+import {Controller, useForm} from 'react-hook-form'
 import {useTranslation} from 'react-i18next'
 import {useNavigate, useParams} from 'react-router-dom'
+import classNames from 'classnames'
+import {InferType} from 'yup'
 import styles from './styles.module.scss'
 
 
-const Index = () => {
+interface IProperties {
+	update?: boolean
+}
+
+const Index: FC<IProperties> = ({update: edit = false}) => {
 	const {id = undefined} = useParams()
 	const {t} = useTranslation()
 	const navigate = useNavigate()
 
-
 	const {
 		data: detail,
-		isPending: isDetailLoading
+		isPending: isDetailLoading,
+		refetch
 	} = useDetail<IOrderDetail>('services/orders/', id, !!id)
 
+	const {
+		mutateAsync: update,
+		isPending: isUpdate
+	} = useUpdate('services/orders/', id, 'patch')
 
-	if (isDetailLoading) return (<Loader/>)
+	const {
+		reset,
+		control,
+		handleSubmit,
+		formState: {errors}
+	} = useForm<InferType<typeof orderUpdateSchema>>({
+		mode: 'onTouched',
+		defaultValues: {
+			count_after_processing: '',
+			invalid_material_in_processing: '',
+			percentage_after_processing: '',
+			mkv_after_processing: '',
+			count_after_flex: '',
+			invalid_material_in_flex: '',
+			percentage_after_flex: '',
+			mkv_after_flex: '',
+			count_after_bet: '',
+			invalid_material_in_bet: '',
+			percentage_after_bet: '',
+			mkv_after_bet: '',
+			count_after_gluing: '',
+			invalid_material_in_gluing: '',
+			percentage_after_gluing: '',
+			mkv_after_gluing: ''
+		},
+		resolver: yupResolver(orderUpdateSchema)
+	})
 
+	useEffect(() => {
+		if (detail) {
+			reset({
+				count_after_processing: detail?.count_after_processing ?? '',
+				invalid_material_in_processing: detail?.invalid_material_in_processing ?? '',
+				percentage_after_processing: detail?.percentage_after_processing ?? '',
+				mkv_after_processing: detail?.mkv_after_processing ?? '',
+				count_after_flex: detail?.count_after_flex ?? '',
+				invalid_material_in_flex: detail?.invalid_material_in_flex ?? '',
+				percentage_after_flex: detail?.percentage_after_flex ?? '',
+				mkv_after_flex: detail?.mkv_after_flex ?? '',
+				count_after_bet: detail?.count_after_bet ?? '',
+				invalid_material_in_bet: detail?.invalid_material_in_bet ?? '',
+				percentage_after_bet: detail?.percentage_after_bet ?? '',
+				mkv_after_bet: detail?.mkv_after_bet ?? '',
+				count_after_gluing: detail?.count_after_gluing ?? '',
+				invalid_material_in_gluing: detail?.invalid_material_in_gluing ?? '',
+				percentage_after_gluing: detail?.percentage_after_gluing ?? '',
+				mkv_after_gluing: detail?.mkv_after_gluing ?? ''
+			})
+		}
+	}, [detail, reset])
 
+	const onSubmit = (data: InferType<typeof orderUpdateSchema>) => {
+		const newData = {
+			count_after_processing: data.count_after_processing,
+			count_after_flex: data.count_after_flex,
+			invalid_material_in_flex: data.invalid_material_in_flex,
+			percentage_after_flex: data.percentage_after_flex,
+			mkv_after_flex: data.mkv_after_flex,
+			count_after_bet: data.count_after_bet,
+			invalid_material_in_bet: data.invalid_material_in_bet,
+			percentage_after_bet: data.percentage_after_bet,
+			mkv_after_bet: data.mkv_after_bet,
+			count_after_gluing: data.count_after_gluing,
+			invalid_material_in_gluing: data.invalid_material_in_gluing,
+			percentage_after_gluing: data.percentage_after_gluing,
+			mkv_after_gluing: data.mkv_after_gluing
+		}
+
+		update(newData).then(() => {
+			// navigate(-1)
+			refetch()
+		})
+	}
+
+	if (isDetailLoading) return <Loader/>
+
+	console.log(errors)
 	return (
 		<>
-			<div style={{display: 'flex', justifyContent: 'flex-end'}}>
-				<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
-					Back
-				</Button>
-			</div>
+			<PageTitle title={t('Order Details')}>
+				<div style={{display: 'flex', justifyContent: 'flex-end', gap: '1rem'}}>
+					<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
+						{t('Back')}
+					</Button>
+					{
+						edit &&
+						<Button onClick={handleSubmit(onSubmit)} disabled={isUpdate}>
+							{t('Edit')}
+						</Button>
+					}
+				</div>
+			</PageTitle>
 
 			<Card
 				screen={true}
 				className={styles.sc}
 				style={{
 					marginTop: '1.5rem',
-					padding: '1.5rem 1.5rem 1.5rem 1.5rem',
+					padding: '1.5rem',
 					width: 'calc(100vw - 19.5rem)',
 					overflowX: 'scroll'
-					// cursor: 'grab',
-					// pointerEvents: 'auto',
-					// userSelect: 'auto'
 				}}
 			>
 				<div className={styles.root}>
-					{
-						detail?.stages_to_passed?.includes('gofra') &&
+					{detail?.stages_to_passed?.includes('gofra') && (
 						<>
 							<div
-								className={classNames(styles.item, {[styles.inactive]: detail?.activity != 'gofra'})}
+								className={classNames(styles.item, {
+									[styles.inactive]: detail?.activity !== 'gofra'
+								})}
 							>
 								<h1>{t('Recycling')}</h1>
 								<Corrugation/>
 								<div className={styles['input-wrapper']}>
-									<Input
-										id="count 1"
-										label="Count"
-										placeholder=" "
-										value={detail?.count_after_processing ?? ''}
-										disabled={true}
+									<Controller
+										control={control}
+										name="count_after_processing"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="count_after_processing"
+												label={t('Count')}
+												maxLength={12}
+												allowDecimals={false}
+												error={errors.count_after_processing?.message}
+												{...field}
+											/>
+										)}
 									/>
 								</div>
 								{/*<div className={styles['input-wrapper']}>*/}
-								{/*	<Input*/}
-								{/*		id="Waste paper 1"*/}
-								{/*		label={`${t('Waste paper')} (${t('kg')})`}*/}
-								{/*		placeholder=" "*/}
-								{/*		value={detail?.invalid_material_in_processing ?? ''}*/}
-								{/*		disabled={true}*/}
+								{/*	<Controller*/}
+								{/*		control={control}*/}
+								{/*		name="invalid_material_in_processing"*/}
+								{/*		render={({field}) => (*/}
+								{/*			<NumberFormattedInput*/}
+								{/*				id="invalid_material_in_processing"*/}
+								{/*				label={`${t('Waste paper')} (${t('kg')})`}*/}
+								{/*				maxLength={12}*/}
+								{/*				allowDecimals={true}*/}
+								{/*				error={errors.invalid_material_in_processing?.message}*/}
+								{/*				{...field}*/}
+								{/*			/>*/}
+								{/*		)}*/}
 								{/*	/>*/}
 								{/*</div>*/}
 								{/*<div className={styles['input-wrapper']}>*/}
-								{/*	<Input*/}
-								{/*		id="Waste paper percentage 1"*/}
-								{/*		label={`${t('Waste paper percentage')} (${t('%')})`}*/}
-								{/*		placeholder=" "*/}
-								{/*		value={detail?.percentage_after_processing ?? ''}*/}
-								{/*		disabled={true}*/}
+								{/*	<Controller*/}
+								{/*		control={control}*/}
+								{/*		name="percentage_after_processing"*/}
+								{/*		render={({field}) => (*/}
+								{/*			<NumberFormattedInput*/}
+								{/*				id="percentage_after_processing"*/}
+								{/*				label={`${t('Waste paper percentage')} (${t('%')})`}*/}
+								{/*				maxLength={12}*/}
+								{/*				allowDecimals={true}*/}
+								{/*				error={errors.percentage_after_processing?.message}*/}
+								{/*				{...field}*/}
+								{/*			/>*/}
+								{/*		)}*/}
 								{/*	/>*/}
 								{/*</div>*/}
 								{/*<div className={styles['input-wrapper']}>*/}
-								{/*	<Input*/}
-								{/*		id="Waste paper area 1"*/}
-								{/*		label={`${t('Waste paper area')} (${t('m²')})`}*/}
-								{/*		placeholder=" "*/}
-								{/*		value={detail?.mkv_after_processing ?? ''}*/}
-								{/*		disabled={true}*/}
+								{/*	<Controller*/}
+								{/*		control={control}*/}
+								{/*		name="mkv_after_processing"*/}
+								{/*		render={({field}) => (*/}
+								{/*			<NumberFormattedInput*/}
+								{/*				id="mkv_after_processing"*/}
+								{/*				label={`${t('Waste paper area')} (${t('m²')})`}*/}
+								{/*				maxLength={12}*/}
+								{/*				allowDecimals={false}*/}
+								{/*				error={errors.mkv_after_processing?.message}*/}
+								{/*				{...field}*/}
+								{/*			/>*/}
+								{/*		)}*/}
 								{/*	/>*/}
 								{/*</div>*/}
 							</div>
-
 						</>
-					}
+					)}
 
-					{
-						detail?.stages_to_passed?.includes('ymo1') &&
+					{detail?.stages_to_passed?.includes('ymo1') && (
 						<>
 							<div className={styles.arrow}>
 								<RightArrow/>
 							</div>
 							<div
-								className={classNames(styles.item, {[styles.inactive]: detail?.activity != 'ymo1'})}
+								className={classNames(styles.item, {
+									[styles.inactive]: detail?.activity !== 'ymo1'
+								})}
 							>
 								<h1>{t('Warehouse')}</h1>
 								<YMO/>
@@ -116,73 +237,98 @@ const Index = () => {
 									/>
 								</div>
 							</div>
-
 						</>
-					}
+					)}
 
-					{
-						detail?.stages_to_passed?.includes('fleksa') &&
+					{detail?.stages_to_passed?.includes('fleksa') && (
 						<>
 							<div className={styles.arrow}>
 								<RightArrow/>
 							</div>
-
 							<div
-								className={classNames(styles.item, {[styles.inactive]: detail?.activity != 'fleksa'})}
+								className={classNames(styles.item, {
+									[styles.inactive]: detail?.activity !== 'fleksa'
+								})}
 							>
 								<h1>{t('Flex')}</h1>
 								<Flex/>
 								<div className={styles['input-wrapper']}>
-									<Input
-										id="count 2"
-										label="Count"
-										placeholder=" "
-										value={detail?.count_after_flex ?? ''}
-										disabled={true}
+									<Controller
+										control={control}
+										name="count_after_flex"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="count_after_flex"
+												label={t('Count')}
+												maxLength={12}
+												allowDecimals={false}
+												error={errors.count_after_flex?.message}
+												{...field}
+											/>
+										)}
 									/>
 								</div>
 								<div className={styles['input-wrapper']}>
-									<Input
-										id="Waste paper 2"
-										label={`${t('Waste paper')} (${t('kg')})`}
-										placeholder=" "
-										value={detail?.invalid_material_in_flex ?? ''}
-										disabled={true}
+									<Controller
+										control={control}
+										name="invalid_material_in_flex"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="invalid_material_in_flex"
+												label={`${t('Waste paper')} (${t('kg')})`}
+												maxLength={12}
+												allowDecimals={true}
+												error={errors.invalid_material_in_flex?.message}
+												{...field}
+											/>
+										)}
 									/>
 								</div>
 								<div className={styles['input-wrapper']}>
-									<Input
-										id="Waste paper percentage 2"
-										label={`${t('Waste paper percentage')} (${t('%')})`}
-										placeholder=" "
-										value={detail?.percentage_after_flex ?? ''}
-										disabled={true}
+									<Controller
+										control={control}
+										name="percentage_after_flex"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="percentage_after_flex"
+												label={`${t('Waste paper percentage')} (${t('%')})`}
+												maxLength={12}
+												allowDecimals={true}
+												error={errors.percentage_after_flex?.message}
+												{...field}
+											/>
+										)}
 									/>
 								</div>
 								<div className={styles['input-wrapper']}>
-									<Input
-										id="Waste paper area 2"
-										label={`${t('Waste paper area')} (${t('m²')})`}
-										placeholder=" "
-										value={detail?.mkv_after_flex ?? ''}
-										disabled={true}
+									<Controller
+										control={control}
+										name="mkv_after_flex"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="mkv_after_flex"
+												label={`${t('Waste paper area')} (${t('m²')})`}
+												maxLength={12}
+												allowDecimals={false}
+												error={errors.mkv_after_flex?.message}
+												{...field}
+											/>
+										)}
 									/>
 								</div>
 							</div>
-
 						</>
+					)}
 
-					}
-
-					{
-						detail?.stages_to_passed?.includes('ymo2') &&
+					{detail?.stages_to_passed?.includes('ymo2') && (
 						<>
 							<div className={styles.arrow}>
 								<RightArrow/>
 							</div>
-
 							<div
-								className={classNames(styles.item, {[styles.inactive]: detail?.activity != 'ymo2'})}
+								className={classNames(styles.item, {
+									[styles.inactive]: detail?.activity !== 'ymo2'
+								})}
 							>
 								<h1>{t('Warehouse')}</h1>
 								<YMO/>
@@ -198,75 +344,179 @@ const Index = () => {
 									</div>
 								</div>
 							</div>
-
 						</>
-					}
+					)}
 
-
-					{
-						(detail?.stages_to_passed?.includes('yelishlash') || detail?.stages_to_passed?.includes('tikish')) &&
+					{detail?.stages_to_passed?.includes('tikish') && (
 						<>
-
 							<div className={styles.arrow}>
 								<RightArrow/>
 							</div>
-
 							<div
-								className={classNames(styles.item, {[styles.inactive]: (detail?.activity !== 'yelimlash' && detail?.activity !== 'tikish')})}
+								className={classNames(styles.item, {
+									[styles.inactive]: detail?.activity !== 'tikish'
+								})}
 							>
-								<h1>{t('Sewing/Gluing')}</h1>
+								<h1>{t('Sewing')}</h1>
 								<Corrugation/>
 								<div className={styles['input-wrapper']}>
-									<div className={styles.item}>
-										<Input
-											placeholder=" "
-											id="count 3"
-											label="Count"
-											value={detail?.count_after_bet ?? detail?.count_after_gluing ?? ''}
-											disabled={true}
-										/>
-									</div>
-								</div>
-								<div className={styles['input-wrapper']}>
-									<Input
-										id="Waste paper 3"
-										label={`${t('Waste paper')} (${t('kg')})`}
-										placeholder=" "
-										value={detail?.invalid_material_in_bet ?? detail?.invalid_material_in_gluing ?? ''}
-										disabled={true}
+									<Controller
+										control={control}
+										name="count_after_bet"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="count_after_bet"
+												label={t('Count')}
+												maxLength={12}
+												allowDecimals={false}
+												error={errors.count_after_bet?.message}
+												{...field}
+											/>
+										)}
 									/>
 								</div>
 								<div className={styles['input-wrapper']}>
-									<Input
-										id="Waste paper percentage 3"
-										label={`${t('Waste paper percentage')} (${t('%')})`}
-										placeholder=" "
-										value={detail?.percentage_after_bet ?? detail?.percentage_after_gluing ?? ''}
-										disabled={true}
+									<Controller
+										control={control}
+										name="invalid_material_in_bet"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="invalid_material_in_bet"
+												label={`${t('Waste paper')} (${t('kg')})`}
+												maxLength={12}
+												allowDecimals={true}
+												error={errors.invalid_material_in_bet?.message}
+												{...field}
+											/>
+										)}
 									/>
 								</div>
 								<div className={styles['input-wrapper']}>
-									<Input
-										id="Waste paper area 3"
-										label={`${t('Waste paper area')} (${t('m²')})`}
-										placeholder=" "
-										value={detail?.mkv_after_bet ?? detail?.percentage_after_gluing ?? ''}
-										disabled={true}
+									<Controller
+										control={control}
+										name="percentage_after_bet"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="percentage_after_bet"
+												label={`${t('Waste paper percentage')} (${t('%')})`}
+												maxLength={12}
+												allowDecimals={true}
+												error={errors.percentage_after_bet?.message}
+												{...field}
+											/>
+										)}
+									/>
+								</div>
+								<div className={styles['input-wrapper']}>
+									<Controller
+										control={control}
+										name="mkv_after_bet"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="mkv_after_bet"
+												label={`${t('Waste paper area')} (${t('m²')})`}
+												maxLength={12}
+												allowDecimals={false}
+												error={errors.mkv_after_bet?.message}
+												{...field}
+											/>
+										)}
 									/>
 								</div>
 							</div>
-
 						</>
-					}
+					)}
 
-					{
-						detail?.stages_to_passed?.includes('is_last') &&
+					{detail?.stages_to_passed?.includes('yelishlash') && (
 						<>
 							<div className={styles.arrow}>
 								<RightArrow/>
 							</div>
 							<div
-								className={classNames(styles.item, {[styles.inactive]: detail?.activity != 'is_last'})}>
+								className={classNames(styles.item, {
+									[styles.inactive]: detail?.activity !== 'yelimlash'
+								})}
+							>
+								<h1>{t('Gluing')}</h1>
+								<Corrugation/>
+								<div className={styles['input-wrapper']}>
+									<Controller
+										control={control}
+										name="count_after_gluing"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="count_after_gluing"
+												label={t('Count')}
+												maxLength={12}
+												allowDecimals={false}
+												error={errors.count_after_gluing?.message}
+												{...field}
+											/>
+										)}
+									/>
+								</div>
+								<div className={styles['input-wrapper']}>
+									<Controller
+										control={control}
+										name="invalid_material_in_gluing"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="invalid_material_in_gluing"
+												label={`${t('Waste paper')} (${t('kg')})`}
+												maxLength={12}
+												allowDecimals={true}
+												error={errors.invalid_material_in_gluing?.message}
+												{...field}
+											/>
+										)}
+									/>
+								</div>
+								<div className={styles['input-wrapper']}>
+									<Controller
+										control={control}
+										name="percentage_after_gluing"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="percentage_after_gluing"
+												label={`${t('Waste paper percentage')} (${t('%')})`}
+												maxLength={12}
+												allowDecimals={true}
+												error={errors.percentage_after_gluing?.message}
+												{...field}
+											/>
+										)}
+									/>
+								</div>
+								<div className={styles['input-wrapper']}>
+									<Controller
+										control={control}
+										name="mkv_after_gluing"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="mkv_after_gluing"
+												label={`${t('Waste paper area')} (${t('m²')})`}
+												maxLength={12}
+												allowDecimals={false}
+												error={errors.mkv_after_gluing?.message}
+												{...field}
+											/>
+										)}
+									/>
+								</div>
+							</div>
+						</>
+					)}
+
+					{detail?.stages_to_passed?.includes('is_last') && (
+						<>
+							<div className={styles.arrow}>
+								<RightArrow/>
+							</div>
+							<div
+								className={classNames(styles.item, {
+									[styles.inactive]: detail?.activity !== 'is_last'
+								})}
+							>
 								<h1>{t('Warehouse')}</h1>
 								<YMO/>
 								<div className={styles['input-wrapper']}>
@@ -282,8 +532,7 @@ const Index = () => {
 								</div>
 							</div>
 						</>
-					}
-
+					)}
 				</div>
 			</Card>
 		</>

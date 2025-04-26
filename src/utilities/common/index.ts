@@ -110,32 +110,25 @@ function hasDifferentLayers(orders: { layer?: (number | string)[] }[]): boolean 
 function calculateTotalMaterialUsageInKg(
 	orders: IOrderDetail[],
 	weight1x1_grams: number,
-	hasAddition: boolean = false,
-	addition?: { x: number; y: number; count: number }
+	format: string | number | undefined,
+	index: number = 0
 ): string {
 	let totalAreaM2 = 0
-	for (const order of orders) {
-		const width = parseFloat(order.width || '0')
-		const length = parseFloat(order.length || '0')
-		const format = parseFloat(order.format?.name || '1')
-		const count = parseFloat(order.count_entered_leader || order.count || '0')
+	if (orders.length) {
+		const width = parseFloat(orders[0]?.width || '0')
+		const length = parseFloat(orders[0]?.length || '0')
+		const count = parseFloat(orders[0]?.count_entered_leader || orders[0]?.count || '0')
 
-		const areaMm2 = (2 * (width + length) + 70) * format
-		const areaM2 = areaMm2 / 1_000_000
-
-		totalAreaM2 += areaM2 * count
+		const areaMm2 = count * (2 * (width + length) + 70) * Number(format || 0)
+		totalAreaM2 = areaMm2 / 1_000_000
 	}
 
-	if (hasAddition && addition) {
-		const {x, y, count} = addition
-		const areaMm2 = x * y
-		const areaM2 = areaMm2 / 1_000_000
-		totalAreaM2 += areaM2 * count
+	if (index % 2 == 1) {
+		totalAreaM2 = totalAreaM2 * 1.45
 	}
 
 	const weight1x1_kg = weight1x1_grams / 1000
-	const totalWeightKg = totalAreaM2 * weight1x1_kg
-
+	const totalWeightKg = totalAreaM2 * weight1x1_kg * 1.05
 
 	return String(Number(totalWeightKg)?.toFixed(2))
 }

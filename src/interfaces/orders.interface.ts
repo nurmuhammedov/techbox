@@ -9,8 +9,9 @@ interface IOrderDetail {
 	count: string;
 	count_entered_leader: string;
 	comment: string;
-	customer: string;
+	customer: IIDName;
 	company_name: string;
+	order: IIDName;
 	price: string;
 	deadline: string;
 	money_paid: string;

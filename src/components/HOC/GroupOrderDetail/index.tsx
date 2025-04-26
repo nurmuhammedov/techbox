@@ -154,15 +154,15 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 											<div className="grid span-12" style={{marginTop: '.75rem'}}>
 												<CutDiagram
 													sections={cutOptions?.find(i => i.value == order?.piece)?.material || 2}
-													length={
-														<Input
-															id="length"
-															mini={true}
-															disabled={true}
-															value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))} mm`}
-															placeholder=" "
-														/>
-													}
+													// length={
+													// 	<Input
+													// 		id="length"
+													// 		mini={true}
+													// 		disabled={true}
+													// 		value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))} mm`}
+													// 		placeholder=" "
+													// 	/>
+													// }
 													count={
 														<Input
 															id="l0"
@@ -172,15 +172,15 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 															placeholder=" "
 														/>
 													}
-													l1={
-														<Input
-															id="l1"
-															mini={true}
-															disabled={true}
-															value={`${order?.format?.name || ''} mm`}
-															placeholder="mm"
-														/>
-													}
+													// l1={
+													// 	<Input
+													// 		id="l1"
+													// 		mini={true}
+													// 		disabled={true}
+													// 		value={`${order?.format?.name || ''} mm`}
+													// 		placeholder="mm"
+													// 	/>
+													// }
 													x={
 														<Input
 															id="l3"

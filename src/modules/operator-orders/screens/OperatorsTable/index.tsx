@@ -149,7 +149,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 						row?.orders?.map((order, index) => (
 							<>
 								<div>
-									{decimalToInteger(order?.count || 0)}
+									{decimalToInteger(order?.count_last || order?.count_after_bet || order?.count_after_gluing || order?.count_after_flex || order?.count_after_processing || order?.count_entered_leader || order?.count || 0)}
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&

@@ -4,14 +4,14 @@ import {
 } from 'hooks'
 import {
 	Card,
-	Diagram,
+	Diagram, FileUpLoader,
 	Input,
 	Loader,
 	Select
 } from 'components'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {decimalToInteger, getSelectValue} from 'utilities/common'
-import {ISelectOption} from 'interfaces/form.interface'
+import {IFIle, ISelectOption} from 'interfaces/form.interface'
 import {useTranslation} from 'react-i18next'
 import styles from './styles.module.scss'
 import classNames from 'classnames'
@@ -190,6 +190,17 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 										className="span-12"
 									/>
 								</div>
+
+								{
+									order?.logo &&
+									<FileUpLoader
+										id="logo"
+										type="image"
+										value={order?.logo as IFIle}
+										onChange={undefined}
+										label="Logo"
+									/>
+								}
 
 								<div
 									className="span-12 flex gap-md"

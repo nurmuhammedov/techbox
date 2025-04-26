@@ -1,24 +1,29 @@
+import {yupResolver} from '@hookform/resolvers/yup'
 import {
 	Button,
 	Card, DeleteButton, DeleteModal,
-	EditButton,
-	FilterInput,
+	EditButton, EditModal,
+	FilterInput, Form, NumberFormattedInput,
 	Pagination,
-	ReactTable,
+	ReactTable, Select,
 	Tab
 } from 'components'
+import {BUTTON_THEME, FIELD} from 'constants/fields'
+import {soldSchema} from 'helpers/yup'
 import {
-	useActions,
+	useActions, useAdd, useData, useDetail,
 	usePaginatedData,
 	usePagination, useSearchParams
 } from 'hooks'
-import {useMemo} from 'react'
+import {ISelectOption} from 'interfaces/form.interface'
+import {useEffect, useMemo} from 'react'
+import {Controller, useForm} from 'react-hook-form'
 import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {getDate} from 'utilities/date'
-import {decimalToInteger} from 'utilities/common'
+import {decimalToInteger, decimalToPrice, getSelectValue} from 'utilities/common'
 import {activityOptions, statusOptions} from 'helpers/options'
 
 
@@ -27,16 +32,23 @@ const Index = () => {
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
 	const {addOrder} = useActions()
-	const {paramsObject: {status = statusOptions[0].value, search = '', company = ''}} = useSearchParams()
+	const {
+		paramsObject: {status = statusOptions[0].value, search = '', company = '', updateId = undefined},
+		removeParams,
+		addParams
+	} = useSearchParams()
+	const {data: formats = []} = useData<ISelectOption[]>('services/customers/select')
+
 
 	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IOrderDetail[]>(
-		`/services/orders-with-detail`,
+		status === statusOptions[3].value ? `services/sold-orders` : `/services/orders-with-detail`,
 		{
 			page: page,
 			page_size: pageSize,
-			status,
+			status: status !== statusOptions[3].value ? status : null,
 			search,
-			company
+			company,
+			not_sold: status === statusOptions[2].value ? 'True' : null
 		}
 	)
 
@@ -114,6 +126,12 @@ const Index = () => {
 					accessor: (row: IOrderDetail) => (
 						<div className="flex items-start gap-lg">
 							<EditButton onClick={() => navigate(`process/${row.id}`)}/>
+							{
+								status == statusOptions[2].value &&
+								<Button mini={true} onClick={() => addParams({modal: 'edit', updateId: row.id})}>
+									Sell
+								</Button>
+							}
 						</div>
 					)
 				}
@@ -121,6 +139,78 @@ const Index = () => {
 		],
 		[page, pageSize, status]
 	)
+
+	const columns2: Column<IOrderDetail>[] = useMemo(
+		() => [
+			{
+				Header: t('Order number'),
+				accessor: (row: IOrderDetail) => `#${row.order?.id}`,
+				style: {
+					width: '14rem',
+					textAlign: 'start'
+				}
+			},
+			{
+				Header: t('Company name'),
+				accessor: (row: IOrderDetail) => row.customer?.name as unknown as string
+			},
+			{
+				Header: t('Count'),
+				accessor: (row: IOrderDetail) => decimalToInteger(row.count || '')
+			},
+			{
+				Header: t('Price'),
+				accessor: (row: IOrderDetail) => decimalToPrice(row.price || '')
+			},
+
+			{
+				Header: t('Total paid money'),
+				accessor: (row: IOrderDetail) => decimalToPrice(row.money_paid || '')
+			}
+
+		],
+		[page, pageSize, status]
+	)
+
+
+	const {
+		handleSubmit,
+		control,
+		reset,
+		formState: {errors}
+	} = useForm({
+		resolver: yupResolver(soldSchema),
+		mode: 'onTouched',
+		defaultValues: {
+			customer: undefined,
+			price: '',
+			money_paid: '',
+			count: ''
+		}
+	})
+
+
+	const {
+		mutateAsync: add,
+		isPending: isAdding
+	} = useAdd('services/sold-orders')
+
+
+	const {
+		data: productDetail,
+		isPending: isProductDetailLoading
+	} = useDetail<IOrderDetail>('services/orders/', updateId, !!updateId)
+
+	useEffect(() => {
+		if (productDetail && !isProductDetailLoading) {
+			reset({
+				count: String(productDetail?.count_last || productDetail?.count_after_bet || productDetail?.count_after_gluing || productDetail?.count_after_flex || productDetail?.count_after_processing || productDetail?.count_entered_leader || productDetail?.count || 0),
+				price: productDetail.price,
+				customer: productDetail?.customer?.id,
+				money_paid: productDetail.money_paid
+			})
+		}
+	}, [productDetail])
 
 
 	return (
@@ -142,13 +232,122 @@ const Index = () => {
 					/>
 				</div>
 				<ReactTable
-					columns={columns}
+					columns={status !== statusOptions[3].value ? columns : columns2}
 					data={data}
 					isLoading={isLoading}
 				/>
 			</Card>
 			<Pagination totalPages={totalPages}/>
 			<DeleteModal endpoint="services/orders/" onDelete={() => refetch()}/>
+
+
+			<EditModal title={`#${updateId} - ${t('Sell order')?.toLowerCase()}`}
+			           style={{height: '40rem', width: '50rem'}} isLoading={isProductDetailLoading}>
+				<Form onSubmit={(e) => e.preventDefault()}>
+					<div className="span-4">
+						<Controller
+							name="customer"
+							control={control}
+							render={({field: {value, ref, onChange, onBlur}}) => (
+								<Select
+									id="customer"
+									label="Company name"
+									options={formats}
+									error={errors?.customer?.message}
+									value={getSelectValue(formats, value)}
+									ref={ref}
+									onBlur={onBlur}
+									defaultValue={getSelectValue(formats, value)}
+									handleOnChange={(e) => onChange(e as string)}
+								/>
+							)}
+						/>
+					</div>
+
+
+					<div className="span-12 grid gap-xl flex-0">
+						<div className="span-4">
+							<Controller
+								name="count"
+								control={control}
+								render={({field}) => (
+									<NumberFormattedInput
+										id="count"
+										maxLength={4}
+										disableGroupSeparators={false}
+										allowDecimals={false}
+										label="Count"
+										error={errors?.count?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+
+
+						<div className="span-4">
+							<Controller
+								name="price"
+								control={control}
+								render={({field}) => (
+									<NumberFormattedInput
+										id="price"
+										maxLength={13}
+										disableGroupSeparators={false}
+										allowDecimals={true}
+										label={`${t('Price')} (${t('Item')?.toLowerCase()})`}
+										error={errors?.price?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+
+						<div className="span-4">
+							<Controller
+								name="money_paid"
+								control={control}
+								render={({field}) => (
+									<NumberFormattedInput
+										id="money_paid"
+										maxLength={13}
+										disableGroupSeparators={false}
+										allowDecimals={true}
+										label="Total paid money"
+										error={errors?.money_paid?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+
+
+					</div>
+				</Form>
+
+				<Button
+					type={FIELD.BUTTON}
+					theme={BUTTON_THEME.PRIMARY}
+					disabled={isAdding}
+					onClick={() => {
+						handleSubmit((data) =>
+							add({...data, count: Number(data?.count), order: updateId})
+								.then(async () => {
+									reset({
+										customer: undefined,
+										price: '',
+										money_paid: '',
+										count: ''
+									})
+									await refetch()
+									removeParams('modal')
+								})
+						)()
+					}}
+				>
+					Save
+				</Button>
+			</EditModal>
 		</>
 	)
 }

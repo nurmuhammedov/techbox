@@ -87,14 +87,10 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 			}
 
 			reset({
-				data: finalLayers.map(item => ({
+				data: finalLayers.map((item, index) => ({
 					material: undefined,
 					layer: item,
-					weight: calculateTotalMaterialUsageInKg(detail?.orders || [], materials?.find(i => i?.value == item)?.weight_1x1 as unknown as number || 0, detail?.has_addition, {
-						x: detail?.x || 0,
-						y: detail?.y || 0,
-						count: Number(detail?.count || 0)
-					})
+					weight: calculateTotalMaterialUsageInKg(detail?.orders || [], materials?.find(i => i?.value == item)?.weight_1x1 as unknown as number || 0, detail?.separated_raw_materials_format?.format, index)
 				}))
 			})
 		}

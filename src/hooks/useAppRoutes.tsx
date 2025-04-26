@@ -179,7 +179,7 @@ function useAppRoutes() {
 				},
 				{
 					path: 'process/:id',
-					element: <Process/>
+					element: <Process update={true}/>
 				}
 			]
 		},

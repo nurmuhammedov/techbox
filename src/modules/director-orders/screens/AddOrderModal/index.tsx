@@ -13,7 +13,7 @@ import {IProductDetail} from 'interfaces/products.interface'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {useForm, Controller, useFieldArray} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
-import {useActions, useAdd, useData, useDetail, useSearchParams} from 'hooks'
+import {useActions, useAdd, useData, useDetail, useSearchParams, useTypedSelector} from 'hooks'
 import {ordersSchema2} from 'helpers/yup'
 import {getSelectValue, modifyObjectField} from 'utilities/common'
 import {Box, Plus} from 'assets/icons'
@@ -29,6 +29,7 @@ interface IProperties {
 
 const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const {t} = useTranslation()
+	const {orders} = useTypedSelector(state => state.orders)
 	const {data: products = []} = useData<ISelectOption[]>('products/select')
 	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
 	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
@@ -39,6 +40,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		handleSubmit,
 		control,
 		register,
+		setValue,
 		reset,
 		watch,
 		formState: {errors}
@@ -95,6 +97,17 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		}
 	}, [productDetail, edit])
 
+
+	useEffect(() => {
+		if (orders?.length && watch('length') && watch('width')) {
+			const count = orders[0]?.count_entered_leader || orders[0]?.count || 0
+			const length = Number(orders[0]?.width || 0) + 70 + 2 * Number(orders[0]?.length || 0)
+			const length2 = Number(watch('width') || 0) + 70 + 2 * Number(watch('length') || 0)
+
+			setValue('count', Math.floor(Number(((Number(count) * length) / length2)))?.toString())
+
+		}
+	}, [watch('width'), watch('length')])
 
 	return (
 		<Modal title="Add order" id="addOrder" style={{height: '60rem', width: '100rem'}}>

@@ -575,7 +575,7 @@ const operatorsOrderSchema = yup.object().shape({
 		.array()
 		.of(yup.object().shape({
 			order: yup.number().required('This field is required'),
-			warehouse: yup.number().required('This field is required'),
+			// warehouse: yup.number().required('This field is required'),
 			count: yup.string().trim().required('This field is required')
 		}))
 		.required('This field is required')
@@ -617,6 +617,132 @@ const clientsSchema = yup.object().shape({
 	partnership_year: yup.string().trim().required('This field is required')
 })
 
+export const orderUpdateSchema = yup.object().shape({
+	count_after_processing: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	invalid_material_in_processing: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	percentage_after_processing: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	mkv_after_processing: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+
+	// Flex (fleksa) related fields
+	count_after_flex: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	invalid_material_in_flex: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	percentage_after_flex: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	mkv_after_flex: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+
+	// Sewing (tikish) related fields
+	count_after_bet: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	invalid_material_in_bet: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	percentage_after_bet: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	mkv_after_bet: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+
+	// Gluing (yelishlash) related fields
+	count_after_gluing: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	invalid_material_in_gluing: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	percentage_after_gluing: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null)),
+	mkv_after_gluing: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => (value ? value : null))
+
+})
+
+
+const soldSchema = yup.object().shape({
+	count: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	price: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	money_paid: yup
+		.string()
+		.trim()
+		.transform(v => v ? v : '0')
+		.optional()
+		.nullable(),
+	customer: yup
+		.number()
+		.required('This field is required')
+})
 export {
 	semiFinishedWarehouseSchema,
 	flexOperatorsOrderSchema,
@@ -631,6 +757,7 @@ export {
 	positionsSchema,
 	warehouseSchema,
 	employeeSchema,
+	soldSchema,
 	ordersSchema2,
 	materialSchema,
 	productSchema,

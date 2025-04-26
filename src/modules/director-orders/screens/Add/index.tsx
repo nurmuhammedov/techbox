@@ -279,6 +279,7 @@ const Index = () => {
 	}
 
 
+
 	return (
 		<>
 			<PageTitle title="Send order">
@@ -286,7 +287,8 @@ const Index = () => {
 					<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
 						Back
 					</Button>
-					<Button onClick={handleSubmit(onSubmit)} disabled={isAddLoading || isAdding}>
+					<Button onClick={handleSubmit(onSubmit)}
+					        disabled={isAddLoading || isAdding || orders?.length >= 3}>
 						Send
 					</Button>
 				</div>
@@ -336,10 +338,11 @@ const Index = () => {
 							{
 								!isAdding ?
 									<div className="flex flex-col gap-sm">
-										<Button onClick={() => setIsAdding(true)}>
+										<Button disabled={orders?.length >= 2} onClick={() => setIsAdding(true)}>
 											Add order
 										</Button>
-										<Button onClick={() => addParams({modal: 'addOrder'})}>
+										<Button disabled={orders?.length >= 2}
+										        onClick={() => addParams({modal: 'addOrder'})}>
 											Standing order
 										</Button>
 									</div> :
@@ -491,15 +494,15 @@ const Index = () => {
 												<div className="grid span-12" style={{marginTop: '.75rem'}}>
 													<CutDiagram
 														sections={cutOptions?.find(i => i.value == order?.piece)?.material || 2}
-														length={
-															<Input
-																id="length"
-																mini={true}
-																disabled={true}
-																value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))} mm`}
-																placeholder=" "
-															/>
-														}
+														// length={
+														// 	<Input
+														// 		id="length"
+														// 		mini={true}
+														// 		disabled={true}
+														// 		value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))} mm`}
+														// 		placeholder=" "
+														// 	/>
+														// }
 														count={
 															<Input
 																id="l0"
@@ -509,15 +512,15 @@ const Index = () => {
 																placeholder=" "
 															/>
 														}
-														l1={
-															<Input
-																id="l1"
-																mini={true}
-																disabled={true}
-																value={`${formats?.find(i => i?.value == order?.format?.id)?.label || ''} mm`}
-																placeholder="mm"
-															/>
-														}
+														// l1={
+														// 	<Input
+														// 		id="l1"
+														// 		mini={true}
+														// 		disabled={true}
+														// 		value={`${formats?.find(i => i?.value == order?.format?.id)?.label || ''} mm`}
+														// 		placeholder="mm"
+														// 	/>
+														// }
 														x={
 															<Input
 																id="l3"
@@ -1042,7 +1045,7 @@ const Index = () => {
 																		}, 0)) || '0',
 																		number: `#${updateId}`,
 																		separationWeight: '0'
-																	}), 'alert', 20000)
+																	}), 'success', 20000)
 																}
 															})
 													}
