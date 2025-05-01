@@ -118,7 +118,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 										id="count"
 										disabled={true}
 										label="Count"
-										value={decimalToInteger(order?.count || 0)}
+										value={decimalToInteger(order?.count_last || 0)}
 									/>
 								</div>
 
@@ -202,6 +202,15 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 									/>
 								}
 
+								<div className="span-12">
+									<Input
+										id="comment"
+										disabled={true}
+										label="Comment"
+										value={order?.comment || ' '}
+									/>
+								</div>
+
 								<div
 									className="span-12 flex gap-md"
 									style={{marginTop: '.7rem', marginBottom: '1.5rem'}}
@@ -284,6 +293,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 										</p>
 									</div>
 								</div>
+
 							</div>
 						</Card>
 					</div>

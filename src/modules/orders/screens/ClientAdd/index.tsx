@@ -432,7 +432,7 @@ const CombinedCreatePage: FC = () => {
 								render={({field}) => (
 									<NumberFormattedInput
 										id="count"
-										maxLength={4}
+										maxLength={6}
 										disableGroupSeparators={false}
 										allowDecimals={false}
 										label="Count"

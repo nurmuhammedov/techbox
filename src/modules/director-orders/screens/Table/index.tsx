@@ -3,13 +3,13 @@ import {
 	Button,
 	Card, DeleteButton, DeleteModal,
 	EditButton, EditModal,
-	FilterInput, Form, NumberFormattedInput,
+	FilterInput, Form, Modal, NumberFormattedInput,
 	Pagination,
 	ReactTable, Select,
 	Tab
 } from 'components'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {soldSchema} from 'helpers/yup'
+import {schema, soldSchema} from 'helpers/yup'
 import {
 	useActions, useAdd, useData, useDetail,
 	usePaginatedData,
@@ -166,6 +166,19 @@ const Index = () => {
 			{
 				Header: t('Total paid money'),
 				accessor: (row: IOrderDetail) => decimalToPrice(row.money_paid || '')
+			},
+			{
+				Header: t('Actions'),
+				accessor: (row: IOrderDetail) => (
+					<div className="flex items-start gap-lg">
+						{
+							status == statusOptions[3].value &&
+							<Button mini={true} onClick={() => addParams({modal: 'return', updateId: row.id})}>
+								Return order
+							</Button>
+						}
+					</div>
+				)
 			}
 
 		],
@@ -189,6 +202,19 @@ const Index = () => {
 		}
 	})
 
+	const {
+		handleSubmit: submitForm,
+		control: controlForm,
+		reset: resetForm,
+		formState: {errors: errorsForm}
+	} = useForm({
+		resolver: yupResolver(schema),
+		mode: 'onTouched',
+		defaultValues: {
+			count: ''
+		}
+	})
+
 
 	const {
 		mutateAsync: add,
@@ -197,9 +223,15 @@ const Index = () => {
 
 
 	const {
+		mutateAsync: ret,
+		isPending: isRet
+	} = useAdd('services/return-order')
+
+
+	const {
 		data: productDetail,
 		isPending: isProductDetailLoading
-	} = useDetail<IOrderDetail>('services/orders/', updateId, !!updateId)
+	} = useDetail<IOrderDetail>('services/orders/', updateId, !!updateId && status == statusOptions[2].value)
 
 	useEffect(() => {
 		if (productDetail && !isProductDetailLoading) {
@@ -273,7 +305,7 @@ const Index = () => {
 								render={({field}) => (
 									<NumberFormattedInput
 										id="count"
-										maxLength={4}
+										maxLength={6}
 										disableGroupSeparators={false}
 										allowDecimals={false}
 										label="Count"
@@ -348,6 +380,55 @@ const Index = () => {
 					Save
 				</Button>
 			</EditModal>
+
+
+			<Modal
+				title={`#${updateId} - ${t('Return order')?.toLowerCase()}`}
+				style={{height: '40rem', width: '50rem'}}
+				id="return"
+			>
+				<Form onSubmit={(e) => e.preventDefault()}>
+					<div className="span-12 grid gap-xl flex-0">
+						<div className="span-12">
+							<Controller
+								name="count"
+								control={controlForm}
+								render={({field}) => (
+									<NumberFormattedInput
+										id="count"
+										maxLength={6}
+										disableGroupSeparators={false}
+										allowDecimals={false}
+										label="Count"
+										error={errorsForm?.count?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+					</div>
+				</Form>
+
+				<Button
+					type={FIELD.BUTTON}
+					theme={BUTTON_THEME.PRIMARY}
+					disabled={isRet}
+					onClick={() => {
+						submitForm((data) =>
+							ret({...data, count: Number(data?.count), sold_order: updateId})
+								.then(async () => {
+									resetForm({
+										count: ''
+									})
+									await refetch()
+									removeParams('modal')
+								})
+						)()
+					}}
+				>
+					Return order
+				</Button>
+			</Modal>
 		</>
 	)
 }

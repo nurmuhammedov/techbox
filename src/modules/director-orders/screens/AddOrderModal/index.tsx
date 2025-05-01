@@ -101,8 +101,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	useEffect(() => {
 		if (orders?.length && watch('length') && watch('width')) {
 			const count = orders[0]?.count_entered_leader || orders[0]?.count || 0
-			const length = Number(orders[0]?.width || 0) + 70 + 2 * Number(orders[0]?.length || 0)
-			const length2 = Number(watch('width') || 0) + 70 + 2 * Number(watch('length') || 0)
+			const length = (2* Number(orders[0]?.width || 0)) + 70 + (2 * Number(orders[0]?.length || 0))
+			const length2 = (2*Number(watch('width') || 0)) + 70 + (2 * Number(watch('length') || 0))
 
 			setValue('count', Math.floor(Number(((Number(count) * length) / length2)))?.toString())
 
@@ -309,7 +309,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							render={({field}) => (
 								<NumberFormattedInput
 									id="count"
-									maxLength={4}
+									maxLength={6}
 									disableGroupSeparators={false}
 									allowDecimals={false}
 									label="Count"

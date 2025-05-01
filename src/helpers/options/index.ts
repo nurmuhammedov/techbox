@@ -36,7 +36,7 @@ const statusOptions: ISelectOption[] = [
 	// {value: 'in_line', label: 'Queued orders'},
 	{value: 'in_proces', label: 'In progress orders'},
 	{value: 'finished', label: 'Finished orders'},
-	{value: 'sold', label: 'Sold orders'},
+	{value: 'sold', label: 'Sold orders'}
 ]
 
 const companyOperationsOptions: ISelectOption[] = [
@@ -48,6 +48,13 @@ const companyOperationsOptions: ISelectOption[] = [
 
 const operatorsStatusOptions: ISelectOption[] = [
 	{value: 1, label: 'New orders'},
+	{value: 2, label: 'History'}
+]
+
+export const bossStatusOptions: ISelectOption[] = [
+	{value: 1, label: 'New orders'},
+	{value: 3, label: 'Flex'},
+	{value: 4, label: 'YMO'},
 	{value: 2, label: 'History'}
 ]
 

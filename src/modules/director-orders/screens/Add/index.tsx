@@ -279,7 +279,6 @@ const Index = () => {
 	}
 
 
-
 	return (
 		<>
 			<PageTitle title="Send order">
@@ -746,7 +745,7 @@ const Index = () => {
 												render={({field}) => (
 													<NumberFormattedInput
 														id="count"
-														maxLength={4}
+														maxLength={6}
 														disableGroupSeparators={false}
 														allowDecimals={false}
 														label="Count"
@@ -1037,15 +1036,27 @@ const Index = () => {
 																}
 															})
 															.then((res) => {
+																const sum = decimalToInteger(res?.data?.reduce((accumulator: number, currentValue: {
+																	weight: string
+																}) => {
+																	return accumulator + Number(currentValue?.weight || 0)
+																}, 0))
 																if (Array.isArray(res?.data)) {
-																	showMessage(t('Material alert', {
-																		material: materials?.find(i => i.value == e)?.label || '',
-																		weight: decimalToInteger(res?.data?.reduce((accumulator, currentValue) => {
-																			return accumulator + Number(currentValue?.weight || 0)
-																		}, 0)) || '0',
-																		number: `#${updateId}`,
-																		separationWeight: '0'
-																	}), 'success', 20000)
+																	if (!sum && !Number(sum)) {
+																		showMessage(t('Material alert', {
+																			material: materials?.find(i => i.value == e)?.label || '',
+																			weight: sum || '0',
+																			number: `#${updateId}`,
+																			separationWeight: '0'
+																		}), 'alert', 20000)
+																	} else {
+																		showMessage(t('Material alert', {
+																			material: materials?.find(i => i.value == e)?.label || '',
+																			weight: sum || '0',
+																			number: `#${updateId}`,
+																			separationWeight: '0'
+																		}), 'success', 20000)
+																	}
 																}
 															})
 													}

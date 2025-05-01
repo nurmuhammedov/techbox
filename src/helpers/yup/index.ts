@@ -531,6 +531,16 @@ const temporaryOrderSchema = yup.object().shape({
 		.required('This field is required')
 })
 
+const YMOOrderSchema = yup.object().shape({
+	gofra: yup.boolean().nullable(),
+	ymo1: yup.boolean().nullable(),
+	fleksa: yup.boolean().nullable(),
+	ymo2: yup.boolean().nullable(),
+	tikish: yup.boolean().nullable(),
+	yelimlash: yup.boolean().nullable(),
+	is_last: yup.boolean().nullable()
+})
+
 const operatorOrderSchema = yup.object().shape({
 	warehouse: yup
 		.number()
@@ -612,9 +622,9 @@ const flexOperatorsOrderSchema = yup.object().shape({
 const clientsSchema = yup.object().shape({
 	company_name: yup.string().trim().required('This field is required'),
 	fullname: yup.string().trim().required('This field is required'),
+	partnership_year: yup.string().trim().nullable(),
 	stir: yup.string().trim().nullable().transform(value => value ? value : null).length(9, 'The entered date is not valid'),
-	phone: yup.string().trim().required('This field is required').length(17, 'The entered date is not valid'),
-	partnership_year: yup.string().trim().required('This field is required')
+	phone: yup.string().trim().required('This field is required').length(17, 'The entered date is not valid')
 })
 
 export const orderUpdateSchema = yup.object().shape({
@@ -743,6 +753,37 @@ const soldSchema = yup.object().shape({
 		.number()
 		.required('This field is required')
 })
+
+const schema = yup.object().shape({
+	count: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+})
+
+
+const splitSchema = yup.object().shape({
+	count: yup
+		.string()
+		.trim()
+		.required('This field is required'),
+	logo: yup
+		.object<IFIle>()
+		.shape({
+			name: yup.string().nullable(),
+			id: yup.number().nullable(),
+			file: yup.string().nullable()
+		})
+		.required('This field is required'),
+	comment: yup
+		.string()
+		.trim()
+		.transform(v => v ? v : '')
+		.optional()
+		.nullable()
+})
+
+
 export {
 	semiFinishedWarehouseSchema,
 	flexOperatorsOrderSchema,
@@ -753,13 +794,16 @@ export {
 	temporaryOrderSchema,
 	operatorOrderSchema,
 	groupOrdersSchema,
+	splitSchema,
 	userUpdateSchema,
 	positionsSchema,
 	warehouseSchema,
+	YMOOrderSchema,
 	employeeSchema,
 	soldSchema,
 	ordersSchema2,
 	materialSchema,
+	schema,
 	productSchema,
 	clientsSchema,
 	formatSchema,
