@@ -123,7 +123,6 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		}
 	}, [detail, edit])
 
-
 	if (isDetailLoading && edit) {
 		return <Loader/>
 	}
@@ -142,7 +141,11 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						onClick={() => {
 							if (!edit) {
 								handleSubmit((data) =>
-									addOrder(modifyObjectField({...data, customer} as ISearchParams, 'logo'))
+									addOrder(modifyObjectField({
+										...data,
+										product: data?.product ? data?.product : null,
+										customer
+									} as ISearchParams, 'logo'))
 										.then(async () => {
 											reset({
 												product: undefined,
@@ -166,7 +169,11 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 								)()
 							} else {
 								handleSubmit((data) =>
-									updateOrder(modifyObjectField({...data, customer} as ISearchParams, 'logo'))
+									updateOrder(modifyObjectField({
+										...data,
+										product: data?.product ? data?.product : null,
+										customer
+									} as ISearchParams, 'logo'))
 										.then(async () => {
 											reset({
 												product: undefined,

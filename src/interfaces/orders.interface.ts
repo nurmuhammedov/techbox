@@ -17,6 +17,7 @@ interface IOrderDetail {
 	money_paid: string;
 	count_last: string;
 	backlog: number;
+	weight: string;
 	piece: string;
 
 	logo?: IFIle;

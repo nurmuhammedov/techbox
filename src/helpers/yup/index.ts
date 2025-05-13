@@ -267,7 +267,8 @@ const productSchema = yup.object().shape({
 const ordersSchema = yup.object().shape({
 	product: yup
 		.number()
-		.nullable(),
+		.nullable()
+		.transform(value => value ? value : null),
 	count: yup
 		.string()
 		.trim()
@@ -758,7 +759,31 @@ const schema = yup.object().shape({
 	count: yup
 		.string()
 		.trim()
+		.required('This field is required')
+})
+
+export const defectiveSchema = yup.object().shape({
+	count: yup
+		.string()
+		.trim()
+		.optional()
+		.nullable()
+		.transform((value) => value ? value : null),
+	weight: yup
+		.string()
+		.trim()
+		.required('This field is required')
+})
+
+export const soldDefectiveSchema = yup.object().shape({
+	price: yup
+		.string()
+		.trim()
 		.required('This field is required'),
+	weight: yup
+		.string()
+		.trim()
+		.required('This field is required')
 })
 
 

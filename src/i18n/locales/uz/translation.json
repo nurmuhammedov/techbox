@@ -216,6 +216,10 @@
   "Roll weight": "Rulon vazni",
   "Add roll": "Rulon qo‘shish",
   "Roll": "Rulon",
+  "Defective product": "Yaroqsiz mahsulot",
+  "Defective products": "Yaroqsiz mahsulotlar",
+  "Sold defective products": "Sotilgan yaroqsiz mahsulotlar",
+  "Sold defective product": "Yaroqsiz mahsulot sotish",
   "Transfer to process": "Jarayonga o‘tkazish",
   "Gluing orders": "Yelimlash"
 }

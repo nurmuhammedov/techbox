@@ -36,7 +36,9 @@ const statusOptions: ISelectOption[] = [
 	// {value: 'in_line', label: 'Queued orders'},
 	{value: 'in_proces', label: 'In progress orders'},
 	{value: 'finished', label: 'Finished orders'},
-	{value: 'sold', label: 'Sold orders'}
+	{value: 'sold', label: 'Sold orders'},
+	{value: 'defective', label: 'Defective products'},
+	{value: 'sold-defective', label: 'Sold defective products'}
 ]
 
 const companyOperationsOptions: ISelectOption[] = [

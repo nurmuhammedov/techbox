@@ -9,7 +9,7 @@ import {
 	Tab
 } from 'components'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {schema, soldSchema} from 'helpers/yup'
+import {defectiveSchema, schema, soldDefectiveSchema, soldSchema} from 'helpers/yup'
 import {
 	useActions, useAdd, useData, useDetail,
 	usePaginatedData,
@@ -33,7 +33,13 @@ const Index = () => {
 	const {page, pageSize} = usePagination()
 	const {addOrder} = useActions()
 	const {
-		paramsObject: {status = statusOptions[0].value, search = '', company = '', updateId = undefined},
+		paramsObject: {
+			status = statusOptions[0].value,
+			orderId = undefined,
+			search = '',
+			company = '',
+			updateId = undefined
+		},
 		removeParams,
 		addParams
 	} = useSearchParams()
@@ -41,7 +47,7 @@ const Index = () => {
 
 
 	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IOrderDetail[]>(
-		status === statusOptions[3].value ? `services/sold-orders` : `/services/orders-with-detail`,
+		status === statusOptions[3].value ? `services/sold-orders` : status === statusOptions[4].value ? `services/wasted-paper-list` : status === statusOptions[5].value ? `services/sold-wasted-paper` : `services/orders-with-detail`,
 		{
 			page: page,
 			page_size: pageSize,
@@ -52,17 +58,8 @@ const Index = () => {
 		}
 	)
 
-
 	const columns: Column<IOrderDetail>[] = useMemo(
 		() => [
-			// {
-			// 	Header: t('№'),
-			// 	accessor: (_: IOrderDetail, index: number) => (page - 1) * pageSize + (index + 1),
-			// 	style: {
-			// 		width: '3rem',
-			// 		textAlign: 'center'
-			// 	}
-			// },
 			{
 				Header: t('Order number'),
 				accessor: (row: IOrderDetail) => `#${row.id}`,
@@ -173,9 +170,22 @@ const Index = () => {
 					<div className="flex items-start gap-lg">
 						{
 							status == statusOptions[3].value &&
-							<Button mini={true} onClick={() => addParams({modal: 'return', updateId: row.id})}>
-								Return order
-							</Button>
+							<>
+								<Button mini={true} onClick={() => addParams({
+									modal: 'return',
+									updateId: row.id,
+									orderId: row?.order?.id
+								})}>
+									Return order
+								</Button>
+								<Button mini={true} onClick={() => addParams({
+									modal: 'defective',
+									updateId: row.id,
+									orderId: row?.order?.id
+								})}>
+									Defective product
+								</Button>
+							</>
 						}
 					</div>
 				)
@@ -185,6 +195,42 @@ const Index = () => {
 		[page, pageSize, status]
 	)
 
+	const columns3: Column<IOrderDetail>[] = useMemo(
+		() => [
+			...status == statusOptions[4].value ? [
+				{
+					Header: t('Order number'),
+					accessor: (row: IOrderDetail) => `#${row.order?.id}`,
+					style: {
+						width: '14rem',
+						textAlign: 'start'
+					}
+				},
+				{
+					Header: t('Count'),
+					accessor: (row: IOrderDetail) => decimalToInteger(row.count || '')
+				}
+			] : [
+				{
+					Header: t('№'),
+					accessor: (_: IOrderDetail, index: number) => (page - 1) * pageSize + (index + 1),
+					style: {
+						width: '3rem',
+						textAlign: 'center'
+					}
+				},
+				{
+					Header: t('Price'),
+					accessor: (row: IOrderDetail) => decimalToPrice(row.price || '')
+				}
+			],
+			{
+				Header: `${t('Weight')} (${t('kg')})`,
+				accessor: (row: IOrderDetail) => decimalToPrice(row.weight || '')
+			}
+		],
+		[page, pageSize, status]
+	)
 
 	const {
 		handleSubmit,
@@ -215,18 +261,53 @@ const Index = () => {
 		}
 	})
 
+	const {
+		handleSubmit: submitDefective,
+		control: controlDefective,
+		reset: resetDefective,
+		formState: {errors: errorsDefective}
+	} = useForm({
+		resolver: yupResolver(defectiveSchema),
+		mode: 'onTouched',
+		defaultValues: {
+			count: '',
+			weight: ''
+		}
+	})
+
+	const {
+		handleSubmit: submitSoldDefective,
+		control: controlSoldDefective,
+		reset: resetSoldDefective,
+		formState: {errors: errorsSoldDefective}
+	} = useForm({
+		resolver: yupResolver(soldDefectiveSchema),
+		mode: 'onTouched',
+		defaultValues: {
+			price: '',
+			weight: ''
+		}
+	})
 
 	const {
 		mutateAsync: add,
 		isPending: isAdding
 	} = useAdd('services/sold-orders')
 
-
 	const {
 		mutateAsync: ret,
 		isPending: isRet
 	} = useAdd('services/return-order')
 
+	const {
+		mutateAsync: def,
+		isPending: isDef
+	} = useAdd('services/adding-waste-to-paper')
+
+	const {
+		mutateAsync: soldDef,
+		isPending: isSoldDef
+	} = useAdd('services/sold-wasted-paper')
 
 	const {
 		data: productDetail,
@@ -244,27 +325,38 @@ const Index = () => {
 		}
 	}, [productDetail])
 
-
 	return (
 		<>
 			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
 				<Tab query="status" fallbackValue={statusOptions[0].value} tabs={statusOptions}/>
 			</div>
 			<Card>
-				<div className="flex gap-lg" style={{padding: '.8rem .8rem .3rem .8rem'}}>
-					<FilterInput
-						id="company"
-						query="company"
-						placeholder="Company name"
-					/>
-					<FilterInput
-						id="search"
-						query="search"
-						placeholder="Full name"
-					/>
-				</div>
+				{
+					status !== statusOptions[4].value || status !== statusOptions[5].value && <>
+						<div className="flex gap-lg" style={{padding: '.8rem .8rem .3rem .8rem'}}>
+							<FilterInput
+								id="company"
+								query="company"
+								placeholder="Company name"
+							/>
+							<FilterInput
+								id="search"
+								query="search"
+								placeholder="Full name"
+							/>
+						</div>
+					</>
+				}
+				{
+					status === statusOptions[5].value &&
+					<div style={{padding: '.5rem', display: 'flex', justifyContent: 'flex-end'}}>
+						<Button onClick={() => addParams({modal: 'soldDefective'})}>
+							Sold defective product
+						</Button>
+					</div>
+				}
 				<ReactTable
-					columns={status !== statusOptions[3].value ? columns : columns2}
+					columns={status == statusOptions[3].value ? columns2 : status === statusOptions[4].value || status === statusOptions[5].value ? columns3 : columns}
 					data={data}
 					isLoading={isLoading}
 				/>
@@ -383,7 +475,7 @@ const Index = () => {
 
 
 			<Modal
-				title={`#${updateId} - ${t('Return order')?.toLowerCase()}`}
+				title={`#${orderId} - ${t('Return order')?.toLowerCase()}`}
 				style={{height: '40rem', width: '50rem'}}
 				id="return"
 			>
@@ -421,12 +513,143 @@ const Index = () => {
 										count: ''
 									})
 									await refetch()
-									removeParams('modal')
+									removeParams('modal', 'orderId', 'updateId')
 								})
 						)()
 					}}
 				>
 					Return order
+				</Button>
+			</Modal>
+
+			<Modal
+				title={`#${orderId} - ${t('Defective product')?.toLowerCase()}`}
+				style={{height: '40rem', width: '50rem'}}
+				id="defective"
+			>
+				<Form onSubmit={(e) => e.preventDefault()}>
+					<div className="span-12 grid gap-xl flex-0">
+						<div className="span-12">
+							<Controller
+								name="count"
+								control={controlDefective}
+								render={({field}) => (
+									<NumberFormattedInput
+										id="count"
+										maxLength={6}
+										disableGroupSeparators={false}
+										allowDecimals={false}
+										label="Count"
+										error={errorsDefective?.count?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+						<div className="span-12">
+							<Controller
+								control={controlDefective}
+								name="weight"
+								render={({field}) => (
+									<NumberFormattedInput
+										id="weight"
+										label={`${t('Weight')} (${t('kg')})`}
+										disableGroupSeparators={false}
+										maxLength={9}
+										allowDecimals={false}
+										error={errorsDefective?.weight?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+					</div>
+				</Form>
+
+				<Button
+					type={FIELD.BUTTON}
+					theme={BUTTON_THEME.PRIMARY}
+					disabled={isDef}
+					onClick={() => {
+						submitDefective((data) =>
+							def({...data, count: data?.count ? Number(data?.count) : null, sold_order: updateId})
+								.then(async () => {
+									resetDefective({
+										count: '',
+										weight: ''
+									})
+									await refetch()
+									removeParams('modal', 'orderId', 'updateId')
+								})
+						)()
+					}}
+				>
+					Return order
+				</Button>
+			</Modal>
+
+			<Modal
+				title={`${t('Defective product')}`}
+				style={{height: '40rem', width: '50rem'}}
+				id="soldDefective"
+			>
+				<Form onSubmit={(e) => e.preventDefault()}>
+					<div className="span-12 grid gap-xl flex-0">
+						<div className="span-12">
+							<Controller
+								name="price"
+								control={controlSoldDefective}
+								render={({field}) => (
+									<NumberFormattedInput
+										id="price"
+										maxLength={6}
+										disableGroupSeparators={false}
+										allowDecimals={false}
+										label="Price"
+										error={errorsSoldDefective?.price?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+						<div className="span-12">
+							<Controller
+								name="weight"
+								control={controlSoldDefective}
+								render={({field}) => (
+									<NumberFormattedInput
+										id="weight"
+										label={`${t('Weight')} (${t('kg')})`}
+										disableGroupSeparators={false}
+										maxLength={9}
+										allowDecimals={false}
+										error={errorsSoldDefective?.weight?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+					</div>
+				</Form>
+
+				<Button
+					type={FIELD.BUTTON}
+					theme={BUTTON_THEME.PRIMARY}
+					disabled={isSoldDef}
+					onClick={() => {
+						submitSoldDefective((data) =>
+							soldDef(data).then(async () => {
+								resetSoldDefective({
+									price: '',
+									weight: ''
+								})
+								await refetch()
+								removeParams('modal', 'orderId', 'updateId')
+							})
+						)()
+					}}
+				>
+					Sold defective product
 				</Button>
 			</Modal>
 		</>
