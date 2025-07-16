@@ -70,6 +70,7 @@ const Index = forwardRef<HTMLInputElement | HTMLTextAreaElement, IField>(
 								}
 								<input
 									{...props}
+									title={props?.disabled ? props?.value?.toString() : undefined}
 									ref={ref as React.Ref<HTMLInputElement>}
 									id={id.toString()}
 									type={type}

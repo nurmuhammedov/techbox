@@ -1,4 +1,4 @@
-import {roleOptions} from 'helpers/options'
+import {cutOptions, roleOptions} from 'helpers/options'
 import {TFunction} from 'i18next'
 import {IFIle, ISelectOption} from 'interfaces/form.interface'
 import {IOrderDetail} from 'interfaces/orders.interface'
@@ -128,7 +128,7 @@ function calculateTotalMaterialUsageInKg(
 	}
 
 	const weight1x1_kg = weight1x1_grams / 1000
-	const totalWeightKg = totalAreaM2 * weight1x1_kg * 1.05
+	const totalWeightKg = (totalAreaM2 * weight1x1_kg * 1.05) / Number(cutOptions.find((item) => item?.value == orders[0]?.piece)?.material || 1)
 
 	return String(Number(totalWeightKg)?.toFixed(2))
 }
