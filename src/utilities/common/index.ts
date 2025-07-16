@@ -96,7 +96,7 @@ const getLayerSellerArray = (layer: string[] | null | undefined) => {
 function hasDifferentLayers(orders: { layer?: (number | string)[] }[]): boolean {
 	if (orders.length === 0) return false
 
-	const normalize = (arr: (number | string)[] = []) => arr.map(Number) // har ehtimolga qarshi stringni numberga aylantiramiz
+	const normalize = (arr: (number | string)[] = []) => arr.map(Number)
 
 	const base = normalize(orders[0].layer)
 
