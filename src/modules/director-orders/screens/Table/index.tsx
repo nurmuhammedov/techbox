@@ -22,7 +22,7 @@ import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {IOrderDetail} from 'interfaces/orders.interface'
-import {getDate} from 'utilities/date'
+import {formatDate, getDate} from 'utilities/date'
 import {decimalToInteger, decimalToPrice, getSelectValue} from 'utilities/common'
 import {activityOptions, statusOptions} from 'helpers/options'
 
@@ -102,6 +102,12 @@ const Index = () => {
 				{
 					Header: `${t('Developed')} ${t('Count')?.toLowerCase()}`,
 					accessor: (row: IOrderDetail) => row?.count_last || 0
+				}
+			] : [],
+			...status == statusOptions[2].value ? [
+				{
+					Header: `${t('Finished date')}`,
+					accessor: (row: IOrderDetail) => row?.end_date ? formatDate(row?.end_date) : ''
 				}
 			] : [],
 			...status == statusOptions[0].value ? [

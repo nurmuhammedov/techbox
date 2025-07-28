@@ -15,14 +15,15 @@ const Index = () => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
-	const {paramsObject} = useSearchParams()
+	const {paramsObject: {format = undefined, ...rest}} = useSearchParams()
 
 	const {data, totalPages, isPending: isLoading} = usePaginatedData<IBaseMaterialList[]>(
 		`products/base-materials`,
 		{
+			...rest,
 			page: page,
 			page_size: pageSize,
-			...paramsObject
+			format1: format
 		}
 	)
 
