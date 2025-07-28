@@ -113,7 +113,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 						row?.orders?.map((order, index) => (
 							<>
 								<div>
-									{`${order.width}*${order.length}*${order.height}`}
+									{`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&

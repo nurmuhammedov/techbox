@@ -88,6 +88,14 @@ const formatSelectOptions = (options: ISelectOption[], id?: number | string): IS
 	})) as unknown as ISelectOption[] || [] as unknown as ISelectOption[]
 }
 
+export const formatSelectOptions2 = (options: ISelectOption[]): ISelectOption[] => {
+	const s = options as unknown as ISearchParams[]
+	return s?.map(option => ({
+		value: option.value,
+		label: `${option?.name} (${option?.made_in}) - ${decimalToInteger(option?.label?.toString())} kg`
+	})) as unknown as ISelectOption[] || [] as unknown as ISelectOption[]
+}
+
 const getLayerSellerArray = (layer: string[] | null | undefined) => {
 	const length = layer?.length ?? 0
 	return length > 0 ? new Array(length).fill(undefined) : []

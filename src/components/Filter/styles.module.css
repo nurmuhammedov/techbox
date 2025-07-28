@@ -1,0 +1,15 @@
+.filterContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  padding: 1rem;
+}
+
+.filterItem {
+  flex: 1 1 auto;
+  min-width: 10rem;
+  max-width: 25rem;
+}
+
+/*# sourceMappingURL=styles.module.css.map */

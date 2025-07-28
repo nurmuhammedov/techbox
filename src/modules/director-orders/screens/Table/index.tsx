@@ -73,6 +73,14 @@ const Index = () => {
 				accessor: (row: IOrderDetail) => row.company_name
 			},
 			{
+				Header: `${t('Product')} ${t('Name')?.toLowerCase()}`,
+				accessor: (row: IOrderDetail) => row.product?.name
+			},
+			{
+				Header: `${t('Sizes')} (${t('mm')})`,
+				accessor: (row: IOrderDetail) => `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}`
+			},
+			{
 				Header: t('Count'),
 				accessor: (row: IOrderDetail) => decimalToInteger(row.count || '')
 			},
@@ -80,10 +88,7 @@ const Index = () => {
 				Header: t('Deadline'),
 				accessor: (row: IOrderDetail) => row.deadline ? getDate(row.deadline) : null
 			},
-			{
-				Header: `${t('Sizes')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => `${row.width}*${row.length}*${row.height}`
-			},
+
 			{
 				Header: `${t('Format')} (${t('mm')})`,
 				accessor: (row: IOrderDetail) => decimalToInteger(row.format?.name)
@@ -93,12 +98,12 @@ const Index = () => {
 					Header: t('Status'),
 					accessor: (row: IOrderDetail) => t(activityOptions?.find(i => row.activity === i?.value)?.label?.toString() || '')
 				}
-			] : [
+			] : status != statusOptions[0].value ? [
 				{
 					Header: `${t('Developed')} ${t('Count')?.toLowerCase()}`,
 					accessor: (row: IOrderDetail) => row?.count_last || 0
 				}
-			],
+			] : [],
 			...status == statusOptions[0].value ? [
 				{
 					Header: t('Actions'),

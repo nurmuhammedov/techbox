@@ -1,7 +1,7 @@
 import {ISearchParams} from 'interfaces/params.interface'
 import {convertParamsToObject} from 'utilities/params'
 import {useSearchParams} from 'react-router-dom'
-import {isObject} from 'utilities/common'
+import {cleanParams, isObject} from 'utilities/common'
 
 
 function useCustomSearchParams() {
@@ -27,7 +27,7 @@ function useCustomSearchParams() {
 			newParams = {...newParams, ...paramKeyOrObj}
 		}
 
-		setSearchParams(newParams as unknown as URLSearchParams, {replace: true})
+		setSearchParams(cleanParams(newParams) as unknown as URLSearchParams, {replace: true})
 	}
 
 	function removeParams(...paramKeys: string[]): void {

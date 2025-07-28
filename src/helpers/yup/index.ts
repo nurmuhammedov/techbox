@@ -70,45 +70,129 @@ const positionsSchema = yup.object().shape({
 
 
 // EMPLOYEES
+// const employeeSchema = yup.object().shape({
+// 	lastname: yup.string().trim().required('This field is required'),
+// 	firstname: yup.string().trim().required('This field is required'),
+// 	middle_name: yup.string().trim().required('This field is required'),
+// 	pinfl: yup.string().trim().required('This field is required').length(14, 'The entered date is not valid'),
+// 	card_number: yup
+// 		.string()
+// 		.trim()
+// 		.required('This field is required')
+// 		.length(16, 'The entered date is not valid')
+// 		.transform((value) => {
+// 			if (typeof value === 'string') {
+// 				return value.split(' ').join('')
+// 			}
+// 			return value
+// 		}),
+// 	passport: yup
+// 		.string()
+// 		.trim()
+// 		.required('This field is required')
+// 		.length(10, 'The entered date is not valid')
+// 		.transform((value) => {
+// 			if (typeof value === 'string') {
+// 				return value.toUpperCase()
+// 			}
+// 			return value
+// 		}),
+// 	address: yup.string().trim().required('This field is required'),
+// 	phone: yup.string().trim().required('This field is required').length(17, 'The entered date is not valid'),
+// 	position: yup.number().required('This field is required'),
+// 	birthday: dateField.required('This field is required').test('isNotFutureDate', 'How are you going to include someone who is not born?', (value) => {
+// 		if (!value) return false
+// 		const [year, month, day] = value.split('-').map(Number)
+// 		const inputDate = new Date(year, month - 1, day)
+// 		const today = new Date()
+// 		today.setHours(0, 0, 0, 0)
+// 		return inputDate <= today
+// 	})
+// })
+
 const employeeSchema = yup.object().shape({
 	lastname: yup.string().trim().required('This field is required'),
 	firstname: yup.string().trim().required('This field is required'),
 	middle_name: yup.string().trim().required('This field is required'),
-	pinfl: yup.string().trim().required('This field is required').length(14, 'The entered date is not valid'),
+
+	pinfl: yup
+		.string()
+		.trim()
+		.length(14, 'The entered date is not valid')
+		.nullable()
+		.transform((value) => (value === '' ? null : value)),
+
 	card_number: yup
 		.string()
 		.trim()
-		.required('This field is required')
 		.length(16, 'The entered date is not valid')
+		.nullable()
 		.transform((value) => {
 			if (typeof value === 'string') {
-				return value.split(' ').join('')
+				const cleaned = value.split(' ').join('')
+				return cleaned === '' ? null : cleaned
 			}
 			return value
 		}),
+
 	passport: yup
 		.string()
 		.trim()
-		.required('This field is required')
 		.length(10, 'The entered date is not valid')
+		.nullable()
 		.transform((value) => {
 			if (typeof value === 'string') {
-				return value.toUpperCase()
+				const cleaned = value.toUpperCase()
+				return cleaned === '' ? null : cleaned
 			}
 			return value
 		}),
-	address: yup.string().trim().required('This field is required'),
-	phone: yup.string().trim().required('This field is required').length(17, 'The entered date is not valid'),
-	position: yup.number().required('This field is required'),
-	birthday: dateField.required('This field is required').test('isNotFutureDate', 'How are you going to include someone who is not born?', (value) => {
-		if (!value) return false
-		const [year, month, day] = value.split('-').map(Number)
-		const inputDate = new Date(year, month - 1, day)
-		const today = new Date()
-		today.setHours(0, 0, 0, 0)
-		return inputDate <= today
-	})
+
+	address: yup.string().trim().nullable().transform((value) => (value === '' ? null : value)),
+
+	phone: yup
+		.string()
+		.trim()
+		.length(17, 'The entered date is not valid')
+		.nullable()
+		.transform((value) => (value === '' ? null : value)),
+
+	position: yup.number().nullable(),
+
+	birthday: yup
+		.string()
+		.transform((value) => {
+			if (!value || value.trim() === '') return null
+			const [day, month, year] = value.split('.')
+			return `${year}-${month}-${day}`
+		})
+		.nullable()
+		.test('isValidDate', 'The entered date is not valid', (value) => {
+			if (!value) return true // null yoki undefined bo‘lsa — xato emas
+			const [year, month, day] = value.split('-').map(Number)
+			const date = new Date(year, month - 1, day)
+			return (
+				date.getFullYear() === year &&
+				date.getMonth() === month - 1 &&
+				date.getDate() === day
+			)
+		})
+		.nullable()
+		.transform((value) => (value === '' ? null : value))
+		.test(
+			'isNotFutureDate',
+			'How are you going to include someone who is not born?',
+			(value) => {
+				if (!value) return true // allow null
+				const [year, month, day] = value.split('-').map(Number)
+				const inputDate = new Date(year, month - 1, day)
+				const today = new Date()
+				today.setHours(0, 0, 0, 0)
+				return inputDate <= today
+			}
+		)
 })
+
 
 const userSchema = yup.object().shape({
 	employee: yup.number().required('This field is required'),
@@ -235,7 +319,8 @@ const productSchema = yup.object().shape({
 	height: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.nullable()
+		.transform(v => v ? v : null),
 	length: yup
 		.string()
 		.trim()
@@ -243,7 +328,8 @@ const productSchema = yup.object().shape({
 	box_ear: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.nullable()
+		.transform(v => v ? v : null),
 	format: yup
 		.number()
 		.required('This field is required'),
@@ -301,7 +387,8 @@ const ordersSchema = yup.object().shape({
 	height: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.nullable()
+		.transform(v => v ? v : null),
 	length: yup
 		.string()
 		.trim()
@@ -309,7 +396,8 @@ const ordersSchema = yup.object().shape({
 	box_ear: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.nullable()
+		.transform(v => v ? v : null),
 	format: yup
 		.number()
 		.required('This field is required'),
@@ -366,7 +454,8 @@ const ordersSchema2 = yup.object().shape({
 	height: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.nullable()
+		.transform(v => v ? v : null),
 	length: yup
 		.string()
 		.trim()
@@ -374,7 +463,8 @@ const ordersSchema2 = yup.object().shape({
 	box_ear: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.nullable()
+		.transform(v => v ? v : null),
 	format: yup
 		.number()
 		.required('This field is required'),
@@ -477,7 +567,7 @@ const groupOrdersSchema = yup.object().shape({
 			is: true,
 			then: (schema) => schema.required('This field is required'),
 			otherwise: (schema) => schema
-				.transform(value => value ? value : null)
+				.transform(value => value ? value : '0')
 				.nullable()
 		}),
 	separated_raw_materials_format: yup
@@ -809,6 +899,18 @@ const splitSchema = yup.object().shape({
 })
 
 
+const countSchema = yup.object().shape({
+	data: yup
+		.array()
+		.default([])
+		.of(yup.object().shape({
+			id: yup.string().trim().required('This field is required'),
+			weight: yup.string().trim().transform(value => value ? value : '0')
+		}))
+		.required('This field is required')
+})
+
+
 export {
 	semiFinishedWarehouseSchema,
 	flexOperatorsOrderSchema,
@@ -824,6 +926,7 @@ export {
 	positionsSchema,
 	warehouseSchema,
 	YMOOrderSchema,
+	countSchema,
 	employeeSchema,
 	soldSchema,
 	ordersSchema2,

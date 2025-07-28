@@ -102,6 +102,9 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 		group_order: detail ? id : null
 	})
 
+	// data massivini kuzatish uchun
+	const watchedData = watch('data');
+
 	return (
 		<>
 			<PageTitle title="Send order">
@@ -185,72 +188,83 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 						</div>
 					</div>
 					{
-						fields?.map((field, index) => (
-							<div className="grid gap-lg span-12" key={field.id}>
-								<div className="span-4">
-									<Controller
-										name={`data.${index}.layer`}
-										control={control}
-										render={({field: {value, ref, onChange, onBlur}}) => (
-											<Select
-												ref={ref}
-												top={true}
-												id={`payment.${index}.layer`}
-												label={`${index + 1}-${t('Layer')?.toString()?.toLowerCase()}`}
-												options={materials}
-												onBlur={onBlur}
-												isDisabled={true}
-												error={errors?.data?.[index]?.layer?.message}
-												value={getSelectValue(materials, value)}
-												defaultValue={getSelectValue(materials, value)}
-												handleOnChange={(e) => onChange(e as string)}
-											/>
-										)}
-									/>
-								</div>
+						fields?.map((field, index) => {
+							// BOSHQA qatorlarda tanlangan "Roll" qiymatlarini yig'ib olamiz
+							const otherSelectedRolls = watchedData
+								?.filter((_, i) => i !== index) // Joriy qatorni hisobga olmaymiz
+								.flatMap(item => item.material || []); // Boshqa qatorlardagi tanlangan rollarni bir massivga yig'amiz
 
-								<div className="span-4">
-									<Controller
-										control={control}
-										name={`data.${index}.weight`}
-										render={({field}) => (
-											<NumberFormattedInput
-												id={`data.${index}.weight`}
-												maxLength={12}
-												disableGroupSeparators={false}
-												allowDecimals={true}
-												disabled={retrieve}
-												label={`${t('Weight')} (${t('kg')})`}
-												error={errors?.data?.[index]?.weight?.message}
-												{...field}
-											/>
-										)}
-									/>
-								</div>
+							// Joriy qator uchun mavjud bo'lgan variantlarni filtrlash
+							const availableRollOptions = formatSelectOptions(rolls, watchedData?.[index]?.layer)
+								.filter(option => !otherSelectedRolls.includes(option.value));
 
-								<div className="span-4">
-									<Controller
-										name={`data.${index}.material`}
-										control={control}
-										render={({field: {value, ref, onChange, onBlur}}) => (
-											<Select
-												ref={ref}
-												id={`payment.${index}.material`}
-												label={`${t('Roll')}`}
-												options={formatSelectOptions(rolls, watch(`data.${index}.layer`))}
-												onBlur={onBlur}
-												isMulti={true}
-												isDisabled={retrieve}
-												error={errors?.data?.[index]?.material?.message}
-												value={getSelectValue(formatSelectOptions(rolls, watch(`data.${index}.layer`)), value)}
-												defaultValue={getSelectValue(formatSelectOptions(rolls, watch(`data.${index}.layer`)), value)}
-												handleOnChange={(e) => onChange(e as string)}
-											/>
-										)}
-									/>
+							return (
+								<div className="grid gap-lg span-12" key={field.id}>
+									<div className="span-4">
+										<Controller
+											name={`data.${index}.layer`}
+											control={control}
+											render={({field: {value, ref, onChange, onBlur}}) => (
+												<Select
+													ref={ref}
+													top={true}
+													id={`payment.${index}.layer`}
+													label={`${index + 1}-${t('Layer')?.toString()?.toLowerCase()}`}
+													options={materials}
+													onBlur={onBlur}
+													isDisabled={true}
+													error={errors?.data?.[index]?.layer?.message}
+													value={getSelectValue(materials, value)}
+													defaultValue={getSelectValue(materials, value)}
+													handleOnChange={(e) => onChange(e as string)}
+												/>
+											)}
+										/>
+									</div>
+
+									<div className="span-4">
+										<Controller
+											control={control}
+											name={`data.${index}.weight`}
+											render={({field}) => (
+												<NumberFormattedInput
+													id={`data.${index}.weight`}
+													maxLength={12}
+													disableGroupSeparators={false}
+													allowDecimals={true}
+													disabled={retrieve}
+													label={`${t('Weight')} (${t('kg')})`}
+													error={errors?.data?.[index]?.weight?.message}
+													{...field}
+												/>
+											)}
+										/>
+									</div>
+
+									<div className="span-4">
+										<Controller
+											name={`data.${index}.material`}
+											control={control}
+											render={({field: {value, ref, onChange, onBlur}}) => (
+												<Select
+													ref={ref}
+													id={`payment.${index}.material`}
+													label={`${t('Roll')}`}
+													options={availableRollOptions}
+													onBlur={onBlur}
+													isMulti={true}
+													isDisabled={retrieve}
+													error={errors?.data?.[index]?.material?.message}
+													value={getSelectValue(availableRollOptions, value)}
+													defaultValue={getSelectValue(availableRollOptions, value)}
+													handleOnChange={(e) => onChange(e as string[])}
+												/>
+											)}
+										/>
+									</div>
 								</div>
-							</div>
-						))
+							);
+						})
 					}
 				</Form>
 			</Card>

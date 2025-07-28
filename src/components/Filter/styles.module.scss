@@ -1,0 +1,14 @@
+.filterContainer {
+  display: flex;
+  gap: .5rem; // Adjust gap as per your design system
+  align-items: flex-start; // Aligns items to the top
+  flex-wrap: nowrap; // Ensures all items stay on one line
+  padding: 1rem;
+}
+
+.filterItem {
+  flex: 1 1 auto; // Allows items to grow and shrink but maintain their content size as basis
+  min-width: 10rem; // Minimum width for usability, adjust as needed
+  max-width: 25rem; // Minimum width for usability, adjust as needed
+}
+

@@ -129,7 +129,7 @@ const Index = () => {
 						row?.orders?.map((order, index) => (
 							<>
 								<div>
-									{`${order.width}*${order.length}*${order.height}`}
+									{`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
@@ -272,7 +272,7 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Sizes')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => `${row.width}*${row.length}*${row.height}`
+				accessor: (row: IOrderDetail) => `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}`
 			},
 			{
 				Header: t('Layer'),

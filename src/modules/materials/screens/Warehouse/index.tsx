@@ -1,6 +1,6 @@
 import {Plus} from 'assets/icons'
 import {Button, Card, EditButton, PageTitle, Pagination, ReactTable} from 'components'
-import {usePaginatedData, usePagination} from 'hooks'
+import {usePaginatedData, usePagination, useSearchParams} from 'hooks'
 import {IBaseMaterialList} from 'interfaces/materials.interface'
 import {useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
@@ -8,18 +8,21 @@ import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {decimalToInteger} from 'utilities/common'
 import {getDate} from 'utilities/date'
+import Filter from 'components/Filter'
 
 
 const Index = () => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
+	const {paramsObject} = useSearchParams()
 
 	const {data, totalPages, isPending: isLoading} = usePaginatedData<IBaseMaterialList[]>(
 		`products/base-materials`,
 		{
 			page: page,
-			page_size: pageSize
+			page_size: pageSize,
+			...paramsObject
 		}
 	)
 
@@ -78,6 +81,7 @@ const Index = () => {
 				</Button>
 			</PageTitle>
 			<Card>
+				<Filter fieldsToShow={['name', 'format']}/>
 				<ReactTable
 					columns={columns}
 					data={data}

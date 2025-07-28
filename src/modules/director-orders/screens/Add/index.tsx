@@ -97,7 +97,7 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Sizes')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => `${row.width}*${row.length}*${row.height}`
+				accessor: (row: IOrderDetail) => `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}`
 			},
 			{
 				Header: `${t('Format')} (${t('mm')})`,
@@ -193,6 +193,8 @@ const Index = () => {
 		resolver: yupResolver(temporaryOrderSchema)
 	})
 
+
+	console.log(errors, 'errors')
 
 	const {fields} = useFieldArray({
 		control,
@@ -400,7 +402,7 @@ const Index = () => {
 													id="sizes"
 													disabled={true}
 													label={`${t('Sizes')} (${t('mm')})`}
-													value={`${order.width}*${order.length}*${order.height}`}
+													value={`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
 												/>
 											</div>
 											<div className="span-4">

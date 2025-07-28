@@ -23,6 +23,7 @@ interface IOrderDetail {
 	logo?: IFIle;
 	name: string;
 	width: string;
+	end_date: string;
 	height: string;
 	length: string;
 	size: string;

@@ -14,7 +14,7 @@ interface IProperties {
 	mask?: string
 	disabled?: boolean
 	onChange: (value: ChangeEvent<HTMLInputElement>) => void
-	onBlur: (event: FocusEvent<HTMLInputElement>) => void;
+	onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
 }
 
 const Index = forwardRef<HTMLInputElement, IProperties>(({
