@@ -33,8 +33,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
 	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
 	const {data: warehouses = []} = useData<ISelectOption[]>('accounts/warehouses-select')
-	const { data: countries = [] } = useData<ISelectOption[]>('products/countries/select');
-	const { data: suppliers = [] } = useData<ISelectOption[]>('products/suppliers/select');
+	const {data: countries = []} = useData<ISelectOption[]>('products/countries/select')
+	const {data: suppliers = []} = useData<ISelectOption[]>('products/suppliers/select')
 
 	const {
 		handleSubmit: orderHandleSubmit,
@@ -106,7 +106,10 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			orderReset({
 				material: detail.material?.id,
 				warehouse: detail.warehouse?.id,
-				weight: detail.weight,
+				weight: detail.weight?.map(i => ({
+					...i,
+					weight: `${decimalToInteger(i?.remaining_weight || '0')}/${decimalToInteger(i?.weight || '0')}`
+				})),
 				format: detail.format?.id
 			})
 		}
@@ -281,22 +284,33 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 										/>
 									</div>
 									<div className="span-3">
-										<Controller
-											control={control}
-											name={`weight.${index}.weight`}
-											render={({field}) => (
-												<NumberFormattedInput
-													id={`weight.${index + 1}.weight`}
+
+										{
+											detail ?
+												<Input
+													id={`weight.${index}.weight`}
+													type={FIELD.TEXT}
 													label={`${index + 1}-${t('Roll weight')?.toLowerCase()} (${t('kg')})`}
-													disableGroupSeparators={false}
-													maxLength={5}
-													disabled={edit}
-													allowDecimals={false}
-													error={orderErrors?.weight?.[index]?.weight?.message}
-													{...field}
+													disabled={true}
+													{...orderRegister(`weight.${index}.weight`)}
+												/> :
+												<Controller
+													control={control}
+													name={`weight.${index}.weight`}
+													render={({field}) => (
+														<NumberFormattedInput
+															id={`weight.${index + 1}.weight`}
+															label={`${index + 1}-${t('Roll weight')?.toLowerCase()} (${t('kg')})`}
+															disableGroupSeparators={false}
+															maxLength={5}
+															disabled={edit}
+															allowDecimals={false}
+															error={orderErrors?.weight?.[index]?.weight?.message}
+															{...field}
+														/>
+													)}
 												/>
-											)}
-										/>
+										}
 									</div>
 									{/*<div className="span-3">*/}
 									{/*	<Input*/}
@@ -323,7 +337,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 										<Controller
 											name={`weight.${index}.supplier`}
 											control={control}
-											render={({ field: { value, ref, onChange, onBlur } }) => (
+											render={({field: {value, ref, onChange, onBlur}}) => (
 												<Select
 													id={`supplier-${index}`}
 													label={t('Supplier')}
@@ -342,7 +356,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 										<Controller
 											name={`weight.${index}.made_in`}
 											control={control}
-											render={({ field: { value, ref, onChange, onBlur } }) => (
+											render={({field: {value, ref, onChange, onBlur}}) => (
 												<Select
 													id={`made_in-${index}`}
 													label={t('Country')}
