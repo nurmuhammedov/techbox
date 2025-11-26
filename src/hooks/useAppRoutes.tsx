@@ -33,6 +33,9 @@ import {routeByRole} from 'utilities/authentication'
 import {ROLE_LIST} from 'constants/roles'
 import {useAppContext} from 'hooks'
 import {Layout} from 'components'
+import {ChemicalTypesTable} from 'modules/chemical-types'
+import {AddChemicals, ChemicalsTable} from 'modules/chemicals'
+import {AddGlue, GlueTable} from 'modules/Glue'
 
 
 function useAppRoutes() {
@@ -66,6 +69,16 @@ function useAppRoutes() {
 				{
 					index: true,
 					element: <RolesTable/>
+				}
+			]
+		},
+		{
+			id: 'chemical_types',
+			path: 'chemical-types',
+			children: [
+				{
+					index: true,
+					element: <ChemicalTypesTable/>
 				}
 			]
 		},
@@ -126,6 +139,34 @@ function useAppRoutes() {
 				{
 					path: 'edit/:id',
 					element: <AddProduct edit={true}/>
+				}
+			]
+		},
+		{
+			id: 'chemicals',
+			path: 'chemicals',
+			children: [
+				{
+					index: true,
+					element: <ChemicalsTable/>
+				},
+				{
+					path: 'add',
+					element: <AddChemicals/>
+				}
+			]
+		},
+		{
+			id: 'glue',
+			path: 'glue',
+			children: [
+				{
+					index: true,
+					element: <GlueTable/>
+				},
+				{
+					path: 'add',
+					element: <AddGlue/>
 				}
 			]
 		},
@@ -411,6 +452,43 @@ function useAppRoutes() {
 							{
 								path: 'edit/:id',
 								element: <AddProduct edit={true}/>
+							}
+						]
+					},
+					{
+						id: 'chemicals',
+						path: 'chemicals',
+						children: [
+							{
+								index: true,
+								element: <ChemicalsTable/>
+							},
+							{
+								path: 'add',
+								element: <AddChemicals/>
+							}
+						]
+					},
+					{
+						id: 'glue',
+						path: 'glue',
+						children: [
+							{
+								index: true,
+								element: <GlueTable/>
+							},
+							{
+								path: 'add',
+								element: <AddGlue/>
+							}
+						]
+					},
+					{
+						path: 'chemical-types',
+						children: [
+							{
+								index: true,
+								element: <ChemicalTypesTable/>
 							}
 						]
 					},

@@ -87,6 +87,14 @@
   grid-column: 1/-1;
 }
 
+.grid-10 {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+}
+.grid-10 > * {
+  grid-column: 1/-1;
+}
+
 .gap-xs {
   gap: 0.25rem !important;
 }
@@ -506,6 +514,17 @@ ol {
   list-style: none;
   padding-left: 0;
   margin: 0;
+}
+
+.h1 {
+  color: var(--navy-dark);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 2rem;
+  font-style: normal;
+  text-align: center;
+  font-weight: 600;
+  line-height: 150%; /* 1.875rem */
+  letter-spacing: 0.075rem;
 }
 
 /* Modal */

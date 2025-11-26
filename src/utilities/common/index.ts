@@ -40,7 +40,7 @@ function isObject(val: unknown): val is ISearchParams {
 
 function getSelectValue(options: ISelectOption[], value: string | number | boolean | (string | number | boolean)[] | undefined | null): ISelectOption[] | null | ISelectOption {
 	if (Array.isArray(value)) {
-		return options.filter((item) => value.includes(item.value))
+		return options?.filter((item) => value.includes(item.value))
 	}
 	return options.find((item) => item?.value == value) ?? null
 }
@@ -141,10 +141,37 @@ function calculateTotalMaterialUsageInKg(
 	return String(Number(totalWeightKg)?.toFixed(2))
 }
 
+function calculateTotalGlueUsageInL(
+	orders: IOrderDetail[],
+	format: string | number | undefined
+): number {
+	let totalAreaM2 = 0
+	if (orders.length) {
+		const width = parseFloat(orders[0]?.width || '0')
+		const length = parseFloat(orders[0]?.length || '0')
+		// const count = parseFloat(orders[0]?.count_entered_leader || orders[0]?.count || '0')
+		const count = orders.reduce((sum, order) => {
+			const count = order?.count_entered_leader || order?.count || 0
+			const material = cutOptions?.find(i => i.value == order?.piece)?.material || 2
+			return sum + Math.ceil(Number(count) / material)
+		}, 0)
+
+		// const areaMm2 = count * (2 * (width + length) + 70) * Number(format || 0) * (orders[0]?.layer?.length - 1)
+
+		const areaMm2 = count * (2 * (width + length) + 70) * Number(format || 0) * ((orders[0]?.layer?.length - 1) == 1 ? 0.5 : (orders[0]?.layer?.length - 1) == 3 ? 1.5 : (orders[0]?.layer?.length - 1) == 4 ? 2 : 1)
+
+		totalAreaM2 = areaMm2 / 1_000_000
+	}
+
+
+	return Number(totalAreaM2)
+}
+
 
 export {
 	noop,
 	isObject,
+	calculateTotalGlueUsageInL,
 	noopAsync,
 	hasDifferentLayers,
 	calculateTotalMaterialUsageInKg,

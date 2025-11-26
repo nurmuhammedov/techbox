@@ -307,6 +307,9 @@ const warehouseOrdersSchema = yup.object().shape({
 
 // PRODUCTS
 const productSchema = yup.object().shape({
+	customer: yup
+		.number()
+		.required('This field is required'),
 	name: yup
 		.string()
 		.trim()
@@ -509,7 +512,10 @@ const ordersSchema2 = yup.object().shape({
 
 const groupOrdersSchema = yup.object().shape({
 	has_addition: yup.boolean().nullable(),
+	is_consecutive: yup.boolean().nullable().default(false),
 	gofra: yup.boolean().nullable(),
+	// glue_square: yup.string().optional().nullable().transform(v => v ? v : null),
+	glue_square: yup.string().required('This field is required'),
 	ymo1: yup.boolean().nullable(),
 	fleksa: yup.boolean().nullable(),
 	ymo2: yup.boolean().nullable(),
@@ -637,6 +643,11 @@ const operatorOrderSchema = yup.object().shape({
 		.number()
 		.transform(value => value ? Number(value) : null)
 		.required('This field is required'),
+	glue: yup
+		.number()
+		.transform(value => value ? Number(value) : null)
+		.required('This field is required'),
+	glue_amount: yup.string().trim().required('This field is required'),
 	data: yup
 		.array()
 		.of(yup.object().shape({
@@ -716,6 +727,18 @@ const clientsSchema = yup.object().shape({
 	partnership_year: yup.string().trim().nullable(),
 	stir: yup.string().trim().nullable().transform(value => value ? value : null).length(9, 'The entered date is not valid'),
 	phone: yup.string().trim().required('This field is required').length(17, 'The entered date is not valid')
+})
+
+
+export const clientsSchema2 = yup.object().shape({
+	customer: yup
+		.number()
+		.required('This field is required'),
+	company_name: yup.string().trim().optional().nullable(),
+	fullname: yup.string().trim().nullable().optional(),
+	partnership_year: yup.string().trim().nullable().optional(),
+	stir: yup.string().trim().nullable().optional(),
+	phone: yup.string().trim().optional().nullable()
 })
 
 export const orderUpdateSchema = yup.object().shape({

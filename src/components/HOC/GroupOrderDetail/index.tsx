@@ -148,7 +148,6 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 												/>
 											</div>
 
-
 										{
 											order?.piece && order?.piece != 'total' &&
 											<div className="grid span-12" style={{marginTop: '.75rem'}}>

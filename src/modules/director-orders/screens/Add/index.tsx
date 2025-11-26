@@ -16,7 +16,7 @@ import {
 } from 'components'
 import styles from 'components/HOC/GroupOrderDetail/styles.module.scss'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {activityOptions, booleanOptions, cutOptions, statusOptions} from 'helpers/options'
+import {activityOptions, booleanOptions, cutOptions, statusOptions, yesNoOptions} from 'helpers/options'
 import {groupOrdersSchema, temporaryOrderSchema} from 'helpers/yup'
 import {
 	useActions,
@@ -149,6 +149,7 @@ const Index = () => {
 			x: '',
 			deadline: '',
 			count: '',
+			glue_square: '0.05',
 			gofra: false,
 			ymo1: false,
 			fleksa: false,
@@ -156,6 +157,7 @@ const Index = () => {
 			tikish: false,
 			yelimlash: false,
 			is_last: false,
+			is_consecutive: false,
 			has_addition: false
 		}
 	})
@@ -249,10 +251,12 @@ const Index = () => {
 			const newData = {
 				separated_raw_materials_format: data?.separated_raw_materials_format,
 				orders: orders?.map(order => order.id),
+				glue_square: data?.glue_square,
 				y: data?.y,
 				x: data?.x,
 				has_addition: data?.has_addition,
-				stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true)?.filter(i => i !== 'has_addition')?.reverse(),
+				is_consecutive: data?.is_consecutive,
+				stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true)?.filter(i => i !== 'has_addition' && i !== 'is_consecutive')?.reverse(),
 				deadline: data?.deadline || null,
 				count: data?.count
 			}
@@ -266,6 +270,7 @@ const Index = () => {
 						y: '',
 						x: '',
 						deadline: '',
+						glue_square: '0.05',
 						count: '',
 						gofra: false,
 						ymo1: false,
@@ -274,6 +279,7 @@ const Index = () => {
 						tikish: false,
 						yelimlash: false,
 						is_last: false,
+						is_consecutive: false,
 						has_addition: false
 					})
 				})
@@ -285,7 +291,10 @@ const Index = () => {
 		<>
 			<PageTitle title="Send order">
 				<div className="flex gap-sm justify-center align-center">
-					<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
+					<Button onClick={() => {
+						navigate(-1)
+						clearOrders()
+					}} theme={BUTTON_THEME.OUTLINE}>
 						Back
 					</Button>
 					<Button onClick={handleSubmit(onSubmit)}
@@ -296,8 +305,8 @@ const Index = () => {
 			</PageTitle>
 			<div className={classNames(styles.root, 'grid gap-lg')}>
 				<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
-					<Form className="grid  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
-						<div className="span-4">
+					<Form className="grid-10  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
+						<div className="span-2">
 							<Controller
 								name="separated_raw_materials_format"
 								control={controlAdd}
@@ -316,7 +325,7 @@ const Index = () => {
 								)}
 							/>
 						</div>
-						<div className="span-4">
+						<div className="span-2">
 							<Controller
 								name="has_addition"
 								control={controlAdd}
@@ -335,7 +344,37 @@ const Index = () => {
 								)}
 							/>
 						</div>
-						<div className="span-4 flex gap-md align-start justify-end">
+						<div className="span-2">
+							<Controller
+								name="is_consecutive"
+								control={controlAdd}
+								render={({field: {value, ref, onChange, onBlur}}) => (
+									<Select
+										id="is_consecutive"
+										label="Guruhlansinmi?"
+										options={yesNoOptions as unknown as ISelectOption[]}
+										error={errors?.is_consecutive?.message}
+										value={getSelectValue(yesNoOptions as unknown as ISelectOption[], value)}
+										ref={ref}
+										onBlur={onBlur}
+										defaultValue={getSelectValue(yesNoOptions as unknown as ISelectOption[], value)}
+										handleOnChange={(e) => onChange(e as string)}
+									/>
+								)}
+							/>
+						</div>
+						<div className="span-2">
+							<Controller
+								name="glue_square"
+								control={controlAdd}
+								render={({field}) => (
+									<Input id="glue_square" {...field} type="text"
+									       label={`${t('Glue amount')} ${t('(m²)')} `}
+									       error={errors?.glue_square?.message}/>
+								)}
+							/>
+						</div>
+						<div className="span-2 flex gap-md align-start justify-end">
 							{
 								!isAdding ?
 									<div className="flex flex-col gap-sm">
@@ -370,7 +409,6 @@ const Index = () => {
 							</Card>
 							<Pagination totalPages={totalPages}/>
 						</> :
-
 						<div className="grid gap-lg span-12">
 							{
 								orders?.map((order) => (
@@ -1348,7 +1386,7 @@ const Index = () => {
 								render={({field}) => (
 									<NumberFormattedInput
 										id="count_entered_leader"
-										maxLength={4}
+										maxLength={9}
 										disableGroupSeparators={false}
 										allowDecimals={false}
 										label="Production count"

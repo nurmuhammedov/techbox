@@ -224,5 +224,21 @@
   "Sold defective products": "Sotilgan yaroqsiz mahsulotlar",
   "Sold defective product": "Yaroqsiz mahsulot sotish",
   "Transfer to process": "Jarayonga o‘tkazish",
-  "Gluing orders": "Yelimlash"
+  "Gluing orders": "Yelimlash",
+  "Chemical types": "Kimyoviy modda turlari",
+  "Chemical type": "Kimyoviy modda turi",
+  "Add chemical type": "Kimyoviy modda turi qo‘shish",
+  "Chemical": "Kimyoviy modda",
+  "Chemicals": "Kimyoviy moddalar",
+  "Glue type": "Yelim turi",
+  "Glue types": "Yelim turlari",
+  "Add glue type": "Yelim turi qo‘shish",
+  "Add glue": "Yelim qo‘shish",
+  "Glue": "Yelim",
+  "Remaining amount": "Qolgan miqdori",
+  "Measure unit": "O‘lchov birligi",
+  "Remaining": "Qoldiq",
+  "Amount": "Miqdori",
+  "Glue amount": "Yelim miqdori",
+  "Add chemicals": "Kimyoviy modda qo‘shish"
 }

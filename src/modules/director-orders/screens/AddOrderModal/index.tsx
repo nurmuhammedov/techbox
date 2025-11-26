@@ -309,7 +309,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							render={({field}) => (
 								<NumberFormattedInput
 									id="count"
-									maxLength={6}
+									maxLength={9}
 									disableGroupSeparators={false}
 									allowDecimals={false}
 									label="Count"

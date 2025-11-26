@@ -27,7 +27,10 @@ const roleOptions: ISelectOption[] = [
 	{value: 'operator_fleksa', label: 'Flex orders'},
 	{value: 'operator_tikish', label: 'Sewing orders'},
 	{value: 'company_operations', label: 'Company operations'},
-	{value: 'operator_yelimlash', label: 'Gluing orders'}
+	{value: 'operator_yelimlash', label: 'Gluing orders'},
+	{value: 'chemical_types', label: 'Chemical types'},
+	{value: 'chemicals', label: 'Chemicals'},
+	{value: 'glue', label: 'Glue'}
 ]
 
 
@@ -71,6 +74,11 @@ const booleanOptions: ISearchParams[] = [
 	{value: false, label: 'No'}
 ]
 
+const yesNoOptions: ISearchParams[] = [
+	{value: true, label: 'Yes'},
+	{value: false, label: 'No'}
+]
+
 const activityOptions: ISelectOption[] = [
 	{value: 'gofra', label: 'Corrugation'},
 	{value: 'ymo1', label: 'YMO'},
@@ -95,6 +103,7 @@ export {
 	paginationOptions,
 	activityOptions,
 	booleanOptions,
+	yesNoOptions,
 	statusOptions,
 	cutOptions,
 	roleOptions

@@ -17,14 +17,14 @@ import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {useForm, Controller, useFieldArray} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {useAdd, useData, useDetail} from 'hooks'
-import {ordersSchema} from 'helpers/yup'
-import {clientsSchema} from 'helpers/yup'
+import {clientsSchema2, ordersSchema} from 'helpers/yup'
 import {getSelectValue, modifyObjectField} from 'utilities/common'
 import {Box, Plus} from 'assets/icons'
 import {useTranslation} from 'react-i18next'
 import {IFIle, ISelectOption} from 'interfaces/form.interface'
 import {generateYearList, getDate} from 'utilities/date'
 import {InferType} from 'yup'
+import {IClientDetail} from 'interfaces/clients.interface'
 
 
 const CombinedCreatePage: FC = () => {
@@ -32,7 +32,6 @@ const CombinedCreatePage: FC = () => {
 	const {t} = useTranslation()
 
 
-	const {data: products = []} = useData<ISelectOption[]>('products/select')
 	const {data: materials = []} = useData<ISelectOption[]>('products/material-types-seller/select')
 	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
 
@@ -42,9 +41,10 @@ const CombinedCreatePage: FC = () => {
 		control: customerControl,
 		register: customerRegister,
 		reset: customerReset,
+		watch: customerWatch,
 		formState: {errors: customerErrors}
 	} = useForm({
-		resolver: yupResolver(clientsSchema),
+		resolver: yupResolver(clientsSchema2),
 		mode: 'onTouched',
 		defaultValues: {
 			company_name: '',
@@ -54,6 +54,26 @@ const CombinedCreatePage: FC = () => {
 			stir: ''
 		}
 	})
+
+
+	const {data: customers = []} = useData<ISelectOption[]>('services/customers/select')
+	const {
+		data: customerDetail,
+		isPending: isCustomerDetailLoading
+	} = useDetail<IClientDetail>('services/customers/', customerWatch('customer'), !!customerWatch('customer'))
+
+	useEffect(() => {
+		if (customerDetail && !isCustomerDetailLoading) {
+			customerReset({
+				customer: customerDetail?.id,
+				company_name: customerDetail.company_name,
+				fullname: customerDetail.fullname,
+				phone: customerDetail.phone,
+				partnership_year: customerDetail.partnership_year,
+				stir: customerDetail.stir
+			})
+		}
+	}, [customerDetail])
 
 	// Order Form
 	const {
@@ -84,6 +104,9 @@ const CombinedCreatePage: FC = () => {
 		}
 	})
 
+
+	const {data: products = []} = useData<ISelectOption[]>('products/select', !!customerWatch('customer'), {customer: customerWatch('customer')})
+
 	const {fields, append, remove} = useFieldArray({
 		control: control,
 		name: 'layer_seller' as never
@@ -111,18 +134,13 @@ const CombinedCreatePage: FC = () => {
 	}, [productDetail])
 
 
-	const {mutateAsync: addCustomer, isPending: isAddingCustomer} =
-		useAdd<InferType<typeof clientsSchema>, { id: number }, unknown>('services/customers')
 	const {mutateAsync: addOrder, isPending: isAddingOrder} = useAdd('services/orders')
 
-	const onSubmit = async (customerData: InferType<typeof clientsSchema>, orderData: InferType<typeof ordersSchema>) => {
+	const onSubmit = async (customerData: InferType<typeof clientsSchema2>, orderData: InferType<typeof ordersSchema>) => {
 		try {
-			const customerResponse = await addCustomer(customerData)
-			const customerId = customerResponse.id
-
 			const orderPayload = {
 				...orderData,
-				customer: customerId
+				customer: customerData?.customer
 			}
 			await addOrder(modifyObjectField(orderPayload as ISearchParams, 'logo'))
 
@@ -151,7 +169,7 @@ const CombinedCreatePage: FC = () => {
 					<Button
 						type={FIELD.BUTTON}
 						theme={BUTTON_THEME.PRIMARY}
-						disabled={isAddingCustomer || isAddingOrder}
+						disabled={isAddingOrder}
 						onClick={handleCombinedSubmit}
 					>
 						Save
@@ -162,10 +180,30 @@ const CombinedCreatePage: FC = () => {
 
 			<Card style={{padding: '1.5rem', marginBottom: '2rem'}}>
 				<Form className="grid gap-xl" onSubmit={(e) => e.preventDefault()}>
+					<div className="span-12">
+						<Controller
+							name="customer"
+							control={customerControl}
+							render={({field: {value, ref, onChange, onBlur}}) => (
+								<Select
+									id="customer"
+									label="Client"
+									options={customers}
+									error={customerErrors?.customer?.message}
+									value={getSelectValue(customers, value)}
+									ref={ref}
+									onBlur={onBlur}
+									defaultValue={getSelectValue(customers, value)}
+									handleOnChange={(e) => onChange(e as string)}
+								/>
+							)}
+						/>
+					</div>
 					<div className="span-4">
 						<Input
 							id="company_name"
 							type={FIELD.TEXT}
+							disabled={true}
 							label="Company name"
 							error={customerErrors?.company_name?.message}
 							{...customerRegister('company_name')}
@@ -174,6 +212,7 @@ const CombinedCreatePage: FC = () => {
 					<div className="span-4">
 						<Input
 							id="fullname"
+							disabled={true}
 							type={FIELD.TEXT}
 							label="Full name"
 							error={customerErrors?.fullname?.message}
@@ -187,6 +226,7 @@ const CombinedCreatePage: FC = () => {
 							render={({field}) => (
 								<MaskInput
 									id="phone"
+									disabled={true}
 									label="Phone number"
 									error={customerErrors?.phone?.message}
 									{...field}
@@ -201,6 +241,7 @@ const CombinedCreatePage: FC = () => {
 							render={({field: {value, ref, onChange, onBlur}}) => (
 								<Select
 									ref={ref}
+									isDisabled={true}
 									id="partnership_year"
 									options={generateYearList(1990)}
 									onBlur={onBlur}
@@ -222,6 +263,7 @@ const CombinedCreatePage: FC = () => {
 									id="stir"
 									maxLength={9}
 									disableGroupSeparators={true}
+									disabled={true}
 									allowDecimals={false}
 									label="TIN"
 									error={customerErrors?.stir?.message}

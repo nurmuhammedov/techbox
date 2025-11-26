@@ -35,6 +35,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const {id} = useParams()
 	const {data: materials = []} = useData<ISelectOption[]>('products/material-types-seller/select')
 	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
+	const {data: customers = []} = useData<ISelectOption[]>('services/customers/select')
 
 	const {
 		handleSubmit,
@@ -283,6 +284,28 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						>
 							Add layer
 						</Button>
+					</div>
+
+					<div className="span-12 grid gap-lg">
+						<div className="span-4">
+							<Controller
+								name="customer"
+								control={control}
+								render={({field: {value, ref, onChange, onBlur}}) => (
+									<Select
+										id="customer"
+										label="Client"
+										options={customers}
+										error={errors?.customer?.message}
+										value={getSelectValue(customers, value)}
+										ref={ref}
+										onBlur={onBlur}
+										defaultValue={getSelectValue(customers, value)}
+										handleOnChange={(e) => onChange(e as string)}
+									/>
+								)}
+							/>
+						</div>
 					</div>
 				</Form>
 			</Card>

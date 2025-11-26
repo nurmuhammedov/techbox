@@ -4,6 +4,9 @@ import {IOrderDetail} from 'interfaces/orders.interface'
 
 interface IGroupOrder {
 	id: number;
+	glue: IIDName;
+	glue_amount: string;
+	glue_square: string;
 	orders: IOrderDetail[];
 	separated_raw_materials_format: {
 		id: number;
@@ -20,6 +23,7 @@ interface IGroupOrder {
 	pallet_count_after_bet: string
 
 	deadline: string;
+	is_consecutive: boolean;
 	count: string;
 	invalid_material_in_processing: string;
 	warehouse_same_finished: IIDName;

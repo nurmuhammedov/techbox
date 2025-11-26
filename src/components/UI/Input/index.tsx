@@ -17,6 +17,7 @@ const Index = forwardRef<HTMLInputElement | HTMLTextAreaElement, IField>(
 			radius = false,
 			mini = false,
 			err = false,
+			yellowLabel = false,
 			handleIcon,
 			handleDelete,
 			children,
@@ -41,7 +42,7 @@ const Index = forwardRef<HTMLInputElement | HTMLTextAreaElement, IField>(
 				{
 					label && (
 						<div className={styles.wrapper}>
-							<label htmlFor={id}>{t(label)}</label>
+							<label htmlFor={id} style={yellowLabel ? {color: '#ec2d2d'} : {}}>{t(label)}</label>
 						</div>
 					)
 				}

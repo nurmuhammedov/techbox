@@ -10,6 +10,7 @@ interface IFieldProperties {
 	label?: string;
 	textarea?: boolean;
 	autocomplete?: boolean;
+	yellowLabel?: boolean;
 	mini?: boolean;
 	err?: boolean;
 	required?: boolean;
@@ -37,6 +38,8 @@ interface ISelectOption {
 	label: string | number;
 	material?: number;
 	weight_1x1?: string;
+	remaining_amount?: string;
+	amount?: string;
 	icon?: React.ReactNode;
 }
 
@@ -45,6 +48,7 @@ interface ISelect extends SelectProps<ISelectOption> {
 	id: string;
 	options: ISelectOption[];
 	placeholder?: string;
+	yellowLabel?: boolean;
 	icon?: React.ReactNode;
 	handleOnChange?: (e: string | number | boolean | string[] | number[] | boolean[] | null) => void;
 	disabled?: boolean;

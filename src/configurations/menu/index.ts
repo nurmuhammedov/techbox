@@ -231,6 +231,42 @@ export const menu: IMenuItem[] = [
 		order: {
 			[ROLE_LIST.EMPLOYEE]: 17
 		}
+	},
+	{
+		id: 'chemical_types',
+		label: 'Chemical types',
+		href: '/chemical-types',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.EMPLOYEE]: 18
+		}
+	},
+	{
+		id: 'chemicals',
+		label: 'Chemicals',
+		href: '/chemicals',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.EMPLOYEE]: 19
+		}
+	},
+	{
+		id: 'glue',
+		label: 'Glue',
+		href: '/glue',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.EMPLOYEE]: 20
+		}
 	}
 ]
 

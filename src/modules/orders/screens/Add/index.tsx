@@ -34,7 +34,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {orderId: id = undefined, id: customer = undefined} = useParams()
-	const {data: products = []} = useData<ISelectOption[]>('products/select')
+	const {data: products = []} = useData<ISelectOption[]>('products/select', !!customer, {customer: customer})
 	const {data: materials = []} = useData<ISelectOption[]>('products/material-types-seller/select')
 	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
 

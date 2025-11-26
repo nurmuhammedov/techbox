@@ -15,12 +15,18 @@ import {GroupOrderDetail} from 'components/HOC'
 import {Controller, useFieldArray, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {operatorOrderSchema} from 'helpers/yup'
-import {calculateTotalMaterialUsageInKg, decimalToInteger, formatSelectOptions, getSelectValue} from 'utilities/common'
+import {
+	calculateTotalGlueUsageInL,
+	calculateTotalMaterialUsageInKg,
+	decimalToInteger,
+	formatSelectOptions,
+	getSelectValue
+} from 'utilities/common'
 import {ISelectOption} from 'interfaces/form.interface'
 import {useTranslation} from 'react-i18next'
 import {BUTTON_THEME} from 'constants/fields'
 import {FC, useEffect} from 'react'
-import {booleanOptions} from 'helpers/options'
+import {booleanOptions, yesNoOptions} from 'helpers/options'
 import {useNavigate, useParams} from 'react-router-dom'
 import {IGroupOrder} from 'interfaces/groupOrders.interface'
 
@@ -38,6 +44,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
 	const {data: warehouses = []} = useData<ISelectOption[]>('accounts/warehouses-select')
 
+
 	const {
 		reset,
 		control,
@@ -48,9 +55,15 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 		mode: 'onTouched',
 		defaultValues: {
 			data: [],
-			warehouse: undefined
+			warehouse: undefined,
+			glue: undefined,
+			glue_amount: undefined
 		},
 		resolver: yupResolver(operatorOrderSchema)
+	})
+
+	const {data: glues = []} = useData<ISelectOption[]>('chemicals/glues-select', !!watch('warehouse'), {
+		warehouse: watch('warehouse')
 	})
 
 	const {fields} = useFieldArray({
@@ -64,6 +77,8 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 		if (retrieve) {
 			reset({
 				warehouse: detail?.warehouse?.id,
+				glue: detail?.glue?.id,
+				glue_amount: detail?.glue_amount,
 				data: detail?.weight_material?.map(item => ({
 					material: item?.material || [],
 					layer: item?.layer || undefined,
@@ -87,6 +102,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 			}
 
 			reset({
+				glue_amount: String(calculateTotalGlueUsageInL(detail?.orders || [], detail?.separated_raw_materials_format?.format) * Number(detail?.glue_square || 0.5)),
 				data: finalLayers.map((item, index) => ({
 					material: undefined,
 					layer: item,
@@ -102,8 +118,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 		group_order: detail ? id : null
 	})
 
-	// data massivini kuzatish uchun
-	const watchedData = watch('data');
+	const watchedData = watch('data')
 
 	return (
 		<>
@@ -124,7 +139,9 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 											weight: i?.weight,
 											layer: i?.layer
 										})),
-										warehouse: data?.warehouse
+										warehouse: data?.warehouse,
+										glue: data?.glue,
+										glue_amount: data?.glue_amount
 									}
 
 									addGroupOrder(newData)
@@ -132,7 +149,9 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 											navigate(-1)
 											reset({
 												data: [],
-												warehouse: undefined
+												warehouse: undefined,
+												glue: undefined,
+												glue_amount: undefined
 											})
 										})
 								})
@@ -148,7 +167,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 				<Form className="grid  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 					<div className="grid gap-lg span-12">
 
-						<div className="span-4">
+						<div className="span-3">
 							<Input
 								id="format"
 								disabled={true}
@@ -156,7 +175,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 								value={decimalToInteger(Number(detail?.separated_raw_materials_format?.format || 0))}
 							/>
 						</div>
-						<div className="span-4">
+						<div className="span-3">
 							<Select
 								id="has_addition"
 								label="Cutting"
@@ -166,7 +185,18 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 								defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], detail?.has_addition)}
 							/>
 						</div>
-						<div className="span-4">
+						<div className="span-3">
+							<Select
+								yellowLabel={true}
+								id="is_consecutive"
+								label="Guruhlansinmi?"
+								disabled={true}
+								options={yesNoOptions as unknown as ISelectOption[]}
+								value={getSelectValue(yesNoOptions as unknown as ISelectOption[], detail?.is_consecutive)}
+								defaultValue={getSelectValue(yesNoOptions as unknown as ISelectOption[], detail?.is_consecutive)}
+							/>
+						</div>
+						<div className="span-3">
 							<Controller
 								name="warehouse"
 								control={control}
@@ -192,11 +222,11 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 							// BOSHQA qatorlarda tanlangan "Roll" qiymatlarini yig'ib olamiz
 							const otherSelectedRolls = watchedData
 								?.filter((_, i) => i !== index) // Joriy qatorni hisobga olmaymiz
-								.flatMap(item => item.material || []); // Boshqa qatorlardagi tanlangan rollarni bir massivga yig'amiz
+								.flatMap(item => item.material || []) // Boshqa qatorlardagi tanlangan rollarni bir massivga yig'amiz
 
 							// Joriy qator uchun mavjud bo'lgan variantlarni filtrlash
 							const availableRollOptions = formatSelectOptions(rolls, watchedData?.[index]?.layer)
-								.filter(option => !otherSelectedRolls.includes(option.value));
+								.filter(option => !otherSelectedRolls.includes(option.value))
 
 							return (
 								<div className="grid gap-lg span-12" key={field.id}>
@@ -263,9 +293,50 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 										/>
 									</div>
 								</div>
-							);
+							)
 						})
 					}
+					<div className="grid gap-lg span-12">
+						<div className="span-4">
+							<Controller
+								name="glue"
+								control={control}
+								render={({field: {value, ref, onChange, onBlur}}) => (
+									<Select
+										id="glue"
+										label="Glue"
+										options={glues}
+										isDisabled={retrieve}
+										error={errors?.glue?.message}
+										value={getSelectValue(glues, value)}
+										ref={ref}
+										onBlur={onBlur}
+										defaultValue={getSelectValue(glues, value)}
+										handleOnChange={(e) => onChange(e as string)}
+									/>
+								)}
+							/>
+						</div>
+						<div className="span-4">
+							<Controller
+								control={control}
+								name={`glue_amount`}
+								render={({field}) => (
+									<NumberFormattedInput
+										id={`glue_amount`}
+										maxLength={12}
+										disableGroupSeparators={false}
+										allowDecimals={true}
+										disabled={retrieve}
+										label={t('Glue amount')}
+										error={errors?.glue_amount?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+
+					</div>
 				</Form>
 			</Card>
 		</>
