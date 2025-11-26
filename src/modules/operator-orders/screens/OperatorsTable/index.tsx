@@ -17,7 +17,7 @@ import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {getDate} from 'utilities/date'
 import {decimalToInteger} from 'utilities/common'
-import {operatorsStatusOptions} from 'helpers/options'
+import {operatorsStatusOptions, yesNoOptions} from 'helpers/options'
 import {IGroupOrder} from 'interfaces/groupOrders.interface'
 
 
@@ -181,6 +181,10 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 			{
 				Header: `${t('Production format')} (${t('mm')})`,
 				accessor: (row: IGroupOrder) => decimalToInteger(row.separated_raw_materials_format?.format)
+			},
+			{
+				Header: `${t('Guruhlansinmi?')}`,
+				accessor: (row: IGroupOrder) => t(yesNoOptions?.find(i => i?.value == row?.is_consecutive)?.label?.toString() || 'No')
 			},
 			{
 				Header: t('Actions'),
