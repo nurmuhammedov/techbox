@@ -28,7 +28,7 @@ import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {getDate} from 'utilities/date'
 import {decimalToInteger} from 'utilities/common'
-import {activityOptions, bossStatusOptions, yesNoOptions} from 'helpers/options'
+import {activityOptions, bossStatusOptions} from 'helpers/options'
 import {IGroupOrder} from 'interfaces/groupOrders.interface'
 
 
@@ -197,10 +197,6 @@ const Index = () => {
 			{
 				Header: `${t('Production format')} (${t('mm')})`,
 				accessor: (row: IGroupOrder) => decimalToInteger(row.separated_raw_materials_format?.format)
-			},
-			{
-				Header: `${t('Guruhlansinmi?')}`,
-				accessor: (row: IGroupOrder) => t(yesNoOptions?.find(i => i?.value == row?.is_consecutive)?.label?.toString() || 'No')
 			},
 			{
 				Header: t('Actions'),

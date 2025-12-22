@@ -120,7 +120,6 @@ const ChemicalType = () => {
 				</Form>
 			</Modal>
 
-			{/* Edit Modal */}
 			<EditModal isLoading={isDetailLoading && !detail} style={{ height: '25rem' }}>
 				<Form onSubmit={handleEditSubmit((data) =>
 					update(data).then(async () => {
@@ -139,7 +138,7 @@ const ChemicalType = () => {
 					/>
 
 					<Button style={{ marginTop: 'auto' }} type={FIELD.SUBMIT} disabled={isUpdating}>
-						Edit
+						Save
 					</Button>
 				</Form>
 			</EditModal>

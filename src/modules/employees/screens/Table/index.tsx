@@ -385,7 +385,7 @@ const Index = () => {
 								{...registerEdit('username')}
 							/>
 
-							<Button style={{marginTop: 'auto'}} type={FIELD.SUBMIT} disabled={isUpdating}>Edit</Button>
+							<Button style={{marginTop: 'auto'}} type={FIELD.SUBMIT} disabled={isUpdating}>Save</Button>
 						</Form>
 					</EditModal>
 

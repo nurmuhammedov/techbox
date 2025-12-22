@@ -1,17 +1,9 @@
 import {Plus} from 'assets/icons'
-import React, {FC, useEffect} from 'react'
-import {
-	Button,
-	Card,
-	Form,
-	Loader,
-	PageTitle,
-	NumberFormattedInput,
-	Select, Input
-} from 'components'
+import {FC, useEffect} from 'react'
+import {Button, Card, Form, Input, Loader, NumberFormattedInput, PageTitle, Select} from 'components'
 import {useNavigate, useParams} from 'react-router-dom'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {useForm, Controller, useFieldArray} from 'react-hook-form'
+import {Controller, useFieldArray, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {useAdd, useData, useDetail, useSearchParams, useUpdate} from 'hooks'
 import {materialSchema, warehouseOrdersSchema} from 'helpers/yup'
@@ -53,6 +45,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			weight: [{
 				made_in: null,
 				name: '',
+				price: '',
 				supplier: null,
 				weight: undefined
 			}]
@@ -120,6 +113,18 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		return <Loader/>
 	}
 
+	const toNumber = (value: unknown): number => {
+		if (value === null || value === undefined) return 0
+		if (typeof value === 'number') return value
+		if (typeof value === 'string') {
+			const normalized = value.replace(/\s/g, '')
+			const num = Number(normalized)
+			return isNaN(num) ? 0 : num
+		}
+		return 0
+	}
+
+
 	return (
 		<>
 			<PageTitle title={edit ? 'Edit material' : 'Add material'}>
@@ -173,7 +178,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 								}
 							}}
 						>
-							{edit ? 'Edit' : 'Save'}
+							{edit ? 'Save' : 'Save'}
 						</Button>
 					}
 				</div>
@@ -272,8 +277,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 
 						{
 							fields?.map((field, index) => (
-								<React.Fragment key={field.id}>
-									<div className="span-3">
+								<div className="flex gap-xl span-12" key={field.id}>
+									<div className="flex-2">
 										<Input
 											id={`${index}.roll.name`}
 											type={FIELD.TEXT}
@@ -283,8 +288,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 											{...orderRegister(`weight.${index}.name`)}
 										/>
 									</div>
-									<div className="span-3">
-
+									<div className="flex-2">
 										{
 											detail ?
 												<Input
@@ -312,28 +316,44 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 												/>
 										}
 									</div>
-									{/*<div className="span-3">*/}
-									{/*	<Input*/}
-									{/*		id={`${index}.roll.supplier`}*/}
-									{/*		type={FIELD.TEXT}*/}
-									{/*		label={`${t('Supplier')}`}*/}
-									{/*		disabled={edit}*/}
-									{/*		error={orderErrors?.weight?.[index]?.supplier?.message}*/}
-									{/*		{...orderRegister(`weight.${index}.supplier`)}*/}
-									{/*	/>*/}
-									{/*</div>*/}
-									{/*<div className="span-3">*/}
-									{/*	<Input*/}
-									{/*		id={`${index}.roll.made_in`}*/}
-									{/*		type={FIELD.TEXT}*/}
-									{/*		label={`${t('Country')}`}*/}
-									{/*		disabled={edit}*/}
-									{/*		error={orderErrors?.weight?.[index]?.made_in?.message}*/}
-									{/*		handleDelete={!edit ? () => remove(index) : undefined}*/}
-									{/*		{...orderRegister(`weight.${index}.made_in`)}*/}
-									{/*	/>*/}
-									{/*</div>*/}
-									<div className="span-3">
+									<div className="flex-2">
+										<Controller
+											name={`weight.${index}.price`}
+											control={control}
+											render={({field}) => (
+												<NumberFormattedInput
+													id="price"
+													maxLength={13}
+													disabled={edit}
+													disableGroupSeparators={false}
+													allowDecimals={true}
+													label={`${t('Price')} (${t('kg')?.toLowerCase()})`}
+													error={orderErrors?.weight?.[index]?.price?.message}
+													{...field}
+												/>
+											)}
+										/>
+									</div>
+									<div className="flex-1">
+										{
+											detail ?
+												<Input
+													id={`all.price`}
+													type={FIELD.TEXT}
+													label={`${t('Roll')} ${t('Price')?.toLowerCase()}`}
+													disabled={true}
+													value={Number(toNumber(orderWatch(`weight.${index}.weight`)?.split('/')?.[1]) * toNumber(orderWatch(`weight.${index}.price`)))?.toFixed(2)}
+												/> :
+												<Input
+													id={`all.price`}
+													type={FIELD.TEXT}
+													label={`${t('Roll')} ${t('Price')?.toLowerCase()}`}
+													disabled={true}
+													value={Number(toNumber(orderWatch(`weight.${index}.weight`)) * toNumber(orderWatch(`weight.${index}.price`)))?.toFixed(2)}
+												/>
+										}
+									</div>
+									<div className="flex-2">
 										<Controller
 											name={`weight.${index}.supplier`}
 											control={control}
@@ -352,7 +372,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 											)}
 										/>
 									</div>
-									<div className="span-3">
+									<div className="flex-2">
 										<Controller
 											name={`weight.${index}.made_in`}
 											control={control}
@@ -372,7 +392,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 											)}
 										/>
 									</div>
-								</React.Fragment>
+								</div>
 							))
 						}
 					</div>
@@ -393,7 +413,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						</div>
 					}
 					<div className="span-12 grid gap-xl">
-						<div className="span-6">
+						<div className="span-3">
 
 						</div>
 						<div className="span-3">
@@ -411,7 +431,16 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 								type={FIELD.TEXT}
 								label={`${t('Total weight')} (${t('kg')})`}
 								disabled={true}
-								value={decimalToInteger(orderWatch('weight')?.reduce((acc, item) => acc + Number(item?.weight || 0), 0)) || 0}
+								value={edit ? decimalToInteger(detail?.weight?.reduce((acc, item) => acc + Number(item?.remaining_weight || 0), 0)) || 0 : decimalToInteger(orderWatch('weight')?.reduce((acc, item) => acc + Number(item?.weight || 0), 0)) || 0}
+							/>
+						</div>
+						<div className="span-3">
+							<Input
+								id={`all.price`}
+								type={FIELD.TEXT}
+								label={`${t('Total')} ${t('Price')?.toLowerCase()}`}
+								disabled={true}
+								value={edit ? decimalToInteger(detail?.weight?.reduce((acc, item) => acc + Number(item?.sum_price || 0), 0)) || 0 : decimalToInteger(orderWatch('weight')?.reduce((acc, item) => acc + Number(item?.weight || 0) * Number(item?.price || 0), 0)) || 0}
 							/>
 						</div>
 					</div>

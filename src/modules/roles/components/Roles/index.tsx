@@ -6,12 +6,12 @@ import {
 	DeleteModal,
 	EditButton,
 	EditModal,
+	Form,
 	Input,
 	Modal,
 	Pagination,
 	ReactTable,
-	Select,
-	Form
+	Select
 } from 'components'
 import {FIELD} from 'constants/fields'
 import {roleOptions} from 'helpers/options'
@@ -226,7 +226,7 @@ const Index = () => {
 						type={FIELD.SUBMIT}
 						disabled={isUpdating}
 					>
-						Edit
+						Save
 					</Button>
 				</Form>
 			</EditModal>

@@ -1,14 +1,5 @@
-import {
-	useData,
-	useDetail
-} from 'hooks'
-import {
-	Card, CutDiagram,
-	Diagram,
-	Input,
-	Loader,
-	Select
-} from 'components'
+import {useData, useDetail} from 'hooks'
+import {Card, CutDiagram, Diagram, Input, Loader, Select} from 'components'
 import {decimalToInteger, getSelectValue} from 'utilities/common'
 import {ISelectOption} from 'interfaces/form.interface'
 import {useTranslation} from 'react-i18next'
@@ -137,16 +128,16 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 										</div>
 
 
-											<div className="span-4">
-												<Select
-													id="piece"
-													disabled={true}
-													label="Cut"
-													options={cutOptions}
-													value={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
-													defaultValue={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
-												/>
-											</div>
+										<div className="span-4">
+											<Select
+												id="piece"
+												disabled={true}
+												label="Cut"
+												options={cutOptions}
+												value={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
+												defaultValue={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
+											/>
+										</div>
 
 										{
 											order?.piece && order?.piece != 'total' &&
@@ -255,7 +246,14 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 
 										<div
 											className="span-12 flex gap-md"
-											style={{marginTop: '.75rem', marginBottom: '1.5rem'}}
+											style={{
+												marginTop: '.75rem',
+												whiteSpace: 'wrap',
+												marginBottom: '1.5rem',
+												paddingBottom: '.75rem',
+												overflowX: 'auto',
+												maxWidth: '100%'
+											}}
 										>
 											<div className="span-4 flex gap-md align-end justify-start">
 												<input
@@ -390,7 +388,13 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 									</div>
 									<div
 										className="span-12 flex gap-md"
-										style={{marginTop: '.7rem', marginBottom: '1.5rem'}}
+										style={{
+											marginTop: '.7rem',
+											marginBottom: '1.5rem',
+											paddingBottom: '.75rem',
+											overflowX: 'auto',
+											maxWidth: '100%'
+										}}
 									>
 										<div className="span-4 flex gap-md align-end justify-start">
 											<input

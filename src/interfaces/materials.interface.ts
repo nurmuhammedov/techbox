@@ -17,7 +17,14 @@ interface IBaseMaterialList {
 	count: string;
 	remaining_weight: string;
 	created_at: string;
-	weight: { made_in: number, supplier: number, weight: string, remaining_weight: string, name: string }[];
+	weight: {
+		made_in: number,
+		supplier: number,
+		weight: string,
+		remaining_weight: string,
+		sum_price: string,
+		name: string
+	}[];
 	format: {
 		id: number;
 		format: string;

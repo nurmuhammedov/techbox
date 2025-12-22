@@ -198,7 +198,7 @@ function useAppRoutes() {
 				},
 				{
 					path: 'edit/:id',
-					element: <EditOperatorOrder corrugation={true}/>
+					element: <EditOperatorOrder />
 				},
 				{
 					path: 'detail/:id',

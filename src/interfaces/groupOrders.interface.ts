@@ -23,7 +23,6 @@ interface IGroupOrder {
 	pallet_count_after_bet: string
 
 	deadline: string;
-	is_consecutive: boolean;
 	count: string;
 	invalid_material_in_processing: string;
 	warehouse_same_finished: IIDName;

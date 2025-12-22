@@ -9,28 +9,21 @@ import {useEffect, useMemo} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {
+	Button,
 	Card,
-	Modal,
-	EditModal,
+	DeleteButton,
 	DeleteModal,
+	EditButton,
+	EditModal,
 	Form,
 	Input,
+	Modal,
 	NumberFormattedInput,
-	Button,
 	Pagination,
-	ReactTable,
-	EditButton,
-	DeleteButton
+	ReactTable
 } from 'components'
 import {FIELD} from 'constants/fields'
-import {
-	useAdd, useAppContext,
-	useDetail,
-	usePaginatedData,
-	usePagination,
-	useSearchParams,
-	useUpdate
-} from 'hooks'
+import {useAdd, useAppContext, useDetail, usePaginatedData, usePagination, useSearchParams, useUpdate} from 'hooks'
 import {decimalToInteger} from 'utilities/common'
 
 
@@ -224,7 +217,7 @@ const Index = () => {
 					</div>
 
 					<Button style={{marginTop: 'auto'}} type={FIELD.SUBMIT} disabled={isUpdating}>
-						Edit
+						Save
 					</Button>
 				</Form>
 			</EditModal>

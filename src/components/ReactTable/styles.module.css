@@ -24,6 +24,31 @@
   letter-spacing: 0.0525rem;
   text-transform: uppercase;
   border-bottom: 1px solid var(--gray-pale);
+  vertical-align: middle;
+}
+.root table thead tr th .headerContent {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+.root table thead tr th .sortIcons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  gap: 2px;
+}
+.root table thead tr th .sortIcons .icon {
+  color: var(--gray-pale);
+  transition: all 0.2s ease;
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+.root table thead tr th .sortIcons .icon.active {
+  color: #146DF3;
 }
 .root table tbody {
   transition: color 0.15s ease-in-out;
@@ -46,6 +71,15 @@
 }
 .root table tbody tr:last-child {
   border-bottom: none !important;
+}
+.root table tbody .rowNew {
+  background-color: rgba(20, 109, 243, 0.06);
+}
+.root table tbody .rowInProcess {
+  background-color: rgba(255, 170, 0, 0.08);
+}
+.root table tbody .rowFinished {
+  background-color: rgba(0, 180, 120, 0.08);
 }
 
 .empty table {

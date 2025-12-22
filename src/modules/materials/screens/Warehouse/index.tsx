@@ -48,7 +48,8 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Format')} (${t('mm')})`,
-				accessor: (row: IBaseMaterialList) => decimalToInteger(row?.format?.format || '')
+				accessor: (row: IBaseMaterialList) => decimalToInteger(row?.format?.format || ''),
+				dynamicFilter: 'format'
 			},
 			{
 				Header: `${t('Total weight')} (${t('kg')})`,
@@ -60,14 +61,14 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Date')}`,
-				accessor: (row: IBaseMaterialList) => getDate(row.created_at) || ''
+				accessor: (row: IBaseMaterialList) => getDate(row.created_at) || '',
+				dynamicFilter: 'created_at'
 			},
 			{
 				Header: t('Actions'),
 				accessor: (row: IBaseMaterialList) => <div className="flex items-start gap-lg">
 					<EditButton
 						onClick={() => navigate(`edit/${row.id || 'detail'}?created_at=${row?.created_at}&warehouse=${row?.warehouse?.id}&format=${row?.format?.id}&material=${row?.material?.id}`)}/>
-					{/*<DeleteButton id={row.id}/>*/}
 				</div>
 			}
 		],
@@ -82,7 +83,7 @@ const Index = () => {
 				</Button>
 			</PageTitle>
 			<Card>
-				<Filter fieldsToShow={['name', 'format']}/>
+				<Filter fieldsToShow={['name', 'material', 'format']}/>
 				<ReactTable
 					columns={columns}
 					data={data}
@@ -90,7 +91,6 @@ const Index = () => {
 				/>
 			</Card>
 			<Pagination totalPages={totalPages}/>
-			{/*<DeleteModal endpoint="products/base-materials/" onDelete={() => refetch()}/>*/}
 		</>
 	)
 }

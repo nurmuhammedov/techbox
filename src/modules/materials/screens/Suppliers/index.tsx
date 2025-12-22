@@ -139,7 +139,7 @@ const Index = () => {
 					/>
 
 					<Button style={{marginTop: 'auto'}} type={FIELD.SUBMIT} disabled={isUpdating}>
-						Edit
+						Save
 					</Button>
 				</Form>
 			</EditModal>

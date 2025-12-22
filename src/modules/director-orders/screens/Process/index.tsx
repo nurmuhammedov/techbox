@@ -121,7 +121,7 @@ const Index: FC<IProperties> = ({update: edit = false}) => {
 					{
 						edit &&
 						<Button onClick={handleSubmit(onSubmit)} disabled={isUpdate}>
-							{t('Edit')}
+							Save
 						</Button>
 					}
 				</div>

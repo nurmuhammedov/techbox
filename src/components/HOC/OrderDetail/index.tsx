@@ -1,14 +1,5 @@
-import {
-	useData,
-	useDetail
-} from 'hooks'
-import {
-	Card,
-	Diagram, FileUpLoader,
-	Input,
-	Loader,
-	Select
-} from 'components'
+import {useData, useDetail} from 'hooks'
+import {Card, Diagram, FileUpLoader, Input, Loader, Select} from 'components'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {decimalToInteger, getSelectValue} from 'utilities/common'
 import {IFIle, ISelectOption} from 'interfaces/form.interface'
@@ -213,7 +204,12 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 
 								<div
 									className="span-12 flex gap-md"
-									style={{marginTop: '.7rem', marginBottom: '1.5rem'}}
+									style={{
+										marginTop: '.7rem', whiteSpace: 'wrap', marginBottom: '1.5rem',
+										paddingBottom: '.75rem',
+										overflowX: 'auto',
+										maxWidth: '100%'
+									}}
 								>
 									<div className="span-4 flex gap-md align-end justify-start">
 										<input

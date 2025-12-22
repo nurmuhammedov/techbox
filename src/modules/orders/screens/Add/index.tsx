@@ -198,7 +198,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							}
 						}}
 					>
-						{edit ? 'Edit' : 'Save'}
+						{edit ? 'Save' : 'Save'}
 					</Button>
 				</div>
 			</PageTitle>

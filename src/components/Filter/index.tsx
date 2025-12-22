@@ -1,12 +1,11 @@
 import useData from 'hooks/useData'
 import useSearchParams from 'hooks/useSearchParams'
-import React, {useState, useEffect, FC} from 'react'
-import {Input, Select, MaskInput} from 'components'
+import React, {FC, useEffect, useState} from 'react'
+import {Input, MaskInput, Select} from 'components'
 import {ISelectOption} from 'interfaces/form.interface'
-// import {currencyOptions, isSerialOptions, expiryOptions, regionsOptions} from 'constants/options' // Assuming this path is correct
 import {getSelectValue} from 'utilities/common'
 import {useTranslation} from 'react-i18next'
-import styles from './styles.module.scss' // Using the provided style import
+import styles from './styles.module.scss'
 import {Search as SearchIcon} from 'assets/icons'
 
 
@@ -29,7 +28,8 @@ export type FilterFieldType =
 	| 'region'
 	| 'name'
 	| 'purchase_date'
-	| 'product';
+	| 'product'
+	| 'material'
 
 interface DynamicFilterProps {
 	fieldsToShow: FilterFieldType[];
@@ -55,7 +55,8 @@ const fieldLabels: Record<FilterFieldType, string> = {
 	region: 'Region',
 	purchase_date: 'Date',
 	name: 'Name',
-	product: 'Product'
+	product: 'Product',
+	material: 'Material' // Yangi qo'shildi
 }
 
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -108,7 +109,6 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 	const [toDateText, setToDateText] = useState(() => formatDateFromURL(paramsObject.to_date as unknown as string))
 	const [purchaseDateText, setPurchaseDateText] = useState(() => formatDateFromURL(paramsObject.purchase_date as unknown as string))
 
-
 	useEffect(() => {
 		const currentSearchInParams = paramsObject.search || ''
 		if (debouncedSearchText !== currentSearchInParams) {
@@ -143,7 +143,7 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 		setPurchaseDateText(formatDateFromURL(paramsObject.purchase_date as unknown as string))
 	}, [paramsObject.purchase_date])
 
-
+	// Fetch options
 	const {data: storesOptions = [], isPending: storesLoading} = useData<ISelectOption[]>(
 		'stores/select',
 		fieldsToShow.includes('store')
@@ -180,7 +180,11 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 		'products/formats/select',
 		fieldsToShow.includes('format')
 	)
-
+	// Materiallar uchun ma'lumotni yuklash
+	const {data: materialsOptions = [], isPending: materialsLoading} = useData<ISelectOption[]>(
+		'products/materials/select',
+		fieldsToShow.includes('material')
+	)
 
 	const handleDateChange = (
 		value: React.ChangeEvent<HTMLInputElement>,
@@ -200,7 +204,6 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 	const handleMultiChange = (paramKey: FilterFieldType) => (selectedValue: string | number | boolean | string[] | number[] | boolean[] | null) => {
 		addParams({[paramKey]: selectedValue?.toString() ?? undefined}, 'page')
 	}
-
 
 	const renderField = (field: FilterFieldType) => {
 		const placeholderText = t(fieldLabels[field])
@@ -298,17 +301,6 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 						{...commonSelectProps}
 					/>
 				)
-			// case 'currency':
-			// 	return (
-			// 		<Select
-			// 			id={selectId}
-			// 			isMulti={true}
-			// 			options={currencyOptions}
-			// 			value={getSelectValue(currencyOptions, parseMultiValue(paramsObject.currency))}
-			// 			handleOnChange={handleMultiChange('currency')}
-			// 			{...commonSelectProps}
-			// 		/>
-			// 	)
 			case 'product_type':
 				return (
 					<Select
@@ -356,47 +348,18 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 						{...commonSelectProps}
 					/>
 				)
-			// case 'single_currency':
-			// 	return (
-			// 		<Select
-			// 			id={selectId}
-			// 			options={currencyOptions}
-			// 			value={getSelectValue(currencyOptions, paramsObject.currency)}
-			// 			handleOnChange={(selectedValue) => addParams({currency: selectedValue as unknown as string ?? undefined}, 'page')}
-			// 			{...commonSelectProps}
-			// 		/>
-			// 	)
-			// case 'expiry':
-			// 	return (
-			// 		<Select
-			// 			id={selectId}
-			// 			options={expiryOptions}
-			// 			value={getSelectValue(expiryOptions, paramsObject.expiry)}
-			// 			handleOnChange={(selectedValue) => addParams({expiry: selectedValue as unknown as string ?? undefined}, 'page')}
-			// 			{...commonSelectProps}
-			// 		/>
-			// 	)
-			// case 'is_user':
-			// 	return (
-			// 		<Select
-			// 			id={selectId}
-			// 			options={expiryOptions}
-			// 			value={getSelectValue(expiryOptions, paramsObject.is_user)}
-			// 			handleOnChange={(selectedValue) => addParams({is_user: selectedValue as unknown as string ?? undefined}, 'page')}
-			// 			{...commonSelectProps}
-			// 		/>
-			// 	)
-			// case 'region':
-			// 	return (
-			// 		<Select
-			// 			id={selectId}
-			// 			isMulti={true}
-			// 			options={regionsOptions}
-			// 			value={getSelectValue(regionsOptions, parseMultiValue(paramsObject.region))}
-			// 			handleOnChange={handleMultiChange('region')}
-			// 			{...commonSelectProps}
-			// 		/>
-			// 	)
+			case 'material':
+				return (
+					<Select
+						id={selectId}
+						isMulti={true}
+						options={materialsOptions}
+						value={getSelectValue(materialsOptions, parseMultiValue(paramsObject.material))}
+						handleOnChange={handleMultiChange('material')}
+						isLoading={materialsLoading}
+						{...commonSelectProps}
+					/>
+				)
 			case 'from_date':
 				return (
 					<MaskInput

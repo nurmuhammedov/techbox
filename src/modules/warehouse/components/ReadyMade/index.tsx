@@ -239,7 +239,7 @@ const Index = () => {
 						type={FIELD.SUBMIT}
 						disabled={isUpdating}
 					>
-						Edit
+						Save
 					</Button>
 				</Form>
 			</EditModal>

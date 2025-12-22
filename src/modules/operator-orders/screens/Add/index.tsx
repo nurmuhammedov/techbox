@@ -26,14 +26,13 @@ import {ISelectOption} from 'interfaces/form.interface'
 import {useTranslation} from 'react-i18next'
 import {BUTTON_THEME} from 'constants/fields'
 import {FC, useEffect} from 'react'
-import {booleanOptions, yesNoOptions} from 'helpers/options'
+import {booleanOptions} from 'helpers/options'
 import {useNavigate, useParams} from 'react-router-dom'
 import {IGroupOrder} from 'interfaces/groupOrders.interface'
 
 
 interface IProperties {
 	retrieve?: boolean
-	corrugation?: boolean
 	detail?: IGroupOrder
 }
 
@@ -183,17 +182,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 								options={booleanOptions as unknown as ISelectOption[]}
 								value={getSelectValue(booleanOptions as unknown as ISelectOption[], detail?.has_addition)}
 								defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], detail?.has_addition)}
-							/>
-						</div>
-						<div className="span-3">
-							<Select
-								yellowLabel={true}
-								id="is_consecutive"
-								label="Guruhlansinmi?"
-								disabled={true}
-								options={yesNoOptions as unknown as ISelectOption[]}
-								value={getSelectValue(yesNoOptions as unknown as ISelectOption[], detail?.is_consecutive)}
-								defaultValue={getSelectValue(yesNoOptions as unknown as ISelectOption[], detail?.is_consecutive)}
 							/>
 						</div>
 						<div className="span-3">

@@ -2,7 +2,6 @@ import {
 	Button,
 	Card,
 	EditButton,
-	FilterInput,
 	Form,
 	Modal,
 	NumberFormattedInput,
@@ -11,13 +10,7 @@ import {
 	Select,
 	Tab
 } from 'components'
-import {
-	useData,
-	usePaginatedData,
-	usePagination,
-	useSearchParams,
-	useUpdate
-} from 'hooks'
+import {useData, usePaginatedData, usePagination, useSearchParams, useUpdate} from 'hooks'
 import {useEffect, useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
@@ -31,6 +24,7 @@ import {ISelectOption} from 'interfaces/form.interface'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {countSchema} from 'helpers/yup'
+import Filter from 'components/Filter'
 
 
 const Index = () => {
@@ -38,7 +32,14 @@ const Index = () => {
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
 	const {
-		paramsObject: {status = companyOperationsOptions[0].value, search = '', company = '', id = ''},
+		paramsObject: {
+			status = companyOperationsOptions[0].value,
+			name = '',
+			company = '',
+			id = '',
+			ordering,
+			format = ''
+		},
 		addParams,
 		removeParams
 	} = useSearchParams()
@@ -49,8 +50,10 @@ const Index = () => {
 			page: page,
 			page_size: pageSize,
 			status,
-			search,
-			company
+			search: name,
+			company,
+			format_: format,
+			ordering
 		}
 	)
 
@@ -96,19 +99,11 @@ const Index = () => {
 
 	const columns: Column<IOrderDetail>[] = useMemo(
 		() => [
-			// {
-			// 	Header: t('№'),
-			// 	accessor: (_: IOrderDetail, index: number) => (page - 1) * pageSize + (index + 1),
-			// 	style: {
-			// 		width: '3rem',
-			// 		textAlign: 'center'
-			// 	}
-			// },
 			{
 				Header: t('Order number'),
 				accessor: (row: IOrderDetail) => `#${row.id}`,
 				style: {
-					width: '14rem',
+					width: '8rem',
 					textAlign: 'start'
 				}
 			},
@@ -118,11 +113,13 @@ const Index = () => {
 			},
 			{
 				Header: t('Count'),
-				accessor: (row: IOrderDetail) => decimalToInteger(row.count || '')
+				accessor: (row: IOrderDetail) => decimalToInteger(row.count || ''),
+				dynamicFilter: 'count'
 			},
 			{
 				Header: t('Deadline'),
-				accessor: (row: IOrderDetail) => row.deadline ? getDate(row.deadline) : null
+				accessor: (row: IOrderDetail) => row.deadline ? getDate(row.deadline) : null,
+				dynamicFilter: 'deadline'
 			},
 			{
 				Header: `${t('Sizes')} (${t('mm')})`,
@@ -130,14 +127,16 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Format')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => decimalToInteger(row.format?.name)
+				accessor: (row: IOrderDetail) => decimalToInteger(row.format?.name),
+				dynamicFilter: 'format'
 			},
-			...status == companyOperationsOptions[0].value ? [
+			...status == companyOperationsOptions[1].value ? [
 				{
 					Header: t('Status'),
-					accessor: (row: IOrderDetail) => t(activityOptions?.find(i => row.activity === i?.value)?.label?.toString() || '')
+					accessor: (row: IOrderDetail) => t(activityOptions?.find(i => row.activity === i?.value)?.label?.toString() || ''),
+					dynamicFilter: 'stages_to_passed'
 				}
-			] : [
+			] : status == companyOperationsOptions[2].value ? [
 				{
 					Header: `${t('Developed')} ${t('Count')?.toLowerCase()}`,
 					accessor: (row: IOrderDetail) => row?.count_last || 0
@@ -146,21 +145,25 @@ const Index = () => {
 					Header: `${t('Finished date')}`,
 					accessor: (row: IOrderDetail) => row?.end_date ? formatDate(row?.end_date) : ''
 				}
-			],
+			] : [],
 			{
 				Header: t('Actions'),
 				accessor: (row: IOrderDetail) => (
 					<div className="flex items-start gap-lg">
 						<EditButton onClick={() => navigate(`process/${row.id}`)}/>
-						<Button
-							mini={true}
-							onClick={() => {
-								addParams({
-									modal: 'count',
-									id: row?.id
-								})
-							}}
-						>Excess roll</Button>
+						{
+							status === 'in_proces' &&
+							<Button
+								style={{whiteSpace: 'nowrap'}}
+								mini={true}
+								onClick={() => {
+									addParams({
+										modal: 'count',
+										id: row?.id
+									})
+								}}
+							>Excess roll</Button>
+						}
 					</div>
 				)
 			}
@@ -169,33 +172,13 @@ const Index = () => {
 		[page, pageSize, status]
 	)
 
-	// useEffect(() => {
-	// 	if (!id) {
-	// 		reset({
-	// 			data: []
-	// 		})
-	// 	}
-	// }, [id])
-
-
 	return (
 		<>
 			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
 				<Tab query="status" fallbackValue={companyOperationsOptions[0].value} tabs={companyOperationsOptions}/>
 			</div>
 			<Card>
-				<div className="flex gap-lg" style={{padding: '.8rem .8rem .3rem .8rem'}}>
-					<FilterInput
-						id="company"
-						query="company"
-						placeholder="Company name"
-					/>
-					<FilterInput
-						id="search"
-						query="search"
-						placeholder="Full name"
-					/>
-				</div>
+				<Filter fieldsToShow={['name', 'format']}/>
 				<ReactTable
 					columns={columns}
 					data={data}
@@ -203,87 +186,90 @@ const Index = () => {
 				/>
 			</Card>
 			<Pagination totalPages={totalPages}/>
-			<Modal
-				title={`#${id}`}
-				style={{height: '40rem', width: '50rem'}}
-				id="count"
-			>
-				<Form onSubmit={(e) => e.preventDefault()}>
-					<div className="span-12 grid gap-xl flex-0">
-						{
-							fields?.map((field, index) => {
-								return (
-									<div className="grid gap-lg span-12" key={field.id}>
-										<div className="span-6">
-											<Controller
-												name={`data.${index}.id`}
-												control={control}
-												render={({field: {value, ref, onChange, onBlur}}) => (
-													<Select
-														ref={ref}
-														id={`data.${index}.id`}
-														label={`${t('Roll')}`}
-														disabled={true}
-														options={formatSelectOptions2(rolls)}
-														onBlur={onBlur}
-														error={errors?.data?.[index]?.id?.message}
-														value={getSelectValue(formatSelectOptions2(rolls), value)}
-														defaultValue={getSelectValue(formatSelectOptions2(rolls), value)}
-														handleOnChange={(e) => onChange(e as string[])}
-													/>
-												)}
-											/>
-										</div>
-
-										<div className="span-6">
-											<Controller
-												control={control}
-												name={`data.${index}.weight`}
-												render={({field}) => (
-													<NumberFormattedInput
-														id={`data.${index}.weight`}
-														maxLength={12}
-														disableGroupSeparators={false}
-														allowDecimals={true}
-														label={`${t('Weight')} (${t('kg')})`}
-														error={errors?.data?.[index]?.weight?.message}
-														{...field}
-													/>
-												)}
-											/>
-										</div>
-									</div>
-								)
-							})
-						}
-
-						{
-							fields?.length == 0 &&
-							<h1 className="h1">{t('Rolls are not available')}</h1>
-						}
-					</div>
-				</Form>
-
-				<Button
-					type={FIELD.BUTTON}
-					theme={BUTTON_THEME.PRIMARY}
-					disabled={isAdding || fields?.length == 0}
-					style={{marginTop: '2rem'}}
-					onClick={() => {
-						handleSubmit(async (data) =>
-							add(data?.data)
-								.then(async () => {
-									reset({
-										data: []
-									})
-									removeParams('modal')
-								})
-						)()
-					}}
+			{
+				status === 'in_proces' &&
+				<Modal
+					title={`#${id}`}
+					style={{height: '40rem', width: '50rem'}}
+					id="count"
 				>
-					Save
-				</Button>
-			</Modal>
+					<Form onSubmit={(e) => e.preventDefault()}>
+						<div className="span-12 grid gap-xl flex-0">
+							{
+								fields?.map((field, index) => {
+									return (
+										<div className="grid gap-lg span-12" key={field.id}>
+											<div className="span-6">
+												<Controller
+													name={`data.${index}.id`}
+													control={control}
+													render={({field: {value, ref, onChange, onBlur}}) => (
+														<Select
+															ref={ref}
+															id={`data.${index}.id`}
+															label={`${t('Roll')}`}
+															disabled={true}
+															options={formatSelectOptions2(rolls)}
+															onBlur={onBlur}
+															error={errors?.data?.[index]?.id?.message}
+															value={getSelectValue(formatSelectOptions2(rolls), value)}
+															defaultValue={getSelectValue(formatSelectOptions2(rolls), value)}
+															handleOnChange={(e) => onChange(e as string[])}
+														/>
+													)}
+												/>
+											</div>
+
+											<div className="span-6">
+												<Controller
+													control={control}
+													name={`data.${index}.weight`}
+													render={({field}) => (
+														<NumberFormattedInput
+															id={`data.${index}.weight`}
+															maxLength={12}
+															disableGroupSeparators={false}
+															allowDecimals={true}
+															label={`${t('Weight')} (${t('kg')})`}
+															error={errors?.data?.[index]?.weight?.message}
+															{...field}
+														/>
+													)}
+												/>
+											</div>
+										</div>
+									)
+								})
+							}
+
+							{
+								fields?.length == 0 &&
+								<h1 className="h1">{t('Rolls are not available')}</h1>
+							}
+						</div>
+					</Form>
+
+					<Button
+						type={FIELD.BUTTON}
+						theme={BUTTON_THEME.PRIMARY}
+						disabled={isAdding || fields?.length == 0}
+						style={{marginTop: '2rem'}}
+						onClick={() => {
+							handleSubmit(async (data) =>
+								add(data?.data)
+									.then(async () => {
+										reset({
+											data: []
+										})
+										removeParams('modal')
+									})
+							)()
+						}}
+					>
+						Save
+					</Button>
+				</Modal>
+			}
 		</>
 	)
 }

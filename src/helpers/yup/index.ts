@@ -288,6 +288,7 @@ const warehouseOrdersSchema = yup.object().shape({
 		.default([{
 			made_in: null,
 			name: '',
+			price: '',
 			supplier: null,
 			weight: undefined
 		}])
@@ -296,6 +297,10 @@ const warehouseOrdersSchema = yup.object().shape({
 				made_in: yup.number().optional().nullable().transform(value => value ? value : null),
 				supplier: yup.number().optional().nullable().transform(value => value ? value : null),
 				name: yup.string().trim().required('This field is required'),
+				price: yup
+					.string()
+					.trim()
+					.required('This field is required'),
 				weight: yup.string().trim().required('This field is required')
 			})
 		).required('This field is required'),
@@ -512,9 +517,7 @@ const ordersSchema2 = yup.object().shape({
 
 const groupOrdersSchema = yup.object().shape({
 	has_addition: yup.boolean().nullable(),
-	is_consecutive: yup.boolean().nullable().default(false),
 	gofra: yup.boolean().nullable(),
-	// glue_square: yup.string().optional().nullable().transform(v => v ? v : null),
 	glue_square: yup.string().required('This field is required'),
 	ymo1: yup.boolean().nullable(),
 	fleksa: yup.boolean().nullable(),

@@ -1,20 +1,23 @@
 import {yupResolver} from '@hookform/resolvers/yup'
 import {
 	Button,
-	Card, DeleteButton, DeleteModal,
-	EditButton, EditModal,
-	FilterInput, Form, Modal, NumberFormattedInput,
+	Card,
+	DeleteButton,
+	DeleteModal,
+	EditButton,
+	EditModal,
+	FilterInput,
+	Form,
+	Modal,
+	NumberFormattedInput,
 	Pagination,
-	ReactTable, Select,
+	ReactTable,
+	Select,
 	Tab
 } from 'components'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {defectiveSchema, schema, soldDefectiveSchema, soldSchema} from 'helpers/yup'
-import {
-	useActions, useAdd, useData, useDetail,
-	usePaginatedData,
-	usePagination, useSearchParams
-} from 'hooks'
+import {useActions, useAdd, useData, useDetail, usePaginatedData, usePagination, useSearchParams} from 'hooks'
 import {ISelectOption} from 'interfaces/form.interface'
 import {useEffect, useMemo} from 'react'
 import {Controller, useForm} from 'react-hook-form'
@@ -38,7 +41,8 @@ const Index = () => {
 			orderId = undefined,
 			search = '',
 			company = '',
-			updateId = undefined
+			updateId = undefined,
+			ordering = undefined
 		},
 		removeParams,
 		addParams
@@ -54,6 +58,7 @@ const Index = () => {
 			status: status !== statusOptions[3].value ? status : null,
 			search,
 			company,
+			ordering,
 			not_sold: status === statusOptions[2].value ? 'True' : null
 		}
 	)
@@ -82,21 +87,25 @@ const Index = () => {
 			},
 			{
 				Header: t('Count'),
-				accessor: (row: IOrderDetail) => decimalToInteger(row.count || '')
+				accessor: (row: IOrderDetail) => decimalToInteger(row.count || ''),
+				dynamicFilter: 'count'
 			},
 			{
 				Header: t('Deadline'),
-				accessor: (row: IOrderDetail) => row.deadline ? getDate(row.deadline) : null
+				accessor: (row: IOrderDetail) => row.deadline ? getDate(row.deadline) : null,
+				dynamicFilter: 'deadline'
 			},
 
 			{
 				Header: `${t('Format')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => decimalToInteger(row.format?.name)
+				accessor: (row: IOrderDetail) => decimalToInteger(row.format?.name),
+				dynamicFilter: 'format'
 			},
 			...status == statusOptions[1].value ? [
 				{
 					Header: t('Status'),
-					accessor: (row: IOrderDetail) => t(activityOptions?.find(i => row.activity === i?.value)?.label?.toString() || '')
+					accessor: (row: IOrderDetail) => t(activityOptions?.find(i => row.activity === i?.value)?.label?.toString() || ''),
+					dynamicFilter: 'stages_to_passed'
 				}
 			] : status != statusOptions[0].value ? [
 				{

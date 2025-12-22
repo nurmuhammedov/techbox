@@ -64,7 +64,7 @@ interface IOrderDetail {
 
 	count_after_processing: string;
 
-	status?: 'new' | 'in_process' | 'finished' | 'in_line';
+	status?: 'new' | 'in_process' | 'in_proces' | 'finished' | 'in_line';
 	l0: string;
 	l1: string;
 	l2: string;

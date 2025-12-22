@@ -2,7 +2,10 @@ import {yupResolver} from '@hookform/resolvers/yup'
 import classNames from 'classnames'
 import {
 	Button,
-	Card, CutDiagram, DeleteButton, DeleteModal,
+	Card,
+	CutDiagram,
+	DeleteButton,
+	DeleteModal,
 	Diagram,
 	EditModal,
 	Form,
@@ -16,7 +19,7 @@ import {
 } from 'components'
 import styles from 'components/HOC/GroupOrderDetail/styles.module.scss'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {activityOptions, booleanOptions, cutOptions, statusOptions, yesNoOptions} from 'helpers/options'
+import {activityOptions, booleanOptions, cutOptions, statusOptions} from 'helpers/options'
 import {groupOrdersSchema, temporaryOrderSchema} from 'helpers/yup'
 import {
 	useActions,
@@ -53,7 +56,11 @@ import {getDate} from 'utilities/date'
 const Index = () => {
 	const {t} = useTranslation()
 	const navigate = useNavigate()
-	const {removeParams, addParams, paramsObject: {updateId = undefined, deleteId = undefined}} = useSearchParams()
+	const {
+		removeParams,
+		addParams,
+		paramsObject: {updateId = undefined, deleteId = undefined, ordering}
+	} = useSearchParams()
 	const {deleteOrder, addOrder, updateOrder, clearOrders} = useActions()
 	const [isAdding, setIsAdding] = useState<boolean>(false)
 	const {page, pageSize} = usePagination()
@@ -67,7 +74,8 @@ const Index = () => {
 		{
 			page: page,
 			page_size: pageSize,
-			status: statusOptions[0].value
+			status: statusOptions[0].value,
+			ordering
 		},
 		isAdding
 	)
@@ -89,11 +97,13 @@ const Index = () => {
 			},
 			{
 				Header: t('Count'),
-				accessor: (row: IOrderDetail) => decimalToInteger(row.count || '')
+				accessor: (row: IOrderDetail) => decimalToInteger(row.count || ''),
+				dynamicFilter: 'count'
 			},
 			{
 				Header: t('Deadline'),
-				accessor: (row: IOrderDetail) => row.deadline ? getDate(row.deadline) : null
+				accessor: (row: IOrderDetail) => row.deadline ? getDate(row.deadline) : null,
+				dynamicFilter: 'deadline'
 			},
 			{
 				Header: `${t('Sizes')} (${t('mm')})`,
@@ -101,7 +111,8 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Format')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => decimalToInteger(row.format?.name)
+				accessor: (row: IOrderDetail) => decimalToInteger(row.format?.name),
+				dynamicFilter: 'format'
 			},
 			{
 				Header: t('Layer'),
@@ -157,7 +168,6 @@ const Index = () => {
 			tikish: false,
 			yelimlash: false,
 			is_last: false,
-			is_consecutive: false,
 			has_addition: false
 		}
 	})
@@ -255,8 +265,7 @@ const Index = () => {
 				y: data?.y,
 				x: data?.x,
 				has_addition: data?.has_addition,
-				is_consecutive: data?.is_consecutive,
-				stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true)?.filter(i => i !== 'has_addition' && i !== 'is_consecutive')?.reverse(),
+				stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true)?.filter(i => i !== 'has_addition')?.reverse(),
 				deadline: data?.deadline || null,
 				count: data?.count
 			}
@@ -279,7 +288,6 @@ const Index = () => {
 						tikish: false,
 						yelimlash: false,
 						is_last: false,
-						is_consecutive: false,
 						has_addition: false
 					})
 				})
@@ -306,7 +314,7 @@ const Index = () => {
 			<div className={classNames(styles.root, 'grid gap-lg')}>
 				<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
 					<Form className="grid-10  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
-						<div className="span-2">
+						<div className="span-3">
 							<Controller
 								name="separated_raw_materials_format"
 								control={controlAdd}
@@ -325,7 +333,7 @@ const Index = () => {
 								)}
 							/>
 						</div>
-						<div className="span-2">
+						<div className="span-3">
 							<Controller
 								name="has_addition"
 								control={controlAdd}
@@ -339,25 +347,6 @@ const Index = () => {
 										ref={ref}
 										onBlur={onBlur}
 										defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], value)}
-										handleOnChange={(e) => onChange(e as string)}
-									/>
-								)}
-							/>
-						</div>
-						<div className="span-2">
-							<Controller
-								name="is_consecutive"
-								control={controlAdd}
-								render={({field: {value, ref, onChange, onBlur}}) => (
-									<Select
-										id="is_consecutive"
-										label="Guruhlansinmi?"
-										options={yesNoOptions as unknown as ISelectOption[]}
-										error={errors?.is_consecutive?.message}
-										value={getSelectValue(yesNoOptions as unknown as ISelectOption[], value)}
-										ref={ref}
-										onBlur={onBlur}
-										defaultValue={getSelectValue(yesNoOptions as unknown as ISelectOption[], value)}
 										handleOnChange={(e) => onChange(e as string)}
 									/>
 								)}
@@ -639,7 +628,11 @@ const Index = () => {
 
 											<div
 												className="span-12 flex gap-md"
-												style={{marginTop: '.75rem', marginBottom: '1.5rem'}}
+												style={{
+													marginTop: '.75rem',
+													whiteSpace: 'wrap',
+													marginBottom: '1.5rem'
+												}}
 											>
 												<div className="span-4 flex gap-md align-end justify-start">
 													<input
@@ -740,7 +733,7 @@ const Index = () => {
 													addParams({updateId: order.id, modal: 'edit'})
 												}
 											}}>
-												Edit
+												Update
 											</Button>
 										</div>
 									</Card>

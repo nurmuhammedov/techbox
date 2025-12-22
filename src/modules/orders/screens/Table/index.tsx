@@ -1,18 +1,5 @@
-import {
-	Button,
-	Card,
-	// DeleteButton, DeleteModal,
-	EditButton, FilterInput,
-	Loader,
-	PageTitle,
-	Pagination,
-	ReactTable
-} from 'components'
-import {
-	useDetail,
-	usePaginatedData,
-	usePagination, useSearchParams
-} from 'hooks'
+import {Button, Card, EditButton, Loader, PageTitle, Pagination, ReactTable} from 'components'
+import {useDetail, usePaginatedData, usePagination, useSearchParams} from 'hooks'
 import {useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate, useParams} from 'react-router-dom'
@@ -30,7 +17,7 @@ const Index = () => {
 	const {id = undefined} = useParams()
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
-	const {paramsObject: {search = '', company = ''}} = useSearchParams()
+	const {paramsObject: {search = '', company = '', ordering = ''}} = useSearchParams()
 
 	const {data, totalPages, isPending: isLoading} = usePaginatedData<IOrderDetail[]>(
 		`services/order-list-by-customer/${id}`,
@@ -38,6 +25,7 @@ const Index = () => {
 			page: page,
 			page_size: pageSize,
 			search,
+			ordering,
 			company
 		},
 		!!id
@@ -65,20 +53,63 @@ const Index = () => {
 			},
 			{
 				Header: t('Count'),
-				accessor: (row: IOrderDetail) => decimalToInteger(row.count || '')
+				accessor: (row: IOrderDetail) => decimalToInteger(row.count || ''),
+				dynamicFilter: 'count'
 			},
 			{
 				Header: t('Deadline'),
-				accessor: (row: IOrderDetail) => row.deadline ? getDate(row.deadline) : null
+				accessor: (row: IOrderDetail) => row.deadline ? getDate(row.deadline) : null,
+				dynamicFilter: 'deadline'
 			},
 			{
 				Header: `${t('Price')} (${t('Item')?.toLowerCase()})`,
-				accessor: (row: IOrderDetail) => decimalToPrice(row.price)
+				accessor: (row: IOrderDetail) => decimalToPrice(row.price),
+				dynamicFilter: 'price'
 			},
 			{
 				Header: t('Total paid money'),
 				accessor: (row: IOrderDetail) => <span
 					style={{color: 'var(--green-bright)'}}>{decimalToPrice(row.money_paid)}</span>
+			},
+			{
+				Header: t('Status'),
+				accessor: (row: IOrderDetail) => row.status,
+				rowClassName: (row: IOrderDetail) => {
+					switch (row.status) {
+						case 'new':
+							return 'rgba(255, 0, 0, 0.12)'
+						case 'in_proces':
+							return 'rgba(255, 170, 0, 0.08)'
+						case 'finished':
+							return ' rgba(0, 180, 120, 0.08)'
+						default:
+							return ''
+					}
+				},
+				dynamicFilter: 'status',
+				Cell: ({value}: { value: string }) => (
+					<span
+						style={{
+							color:
+								value === 'new'
+									? 'var(--red)'
+									: value === 'in_proces'
+										? 'rgb(255, 170, 0)'
+										: value === 'finished'
+											? 'var(--green-bright)'
+											: 'rgb(160, 160, 160)',
+							fontWeight: 500
+						}}
+					>
+    {value === 'new'
+	    ? t('New')
+	    : value === 'in_proces'
+		    ? t('In progress')
+		    : value === 'finished'
+			    ? t('Finished')
+			    : '-'}
+  </span>
+				)
 			},
 			{
 				Header: t('Indebtedness'),
@@ -90,7 +121,6 @@ const Index = () => {
 				accessor: (row: IOrderDetail) => (
 					<div className="flex items-start gap-lg">
 						<EditButton onClick={() => navigate(`edit/${row.id}`)}/>
-						{/*<DeleteButton id={row.id}/>*/}
 					</div>
 				)
 			}
@@ -113,18 +143,6 @@ const Index = () => {
 				</div>
 			</PageTitle>
 			<Card>
-				<div className="flex gap-lg" style={{padding: '.8rem .8rem .3rem .8rem'}}>
-					<FilterInput
-						id="company"
-						query="company"
-						placeholder="Company name"
-					/>
-					<FilterInput
-						id="search"
-						query="search"
-						placeholder="Name"
-					/>
-				</div>
 				<ReactTable
 					columns={columns}
 					data={data}

@@ -5,24 +5,19 @@ import {useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate, useParams} from 'react-router-dom'
 import {Column} from 'react-table'
-import {
-	Button,
-	Card, Loader, PageTitle,
-	Pagination,
-	ReactTable
-} from 'components'
-import {
-	useDetail,
-	usePaginatedData,
-	usePagination
-} from 'hooks'
+import {Button, Card, Loader, PageTitle, Pagination, ReactTable, Tab} from 'components'
+import {useDetail, usePaginatedData, usePagination} from 'hooks'
 import {decimalToInteger} from 'utilities/common'
+import {ISelectOption} from 'interfaces/form.interface'
+import useCustomSearchParams from 'hooks/useSearchParams'
+import Filter from 'components/Filter'
 
 
 const Index = () => {
 	const {t} = useTranslation()
 	const {id} = useParams()
 	const navigate = useNavigate()
+	const {paramsObject: {tab = 'remained', format = '', ...rest}} = useCustomSearchParams()
 	const {page, pageSize} = usePagination()
 
 	const {
@@ -32,7 +27,10 @@ const Index = () => {
 	} = usePaginatedData<IBaseMaterialList[]>('products/all-base-material', {
 		page,
 		page_size: pageSize,
-		warehouse: id
+		warehouse: id,
+		remaining: tab == 'remained',
+		format_: format,
+		...rest
 	})
 
 	const {
@@ -80,14 +78,23 @@ const Index = () => {
 		return <Loader/>
 	}
 
+	const tabOptions: ISelectOption[] = [
+		{label: 'Remained materials', value: 'remained'},
+		{label: 'Used materials', value: 'topcoder'}
+	]
+
 	return (
 		<>
-			<PageTitle title={`${t('Material warehouse')} - ${detail?.name}`}>
+			<PageTitle style={{marginBottom: ''}} title={`${t('Material warehouse')} - ${detail?.name}`}>
 				<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
 					Back
 				</Button>
 			</PageTitle>
+			<div style={{marginBottom: '.5rem'}}>
+				<Tab fallbackValue={tabOptions[0]?.value} tabs={tabOptions}/>
+			</div>
 			<Card>
+				<Filter fieldsToShow={['material', 'format']}/>
 				<ReactTable
 					columns={columns}
 					data={dataList}

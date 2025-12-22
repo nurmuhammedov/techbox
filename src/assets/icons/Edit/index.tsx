@@ -4,7 +4,7 @@ const CustomIcon = () => {
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 19 20"
 			fill="none"
-			style={{maxWidth: '1.25rem', minWidth: '1.25rem', width: '100%', height: 'auto'}}
+			style={{maxWidth: '1.4rem', minWidth: '1.4rem', width: '100%', height: 'auto'}}
 		>
 			<path
 				fillRule="evenodd"

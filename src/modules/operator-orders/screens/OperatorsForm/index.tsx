@@ -3,7 +3,7 @@ import {Corrugation} from 'assets/icons'
 import {Button, Card, Form, Input, NumberFormattedInput, PageIcon, PageTitle, Select} from 'components'
 import {GroupOrderDetail} from 'components/HOC'
 import {BUTTON_THEME} from 'constants/fields'
-import {booleanOptions, yesNoOptions} from 'helpers/options'
+import {booleanOptions} from 'helpers/options'
 import {operatorsOrderSchema} from 'helpers/yup'
 import {useUpdate} from 'hooks'
 import {ISelectOption} from 'interfaces/form.interface'
@@ -219,17 +219,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 								options={booleanOptions as unknown as ISelectOption[]}
 								value={getSelectValue(booleanOptions as unknown as ISelectOption[], detail?.has_addition)}
 								defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], detail?.has_addition)}
-							/>
-						</div>
-						<div className="span-3">
-							<Select
-								yellowLabel={true}
-								id="is_consecutive"
-								label="Guruhlansinmi?"
-								disabled={true}
-								options={yesNoOptions as unknown as ISelectOption[]}
-								value={getSelectValue(yesNoOptions as unknown as ISelectOption[], detail?.is_consecutive)}
-								defaultValue={getSelectValue(yesNoOptions as unknown as ISelectOption[], detail?.is_consecutive)}
 							/>
 						</div>
 					</div>

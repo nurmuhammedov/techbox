@@ -45,7 +45,7 @@ const statusOptions: ISelectOption[] = [
 ]
 
 const companyOperationsOptions: ISelectOption[] = [
-	// {value: 'new', label: 'New orders'},
+	{value: 'new', label: 'New orders'},
 	// {value: 'in_line', label: 'Queued orders'},
 	{value: 'in_proces', label: 'In progress orders'},
 	{value: 'finished', label: 'Finished orders'}
@@ -83,7 +83,7 @@ const activityOptions: ISelectOption[] = [
 	{value: 'gofra', label: 'Corrugation'},
 	{value: 'ymo1', label: 'YMO'},
 	{value: 'fleksa', label: 'Flex'},
-	{value: 'ymo2', label: 'YMO'},
+	{value: 'ymo2', label: 'YMO2'},
 	{value: 'tikish', label: 'Sewing'},
 	{value: 'yelimlash', label: 'Gluing'},
 	{value: 'is_last', label: 'Warehouse'}
