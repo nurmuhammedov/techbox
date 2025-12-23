@@ -206,8 +206,6 @@ const Index = () => {
 	})
 
 
-	console.log(errors, 'errors')
-
 	const {fields} = useFieldArray({
 		control,
 		name: 'layer' as never
@@ -306,7 +304,7 @@ const Index = () => {
 						Back
 					</Button>
 					<Button onClick={handleSubmit(onSubmit)}
-					        disabled={isAddLoading || isAdding || orders?.length >= 3}>
+					        disabled={isAddLoading || isAdding}>
 						Send
 					</Button>
 				</div>
@@ -367,11 +365,11 @@ const Index = () => {
 							{
 								!isAdding ?
 									<div className="flex flex-col gap-sm">
-										<Button disabled={orders?.length >= 2} onClick={() => setIsAdding(true)}>
+										<Button onClick={() => setIsAdding(true)}>
 											Add order
 										</Button>
-										<Button disabled={orders?.length >= 2}
-										        onClick={() => addParams({modal: 'addOrder'})}>
+										<Button
+											onClick={() => addParams({modal: 'addOrder'})}>
 											Standing order
 										</Button>
 									</div> :

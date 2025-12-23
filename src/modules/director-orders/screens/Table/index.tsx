@@ -6,7 +6,6 @@ import {
 	DeleteModal,
 	EditButton,
 	EditModal,
-	FilterInput,
 	Form,
 	Modal,
 	NumberFormattedInput,
@@ -351,22 +350,22 @@ const Index = () => {
 				<Tab query="status" fallbackValue={statusOptions[0].value} tabs={statusOptions}/>
 			</div>
 			<Card>
-				{
-					status !== statusOptions[4].value || status !== statusOptions[5].value && <>
-						<div className="flex gap-lg" style={{padding: '.8rem .8rem .3rem .8rem'}}>
-							<FilterInput
-								id="company"
-								query="company"
-								placeholder="Company name"
-							/>
-							<FilterInput
-								id="search"
-								query="search"
-								placeholder="Full name"
-							/>
-						</div>
-					</>
-				}
+				{/*{*/}
+				{/*	status !== statusOptions[4].value || status !== statusOptions[5].value && <>*/}
+				{/*		<div className="flex gap-lg" style={{padding: '.8rem .8rem .3rem .8rem'}}>*/}
+				{/*			<FilterInput*/}
+				{/*				id="company"*/}
+				{/*				query="company"*/}
+				{/*				placeholder="Company name"*/}
+				{/*			/>*/}
+				{/*			<FilterInput*/}
+				{/*				id="search"*/}
+				{/*				query="search"*/}
+				{/*				placeholder="Full name"*/}
+				{/*			/>*/}
+				{/*		</div>*/}
+				{/*	</>*/}
+				{/*}*/}
 				{
 					status === statusOptions[5].value &&
 					<div style={{padding: '.5rem', display: 'flex', justifyContent: 'flex-end'}}>

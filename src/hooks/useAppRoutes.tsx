@@ -19,7 +19,6 @@ import {
 	OperatorOrdersTable,
 	EditOperatorOrder,
 	OperatorsTable,
-	OperatorsForm,
 	ClientAndOrderAdd,
 	FlexTable,
 	FlexOrderForm,
@@ -36,6 +35,7 @@ import {Layout} from 'components'
 import {ChemicalTypesTable} from 'modules/chemical-types'
 import {AddChemicals, ChemicalsTable} from 'modules/chemicals'
 import {AddGlue, GlueTable} from 'modules/Glue'
+import CorrugationForm from 'modules/operator-orders/screens/CorrugationForm'
 
 
 function useAppRoutes() {
@@ -197,12 +197,8 @@ function useAppRoutes() {
 					element: <OperatorOrdersTable/>
 				},
 				{
-					path: 'edit/:id',
+					path: 'add',
 					element: <EditOperatorOrder />
-				},
-				{
-					path: 'detail/:id',
-					element: <EditOperatorOrder retrieve={true}/>
 				}
 			]
 		},
@@ -234,11 +230,11 @@ function useAppRoutes() {
 				},
 				{
 					path: 'edit/:id',
-					element: <OperatorsForm type="corrugation"/>
+					element: <CorrugationForm />
 				},
 				{
 					path: 'detail/:id',
-					element: <OperatorsForm retrieve={true} type="corrugation"/>
+					element: <CorrugationForm detail={true}/>
 				}
 			]
 		},

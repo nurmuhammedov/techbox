@@ -1,15 +1,5 @@
-import {
-	Button,
-	Card,
-	EditButton,
-	Pagination,
-	ReactTable,
-	Tab
-} from 'components'
-import {
-	usePaginatedData,
-	usePagination, useSearchParams
-} from 'hooks'
+import {Button, Card, EditButton, Pagination, ReactTable, Tab} from 'components'
+import {usePaginatedData, usePagination, useSearchParams} from 'hooks'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {FC, useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
@@ -32,7 +22,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 	const {paramsObject: {status = operatorsStatusOptions[0].value}} = useSearchParams()
 
 	const {data, totalPages, isPending: isLoading} = usePaginatedData<IGroupOrder[]>(
-		'services/group-orders',
+		type == 'gofra' ? 'services/consecutive-orders' : 'services/group-orders',
 		{
 			page: page,
 			page_size: pageSize,

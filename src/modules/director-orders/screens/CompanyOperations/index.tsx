@@ -40,7 +40,6 @@ const Index = () => {
 			ordering,
 			format = ''
 		},
-		addParams,
 		removeParams
 	} = useSearchParams()
 
@@ -151,19 +150,19 @@ const Index = () => {
 				accessor: (row: IOrderDetail) => (
 					<div className="flex items-start gap-lg">
 						<EditButton onClick={() => navigate(`process/${row.id}`)}/>
-						{
-							status === 'in_proces' &&
-							<Button
-								style={{whiteSpace: 'nowrap'}}
-								mini={true}
-								onClick={() => {
-									addParams({
-										modal: 'count',
-										id: row?.id
-									})
-								}}
-							>Excess roll</Button>
-						}
+						{/*{*/}
+						{/*	status === 'in_proces' &&*/}
+						{/*	<Button*/}
+						{/*		style={{whiteSpace: 'nowrap'}}*/}
+						{/*		mini={true}*/}
+						{/*		onClick={() => {*/}
+						{/*			addParams({*/}
+						{/*				modal: 'count',*/}
+						{/*				id: row?.id*/}
+						{/*			})*/}
+						{/*		}}*/}
+						{/*	>Excess roll</Button>*/}
+						{/*}*/}
 					</div>
 				)
 			}

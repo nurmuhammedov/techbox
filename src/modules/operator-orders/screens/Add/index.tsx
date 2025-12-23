@@ -1,54 +1,216 @@
-import {
-	useAdd,
-	useData
-} from 'hooks'
-import {
-	Button,
-	Card,
-	Form,
-	Input,
-	NumberFormattedInput,
-	PageTitle,
-	Select
-} from 'components'
-import {GroupOrderDetail} from 'components/HOC'
+import {useActions, useAdd, useData, usePaginatedData, usePagination, useTypedSelector} from 'hooks'
+import {Button, Card, Form, NumberFormattedInput, PageTitle, Pagination, ReactTable, Select} from 'components'
 import {Controller, useFieldArray, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {operatorOrderSchema} from 'helpers/yup'
-import {
-	calculateTotalGlueUsageInL,
-	calculateTotalMaterialUsageInKg,
-	decimalToInteger,
-	formatSelectOptions,
-	getSelectValue
-} from 'utilities/common'
+import {calculateTotalGlueUsageInL, decimalToInteger, formatSelectOptions, getSelectValue} from 'utilities/common'
 import {ISelectOption} from 'interfaces/form.interface'
 import {useTranslation} from 'react-i18next'
 import {BUTTON_THEME} from 'constants/fields'
-import {FC, useEffect} from 'react'
-import {booleanOptions} from 'helpers/options'
+import {FC, useEffect, useMemo, useState} from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
 import {IGroupOrder} from 'interfaces/groupOrders.interface'
+import HighGroupOrders from 'components/HighGroupOrders'
+import {Column} from 'react-table'
+import {IOrderDetail} from 'interfaces/orders.interface'
+import {getDate} from 'utilities/date'
+import {cutOptions} from 'helpers/options'
 
 
-interface IProperties {
-	retrieve?: boolean
-	detail?: IGroupOrder
-}
-
-const Index: FC<IProperties> = ({retrieve = false, detail}) => {
+const Index: FC = () => {
 	const {t} = useTranslation()
 	const {id} = useParams()
+	const {groupOrders} = useTypedSelector(state => state.groupOrders)
 	const navigate = useNavigate()
 	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
 	const {data: warehouses = []} = useData<ISelectOption[]>('accounts/warehouses-select')
+	const [isAdding, setIsAdding] = useState<boolean>(false)
+	const {page, pageSize} = usePagination()
+	const {addGroupOrder, clearGroupOrders} = useActions()
 
+	const {data, totalPages, isPending: isLoading} = usePaginatedData<IGroupOrder[]>(`services/group-orders`,
+		{
+			page: page,
+			page_size: pageSize
+		},
+		isAdding
+	)
+
+	const columns: Column<IGroupOrder>[] = useMemo(
+		() => [
+			{
+				Header: t('№'),
+				accessor: (_: IGroupOrder, index: number) => (page - 1) * pageSize + (index + 1),
+				style: {
+					width: '3rem',
+					textAlign: 'center'
+				}
+			},
+			{
+				Header: t('Order number'),
+				accessor: (row: IGroupOrder) => <div>
+					{
+						row?.orders?.map((order: IOrderDetail, index) => (
+							<>
+								<div>
+									#{order.id}
+								</div>
+								{
+									row?.orders?.length !== index + 1 &&
+									<br/>
+								}
+							</>
+						))
+					}
+				</div>
+			},
+			{
+				Header: t('Company name'),
+				accessor: (row: IGroupOrder) => <div>
+					{
+						row?.orders?.map((order, index) => (
+							<>
+								<div>
+									{order?.company_name}
+								</div>
+								{
+									row?.orders?.length !== index + 1 &&
+									<br/>
+								}
+							</>
+						))
+					}
+				</div>
+			},
+			{
+				Header: t('Name'),
+				accessor: (row: IGroupOrder) => <div>
+					{
+						row?.orders?.map((order, index) => (
+							<>
+								<div>
+									{order?.name}
+								</div>
+								{
+									row?.orders?.length !== index + 1 &&
+									<br/>
+								}
+							</>
+						))
+					}
+				</div>
+			},
+			{
+				Header: `${t('Sizes')} (${t('mm')})`,
+				accessor: (row: IGroupOrder) => <div>
+					{
+						row?.orders?.map((order, index) => (
+							<>
+								<div>
+									{`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
+								</div>
+								{
+									row?.orders?.length !== index + 1 &&
+									<br/>
+								}
+							</>
+						))
+					}
+				</div>
+			},
+			{
+				Header: t('Layer'),
+				accessor: (row: IGroupOrder) => <div>
+					{
+						row?.orders?.map((order, index) => (
+							<>
+								<div>
+									{order?.layer?.length || order?.layer_seller?.length || 0}
+								</div>
+								{
+									row?.orders?.length !== index + 1 &&
+									<br/>
+								}
+							</>
+						))
+					}
+				</div>
+			},
+			{
+				Header: t('Count'),
+				accessor: (row: IGroupOrder) => <div>
+					{
+						row?.orders?.map((order, index) => (
+							<>
+								<div>
+									{decimalToInteger(order?.count_last || order?.count_after_bet || order?.count_after_gluing || order?.count_after_flex || order?.count_after_processing || order?.count_entered_leader || order?.count || 0)}
+								</div>
+								{
+									row?.orders?.length !== index + 1 &&
+									<br/>
+								}
+							</>
+						))
+					}
+				</div>
+			},
+			{
+				Header: t('Deadline'),
+				accessor: (row: IGroupOrder) => <div>
+					{
+						row?.orders?.map((order, index) => (
+							<>
+								<div>
+									{order?.deadline ? getDate(order?.deadline) : null}
+								</div>
+								{
+									row?.orders?.length !== index + 1 &&
+									<br/>
+								}
+							</>
+						))
+					}
+				</div>
+			},
+			{
+				Header: `${t('Production format')} (${t('mm')})`,
+				accessor: (row: IGroupOrder) => decimalToInteger(row.separated_raw_materials_format?.format)
+			},
+			{
+				Header: t('Actions'),
+				accessor: (row: IGroupOrder) => {
+					const isSelected = !!groupOrders?.find(order => order?.id == row?.id)
+					const firstSelectedFormat = groupOrders?.[0]?.separated_raw_materials_format?.id
+					const isDifferentFormat = !!firstSelectedFormat && row?.separated_raw_materials_format?.id !== firstSelectedFormat
+
+					return (
+						<div className="flex items-start gap-lg">
+							{
+								<Button
+									mini={true}
+									disabled={isSelected || isDifferentFormat}
+									onClick={() => {
+										addGroupOrder({...row})
+										setIsAdding(false)
+									}}
+								>
+									Choosing
+								</Button>
+							}
+						</div>
+					)
+				}
+			}
+		],
+		[page, pageSize, groupOrders]
+	)
 
 	const {
 		reset,
 		control,
 		handleSubmit,
 		watch,
+		getValues,
 		formState: {errors}
 	} = useForm({
 		mode: 'onTouched',
@@ -70,51 +232,71 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 		name: 'data' as never
 	})
 
-	const {mutateAsync: addGroupOrder, isPending: isAddLoading} = useAdd('services/weight-material')
+	const {mutateAsync: addGroupOrderForm, isPending: isAddLoading} = useAdd('services/consecutive-orders')
 
 	useEffect(() => {
-		if (retrieve) {
-			reset({
-				warehouse: detail?.warehouse?.id,
-				glue: detail?.glue?.id,
-				glue_amount: detail?.glue_amount,
-				data: detail?.weight_material?.map(item => ({
-					material: item?.material || [],
-					layer: item?.layer || undefined,
-					weight: item?.weight || ''
-				})) || []
+		if (groupOrders?.length && materials?.length) {
+			let totalGlue = 0
+			const materialWeights = new Map<number, number>()
+
+			groupOrders.forEach(groupOrder => {
+				totalGlue += calculateTotalGlueUsageInL(groupOrder?.orders || [], groupOrder?.separated_raw_materials_format?.format) * Number(groupOrder?.glue_square || 0.5)
+
+				const format = Number(groupOrder?.separated_raw_materials_format?.format || 0)
+
+				groupOrder?.orders?.forEach(order => {
+					const width = parseFloat(order?.width || '0')
+					const length = parseFloat(order?.length || '0')
+					const cutFactor = Number(cutOptions.find((item) => item?.value == order?.piece)?.material || 1)
+					const count = Math.ceil(Number(order?.count_entered_leader || order?.count || 0) / cutFactor)
+
+					const baseAreaMm2 = count * (2 * (width + length) + 70) * format
+					const baseAreaM2 = baseAreaMm2 / 1_000_000
+
+					order?.layer?.forEach((layerIdStr, layerIndex) => {
+						const layerId = Number(layerIdStr)
+						if (!layerId) return
+
+						const materialInfo = materials.find(m => m.value == layerId)
+						const weight1x1 = Number(materialInfo?.weight_1x1 || 0)
+
+						const isFlute = layerIndex % 2 !== 0
+						const areaFactor = isFlute ? 1.45 : 1.0
+
+						const layerWeight = (baseAreaM2 * areaFactor * weight1x1 * 1.05) / 1000
+
+						const currentWeight = materialWeights.get(layerId) || 0
+						materialWeights.set(layerId, currentWeight + layerWeight)
+					})
+				})
 			})
-		} else if (detail) {
-			const initialLayers = (detail?.orders?.[0]?.layer || []).map(Number)
-			const seen: number[] = [...initialLayers]
 
-			const restLayers = detail?.orders?.slice(1)
-				.flatMap(order => (order.layer || []).map(Number)) || []
-
-			const finalLayers = [...initialLayers]
-
-			for (const layer of restLayers) {
-				if (!seen.includes(layer)) {
-					seen.push(layer)
-					finalLayers.push(layer)
-				}
-			}
+			const calculatedData = Array.from(materialWeights.entries()).map(([matId, weight]) => ({
+				material: undefined,
+				layer: matId,
+				weight: String(weight.toFixed(2))
+			}))
 
 			reset({
-				glue_amount: String(calculateTotalGlueUsageInL(detail?.orders || [], detail?.separated_raw_materials_format?.format) * Number(detail?.glue_square || 0.5)),
-				data: finalLayers.map((item, index) => ({
-					material: undefined,
-					layer: item,
-					weight: calculateTotalMaterialUsageInKg(detail?.orders || [], materials?.find(i => i?.value == item)?.weight_1x1 as unknown as number || 0, detail?.separated_raw_materials_format?.format, index)
-				}))
+				warehouse: getValues('warehouse'),
+				glue: getValues('glue'),
+				glue_amount: String(totalGlue.toFixed(2)),
+				data: calculatedData
+			})
+		} else {
+			reset({
+				data: [],
+				warehouse: undefined,
+				glue: undefined,
+				glue_amount: undefined
 			})
 		}
-	}, [detail])
+	}, [groupOrders, materials])
 
-	const {data: rolls = []} = useData<ISelectOption[]>(retrieve ? 'services/weight-material-list-by-group-order' : 'products/base-materials/select', !!watch('warehouse') && !!detail?.separated_raw_materials_format?.id, {
-		format_: detail?.separated_raw_materials_format?.id,
+	const {data: rolls = []} = useData<ISelectOption[]>('products/base-materials/select', !!watch('warehouse') && !!groupOrders?.[0]?.separated_raw_materials_format?.id, {
+		format_: groupOrders?.[0]?.separated_raw_materials_format?.id,
 		warehouse: watch('warehouse'),
-		group_order: detail ? id : null
+		group_order: id ? id : null
 	})
 
 	const watchedData = watch('data')
@@ -123,67 +305,50 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 		<>
 			<PageTitle title="Send order">
 				<div className="flex gap-sm justify-center align-center">
-					<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
+					<Button
+						onClick={() => {
+							navigate(-1)
+							clearGroupOrders()
+						}}
+						theme={BUTTON_THEME.OUTLINE}>
 						Back
 					</Button>
-					{
-						!retrieve &&
-						<Button
-							onClick={
-								handleSubmit((data) => {
-									const newData = {
-										group_order: Number(id),
-										data: data?.data?.map(i => ({
-											material: i?.material,
-											weight: i?.weight,
-											layer: i?.layer
-										})),
-										warehouse: data?.warehouse,
-										glue: data?.glue,
-										glue_amount: data?.glue_amount
-									}
-
-									addGroupOrder(newData)
-										.then(() => {
-											navigate(-1)
-											reset({
-												data: [],
-												warehouse: undefined,
-												glue: undefined,
-												glue_amount: undefined
-											})
+					<Button
+						onClick={
+							handleSubmit((data) => {
+								const newData = {
+									group_order: groupOrders?.map(item => item?.id),
+									data: data?.data?.map(i => ({
+										material: i?.material,
+										weight: i?.weight,
+										layer: i?.layer
+									})),
+									warehouse: data?.warehouse,
+									glue: data?.glue,
+									glue_amount: (Number(data?.glue_amount) / groupOrders.length).toFixed(2)
+								}
+								addGroupOrderForm(newData)
+									.then(() => {
+										navigate(-1)
+										reset({
+											data: [],
+											warehouse: undefined,
+											glue: undefined,
+											glue_amount: undefined
 										})
-								})
-							}
-							disabled={isAddLoading}
-						>
-							Send
-						</Button>
-					}
+										clearGroupOrders()
+									})
+							})
+						}
+						disabled={isAddLoading || groupOrders.length === 0}
+					>
+						Send
+					</Button>
 				</div>
 			</PageTitle>
 			<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
 				<Form className="grid  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 					<div className="grid gap-lg span-12">
-
-						<div className="span-3">
-							<Input
-								id="format"
-								disabled={true}
-								label={`${t('Production format')} (${t('mm')})`}
-								value={decimalToInteger(Number(detail?.separated_raw_materials_format?.format || 0))}
-							/>
-						</div>
-						<div className="span-3">
-							<Select
-								id="has_addition"
-								label="Cutting"
-								disabled={true}
-								options={booleanOptions as unknown as ISelectOption[]}
-								value={getSelectValue(booleanOptions as unknown as ISelectOption[], detail?.has_addition)}
-								defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], detail?.has_addition)}
-							/>
-						</div>
 						<div className="span-3">
 							<Controller
 								name="warehouse"
@@ -193,7 +358,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 										id="warehouse"
 										label="Material warehouse"
 										options={warehouses}
-										isDisabled={retrieve}
 										error={errors?.warehouse?.message}
 										value={getSelectValue(warehouses, value)}
 										ref={ref}
@@ -204,15 +368,56 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 								)}
 							/>
 						</div>
+						<div className="span-3">
+							<Controller
+								name="glue"
+								control={control}
+								render={({field: {value, ref, onChange, onBlur}}) => (
+									<Select
+										id="glue"
+										label="Glue"
+										options={glues}
+										error={errors?.glue?.message}
+										value={getSelectValue(glues, value)}
+										ref={ref}
+										onBlur={onBlur}
+										defaultValue={getSelectValue(glues, value)}
+										handleOnChange={(e) => onChange(e as string)}
+									/>
+								)}
+							/>
+						</div>
+						<div className="span-3">
+							<Controller
+								control={control}
+								name={`glue_amount`}
+								render={({field}) => (
+									<NumberFormattedInput
+										id={`glue_amount`}
+										maxLength={12}
+										disableGroupSeparators={false}
+										allowDecimals={true}
+										label={t('Glue amount')}
+										error={errors?.glue_amount?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
+						<div className="span-3 flex justify-end">
+							<div>
+								<Button style={{marginTop: '1.9rem'}} onClick={() => setIsAdding(true)}>
+									Add order
+								</Button>
+							</div>
+						</div>
 					</div>
 					{
 						fields?.map((field, index) => {
-							// BOSHQA qatorlarda tanlangan "Roll" qiymatlarini yig'ib olamiz
 							const otherSelectedRolls = watchedData
-								?.filter((_, i) => i !== index) // Joriy qatorni hisobga olmaymiz
-								.flatMap(item => item.material || []) // Boshqa qatorlardagi tanlangan rollarni bir massivga yig'amiz
+								?.filter((_, i) => i !== index)
+								.flatMap(item => item.material || [])
 
-							// Joriy qator uchun mavjud bo'lgan variantlarni filtrlash
 							const availableRollOptions = formatSelectOptions(rolls, watchedData?.[index]?.layer)
 								.filter(option => !otherSelectedRolls.includes(option.value))
 
@@ -227,7 +432,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 													ref={ref}
 													top={true}
 													id={`payment.${index}.layer`}
-													label={`${index + 1}-${t('Layer')?.toString()?.toLowerCase()}`}
+													label={`${t('Material')}`}
 													options={materials}
 													onBlur={onBlur}
 													isDisabled={true}
@@ -250,7 +455,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 													maxLength={12}
 													disableGroupSeparators={false}
 													allowDecimals={true}
-													disabled={retrieve}
 													label={`${t('Weight')} (${t('kg')})`}
 													error={errors?.data?.[index]?.weight?.message}
 													{...field}
@@ -271,7 +475,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 													options={availableRollOptions}
 													onBlur={onBlur}
 													isMulti={true}
-													isDisabled={retrieve}
 													error={errors?.data?.[index]?.material?.message}
 													value={getSelectValue(availableRollOptions, value)}
 													defaultValue={getSelectValue(availableRollOptions, value)}
@@ -285,53 +488,26 @@ const Index: FC<IProperties> = ({retrieve = false, detail}) => {
 						})
 					}
 					<div className="grid gap-lg span-12">
-						<div className="span-4">
-							<Controller
-								name="glue"
-								control={control}
-								render={({field: {value, ref, onChange, onBlur}}) => (
-									<Select
-										id="glue"
-										label="Glue"
-										options={glues}
-										isDisabled={retrieve}
-										error={errors?.glue?.message}
-										value={getSelectValue(glues, value)}
-										ref={ref}
-										onBlur={onBlur}
-										defaultValue={getSelectValue(glues, value)}
-										handleOnChange={(e) => onChange(e as string)}
-									/>
-								)}
-							/>
-						</div>
-						<div className="span-4">
-							<Controller
-								control={control}
-								name={`glue_amount`}
-								render={({field}) => (
-									<NumberFormattedInput
-										id={`glue_amount`}
-										maxLength={12}
-										disableGroupSeparators={false}
-										allowDecimals={true}
-										disabled={retrieve}
-										label={t('Glue amount')}
-										error={errors?.glue_amount?.message}
-										{...field}
-									/>
-								)}
-							/>
-						</div>
-
 					</div>
 				</Form>
 			</Card>
+
+			{
+				isAdding ?
+					<>
+						<Card style={{marginTop: '2rem'}}>
+							<ReactTable
+								columns={columns}
+								data={data}
+								isLoading={isLoading}
+							/>
+						</Card>
+						<Pagination totalPages={totalPages}/>
+					</> :
+					<HighGroupOrders groupOrders={groupOrders}/>
+			}
 		</>
 	)
 }
 
-
-const HOF = GroupOrderDetail<IProperties>(Index)
-
-export default HOF
+export default Index

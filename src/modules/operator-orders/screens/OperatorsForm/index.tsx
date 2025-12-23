@@ -25,8 +25,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 	const {id} = useParams()
 	const {t} = useTranslation()
 	const navigate = useNavigate()
-	// const {data: warehouses = []} = useData<ISelectOption[]>((type === 'corrugation' || type === 'flex') ? 'accounts/warehouses/same-finished-select' : 'accounts/warehouses/finished-select')
-	// const {data: finished = []} = useData<ISelectOption[]>('accounts/warehouses/finished-select')
 
 	const {
 		reset,
@@ -45,7 +43,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 			data: [
 				{
 					order: undefined,
-					// warehouse: undefined,
 					count: ''
 				}
 			]
@@ -137,35 +134,19 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 									let newData = undefined
 									if (type === 'corrugation') {
 										newData = {
-											// invalid_material_in_processing: data?.weight,
-											// percentage_after_processing: data?.percentage,
-											// mkv_after_processing: data?.area,
-											// pallet_warehouse: data?.warehouse,
 											pallet_count_after_gofra: data?.pallet,
 											count_after_processing: data?.data
 										}
 									} else if (type === 'flex') {
 										newData = {
-											// invalid_material_in_flex: data?.weight,
-											// percentage_after_flex: data?.percentage,
-											// warehouse_same_finished: data?.warehouse,
-											// mkv_after_flex: data?.area,
 											count_after_flex: data?.data
 										}
 									} else if (type === 'sewing') {
 										newData = {
-											// invalid_material_in_bet: data?.weight,
-											// warehouse_finished: data?.warehouse,
-											// percentage_after_bet: data?.percentage,
-											// mkv_after_bet: data?.area,
 											count_after_bet: data?.data
 										}
 									} else if (type === 'gluing') {
 										newData = {
-											// invalid_material_in_gluing: data?.weight,
-											// warehouse_finished: data?.warehouse,
-											// percentage_after_gluing: data?.percentage,
-											// mkv_after_gluing: data?.area,
 											count_after_gluing: data?.data
 										}
 									}
@@ -182,7 +163,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 												data: [
 													{
 														order: undefined,
-														// warehouse: undefined,
 														count: ''
 													}
 												]
@@ -253,30 +233,6 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 										)}
 									/>
 								</div>
-
-								{/*{*/}
-								{/*	!retrieve &&*/}
-								{/*	<div className="span-4">*/}
-								{/*		<Controller*/}
-								{/*			name={`data.${index}.warehouse`}*/}
-								{/*			control={control}*/}
-								{/*			render={({field: {value, ref, onChange, onBlur}}) => (*/}
-								{/*				<Select*/}
-								{/*					id="warehouse"*/}
-								{/*					label={detail?.orders?.find(i => i.id == watch(`data.${index}.order`))?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? 'Ready-made warehouse' : 'Semi-finished warehouse'}*/}
-								{/*					options={detail?.orders?.find(i => i.id == watch(`data.${index}.order`))?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses}*/}
-								{/*					disabled={retrieve}*/}
-								{/*					error={errors?.data?.[index]?.warehouse?.message}*/}
-								{/*					value={getSelectValue(detail?.orders?.find(i => i.id == watch(`data.${index}.order`))?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses, value)}*/}
-								{/*					ref={ref}*/}
-								{/*					onBlur={onBlur}*/}
-								{/*					defaultValue={getSelectValue(detail?.orders?.find(i => i.id == watch(`data.${index}.order`))?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses, value)}*/}
-								{/*					handleOnChange={(e) => onChange(e as string)}*/}
-								{/*				/>*/}
-								{/*			)}*/}
-								{/*		/>*/}
-								{/*	</div>*/}
-								{/*}*/}
 							</div>
 						))
 					}
@@ -302,85 +258,8 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 									)}
 								/>
 							</div>
-							{/*<div className="span-4">*/}
-							{/*	<Controller*/}
-							{/*		name="warehouse"*/}
-							{/*		control={control}*/}
-							{/*		render={({field: {value, ref, onChange, onBlur}}) => (*/}
-							{/*			<Select*/}
-							{/*				id="warehouse"*/}
-							{/*				label={detail?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? 'Ready-made warehouse' : 'Semi-finished warehouse'}*/}
-							{/*				options={detail?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses}*/}
-							{/*				disabled={retrieve}*/}
-							{/*				error={errors?.warehouse?.message}*/}
-							{/*				value={getSelectValue(detail?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses, value)}*/}
-							{/*				ref={ref}*/}
-							{/*				onBlur={onBlur}*/}
-							{/*				defaultValue={getSelectValue(detail?.stages_to_passed?.toString() === ['gofra', 'is_last']?.toString() ? finished : warehouses, value)}*/}
-							{/*				handleOnChange={(e) => onChange(e as string)}*/}
-							{/*			/>*/}
-							{/*		)}*/}
-							{/*	/>*/}
-							{/*</div>*/}
 						</div>
 					}
-
-					{/*<div className="grid gap-lg span-12">*/}
-					{/*	<div className="span-4">*/}
-					{/*		<Controller*/}
-					{/*			control={control}*/}
-					{/*			name="weight"*/}
-					{/*			render={({field}) => (*/}
-					{/*				<NumberFormattedInput*/}
-					{/*					id="weight"*/}
-					{/*					maxLength={12}*/}
-					{/*					disableGroupSeparators={false}*/}
-					{/*					allowDecimals={true}*/}
-					{/*					disabled={retrieve}*/}
-					{/*					label={`${t('Waste paper')} (${t('kg')})`}*/}
-					{/*					error={errors?.weight?.message}*/}
-					{/*					{...field}*/}
-					{/*				/>*/}
-					{/*			)}*/}
-					{/*		/>*/}
-					{/*	</div>*/}
-					{/*	<div className="span-4">*/}
-					{/*		<Controller*/}
-					{/*			control={control}*/}
-					{/*			name="percentage"*/}
-					{/*			render={({field}) => (*/}
-					{/*				<NumberFormattedInput*/}
-					{/*					id="percentage"*/}
-					{/*					maxLength={12}*/}
-					{/*					disableGroupSeparators={false}*/}
-					{/*					allowDecimals={true}*/}
-					{/*					disabled={retrieve}*/}
-					{/*					label={`${t('Waste paper percentage')} (${t('%')})`}*/}
-					{/*					error={errors?.percentage?.message}*/}
-					{/*					{...field}*/}
-					{/*				/>*/}
-					{/*			)}*/}
-					{/*		/>*/}
-					{/*	</div>*/}
-					{/*	<div className="span-4">*/}
-					{/*		<Controller*/}
-					{/*			control={control}*/}
-					{/*			name="area"*/}
-					{/*			render={({field}) => (*/}
-					{/*				<NumberFormattedInput*/}
-					{/*					id="area"*/}
-					{/*					maxLength={12}*/}
-					{/*					disableGroupSeparators={false}*/}
-					{/*					allowDecimals={false}*/}
-					{/*					disabled={retrieve}*/}
-					{/*					label={`${t('Waste paper area')} (${t('m²')})`}*/}
-					{/*					error={errors?.area?.message}*/}
-					{/*					{...field}*/}
-					{/*				/>*/}
-					{/*			)}*/}
-					{/*		/>*/}
-					{/*	</div>*/}
-					{/*</div>*/}
 				</Form>
 			</Card>
 		</>

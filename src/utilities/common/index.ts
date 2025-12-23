@@ -102,16 +102,16 @@ const getLayerSellerArray = (layer: string[] | null | undefined) => {
 }
 
 function hasDifferentLayers(orders: { layer?: (number | string)[] }[]): boolean {
-	if (orders.length === 0) return false
+	if (orders?.length === 0) return false
 
-	const normalize = (arr: (number | string)[] = []) => arr.map(Number)
+	const normalize = (arr: (number | string)[] = []) => arr?.map(Number)
 
-	const base = normalize(orders[0].layer)
+	const base = normalize(orders[0]?.layer)
 
-	return orders.some(order => {
-		const current = normalize(order.layer)
-		if (current.length !== base.length) return true
-		return current.some((val, i) => val !== base[i])
+	return orders?.some(order => {
+		const current = normalize(order?.layer)
+		if (current?.length !== base?.length) return true
+		return current?.some((val, i) => val !== base[i])
 	})
 }
 

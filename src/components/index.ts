@@ -5,6 +5,7 @@ import Pagination from './Pagination'
 import EditButton from './EditButton'
 import ReactTable from './ReactTable'
 import PageTitle from './PageTitle'
+import OrderInfo from './OrderInfo'
 import AlertItem from './AlertItem'
 import EditModal from './EditModal'
 import Wrapper from './Wrapper'
@@ -30,6 +31,7 @@ export {
 	Pagination,
 	ReactTable,
 	PageIcon,
+	OrderInfo,
 	FilterInput,
 	EditButton,
 	CutDiagram,

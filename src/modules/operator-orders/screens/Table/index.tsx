@@ -10,15 +10,12 @@ import {
 	Modal,
 	NumberFormattedInput,
 	Pagination,
-	ReactTable, Tab
+	ReactTable,
+	Tab
 } from 'components'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {splitSchema, YMOOrderSchema} from 'helpers/yup'
-import {
-	useAdd, useDetail,
-	usePaginatedData,
-	usePagination, useSearchParams, useUpdate
-} from 'hooks'
+import {useActions, useAdd, useDetail, usePaginatedData, usePagination, useSearchParams, useUpdate} from 'hooks'
 import {IFIle} from 'interfaces/form.interface'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {useEffect, useMemo} from 'react'
@@ -36,6 +33,8 @@ const Index = () => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 	const {page, pageSize} = usePagination()
+	const {addGroupOrder} = useActions()
+
 	const {
 		removeParams,
 		addParams,
@@ -216,7 +215,8 @@ const Index = () => {
 									<Button
 										mini={true}
 										onClick={() => {
-											navigate(`edit/${row.id}`)
+											navigate(`add`)
+											addGroupOrder(row)
 										}}
 									>
 										Choosing
