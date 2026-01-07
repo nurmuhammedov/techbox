@@ -16,6 +16,10 @@ function formatDate(isoDateString: string | null | undefined): string {
 const getDate = (dateStr?: string): string => {
 	let date: Date
 
+	if (!dateStr) {
+		return ''
+	}
+
 	if (dateStr) {
 		date = new Date(dateStr)
 		if (isNaN(date.getTime())) return ''

@@ -1,8 +1,20 @@
 import {yupResolver} from '@hookform/resolvers/yup'
 import {Corrugation} from 'assets/icons'
-import {Button, Card, Form, Input, NumberFormattedInput, PageIcon, PageTitle, Select} from 'components'
+import {
+	Button,
+	Card,
+	Diagram,
+	Form,
+	Input,
+	MaskInput,
+	NumberFormattedInput,
+	PageIcon,
+	PageTitle,
+	Select
+} from 'components'
+import OrderInfo from 'components/OrderInfo'
 import {BUTTON_THEME} from 'constants/fields'
-import {booleanOptions} from 'helpers/options'
+import {activityOptions, booleanOptions} from 'helpers/options'
 import {useDetail, useUpdate} from 'hooks'
 import {ISelectOption} from 'interfaces/form.interface'
 import {IGroupOrder} from 'interfaces/groupOrders.interface'
@@ -10,9 +22,9 @@ import {FC, useEffect} from 'react'
 import {Controller, useFieldArray, useForm} from 'react-hook-form'
 import {useTranslation} from 'react-i18next'
 import {useNavigate, useParams} from 'react-router-dom'
-import {decimalToInteger, getSelectValue} from 'utilities/common'
+import {decimalToInteger, getSelectValue, noop} from 'utilities/common'
+import {getDate} from 'utilities/date'
 import * as yup from 'yup'
-import HighGroupOrders from 'components/HighGroupOrders'
 import {IIDName} from 'interfaces/configuration.interface'
 
 
@@ -225,129 +237,272 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
 				</div>
 			</PageTitle>
 
-			<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
+			<div
+				style={{
+					display: 'flex',
+					flexDirection: 'column',
+					marginTop: '.5rem',
+					gap: '1rem',
+					maxWidth: '100%',
+					width: '100%'
+				}}
+			>
 				<Form className="grid gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
-					{itemFields.map((groupField, groupIndex) => (
-						<div key={groupField.id} className="grid gap-lg span-12"
-						     style={{borderBottom: '1px solid #eee', paddingBottom: '2rem'}}>
-							<PageIcon className="span-2">
-								<Corrugation/>
-							</PageIcon>
-							<div className="span-3">
-								<Input
-									id={`items.${groupIndex}.format`}
-									disabled={true}
-									label={`${t('Production format')} (${t('mm')})`}
-									value={decimalToInteger(Number(responseData?.group_order?.[groupIndex]?.separated_raw_materials_format?.format || 0))}
-								/>
-							</div>
-							<div className="span-3">
-								<Select
-									id={`items.${groupIndex}.has_addition`}
-									label="Cutting"
-									disabled={true}
-									options={booleanOptions as unknown as ISelectOption[]}
-									value={getSelectValue(booleanOptions as unknown as ISelectOption[], groupField.has_addition)}
-								/>
-							</div>
 
-							{groupField.has_addition && (
-								<div className="span-4">
-									<Controller
-										control={control}
-										name={`items.${groupIndex}.pallet`}
-										render={({field}) => (
-											<NumberFormattedInput
-												id={`items.${groupIndex}.pallet`}
-												maxLength={12}
-												disableGroupSeparators={false}
-												allowDecimals={true}
-												label="Pallet count"
-												disabled={detail}
-												error={errors?.items?.[groupIndex]?.pallet?.message}
-												{...field}
-											/>
-										)}
-									/>
-								</div>
-							)}
-
-							<div className="span-12 grid gap-lg">
-								{groupField.orders.map((orderField, orderIndex) => (
-									<div className="grid gap-lg span-12" key={orderField.order_id}>
-										<div className="span-4">
-											<Input
-												id={`items.${groupIndex}.orders.${orderIndex}.order_id`}
-												disabled={true}
-												label="Order number"
-												value={`#${orderField.order_id}`}
-											/>
+					{!detail && leftoverFields.length > 0 && (
+						<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
+							<div className="grid gap-lg span-12">
+								{leftoverFields.map((field, index) => {
+									const materialLabel = `${responseData?.materials?.find(m => m.id == watch(`leftover.${index}.id`))?.material_name || '-'}/${responseData?.materials?.find(m => m.id == watch(`leftover.${index}.id`))?.name || '-'}`
+									return (
+										<div key={field.id} className="grid gap-lg span-12 align-end">
+											<div className="span-4">
+												<Input
+													id={`leftover.${index}.name`}
+													label={t('Material')}
+													value={String(materialLabel)}
+													disabled={true}
+												/>
+											</div>
+											<div className="span-4">
+												<Controller
+													control={control}
+													name={`leftover.${index}.weight`}
+													render={({field}) => (
+														<NumberFormattedInput
+															id={`leftover.${index}.weight`}
+															label={`${t('Excess roll')} (${t('kg')})`}
+															maxLength={12}
+															allowDecimals={true}
+															{...field}
+															error={errors?.leftover?.[index]?.weight?.message}
+														/>
+													)}
+												/>
+											</div>
 										</div>
-										<div className="span-4">
+									)
+								})}
+							</div>
+						</Card>
+					)}
+
+					{itemFields.map((groupField, groupIndex) => {
+						const groupOrderData = responseData?.group_order?.[groupIndex]
+
+						return (
+							<div
+								key={groupField.id}
+								style={{
+									border: '1px solid rgba(0, 0, 0, 0.12)',
+									borderRadius: '12px',
+									backgroundColor: groupIndex % 2 !== 0 ? 'rgba(0,120,212,0.25)' : 'rgba(0,120,212,0.6)',
+									boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+									maxWidth: '100%',
+									padding: '1rem',
+									width: '100%'
+								}}
+							>
+								<div className="grid gap-lg span-12" style={{
+									borderBottom: '1px solid #eee',
+									paddingBottom: '1.5rem',
+									marginBottom: '1rem'
+								}}>
+									<PageIcon className="span-2">
+										<Corrugation/>
+									</PageIcon>
+
+									<div className="span-2">
+										<Input
+											id={`items.${groupIndex}.format`}
+											disabled={true}
+											label={`${t('Production format')} (${t('mm')})`}
+											value={decimalToInteger(Number(groupOrderData?.separated_raw_materials_format?.format || 0))}
+										/>
+									</div>
+									<div className="span-2">
+										<Input
+											id="glue_square"
+											disabled={true}
+											label={`${t('Glue amount')} ${t('(m²)')} `}
+											value={groupOrderData?.glue_square || 0.05}
+										/>
+									</div>
+									<div className="span-2">
+										<Select
+											id={`items.${groupIndex}.has_addition`}
+											label="Cutting"
+											disabled={true}
+											options={booleanOptions as unknown as ISelectOption[]}
+											value={getSelectValue(booleanOptions as unknown as ISelectOption[], groupField.has_addition)}
+										/>
+									</div>
+
+									{groupField.has_addition && (
+										<div className="span-2">
 											<Controller
 												control={control}
-												name={`items.${groupIndex}.orders.${orderIndex}.count`}
+												name={`items.${groupIndex}.pallet`}
 												render={({field}) => (
 													<NumberFormattedInput
-														id={`items.${groupIndex}.orders.${orderIndex}.count`}
+														id={`items.${groupIndex}.pallet`}
 														maxLength={12}
 														disableGroupSeparators={false}
 														allowDecimals={true}
-														label="Count"
+														label="Pallet count"
 														disabled={detail}
-														error={errors?.items?.[groupIndex]?.orders?.[orderIndex]?.count?.message}
+														error={errors?.items?.[groupIndex]?.pallet?.message}
 														{...field}
 													/>
 												)}
 											/>
 										</div>
+									)}
+
+									<div className="span-12 grid gap-lg">
+										{groupField.orders.map((orderField, orderIndex) => (
+											<div className="grid gap-lg span-12" key={orderField.order_id}>
+												<div className="span-3">
+													<Input
+														id={`items.${groupIndex}.orders.${orderIndex}.order_id`}
+														disabled={true}
+														label="Order number"
+														value={`#${orderField.order_id}`}
+													/>
+												</div>
+												<div className="span-3">
+													<Controller
+														control={control}
+														name={`items.${groupIndex}.orders.${orderIndex}.count`}
+														render={({field}) => (
+															<NumberFormattedInput
+																id={`items.${groupIndex}.orders.${orderIndex}.count`}
+																maxLength={12}
+																disableGroupSeparators={false}
+																allowDecimals={true}
+																label="Count"
+																disabled={detail}
+																error={errors?.items?.[groupIndex]?.orders?.[orderIndex]?.count?.message}
+																{...field}
+															/>
+														)}
+													/>
+												</div>
+											</div>
+										))}
 									</div>
-								))}
-							</div>
-						</div>
-					))}
+								</div>
 
-					{!detail && leftoverFields.length > 0 && (
-						<div className="grid gap-lg span-12"
-						     style={{marginTop: '1rem'}}>
+								<div
+									style={{
+										display: 'flex',
+										gap: '1rem',
+										flexDirection: 'row',
+										marginBottom: '.5rem',
+										marginTop: '1rem',
+										overflowX: 'auto',
+										maxWidth: 'calc(100vw - 22rem)',
+										paddingBottom: '.3rem',
+										width: '100%'
+									}}
+								>
+									{
+										groupOrderData?.orders.map(order => (
+											<div key={order.id} style={{minWidth: '47rem'}}>
+												<OrderInfo order={order}/>
+											</div>
+										))
+									}
+									{
+										groupField.has_addition &&
+										<div style={{minWidth: '35rem'}}>
+											<Card
+												screen={false}
+												style={{padding: '1.5rem'}}
+												className="grid gap-md"
+											>
+												<div className="span-12">
+													<Diagram
+														second={true}
+														x={
+															<Input
+																id="x"
+																mini={true}
+																disabled={true}
+																placeholder="mm"
+																value={groupOrderData?.x || ''}
+															/>
+														}
+														y={
+															<Input
+																id="y"
+																mini={true}
+																disabled={true}
+																placeholder="mm"
+																value={groupOrderData?.y || ''}
+															/>
+														}
+													/>
+												</div>
 
-
-							{leftoverFields.map((field, index) => {
-								const materialLabel = responseData?.materials?.find(m => m.id == watch(`leftover.${index}.id`))?.name || '-'
-								return (
-									<div key={field.id} className="grid gap-lg span-12 align-end">
-										<div className="span-4">
-											<Input
-												id={`leftover.${index}.name`}
-												label={t('Material')}
-												value={String(materialLabel)}
-												disabled={true}
-											/>
-										</div>
-										<div className="span-4">
-											<Controller
-												control={control}
-												name={`leftover.${index}.weight`}
-												render={({field}) => (
+												<div className="span-6">
 													<NumberFormattedInput
-														id={`leftover.${index}.weight`}
-														label={`${t('Excess roll')} (${t('kg')})`}
-														maxLength={12}
-														allowDecimals={true}
-														{...field}
-														error={errors?.leftover?.[index]?.weight?.message}
+														id="count"
+														disabled={true}
+														maxLength={6}
+														disableGroupSeparators={false}
+														allowDecimals={false}
+														label="Count"
+														value={groupOrderData?.count}
 													/>
-												)}
-											/>
+												</div>
+
+												<div className="span-6">
+													<MaskInput
+														id="deadline"
+														disabled={true}
+														label="Deadline"
+														onChange={noop}
+														placeholder={getDate()}
+														mask="99.99.9999"
+														value={groupOrderData?.deadline ? getDate(groupOrderData?.deadline) : ''}
+													/>
+												</div>
+
+												<div
+													className="span-12 flex gap-md"
+													style={{
+														marginTop: '.75rem',
+														marginBottom: '1.5rem',
+														flexWrap: 'nowrap',
+														overflowX: 'auto'
+													}}
+												>
+													{activityOptions.map((option) => (
+														<div key={option.value as string}
+														     className="flex align-center gap-xs">
+															<input
+																id={option.value as string}
+																type="checkbox"
+																className="checkbox"
+																readOnly
+																checked={groupOrderData?.stages_to_passed?.includes(option.value as string) || false}
+															/>
+															<p className="checkbox-label">
+																{t(option.label as string)}
+															</p>
+														</div>
+													))}
+												</div>
+											</Card>
 										</div>
-									</div>
-								)
-							})}
-						</div>
-					)}
+									}
+								</div>
+							</div>
+						)
+					})}
 				</Form>
-			</Card>
-			<HighGroupOrders groupOrders={responseData?.group_order || []} detail={true}/>
+			</div>
 		</>
 	)
 }

@@ -42,12 +42,14 @@ const Index = () => {
 	} = useSearchParams()
 
 	const {data, refetch, totalPages, isPending: isLoading} = usePaginatedData<IGroupOrder[]>(
-		status == bossStatusOptions[2].value ? `services/suspended-orders` : status == bossStatusOptions[1].value ? `services/orders/list-for-proces` : `services/group-orders`,
+		status == bossStatusOptions[2].value ? `services/consecutive-orders` : status == bossStatusOptions[1].value ? `services/consecutive-orders` : status == bossStatusOptions[3].value ? `services/orders/list-for-proces` : `services/group-orders`,
 		{
 			page: page,
 			page_size: pageSize,
-			is_separated: status != bossStatusOptions[1].value ? status : null,
-			confirmed: status == bossStatusOptions[1].value ? 'not_confirmed' : null
+			is_separated: status != bossStatusOptions[3].value ? status : null,
+			confirmed: status == bossStatusOptions[3].value ? 'not_confirmed' : null,
+			activity: status == bossStatusOptions[1].value ? 'gofra' : null,
+			pass_activity: status == bossStatusOptions[2].value ? 'gofra' : null
 		}
 	)
 
@@ -194,42 +196,53 @@ const Index = () => {
 				</div>
 			},
 			{
-				Header: `${t('Production format')} (${t('mm')})`,
+				Header: `${t('Production format')}`,
 				accessor: (row: IGroupOrder) => decimalToInteger(row.separated_raw_materials_format?.format)
 			},
 			{
-				Header: t('CreatedAt'),
+				Header: t('Yub. sana'),
 				accessor: (row: IGroupOrder) => getDate(row.created_at)
 			},
-			{
-				Header: t('Actions'),
-				accessor: (row: IGroupOrder) => (
-					<div className="flex items-start gap-lg">
-						{
-							status == bossStatusOptions[1].value ?
-								<Button
-									mini={true}
-									onClick={() => {
-										addParams({modal: 'edit', updateId: row?.id})
-									}}
-								>
-									Go flex
-								</Button> :
-								status == bossStatusOptions[0].value ?
+			...(status == bossStatusOptions[2].value ? [
+				{
+					Header: t('Yak. sana'),
+					accessor: (row: IGroupOrder) => getDate(row.end_date)
+				}
+			] : []),
+
+
+			...(status !== bossStatusOptions[1].value && status !== bossStatusOptions[2].value ? [
+				{
+					Header: t('Actions'),
+					accessor: (row: IGroupOrder) => (
+						<div className="flex items-start gap-lg">
+							{
+								status == bossStatusOptions[3].value ?
 									<Button
 										mini={true}
 										onClick={() => {
-											navigate(`add`)
-											addGroupOrder(row)
+											addParams({modal: 'edit', updateId: row?.id})
 										}}
 									>
-										Choosing
+										Go flex
 									</Button> :
-									<EditButton onClick={() => navigate(`detail/${row.id}`)}/>
-						}
-					</div>
-				)
-			}
+									status == bossStatusOptions[0].value ?
+										<Button
+											mini={true}
+											onClick={() => {
+												navigate(`add`)
+												addGroupOrder(row)
+											}}
+										>
+											Choosing
+										</Button> :
+										<EditButton onClick={() => navigate(`detail/${row.id}`)}/>
+							}
+						</div>
+					)
+				}
+			] : [])
+
 		],
 		[page, pageSize, status]
 	)
@@ -299,14 +312,14 @@ const Index = () => {
 				accessor: (row: IOrderDetail) => (
 					<div className="flex items-start gap-lg">
 						{
-							status == bossStatusOptions[1].value ?
+							status == bossStatusOptions[3].value ?
 								<Button
 									mini={true}
 									onClick={() => {
 										addParams({
 											modal: 'split',
 											updateId: row?.id,
-											status: bossStatusOptions[1].value
+											status: bossStatusOptions[3].value
 										})
 									}}
 								>
@@ -379,7 +392,7 @@ const Index = () => {
 			</div>
 			<Card>
 				<ReactTable
-					columns={(status == bossStatusOptions[1].value || status == bossStatusOptions[2].value) ? orderColumns as unknown as never : columns as unknown as never}
+					columns={(status == bossStatusOptions[3].value) ? orderColumns as unknown as never : columns as unknown as never}
 					data={data as unknown as never}
 					isLoading={isLoading}
 				/>

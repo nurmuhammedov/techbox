@@ -7,6 +7,7 @@ interface IGroupOrder {
 	glue: IIDName;
 	glue_amount: string;
 	created_at: string;
+	end_date: string;
 	glue_square: string;
 	orders: IOrderDetail[];
 	separated_raw_materials_format: {

@@ -58,9 +58,9 @@ const operatorsStatusOptions: ISelectOption[] = [
 
 export const bossStatusOptions: ISelectOption[] = [
 	{value: 1, label: 'New orders'},
-	{value: 3, label: 'Flex'},
+	{value: 2, label: 'Gofra'},
 	{value: 4, label: 'YMO'},
-	{value: 2, label: 'History'}
+	{value: 3, label: 'Flex'},
 ]
 
 const flexOperatorsStatusOptions: ISelectOption[] = [

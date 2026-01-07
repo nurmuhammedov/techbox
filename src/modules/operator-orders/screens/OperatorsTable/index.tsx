@@ -173,6 +173,16 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 				accessor: (row: IGroupOrder) => decimalToInteger(row.separated_raw_materials_format?.format)
 			},
 			{
+				Header: t('Yub. sana'),
+				accessor: (row: IGroupOrder) => getDate(row.created_at)
+			},
+			...(
+				status == operatorsStatusOptions[1].value ? [{
+					Header: t('Yak. sana'),
+					accessor: (row: IGroupOrder) => getDate(row.end_date)
+				}] : []
+			),
+			{
 				Header: t('Actions'),
 				accessor: (row: IGroupOrder) => (
 					<div className="flex items-start gap-lg">
