@@ -118,6 +118,10 @@ const Index = () => {
 					accessor: (row: IOrderDetail) => row?.end_date ? formatDate(row?.end_date) : ''
 				}
 			] : [],
+			{
+				Header: t('CreatedAt'),
+				accessor: (row: IOrderDetail) => getDate(row.created_at)
+			},
 			...status == statusOptions[0].value ? [
 				{
 					Header: t('Actions'),
@@ -463,8 +467,6 @@ const Index = () => {
 								)}
 							/>
 						</div>
-
-
 					</div>
 				</Form>
 

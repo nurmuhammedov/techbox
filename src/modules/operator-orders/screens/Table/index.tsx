@@ -198,6 +198,10 @@ const Index = () => {
 				accessor: (row: IGroupOrder) => decimalToInteger(row.separated_raw_materials_format?.format)
 			},
 			{
+				Header: t('CreatedAt'),
+				accessor: (row: IGroupOrder) => getDate(row.created_at)
+			},
+			{
 				Header: t('Actions'),
 				accessor: (row: IGroupOrder) => (
 					<div className="flex items-start gap-lg">
@@ -285,6 +289,10 @@ const Index = () => {
 			{
 				Header: t('Deadline'),
 				accessor: (row: IOrderDetail) => row?.deadline ? getDate(row?.deadline) : null
+			},
+			{
+				Header: t('CreatedAt'),
+				accessor: (row: IOrderDetail) => getDate(row.created_at)
 			},
 			{
 				Header: t('Actions'),

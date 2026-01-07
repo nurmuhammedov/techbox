@@ -7,6 +7,8 @@ interface IOrderDetail {
 	id: number;
 	product: IProductDetail;
 	count: string;
+	layer_count: string;
+	created_at: string;
 	count_entered_leader: string;
 	comment: string;
 	customer: IIDName;

@@ -52,6 +52,14 @@ const Index = () => {
 				accessor: (row: IOrderDetail) => row.name
 			},
 			{
+				Header: `${t('Sizes')} (${t('mm')})`,
+				accessor: (row: IOrderDetail) => `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}`
+			},
+			{
+				Header: t('Layer'),
+				accessor: (row: IOrderDetail) => row?.layer_count || 0
+			},
+			{
 				Header: t('Count'),
 				accessor: (row: IOrderDetail) => decimalToInteger(row.count || ''),
 				dynamicFilter: 'count'
@@ -73,7 +81,7 @@ const Index = () => {
 			},
 			{
 				Header: t('Status'),
-				accessor: (row: IOrderDetail) => row.status,
+				accessor: (row: IOrderDetail) => row,
 				rowClassName: (row: IOrderDetail) => {
 					switch (row.status) {
 						case 'new':
@@ -87,7 +95,7 @@ const Index = () => {
 					}
 				},
 				dynamicFilter: 'status',
-				Cell: ({value}: { value: string }) => (
+				Cell: ({value: {status: value, activity}}: { value: IOrderDetail }) => (
 					<span
 						style={{
 							color:
@@ -104,7 +112,7 @@ const Index = () => {
     {value === 'new'
 	    ? t('New')
 	    : value === 'in_proces'
-		    ? t('In progress')
+		    ? `${t('In progress')}/${activity ? activity?.toString()?.toUpperCase() : ''}`
 		    : value === 'finished'
 			    ? t('Finished')
 			    : '-'}
@@ -115,6 +123,10 @@ const Index = () => {
 				Header: t('Indebtedness'),
 				accessor: (row: IOrderDetail) => <span
 					style={{color: row.backlog > 0 ? 'var(--red)' : 'var(--green-bright)'}}>{decimalToPrice(row.backlog)}</span>
+			},
+			{
+				Header: t('CreatedAt'),
+				accessor: (row: IOrderDetail) => getDate(row.created_at)
 			},
 			{
 				Header: t('Actions'),

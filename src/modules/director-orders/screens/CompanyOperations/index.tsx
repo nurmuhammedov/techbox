@@ -111,6 +111,14 @@ const Index = () => {
 				accessor: (row: IOrderDetail) => row.company_name
 			},
 			{
+				Header: t('Name'),
+				accessor: (row: IOrderDetail) => row.name
+			},
+			{
+				Header: t('Layer'),
+				accessor: (row: IOrderDetail) => row?.layer_count || 0
+			},
+			{
 				Header: t('Count'),
 				accessor: (row: IOrderDetail) => decimalToInteger(row.count || ''),
 				dynamicFilter: 'count'
@@ -145,6 +153,11 @@ const Index = () => {
 					accessor: (row: IOrderDetail) => row?.end_date ? formatDate(row?.end_date) : ''
 				}
 			] : [],
+			{
+				Header: t('CreatedAt'),
+				accessor: (row: IOrderDetail) => getDate(row.created_at),
+				dynamicFilter: 'created_at',
+			},
 			{
 				Header: t('Actions'),
 				accessor: (row: IOrderDetail) => (
