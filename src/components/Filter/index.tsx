@@ -1,12 +1,13 @@
 import useData from 'hooks/useData'
 import useSearchParams from 'hooks/useSearchParams'
-import React, {FC, useEffect, useState} from 'react'
-import {Input, MaskInput, Select} from 'components'
-import {ISelectOption} from 'interfaces/form.interface'
-import {getSelectValue} from 'utilities/common'
-import {useTranslation} from 'react-i18next'
+import React, { FC, useEffect, useState } from 'react'
+import { Input, MaskInput, Select } from 'components'
+import { ISelectOption } from 'interfaces/form.interface'
+import { getSelectValue } from 'utilities/common'
+import { activityOptions } from 'helpers/options'
+import { useTranslation } from 'react-i18next'
 import styles from './styles.module.scss'
-import {Search as SearchIcon} from 'assets/icons'
+import { Search as SearchIcon } from 'assets/icons'
 
 
 export type FilterFieldType =
@@ -30,6 +31,8 @@ export type FilterFieldType =
 	| 'purchase_date'
 	| 'product'
 	| 'material'
+	| 'companyName'
+	| 'activity'
 
 interface DynamicFilterProps {
 	fieldsToShow: FilterFieldType[];
@@ -56,7 +59,9 @@ const fieldLabels: Record<FilterFieldType, string> = {
 	purchase_date: 'Date',
 	name: 'Name',
 	product: 'Product',
-	material: 'Material' // Yangi qo'shildi
+	material: 'Material', // Yangi qo'shildi
+	companyName: 'Company name',
+	activity: 'Activity'
 }
 
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -96,14 +101,16 @@ const formatDateFromURL = (dateStr_yyyyMMdd: string | undefined): string => {
 	return `${parts[2]}.${parts[1]}.${parts[0]}`
 }
 
-const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => {
-	const {t} = useTranslation()
-	const {paramsObject, addParams} = useSearchParams()
+const DynamicFilter: FC<DynamicFilterProps> = ({ fieldsToShow, width = true }) => {
+	const { t } = useTranslation()
+	const { paramsObject, addParams } = useSearchParams()
 
 	const [searchText, setSearchText] = useState(paramsObject.search || '')
 	const [nameText, setNameText] = useState(paramsObject.name || '')
+	const [companyNameText, setCompanyNameText] = useState(paramsObject.companyName || '')
 	const debouncedSearchText = useDebouncedValue(searchText, 500)
 	const debouncedNameText = useDebouncedValue(nameText, 500)
+	const debouncedCompanyNameText = useDebouncedValue(companyNameText, 500)
 
 	const [fromDateText, setFromDateText] = useState(() => formatDateFromURL(paramsObject.from_date as unknown as string))
 	const [toDateText, setToDateText] = useState(() => formatDateFromURL(paramsObject.to_date as unknown as string))
@@ -112,14 +119,14 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 	useEffect(() => {
 		const currentSearchInParams = paramsObject.search || ''
 		if (debouncedSearchText !== currentSearchInParams) {
-			addParams({search: debouncedSearchText || undefined}, 'page')
+			addParams({ search: debouncedSearchText || undefined }, 'page')
 		}
 	}, [debouncedSearchText, paramsObject.search, addParams])
 
 	useEffect(() => {
 		const currentSearchInParams = paramsObject.name || ''
 		if (debouncedNameText !== currentSearchInParams) {
-			addParams({name: debouncedNameText || undefined}, 'page')
+			addParams({ name: debouncedNameText || undefined }, 'page')
 		}
 	}, [debouncedNameText, paramsObject.name, addParams])
 
@@ -143,45 +150,56 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 		setPurchaseDateText(formatDateFromURL(paramsObject.purchase_date as unknown as string))
 	}, [paramsObject.purchase_date])
 
+	useEffect(() => {
+		const currentSearchInParams = paramsObject.companyName || ''
+		if (debouncedCompanyNameText !== currentSearchInParams) {
+			addParams({ companyName: debouncedCompanyNameText || undefined }, 'page')
+		}
+	}, [debouncedCompanyNameText, paramsObject.companyName, addParams])
+
+	useEffect(() => {
+		setCompanyNameText(paramsObject.companyName || '')
+	}, [paramsObject.companyName])
+
 	// Fetch options
-	const {data: storesOptions = [], isPending: storesLoading} = useData<ISelectOption[]>(
+	const { data: storesOptions = [], isPending: storesLoading } = useData<ISelectOption[]>(
 		'stores/select',
 		fieldsToShow.includes('store')
 	)
-	const {data: productsOptions = [], isPending: productsLoading} = useData<ISelectOption[]>(
+	const { data: productsOptions = [], isPending: productsLoading } = useData<ISelectOption[]>(
 		'products/select',
 		fieldsToShow.includes('product')
 	)
-	const {data: customersOptions = [], isPending: customersLoading} = useData<ISelectOption[]>(
+	const { data: customersOptions = [], isPending: customersLoading } = useData<ISelectOption[]>(
 		'customers/select',
 		fieldsToShow.includes('customer')
 	)
-	const {data: priceTypesOptions = [], isPending: priceTypesLoading} = useData<ISelectOption[]>(
+	const { data: priceTypesOptions = [], isPending: priceTypesLoading } = useData<ISelectOption[]>(
 		'price-types/select',
 		fieldsToShow.includes('price_type')
 	)
-	const {data: serviceTypesOptions = [], isPending: serviceTypesLoading} = useData<ISelectOption[]>(
+	const { data: serviceTypesOptions = [], isPending: serviceTypesLoading } = useData<ISelectOption[]>(
 		'service-types/select',
 		fieldsToShow.includes('service_type')
 	)
-	const {data: productTypesOptions = [], isPending: productTypesLoading} = useData<ISelectOption[]>(
+	const { data: productTypesOptions = [], isPending: productTypesLoading } = useData<ISelectOption[]>(
 		'product-types/select',
 		fieldsToShow.includes('product_type')
 	)
-	const {data: brandOptions = [], isPending: brandLoading} = useData<ISelectOption[]>(
+	const { data: brandOptions = [], isPending: brandLoading } = useData<ISelectOption[]>(
 		'brands/select',
 		fieldsToShow.includes('brand')
 	)
-	const {data: countryOptions = [], isPending: countryLoading} = useData<ISelectOption[]>(
+	const { data: countryOptions = [], isPending: countryLoading } = useData<ISelectOption[]>(
 		'countries/select',
 		fieldsToShow.includes('country')
 	)
-	const {data: formats = [], isPending: formatLoading} = useData<ISelectOption[]>(
+	const { data: formats = [], isPending: formatLoading } = useData<ISelectOption[]>(
 		'products/formats/select',
 		fieldsToShow.includes('format')
 	)
 	// Materiallar uchun ma'lumotni yuklash
-	const {data: materialsOptions = [], isPending: materialsLoading} = useData<ISelectOption[]>(
+	const { data: materialsOptions = [], isPending: materialsLoading } = useData<ISelectOption[]>(
 		'products/materials/select',
 		fieldsToShow.includes('material')
 	)
@@ -194,7 +212,7 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 		const maskedValue = value.target.value
 		setDateTextState(maskedValue)
 		const formattedForURL = formatDateToURL(maskedValue)
-		addParams({[paramKey]: formattedForURL}, 'page')
+		addParams({ [paramKey]: formattedForURL }, 'page')
 	}
 
 	const parseMultiValue = (paramValue: string | number | boolean | null | undefined) => {
@@ -202,7 +220,7 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 	}
 
 	const handleMultiChange = (paramKey: FilterFieldType) => (selectedValue: string | number | boolean | string[] | number[] | boolean[] | null) => {
-		addParams({[paramKey]: selectedValue?.toString() ?? undefined}, 'page')
+		addParams({ [paramKey]: selectedValue?.toString() ?? undefined }, 'page')
 	}
 
 	const renderField = (field: FilterFieldType) => {
@@ -221,11 +239,11 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 						<Input
 							id={inputId}
 							radius={true}
-							style={width ? {width: '20rem', maxWidth: '100%'} : {}}
+							style={width ? { width: '20rem', maxWidth: '100%' } : {}}
 							placeholder={placeholderText}
 							value={searchText as unknown as string}
 							onChange={(e) => setSearchText(e.target.value)}
-							icon={<SearchIcon/>}
+							icon={<SearchIcon />}
 							iconPosition="left"
 						/>
 					</div>
@@ -344,7 +362,7 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 						options={formats}
 						isLoading={formatLoading}
 						value={getSelectValue(formats, paramsObject.format)}
-						handleOnChange={(selectedValue) => addParams({format: selectedValue as unknown as string ?? undefined}, 'page')}
+						handleOnChange={(selectedValue) => addParams({ format: selectedValue as unknown as string ?? undefined }, 'page')}
 						{...commonSelectProps}
 					/>
 				)
@@ -388,6 +406,27 @@ const DynamicFilter: FC<DynamicFilterProps> = ({fieldsToShow, width = true}) => 
 						value={purchaseDateText}
 						onChange={(e) => handleDateChange(e, 'purchase_date', setPurchaseDateText)}
 						mask="99.99.9999"
+					/>
+				)
+			case 'companyName':
+				return (
+					<div>
+						<Input
+							id={inputId}
+							placeholder={placeholderText}
+							value={companyNameText as unknown as string}
+							onChange={(e) => setCompanyNameText(e.target.value)}
+						/>
+					</div>
+				)
+			case 'activity':
+				return (
+					<Select
+						id={selectId}
+						options={activityOptions}
+						value={getSelectValue(activityOptions, paramsObject.activity)}
+						handleOnChange={(val) => addParams({ activity: val as string ?? undefined }, 'page')}
+						{...commonSelectProps}
 					/>
 				)
 			default:

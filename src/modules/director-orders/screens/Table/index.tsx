@@ -1,4 +1,4 @@
-import {yupResolver} from '@hookform/resolvers/yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 import {
 	Button,
 	Card,
@@ -14,26 +14,26 @@ import {
 	Select,
 	Tab
 } from 'components'
-import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {defectiveSchema, schema, soldDefectiveSchema, soldSchema} from 'helpers/yup'
-import {useActions, useAdd, useData, useDetail, usePaginatedData, usePagination, useSearchParams} from 'hooks'
-import {ISelectOption} from 'interfaces/form.interface'
-import {useEffect, useMemo} from 'react'
-import {Controller, useForm} from 'react-hook-form'
-import {useTranslation} from 'react-i18next'
-import {useNavigate} from 'react-router-dom'
-import {Column} from 'react-table'
-import {IOrderDetail} from 'interfaces/orders.interface'
-import {formatDate, getDate} from 'utilities/date'
-import {decimalToInteger, decimalToPrice, getSelectValue} from 'utilities/common'
-import {activityOptions, statusOptions} from 'helpers/options'
+import { BUTTON_THEME, FIELD } from 'constants/fields'
+import { defectiveSchema, schema, soldDefectiveSchema, soldSchema } from 'helpers/yup'
+import { useActions, useAdd, useData, useDetail, usePaginatedData, usePagination, useSearchParams } from 'hooks'
+import { ISelectOption } from 'interfaces/form.interface'
+import { useEffect, useMemo } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { Column } from 'react-table'
+import { IOrderDetail } from 'interfaces/orders.interface'
+import { formatDate, getDate } from 'utilities/date'
+import { decimalToInteger, decimalToPrice, getSelectValue } from 'utilities/common'
+import { activityOptions, statusOptions } from 'helpers/options'
 
 
 const Index = () => {
 	const navigate = useNavigate()
-	const {t} = useTranslation()
-	const {page, pageSize} = usePagination()
-	const {addOrder} = useActions()
+	const { t } = useTranslation()
+	const { page, pageSize } = usePagination()
+	const { addOrder } = useActions()
 	const {
 		paramsObject: {
 			status = statusOptions[0].value,
@@ -46,10 +46,10 @@ const Index = () => {
 		removeParams,
 		addParams
 	} = useSearchParams()
-	const {data: formats = []} = useData<ISelectOption[]>('services/customers/select')
+	const { data: formats = [] } = useData<ISelectOption[]>('services/customers/select')
 
 
-	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IOrderDetail[]>(
+	const { data, totalPages, isPending: isLoading, refetch } = usePaginatedData<IOrderDetail[]>(
 		status === statusOptions[3].value ? `services/sold-orders` : status === statusOptions[4].value ? `services/wasted-paper-list` : status === statusOptions[5].value ? `services/sold-wasted-paper` : `services/orders-with-detail`,
 		{
 			page: page,
@@ -104,7 +104,7 @@ const Index = () => {
 				{
 					Header: t('Status'),
 					accessor: (row: IOrderDetail) => t(activityOptions?.find(i => row.activity === i?.value)?.label?.toString() || ''),
-					dynamicFilter: 'stages_to_passed'
+					dynamicFilter: 'activity'
 				}
 			] : status != statusOptions[0].value ? [
 				{
@@ -130,13 +130,13 @@ const Index = () => {
 							<Button
 								mini={true}
 								onClick={() => {
-									addOrder({...row})
+									addOrder({ ...row })
 									navigate(`add`)
 								}}
 							>
 								Choosing
 							</Button>
-							<DeleteButton id={row.id}/>
+							<DeleteButton id={row.id} />
 						</div>
 					)
 				}
@@ -145,10 +145,10 @@ const Index = () => {
 					Header: t('Actions'),
 					accessor: (row: IOrderDetail) => (
 						<div className="flex items-start gap-lg">
-							<EditButton onClick={() => navigate(`process/${row.id}`)}/>
+							<EditButton onClick={() => navigate(`process/${row.id}`)} />
 							{
 								status == statusOptions[2].value &&
-								<Button mini={true} onClick={() => addParams({modal: 'edit', updateId: row.id})}>
+								<Button mini={true} onClick={() => addParams({ modal: 'edit', updateId: row.id })}>
 									Sell
 								</Button>
 							}
@@ -259,7 +259,7 @@ const Index = () => {
 		handleSubmit,
 		control,
 		reset,
-		formState: {errors}
+		formState: { errors }
 	} = useForm({
 		resolver: yupResolver(soldSchema),
 		mode: 'onTouched',
@@ -275,7 +275,7 @@ const Index = () => {
 		handleSubmit: submitForm,
 		control: controlForm,
 		reset: resetForm,
-		formState: {errors: errorsForm}
+		formState: { errors: errorsForm }
 	} = useForm({
 		resolver: yupResolver(schema),
 		mode: 'onTouched',
@@ -288,7 +288,7 @@ const Index = () => {
 		handleSubmit: submitDefective,
 		control: controlDefective,
 		reset: resetDefective,
-		formState: {errors: errorsDefective}
+		formState: { errors: errorsDefective }
 	} = useForm({
 		resolver: yupResolver(defectiveSchema),
 		mode: 'onTouched',
@@ -302,7 +302,7 @@ const Index = () => {
 		handleSubmit: submitSoldDefective,
 		control: controlSoldDefective,
 		reset: resetSoldDefective,
-		formState: {errors: errorsSoldDefective}
+		formState: { errors: errorsSoldDefective }
 	} = useForm({
 		resolver: yupResolver(soldDefectiveSchema),
 		mode: 'onTouched',
@@ -350,8 +350,8 @@ const Index = () => {
 
 	return (
 		<>
-			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
-				<Tab query="status" fallbackValue={statusOptions[0].value} tabs={statusOptions}/>
+			<div className="flex align-center justify-between gap-lg" style={{ marginBottom: '.5rem' }}>
+				<Tab query="status" fallbackValue={statusOptions[0].value} tabs={statusOptions} />
 			</div>
 			<Card>
 				{/*{*/}
@@ -372,8 +372,8 @@ const Index = () => {
 				{/*}*/}
 				{
 					status === statusOptions[5].value &&
-					<div style={{padding: '.5rem', display: 'flex', justifyContent: 'flex-end'}}>
-						<Button onClick={() => addParams({modal: 'soldDefective'})}>
+					<div style={{ padding: '.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+						<Button onClick={() => addParams({ modal: 'soldDefective' })}>
 							Sold defective product
 						</Button>
 					</div>
@@ -384,18 +384,18 @@ const Index = () => {
 					isLoading={isLoading}
 				/>
 			</Card>
-			<Pagination totalPages={totalPages}/>
-			<DeleteModal endpoint="services/orders/" onDelete={() => refetch()}/>
+			<Pagination totalPages={totalPages} />
+			<DeleteModal endpoint="services/orders/" onDelete={() => refetch()} />
 
 
 			<EditModal title={`#${updateId} - ${t('Sell order')?.toLowerCase()}`}
-			           style={{height: '40rem', width: '50rem'}} isLoading={isProductDetailLoading}>
+				style={{ height: '40rem', width: '50rem' }} isLoading={isProductDetailLoading}>
 				<Form onSubmit={(e) => e.preventDefault()}>
 					<div className="span-4">
 						<Controller
 							name="customer"
 							control={control}
-							render={({field: {value, ref, onChange, onBlur}}) => (
+							render={({ field: { value, ref, onChange, onBlur } }) => (
 								<Select
 									id="customer"
 									label="Company name"
@@ -417,7 +417,7 @@ const Index = () => {
 							<Controller
 								name="count"
 								control={control}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="count"
 										maxLength={6}
@@ -436,7 +436,7 @@ const Index = () => {
 							<Controller
 								name="price"
 								control={control}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="price"
 										maxLength={13}
@@ -454,7 +454,7 @@ const Index = () => {
 							<Controller
 								name="money_paid"
 								control={control}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="money_paid"
 										maxLength={13}
@@ -476,7 +476,7 @@ const Index = () => {
 					disabled={isAdding}
 					onClick={() => {
 						handleSubmit((data) =>
-							add({...data, count: Number(data?.count), order: updateId})
+							add({ ...data, count: Number(data?.count), order: updateId })
 								.then(async () => {
 									reset({
 										customer: undefined,
@@ -497,7 +497,7 @@ const Index = () => {
 
 			<Modal
 				title={`#${orderId} - ${t('Return order')?.toLowerCase()}`}
-				style={{height: '40rem', width: '50rem'}}
+				style={{ height: '40rem', width: '50rem' }}
 				id="return"
 			>
 				<Form onSubmit={(e) => e.preventDefault()}>
@@ -506,7 +506,7 @@ const Index = () => {
 							<Controller
 								name="count"
 								control={controlForm}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="count"
 										maxLength={6}
@@ -528,7 +528,7 @@ const Index = () => {
 					disabled={isRet}
 					onClick={() => {
 						submitForm((data) =>
-							ret({...data, count: Number(data?.count), sold_order: updateId})
+							ret({ ...data, count: Number(data?.count), sold_order: updateId })
 								.then(async () => {
 									resetForm({
 										count: ''
@@ -545,7 +545,7 @@ const Index = () => {
 
 			<Modal
 				title={`#${orderId} - ${t('Defective product')?.toLowerCase()}`}
-				style={{height: '40rem', width: '50rem'}}
+				style={{ height: '40rem', width: '50rem' }}
 				id="defective"
 			>
 				<Form onSubmit={(e) => e.preventDefault()}>
@@ -554,7 +554,7 @@ const Index = () => {
 							<Controller
 								name="count"
 								control={controlDefective}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="count"
 										maxLength={6}
@@ -571,7 +571,7 @@ const Index = () => {
 							<Controller
 								control={controlDefective}
 								name="weight"
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="weight"
 										label={`${t('Weight')} (${t('kg')})`}
@@ -593,7 +593,7 @@ const Index = () => {
 					disabled={isDef}
 					onClick={() => {
 						submitDefective((data) =>
-							def({...data, count: data?.count ? Number(data?.count) : null, sold_order: updateId})
+							def({ ...data, count: data?.count ? Number(data?.count) : null, sold_order: updateId })
 								.then(async () => {
 									resetDefective({
 										count: '',
@@ -611,7 +611,7 @@ const Index = () => {
 
 			<Modal
 				title={`${t('Defective product')}`}
-				style={{height: '40rem', width: '50rem'}}
+				style={{ height: '40rem', width: '50rem' }}
 				id="soldDefective"
 			>
 				<Form onSubmit={(e) => e.preventDefault()}>
@@ -620,7 +620,7 @@ const Index = () => {
 							<Controller
 								name="price"
 								control={controlSoldDefective}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="price"
 										maxLength={6}
@@ -637,7 +637,7 @@ const Index = () => {
 							<Controller
 								name="weight"
 								control={controlSoldDefective}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="weight"
 										label={`${t('Weight')} (${t('kg')})`}

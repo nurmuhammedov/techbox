@@ -22,7 +22,11 @@ const useDynamicUpdateMutation = <TVariables, TData, TError>(
 				? CommonService.updateData<TVariables, TData>(endpoint, data, id.toString())
 				: CommonService.partialUpdateData<TVariables, TData>(endpoint, data, id.toString())
 		},
-		onSuccess: () => showMessage(successMessage, 'success'),
+		onSuccess: () => {
+			if (successMessage) {
+				showMessage(successMessage, 'success')
+			}
+		},
 		onError: () => {
 			if (errorMessage) {
 				showMessage(errorMessage, 'error')

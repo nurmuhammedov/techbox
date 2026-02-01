@@ -35,7 +35,9 @@ const Index = () => {
 		paramsObject: {
 			status = companyOperationsOptions[0].value,
 			name = '',
+			companyName = '',
 			company = '',
+			activity = '',
 			id = '',
 			ordering,
 			format = ''
@@ -49,7 +51,9 @@ const Index = () => {
 			page: page,
 			page_size: pageSize,
 			status,
-			search: name,
+			search: companyName,
+			name,
+			activity,
 			company,
 			format_: format,
 			ordering
@@ -141,7 +145,7 @@ const Index = () => {
 				{
 					Header: t('Status'),
 					accessor: (row: IOrderDetail) => t(activityOptions?.find(i => row.activity === i?.value)?.label?.toString() || ''),
-					dynamicFilter: 'stages_to_passed'
+					dynamicFilter: 'activity'
 				}
 			] : status == companyOperationsOptions[2].value ? [
 				{
@@ -190,7 +194,7 @@ const Index = () => {
 				<Tab query="status" fallbackValue={companyOperationsOptions[0].value} tabs={companyOperationsOptions}/>
 			</div>
 			<Card>
-				<Filter fieldsToShow={['name', 'format']}/>
+				<Filter fieldsToShow={[ 'companyName', 'name', 'format', 'activity']}/>
 				<ReactTable
 					columns={columns}
 					data={data}
