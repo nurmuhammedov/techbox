@@ -53,7 +53,8 @@ const companyOperationsOptions: ISelectOption[] = [
 
 const operatorsStatusOptions: ISelectOption[] = [
 	{value: 1, label: 'New orders'},
-	{value: 2, label: 'History'}
+	{value: 2, label: 'Buyurtmalarim'},
+	{value: 3, label: 'History'}
 ]
 
 export const bossStatusOptions: ISelectOption[] = [

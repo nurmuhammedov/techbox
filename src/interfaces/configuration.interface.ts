@@ -23,6 +23,7 @@ interface IListResponse<T> {
 interface IIDName {
 	id: number
 	name: string
+	end_date: string
 	material_name?: string
 }
 

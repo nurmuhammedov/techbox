@@ -49,6 +49,7 @@ const Index = () => {
 			is_separated: status != bossStatusOptions[3].value ? status : null,
 			confirmed: status == bossStatusOptions[3].value ? 'not_confirmed' : null,
 			activity: status == bossStatusOptions[1].value ? 'gofra' : null,
+			operator: status == bossStatusOptions[1].value ? 'new' : null,
 			pass_activity: status == bossStatusOptions[2].value ? 'gofra' : null
 		}
 	)

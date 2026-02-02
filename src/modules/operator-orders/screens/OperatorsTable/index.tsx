@@ -26,8 +26,9 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 		{
 			page: page,
 			page_size: pageSize,
-			activity: status == operatorsStatusOptions[0].value ? type : null,
-			pass_activity: status == operatorsStatusOptions[1].value ? type : null
+			activity: status != operatorsStatusOptions[2].value ? type : null,
+			operator: status == operatorsStatusOptions[0].value ? 'new' : status == operatorsStatusOptions[1].value ? "operator" : 'gofra',
+			pass_activity: status == operatorsStatusOptions[2].value ? type : null,
 		}
 	)
 
@@ -177,7 +178,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 				accessor: (row: IGroupOrder) => getDate(row.created_at)
 			},
 			...(
-				status == operatorsStatusOptions[1].value ? [{
+				status == operatorsStatusOptions[2].value ? [{
 					Header: t('Yak. sana'),
 					accessor: (row: IGroupOrder) => getDate(row.end_date)
 				}] : []
