@@ -1,27 +1,29 @@
-import {Button, Card, EditButton, Pagination, ReactTable, Tab} from 'components'
-import {usePaginatedData, usePagination, useSearchParams} from 'hooks'
-import {IOrderDetail} from 'interfaces/orders.interface'
-import {FC, useMemo} from 'react'
-import {useTranslation} from 'react-i18next'
-import {useNavigate} from 'react-router-dom'
-import {Column} from 'react-table'
-import {getDate} from 'utilities/date'
-import {decimalToInteger} from 'utilities/common'
-import {operatorsStatusOptions} from 'helpers/options'
-import {IGroupOrder} from 'interfaces/groupOrders.interface'
+import { Button, Card, EditButton, Pagination, ReactTable, Tab } from 'components'
+import { usePaginatedData, usePagination, useSearchParams } from 'hooks'
+import { IOrderDetail } from 'interfaces/orders.interface'
+import { FC, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { Column } from 'react-table'
+import { getDate } from 'utilities/date'
+import { decimalToInteger } from 'utilities/common'
+import { operatorsStatusOptions } from 'helpers/options'
+import { IGroupOrder } from 'interfaces/groupOrders.interface'
+import { interceptor } from 'libraries'
+import { showMessage } from 'utilities/alert'
 
 
 interface IProperties {
 	type?: 'gofra' | 'fleksa' | 'tikish' | 'yelimlash'
 }
 
-const Index: FC<IProperties> = ({type = 'gofra'}) => {
+const Index: FC<IProperties> = ({ type = 'gofra' }) => {
 	const navigate = useNavigate()
-	const {t} = useTranslation()
-	const {page, pageSize} = usePagination()
-	const {paramsObject: {status = operatorsStatusOptions[0].value}} = useSearchParams()
+	const { t } = useTranslation()
+	const { page, pageSize } = usePagination()
+	const { paramsObject: { status = operatorsStatusOptions[0].value } } = useSearchParams()
 
-	const {data, totalPages, isPending: isLoading} = usePaginatedData<IGroupOrder[]>(
+	const { data, totalPages, isPending: isLoading, refetch } = usePaginatedData<IGroupOrder[]>(
 		type == 'gofra' ? 'services/consecutive-orders' : 'services/group-orders',
 		{
 			page: page,
@@ -54,7 +56,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -72,7 +74,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -90,7 +92,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -108,7 +110,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -126,7 +128,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -144,7 +146,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -162,7 +164,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -192,12 +194,17 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 								<Button
 									mini={true}
 									onClick={() => {
-										navigate(`edit/${row.id}`)
+										interceptor
+											.get(`services/consecutive-orders/get-order/${row.id}`)
+											.then(async () => {
+												showMessage('Successful', 'success')
+												await refetch()
+											})
 									}}
 								>
-									Choosing
-								</Button> :
-								<EditButton onClick={() => navigate(`detail/${row.id}`)}/>
+									Transfer to process
+								</Button> : status == operatorsStatusOptions[1].value ?
+									<EditButton onClick={() => navigate(`edit/${row.id}`)} /> : <EditButton onClick={() => navigate(`detail/${row.id}`)} />
 						}
 					</div>
 				)
@@ -208,8 +215,8 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 
 	return (
 		<>
-			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
-				<Tab query="status" fallbackValue={operatorsStatusOptions[0].value} tabs={operatorsStatusOptions}/>
+			<div className="flex align-center justify-between gap-lg" style={{ marginBottom: '.5rem' }}>
+				<Tab query="status" fallbackValue={operatorsStatusOptions[0].value} tabs={operatorsStatusOptions} />
 			</div>
 			<Card>
 				<ReactTable
@@ -218,7 +225,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 					isLoading={isLoading}
 				/>
 			</Card>
-			<Pagination totalPages={totalPages}/>
+			<Pagination totalPages={totalPages} />
 		</>
 	)
 }
