@@ -1,4 +1,4 @@
-import {IFIle} from 'interfaces/form.interface'
+import { IFIle } from 'interfaces/form.interface'
 import * as yup from 'yup'
 
 // Login validation
@@ -548,23 +548,8 @@ const groupOrdersSchema = yup.object().shape({
 		.when('has_addition', {
 			is: true,
 			then: (schema) => schema
-				.required('This field is required')
-				.length(10, 'The entered date is not valid')
-				.transform((value) => {
-					if (!value) return value
-					const [day, month, year] = value.split('.')
-					return `${year}-${month}-${day}`
-				})
-				.test('isValidDate', 'The entered date is not valid', (value) => {
-					if (!value) return false
-					const [year, month, day] = value.split('-').map(Number)
-					const date = new Date(year, month - 1, day)
-					return (
-						date.getFullYear() === year &&
-						date.getMonth() === month - 1 &&
-						date.getDate() === day
-					)
-				}),
+				.nullable()
+				.optional(),
 			otherwise: (schema) => schema
 				.nullable()
 				.optional()
@@ -572,9 +557,10 @@ const groupOrdersSchema = yup.object().shape({
 	count: yup
 		.string()
 		.trim()
+		.nullable()
 		.when('has_addition', {
 			is: true,
-			then: (schema) => schema.required('This field is required'),
+			then: (schema) => schema.nullable().optional(),
 			otherwise: (schema) => schema
 				.transform(value => value ? value : '0')
 				.nullable()

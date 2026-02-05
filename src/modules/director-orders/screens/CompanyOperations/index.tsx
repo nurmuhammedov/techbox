@@ -160,7 +160,7 @@ const Index = () => {
 			{
 				Header: t('CreatedAt'),
 				accessor: (row: IOrderDetail) => getDate(row.created_at),
-				dynamicFilter: 'created_at',
+				// dynamicFilter: 'created_at',
 			},
 			{
 				Header: t('Actions'),
