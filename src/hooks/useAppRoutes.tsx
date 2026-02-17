@@ -27,19 +27,19 @@ import {
 	SemiFinishedDetail,
 	FinishedDetail, CompanyOperations
 } from 'modules'
-import {Navigate, useRoutes} from 'react-router-dom'
-import {routeByRole} from 'utilities/authentication'
-import {ROLE_LIST} from 'constants/roles'
-import {useAppContext} from 'hooks'
-import {Layout} from 'components'
-import {ChemicalTypesTable} from 'modules/chemical-types'
-import {AddChemicals, ChemicalsTable} from 'modules/chemicals'
-import {AddGlue, GlueTable} from 'modules/Glue'
+import { Navigate, useRoutes } from 'react-router-dom'
+import { routeByRole } from 'utilities/authentication'
+import { ROLE_LIST } from 'constants/roles'
+import { useAppContext } from 'hooks'
+import { Layout } from 'components'
+import { ChemicalTypesTable } from 'modules/chemical-types'
+import { AddChemicals, ChemicalsTable } from 'modules/chemicals'
+import { AddGlue, GlueTable } from 'modules/Glue'
 import CorrugationForm from 'modules/operator-orders/screens/CorrugationForm'
 
 
 function useAppRoutes() {
-	const {user} = useAppContext()
+	const { user } = useAppContext()
 
 	const userPermissions = user?.permissions || []
 
@@ -50,15 +50,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <EmployeesTable/>
+					element: <EmployeesTable />
 				},
 				{
 					path: 'add',
-					element: <AddEmployee/>
+					element: <AddEmployee />
 				},
 				{
 					path: 'edit/:id',
-					element: <AddEmployee edit={true}/>
+					element: <AddEmployee edit={true} />
 				}
 			]
 		},
@@ -68,7 +68,7 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <RolesTable/>
+					element: <RolesTable />
 				}
 			]
 		},
@@ -78,7 +78,7 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <ChemicalTypesTable/>
+					element: <ChemicalTypesTable />
 				}
 			]
 		},
@@ -88,7 +88,7 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <MaterialsTable/>
+					element: <MaterialsTable />
 				}
 			]
 		},
@@ -98,7 +98,7 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <FormatsTable/>
+					element: <FormatsTable />
 				}
 			]
 		},
@@ -108,19 +108,19 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <WarehouseTable/>
+					element: <WarehouseTable />
 				},
 				{
 					path: 'warehouse-detail/:id',
-					element: <WarehouseDetail/>
+					element: <WarehouseDetail />
 				},
 				{
 					path: 'semi-finished-detail/:id',
-					element: <SemiFinishedDetail/>
+					element: <SemiFinishedDetail />
 				},
 				{
 					path: 'finished-detail/:id',
-					element: <FinishedDetail/>
+					element: <FinishedDetail />
 				}
 			]
 		},
@@ -130,15 +130,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <ProductsTable/>
+					element: <ProductsTable />
 				},
 				{
 					path: 'add',
-					element: <AddProduct/>
+					element: <AddProduct />
 				},
 				{
 					path: 'edit/:id',
-					element: <AddProduct edit={true}/>
+					element: <AddProduct edit={true} />
 				}
 			]
 		},
@@ -148,11 +148,11 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <ChemicalsTable/>
+					element: <ChemicalsTable />
 				},
 				{
 					path: 'add',
-					element: <AddChemicals/>
+					element: <AddChemicals />
 				}
 			]
 		},
@@ -162,11 +162,11 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <GlueTable/>
+					element: <GlueTable />
 				},
 				{
 					path: 'add',
-					element: <AddGlue/>
+					element: <AddGlue />
 				}
 			]
 		},
@@ -176,15 +176,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <DirectorOrdersTable/>
+					element: <DirectorOrdersTable />
 				},
 				{
 					path: 'add',
-					element: <AddDirectorOrder/>
+					element: <AddDirectorOrder />
 				},
 				{
 					path: 'process/:id',
-					element: <Process/>
+					element: <Process />
 				}
 			]
 		},
@@ -194,11 +194,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <OperatorOrdersTable/>
+					element: <OperatorOrdersTable />
 				},
 				{
 					path: 'add',
 					element: <EditOperatorOrder />
+				},
+				{
+					path: 'detail/:id',
+					element: <CorrugationForm detail={true} />
 				}
 			]
 		},
@@ -208,15 +212,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <CompanyOperations/>
+					element: <CompanyOperations />
 				},
 				{
 					path: 'add',
-					element: <AddDirectorOrder/>
+					element: <AddDirectorOrder />
 				},
 				{
 					path: 'process/:id',
-					element: <Process update={true}/>
+					element: <Process update={true} />
 				}
 			]
 		},
@@ -226,7 +230,7 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <OperatorsTable type="gofra"/>
+					element: <OperatorsTable type="gofra" />
 				},
 				{
 					path: 'edit/:id',
@@ -234,7 +238,7 @@ function useAppRoutes() {
 				},
 				{
 					path: 'detail/:id',
-					element: <CorrugationForm detail={true}/>
+					element: <CorrugationForm detail={true} />
 				}
 			]
 		},
@@ -244,15 +248,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <FlexTable type="fleksa"/>
+					element: <FlexTable type="fleksa" />
 				},
 				{
 					path: 'edit/:id',
-					element: <FlexOrderForm type="flex"/>
+					element: <FlexOrderForm type="flex" />
 				},
 				{
 					path: 'detail/:id',
-					element: <FlexOrderForm retrieve={true} type="flex"/>
+					element: <FlexOrderForm retrieve={true} type="flex" />
 				}
 			]
 		},
@@ -262,15 +266,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <FlexTable type="tikish"/>
+					element: <FlexTable type="tikish" />
 				},
 				{
 					path: 'edit/:id',
-					element: <FlexOrderForm type="sewing"/>
+					element: <FlexOrderForm type="sewing" />
 				},
 				{
 					path: 'detail/:id',
-					element: <FlexOrderForm retrieve={true} type="sewing"/>
+					element: <FlexOrderForm retrieve={true} type="sewing" />
 				}
 			]
 		},
@@ -280,15 +284,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <FlexTable type="yelimlash"/>
+					element: <FlexTable type="yelimlash" />
 				},
 				{
 					path: 'edit/:id',
-					element: <FlexOrderForm type="gluing"/>
+					element: <FlexOrderForm type="gluing" />
 				},
 				{
 					path: 'detail/:id',
-					element: <FlexOrderForm retrieve={true} type="gluing"/>
+					element: <FlexOrderForm retrieve={true} type="gluing" />
 				}
 			]
 		},
@@ -298,15 +302,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <ClientsTable/>
+					element: <ClientsTable />
 				},
 				{
 					path: 'add',
-					element: <AddClient/>
+					element: <AddClient />
 				},
 				{
 					path: 'edit/:id',
-					element: <AddClient edit={true}/>
+					element: <AddClient edit={true} />
 				}
 			]
 		},
@@ -316,26 +320,26 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <ClientsTable order={true}/>
+					element: <ClientsTable order={true} />
 				},
 				{
 					path: 'add',
-					element: <ClientAndOrderAdd/>
+					element: <ClientAndOrderAdd />
 				},
 				{
 					path: ':id',
 					children: [
 						{
 							index: true,
-							element: <OrdersTable/>
+							element: <OrdersTable />
 						},
 						{
 							path: 'add',
-							element: <AddOrder/>
+							element: <AddOrder />
 						},
 						{
 							path: 'edit/:orderId',
-							element: <AddOrder edit={true}/>
+							element: <AddOrder edit={true} />
 						}
 					]
 				}
@@ -347,15 +351,15 @@ function useAppRoutes() {
 			children: [
 				{
 					index: true,
-					element: <WarehouseManTable/>
+					element: <WarehouseManTable />
 				},
 				{
 					path: 'add',
-					element: <WarehouseOrder/>
+					element: <WarehouseOrder />
 				},
 				{
 					path: 'edit/:orderId',
-					element: <WarehouseOrder edit={true}/>
+					element: <WarehouseOrder edit={true} />
 				}
 			]
 		}
@@ -371,18 +375,18 @@ function useAppRoutes() {
 		[ROLE_LIST.ADMIN]: [
 			{
 				path: '/',
-				element: <Layout/>,
+				element: <Layout />,
 				children: [
 					{
 						index: true,
-						element: <Navigate to={routeByRole(user?.role)} replace/>
+						element: <Navigate to={routeByRole(user?.role)} replace />
 					},
 					{
 						path: 'roles',
 						children: [
 							{
 								index: true,
-								element: <RolesTable/>
+								element: <RolesTable />
 							}
 						]
 					},
@@ -391,7 +395,7 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <EmployeesTable/>
+								element: <EmployeesTable />
 							}
 						]
 					},
@@ -400,7 +404,7 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <MaterialsTable/>
+								element: <MaterialsTable />
 							}
 						]
 					},
@@ -409,7 +413,7 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <FormatsTable/>
+								element: <FormatsTable />
 							}
 						]
 					},
@@ -418,19 +422,19 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <WarehouseTable/>
+								element: <WarehouseTable />
 							},
 							{
 								path: 'warehouse-detail/:id',
-								element: <WarehouseDetail/>
+								element: <WarehouseDetail />
 							},
 							{
 								path: 'semi-finished-detail/:id',
-								element: <SemiFinishedDetail/>
+								element: <SemiFinishedDetail />
 							},
 							{
 								path: 'finished-detail/:id',
-								element: <FinishedDetail/>
+								element: <FinishedDetail />
 							}
 						]
 					},
@@ -439,15 +443,15 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <ProductsTable/>
+								element: <ProductsTable />
 							},
 							{
 								path: 'add',
-								element: <AddProduct/>
+								element: <AddProduct />
 							},
 							{
 								path: 'edit/:id',
-								element: <AddProduct edit={true}/>
+								element: <AddProduct edit={true} />
 							}
 						]
 					},
@@ -457,11 +461,11 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <ChemicalsTable/>
+								element: <ChemicalsTable />
 							},
 							{
 								path: 'add',
-								element: <AddChemicals/>
+								element: <AddChemicals />
 							}
 						]
 					},
@@ -471,11 +475,11 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <GlueTable/>
+								element: <GlueTable />
 							},
 							{
 								path: 'add',
-								element: <AddGlue/>
+								element: <AddGlue />
 							}
 						]
 					},
@@ -484,7 +488,7 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <ChemicalTypesTable/>
+								element: <ChemicalTypesTable />
 							}
 						]
 					},
@@ -591,15 +595,15 @@ function useAppRoutes() {
 						children: [
 							{
 								index: true,
-								element: <ClientsTable/>
+								element: <ClientsTable />
 							},
 							{
 								path: 'add',
-								element: <AddClient/>
+								element: <AddClient />
 							},
 							{
 								path: 'edit/:id',
-								element: <AddClient edit={true}/>
+								element: <AddClient edit={true} />
 							}
 						]
 					}
@@ -650,32 +654,32 @@ function useAppRoutes() {
 			},
 			{
 				path: '*',
-				element: <Navigate to={routeByRole(user?.role)} replace/>
+				element: <Navigate to={routeByRole(user?.role)} replace />
 			}
 		],
 		[ROLE_LIST.HEAD_DEPARTMENT]: [
 			{
 				path: '/',
-				element: <Layout/>,
+				element: <Layout />,
 				children: [
 					{
 						index: true,
-						element: <Navigate to={routeByRole(user?.role)} replace/>
+						element: <Navigate to={routeByRole(user?.role)} replace />
 					},
 					{
 						path: 'employees',
 						children: [
 							{
 								index: true,
-								element: <EmployeesTable/>
+								element: <EmployeesTable />
 							},
 							{
 								path: 'add',
-								element: <AddEmployee/>
+								element: <AddEmployee />
 							},
 							{
 								path: 'edit/:id',
-								element: <AddEmployee edit={true}/>
+								element: <AddEmployee edit={true} />
 							}
 						]
 					}
@@ -683,17 +687,17 @@ function useAppRoutes() {
 			},
 			{
 				path: '*',
-				element: <Navigate to={routeByRole(user?.role)} replace/>
+				element: <Navigate to={routeByRole(user?.role)} replace />
 			}
 		],
 		[ROLE_LIST.EMPLOYEE]: [
 			{
 				path: '/',
-				element: <Layout/>,
+				element: <Layout />,
 				children: filteredEmployeeRoutes?.length ? [
 					{
 						index: true,
-						element: <Navigate to={url} replace/>
+						element: <Navigate to={url} replace />
 					},
 					...filteredEmployeeRoutes
 				] : [
@@ -715,11 +719,11 @@ function useAppRoutes() {
 		default: [
 			{
 				path: '/login',
-				element: <Login/>
+				element: <Login />
 			},
 			{
 				path: '*',
-				element: <Navigate to="/login" replace/>
+				element: <Navigate to="/login" replace />
 			}
 		]
 	}

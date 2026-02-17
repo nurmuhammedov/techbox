@@ -1,36 +1,36 @@
-import { Button, Card, EditButton, Pagination, ReactTable, Tab } from 'components'
-import { usePaginatedData, usePagination, useSearchParams } from 'hooks'
-import { IOrderDetail } from 'interfaces/orders.interface'
-import { FC, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { Column } from 'react-table'
-import { getDate } from 'utilities/date'
-import { decimalToInteger } from 'utilities/common'
-import { operatorsStatusOptions } from 'helpers/options'
-import { IGroupOrder } from 'interfaces/groupOrders.interface'
-import { interceptor } from 'libraries'
-import { showMessage } from 'utilities/alert'
+import {Button, Card, EditButton, Pagination, ReactTable, Tab} from 'components'
+import {usePaginatedData, usePagination, useSearchParams} from 'hooks'
+import {IOrderDetail} from 'interfaces/orders.interface'
+import {FC, useMemo} from 'react'
+import {useTranslation} from 'react-i18next'
+import {useNavigate} from 'react-router-dom'
+import {Column} from 'react-table'
+import {getDate} from 'utilities/date'
+import {decimalToInteger} from 'utilities/common'
+import {operatorsStatusOptions} from 'helpers/options'
+import {IGroupOrder} from 'interfaces/groupOrders.interface'
+import {interceptor} from 'libraries'
+import {showMessage} from 'utilities/alert'
 
 
 interface IProperties {
 	type?: 'gofra' | 'fleksa' | 'tikish' | 'yelimlash'
 }
 
-const Index: FC<IProperties> = ({ type = 'gofra' }) => {
+const Index: FC<IProperties> = ({type = 'gofra'}) => {
 	const navigate = useNavigate()
-	const { t } = useTranslation()
-	const { page, pageSize } = usePagination()
-	const { paramsObject: { status = operatorsStatusOptions[0].value } } = useSearchParams()
+	const {t} = useTranslation()
+	const {page, pageSize} = usePagination()
+	const {paramsObject: {status = operatorsStatusOptions[0].value}} = useSearchParams()
 
-	const { data, totalPages, isPending: isLoading, refetch } = usePaginatedData<IGroupOrder[]>(
+	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IGroupOrder[]>(
 		type == 'gofra' ? 'services/consecutive-orders' : 'services/group-orders',
 		{
 			page: page,
 			page_size: pageSize,
 			activity: status != operatorsStatusOptions[2].value ? type : null,
-			operator: status == operatorsStatusOptions[0].value ? 'new' : status == operatorsStatusOptions[1].value ? "operator" : 'gofra',
-			pass_activity: status == operatorsStatusOptions[2].value ? type : null,
+			operator: status == operatorsStatusOptions[0].value ? 'new' : status == operatorsStatusOptions[1].value ? 'operator' : 'gofra',
+			pass_activity: status == operatorsStatusOptions[2].value ? type : null
 		}
 	)
 
@@ -56,31 +56,31 @@ const Index: FC<IProperties> = ({ type = 'gofra' }) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br />
+									<br/>
 								}
 							</>
 						))
 					}
 				</div>
 			},
-			{
-				Header: t('Company name'),
-				accessor: (row: IGroupOrder) => <div>
-					{
-						row?.orders?.map((order, index) => (
-							<>
-								<div>
-									{order?.company_name}
-								</div>
-								{
-									row?.orders?.length !== index + 1 &&
-									<br />
-								}
-							</>
-						))
-					}
-				</div>
-			},
+			// {
+			// 	Header: t('Company name'),
+			// 	accessor: (row: IGroupOrder) => <div>
+			// 		{
+			// 			row?.orders?.map((order, index) => (
+			// 				<>
+			// 					<div>
+			// 						{order?.company_name}
+			// 					</div>
+			// 					{
+			// 						row?.orders?.length !== index + 1 &&
+			// 						<br />
+			// 					}
+			// 				</>
+			// 			))
+			// 		}
+			// 	</div>
+			// },
 			{
 				Header: t('Name'),
 				accessor: (row: IGroupOrder) => <div>
@@ -92,7 +92,7 @@ const Index: FC<IProperties> = ({ type = 'gofra' }) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br />
+									<br/>
 								}
 							</>
 						))
@@ -110,7 +110,7 @@ const Index: FC<IProperties> = ({ type = 'gofra' }) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br />
+									<br/>
 								}
 							</>
 						))
@@ -128,7 +128,7 @@ const Index: FC<IProperties> = ({ type = 'gofra' }) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br />
+									<br/>
 								}
 							</>
 						))
@@ -146,35 +146,35 @@ const Index: FC<IProperties> = ({ type = 'gofra' }) => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br />
+									<br/>
 								}
 							</>
 						))
 					}
 				</div>
 			},
-			{
-				Header: t('Deadline'),
-				accessor: (row: IGroupOrder) => <div>
-					{
-						row?.orders?.map((order, index) => (
-							<>
-								<div>
-									{order?.deadline ? getDate(order?.deadline) : null}
-								</div>
-								{
-									row?.orders?.length !== index + 1 &&
-									<br />
-								}
-							</>
-						))
-					}
-				</div>
-			},
-			{
-				Header: `${t('Production format')} (${t('mm')})`,
-				accessor: (row: IGroupOrder) => decimalToInteger(row.separated_raw_materials_format?.format)
-			},
+			// {
+			// 	Header: t('Deadline'),
+			// 	accessor: (row: IGroupOrder) => <div>
+			// 		{
+			// 			row?.orders?.map((order, index) => (
+			// 				<>
+			// 					<div>
+			// 						{order?.deadline ? getDate(order?.deadline) : null}
+			// 					</div>
+			// 					{
+			// 						row?.orders?.length !== index + 1 &&
+			// 						<br />
+			// 					}
+			// 				</>
+			// 			))
+			// 		}
+			// 	</div>
+			// },
+			// {
+			// 	Header: `${t('Production format')} (${t('mm')})`,
+			// 	accessor: (row: IGroupOrder) => decimalToInteger(row.separated_raw_materials_format?.format)
+			// },
 			{
 				Header: t('Yub. sana'),
 				accessor: (row: IGroupOrder) => getDate(row.created_at)
@@ -183,6 +183,16 @@ const Index: FC<IProperties> = ({ type = 'gofra' }) => {
 				status == operatorsStatusOptions[2].value ? [{
 					Header: t('Yak. sana'),
 					accessor: (row: IGroupOrder) => getDate(row.end_date)
+				}] : []
+			),
+			...(
+				status == operatorsStatusOptions[0].value ? [{
+					Header: t('Comment'),
+					accessor: (row: IGroupOrder) => <div>
+						{
+							row?.comment || '-'
+						}
+					</div>
 				}] : []
 			),
 			{
@@ -204,7 +214,8 @@ const Index: FC<IProperties> = ({ type = 'gofra' }) => {
 								>
 									Transfer to process
 								</Button> : status == operatorsStatusOptions[1].value ?
-									<EditButton onClick={() => navigate(`edit/${row.id}`)} /> : <EditButton onClick={() => navigate(`detail/${row.id}`)} />
+									<EditButton onClick={() => navigate(`edit/${row.id}`)}/> :
+									<EditButton onClick={() => navigate(`detail/${row.id}`)}/>
 						}
 					</div>
 				)
@@ -215,8 +226,8 @@ const Index: FC<IProperties> = ({ type = 'gofra' }) => {
 
 	return (
 		<>
-			<div className="flex align-center justify-between gap-lg" style={{ marginBottom: '.5rem' }}>
-				<Tab query="status" fallbackValue={operatorsStatusOptions[0].value} tabs={operatorsStatusOptions} />
+			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
+				<Tab query="status" fallbackValue={operatorsStatusOptions[0].value} tabs={operatorsStatusOptions}/>
 			</div>
 			<Card>
 				<ReactTable
@@ -225,7 +236,7 @@ const Index: FC<IProperties> = ({ type = 'gofra' }) => {
 					isLoading={isLoading}
 				/>
 			</Card>
-			<Pagination totalPages={totalPages} />
+			<Pagination totalPages={totalPages}/>
 		</>
 	)
 }

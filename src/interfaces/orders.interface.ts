@@ -1,6 +1,6 @@
-import {IIDName} from 'interfaces/configuration.interface'
-import {IProductDetail} from 'interfaces/products.interface'
-import {IFIle} from 'interfaces/form.interface'
+import { IIDName } from 'interfaces/configuration.interface'
+import { IProductDetail } from 'interfaces/products.interface'
+import { IFIle } from 'interfaces/form.interface'
 
 
 interface IOrderDetail {

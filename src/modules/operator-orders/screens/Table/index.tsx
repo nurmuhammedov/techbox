@@ -1,4 +1,4 @@
-import {yupResolver} from '@hookform/resolvers/yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 import {
 	Button,
 	Card,
@@ -13,35 +13,35 @@ import {
 	ReactTable,
 	Tab
 } from 'components'
-import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {splitSchema, YMOOrderSchema} from 'helpers/yup'
-import {useActions, useAdd, useDetail, usePaginatedData, usePagination, useSearchParams, useUpdate} from 'hooks'
-import {IFIle} from 'interfaces/form.interface'
-import {IOrderDetail} from 'interfaces/orders.interface'
-import {useEffect, useMemo} from 'react'
-import {Controller, useForm} from 'react-hook-form'
-import {useTranslation} from 'react-i18next'
-import {useNavigate} from 'react-router-dom'
-import {Column} from 'react-table'
-import {getDate} from 'utilities/date'
-import {decimalToInteger} from 'utilities/common'
-import {activityOptions, bossStatusOptions} from 'helpers/options'
-import {IGroupOrder} from 'interfaces/groupOrders.interface'
+import { BUTTON_THEME, FIELD } from 'constants/fields'
+import { splitSchema, YMOOrderSchema } from 'helpers/yup'
+import { useActions, useAdd, useDetail, usePaginatedData, usePagination, useSearchParams, useUpdate } from 'hooks'
+import { IFIle } from 'interfaces/form.interface'
+import { IOrderDetail } from 'interfaces/orders.interface'
+import { useEffect, useMemo } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { Column } from 'react-table'
+import { getDate } from 'utilities/date'
+import { decimalToInteger } from 'utilities/common'
+import { activityOptions, bossStatusOptions } from 'helpers/options'
+import { IGroupOrder } from 'interfaces/groupOrders.interface'
 
 
 const Index = () => {
 	const navigate = useNavigate()
-	const {t} = useTranslation()
-	const {page, pageSize} = usePagination()
-	const {addGroupOrder} = useActions()
+	const { t } = useTranslation()
+	const { page, pageSize } = usePagination()
+	const { addGroupOrder } = useActions()
 
 	const {
 		removeParams,
 		addParams,
-		paramsObject: {status = bossStatusOptions[0].value, updateId = undefined}
+		paramsObject: { status = bossStatusOptions[0].value, updateId = undefined }
 	} = useSearchParams()
 
-	const {data, refetch, totalPages, isPending: isLoading} = usePaginatedData<IGroupOrder[]>(
+	const { data, refetch, totalPages, isPending: isLoading } = usePaginatedData<IGroupOrder[]>(
 		status == bossStatusOptions[2].value ? `services/consecutive-orders` : status == bossStatusOptions[1].value ? `services/consecutive-orders` : status == bossStatusOptions[3].value ? `services/orders/list-for-proces` : `services/group-orders`,
 		{
 			page: page,
@@ -81,7 +81,7 @@ const Index = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -99,7 +99,7 @@ const Index = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -117,7 +117,7 @@ const Index = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -135,7 +135,7 @@ const Index = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -153,7 +153,7 @@ const Index = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -171,7 +171,7 @@ const Index = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -189,7 +189,7 @@ const Index = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -212,7 +212,7 @@ const Index = () => {
 			] : []),
 
 
-			...(status !== bossStatusOptions[1].value && status !== bossStatusOptions[2].value ? [
+			...([
 				{
 					Header: t('Actions'),
 					accessor: (row: IGroupOrder) => (
@@ -222,7 +222,7 @@ const Index = () => {
 									<Button
 										mini={true}
 										onClick={() => {
-											addParams({modal: 'edit', updateId: row?.id})
+											addParams({ modal: 'edit', updateId: row?.id })
 										}}
 									>
 										Go flex
@@ -237,12 +237,15 @@ const Index = () => {
 										>
 											Choosing
 										</Button> :
-										<EditButton onClick={() => navigate(`detail/${row.id}`)}/>
+										(status == bossStatusOptions[1].value || status == bossStatusOptions[2].value) ?
+											<EditButton
+												onClick={() => navigate(`/operator-orders/detail/${row.id}`)} /> :
+											<EditButton onClick={() => navigate(`detail/${row.id}`)} />
 							}
 						</div>
 					)
 				}
-			] : [])
+			])
 
 		],
 		[page, pageSize, status]
@@ -253,7 +256,7 @@ const Index = () => {
 		control,
 		reset,
 		register,
-		formState: {errors}
+		formState: { errors }
 	} = useForm({
 		resolver: yupResolver(splitSchema),
 		mode: 'onTouched',
@@ -388,8 +391,8 @@ const Index = () => {
 
 	return (
 		<>
-			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
-				<Tab query="status" fallbackValue={bossStatusOptions[0].value} tabs={bossStatusOptions}/>
+			<div className="flex align-center justify-between gap-lg" style={{ marginBottom: '.5rem' }}>
+				<Tab query="status" fallbackValue={bossStatusOptions[0].value} tabs={bossStatusOptions} />
 			</div>
 			<Card>
 				<ReactTable
@@ -398,10 +401,10 @@ const Index = () => {
 					isLoading={isLoading}
 				/>
 			</Card>
-			<Pagination totalPages={totalPages}/>
+			<Pagination totalPages={totalPages} />
 			<Modal
 				title={`#${updateId} - ${t('Split order')?.toLowerCase()}`}
-				style={{height: '40rem', width: '50rem'}}
+				style={{ height: '40rem', width: '50rem' }}
 				id="split"
 			>
 				<Form onSubmit={(e) => e.preventDefault()}>
@@ -410,7 +413,7 @@ const Index = () => {
 							<Controller
 								name="count"
 								control={control}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="count"
 										maxLength={6}
@@ -436,7 +439,7 @@ const Index = () => {
 							<Controller
 								name="logo"
 								control={control}
-								render={({field: {value, ref, onChange, onBlur}}) => (
+								render={({ field: { value, ref, onChange, onBlur } }) => (
 									<FileUpLoader
 										id="logo"
 										ref={ref}
@@ -459,7 +462,7 @@ const Index = () => {
 					disabled={isAdding}
 					onClick={() => {
 						handleSubmit(async (data) =>
-							add({...data, count: Number(data?.count), order: updateId})
+							add({ ...data, count: Number(data?.count), order: updateId })
 								.then(async () => {
 									reset({
 										logo: undefined,
@@ -479,7 +482,7 @@ const Index = () => {
 			<EditModal
 				isLoading={isDetailLoading && !detail}
 				title={`${t('Order number')}: #${updateId}`}
-				style={{height: '25rem'}}
+				style={{ height: '25rem' }}
 			>
 				<Form
 					onSubmit={
@@ -496,7 +499,7 @@ const Index = () => {
 				>
 					<div
 						className="span-12 flex gap-md"
-						style={{marginTop: '.75rem', marginBottom: '1.5rem'}}
+						style={{ marginTop: '.75rem', marginBottom: '1.5rem' }}
 					>
 						<div className="span-4 flex gap-md align-end justify-start">
 							<input
@@ -685,7 +688,7 @@ const Index = () => {
 					</div>
 
 					<Button
-						style={{marginTop: 'auto'}}
+						style={{ marginTop: 'auto' }}
 						type={FIELD.SUBMIT}
 						disabled={isUpdating}
 					>

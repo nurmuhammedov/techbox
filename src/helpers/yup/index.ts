@@ -636,6 +636,7 @@ const operatorOrderSchema = yup.object().shape({
 		.number()
 		.transform(value => value ? Number(value) : null)
 		.required('This field is required'),
+	comment: yup.string().trim().required('This field is required'),
 	glue_amount: yup.string().trim().required('This field is required'),
 	data: yup
 		.array()

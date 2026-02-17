@@ -1,5 +1,5 @@
-import {IIDName} from 'interfaces/configuration.interface'
-import {IOrderDetail} from 'interfaces/orders.interface'
+import { IIDName } from 'interfaces/configuration.interface'
+import { IOrderDetail } from 'interfaces/orders.interface'
 
 
 interface IGroupOrder {
@@ -17,6 +17,7 @@ interface IGroupOrder {
 	has_addition?: boolean;
 	x?: number;
 	y?: number;
+	comment?: string;
 
 
 	pallet_count_after_gofra: string

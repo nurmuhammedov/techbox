@@ -1,5 +1,5 @@
-import {yupResolver} from '@hookform/resolvers/yup'
-import {Corrugation} from 'assets/icons'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Corrugation } from 'assets/icons'
 import {
     Button,
     Card,
@@ -13,20 +13,20 @@ import {
     Select
 } from 'components'
 import OrderInfo from 'components/OrderInfo'
-import {BUTTON_THEME} from 'constants/fields'
-import {activityOptions, booleanOptions} from 'helpers/options'
-import {useDetail, useUpdate} from 'hooks'
-import {ISelectOption} from 'interfaces/form.interface'
-import {IGroupOrder} from 'interfaces/groupOrders.interface'
-import {FC, useEffect} from 'react'
-import {Controller, useFieldArray, useForm} from 'react-hook-form'
-import {useTranslation} from 'react-i18next'
-import {useNavigate, useParams} from 'react-router-dom'
-import {decimalToInteger, getSelectValue, noop} from 'utilities/common'
-import {getDate} from 'utilities/date'
-import {showMessage} from 'utilities/alert'
+import { BUTTON_THEME } from 'constants/fields'
+import { activityOptions, booleanOptions } from 'helpers/options'
+import { useDetail, useUpdate } from 'hooks'
+import { ISelectOption } from 'interfaces/form.interface'
+import { IGroupOrder } from 'interfaces/groupOrders.interface'
+import { FC, useEffect } from 'react'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { useNavigate, useParams } from 'react-router-dom'
+import { decimalToInteger, getSelectValue, noop } from 'utilities/common'
+import { getDate } from 'utilities/date'
+import { showMessage } from 'utilities/alert'
 import * as yup from 'yup'
-import {IIDName} from 'interfaces/configuration.interface'
+import { IIDName } from 'interfaces/configuration.interface'
 
 
 interface IDetailData {
@@ -91,12 +91,12 @@ const schema = yup.object().shape({
     )
 })
 
-const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
-    const {t} = useTranslation()
+const CorrugationOrder: FC<ICorrugationProperties> = ({ detail = false }) => {
+    const { t } = useTranslation()
     const navigate = useNavigate()
-    const {id} = useParams()
+    const { id } = useParams()
 
-    const {data: responseData} = useDetail<IDetailData>('services/consecutive-orders/', id)
+    const { data: responseData } = useDetail<IDetailData>('services/consecutive-orders/', id)
 
     const {
         mutateAsync: updateOrders,
@@ -112,7 +112,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
         handleSubmit,
         reset,
         watch,
-        formState: {errors}
+        formState: { errors }
     } = useForm<IFormValues>({
         mode: 'onTouched',
         defaultValues: {
@@ -124,12 +124,12 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
         resolver: yupResolver(schema)
     })
 
-    const {fields: itemFields} = useFieldArray({
+    const { fields: itemFields } = useFieldArray({
         control,
         name: 'items'
     })
 
-    const {fields: leftoverFields} = useFieldArray({
+    const { fields: leftoverFields } = useFieldArray({
         control,
         name: 'leftover'
     })
@@ -254,7 +254,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
                 <Form className="grid gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 
                     {leftoverFields.length > 0 && (
-                        <Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
+                        <Card className="span-12" screen={false} style={{ padding: '1.5rem' }}>
                             <div className="grid gap-lg span-12">
                                 {leftoverFields.map((field, index) => {
                                     const materialLabel = `${responseData?.materials?.find(m => m.id == watch(`leftover.${index}.id`))?.material_name || '-'}/${responseData?.materials?.find(m => m.id == watch(`leftover.${index}.id`))?.name || '-'}`
@@ -272,7 +272,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
                                                 <Controller
                                                     control={control}
                                                     name={`leftover.${index}.weight`}
-                                                    render={({field}) => (
+                                                    render={({ field }) => (
                                                         <NumberFormattedInput
                                                             id={`leftover.${index}.weight`}
                                                             label={`${t('Excess roll')} (${t('kg')})`}
@@ -314,7 +314,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
                                     marginBottom: '1rem'
                                 }}>
                                     <PageIcon className="span-2">
-                                        <Corrugation/>
+                                        <Corrugation />
                                     </PageIcon>
 
                                     <div className="span-2">
@@ -348,7 +348,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
                                             <Controller
                                                 control={control}
                                                 name={`items.${groupIndex}.pallet`}
-                                                render={({field}) => (
+                                                render={({ field }) => (
                                                     <NumberFormattedInput
                                                         id={`items.${groupIndex}.pallet`}
                                                         maxLength={12}
@@ -379,7 +379,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
                                                     <Controller
                                                         control={control}
                                                         name={`items.${groupIndex}.orders.${orderIndex}.count`}
-                                                        render={({field}) => (
+                                                        render={({ field }) => (
                                                             <NumberFormattedInput
                                                                 id={`items.${groupIndex}.orders.${orderIndex}.count`}
                                                                 maxLength={12}
@@ -413,17 +413,17 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
                                 >
                                     {
                                         groupOrderData?.orders.map(order => (
-                                            <div key={order.id} style={{minWidth: '47rem'}}>
-                                                <OrderInfo order={order}/>
+                                            <div key={order.id} style={{ minWidth: '47rem' }}>
+                                                <OrderInfo order={order} />
                                             </div>
                                         ))
                                     }
                                     {
                                         groupField.has_addition &&
-                                        <div style={{minWidth: '35rem'}}>
+                                        <div style={{ minWidth: '35rem' }}>
                                             <Card
                                                 screen={false}
-                                                style={{padding: '1.5rem'}}
+                                                style={{ padding: '1.5rem' }}
                                                 className="grid gap-md"
                                             >
                                                 <div className="span-12">
@@ -474,6 +474,15 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
                                                     />
                                                 </div>
 
+                                                <div className="span-12">
+                                                    <Input
+                                                        id="comment"
+                                                        disabled={true}
+                                                        label="Comment"
+                                                        value={groupOrderData?.comment || ' '}
+                                                    />
+                                                </div>
+
                                                 <div
                                                     className="span-12 flex gap-md"
                                                     style={{
@@ -485,7 +494,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
                                                 >
                                                     {activityOptions.map((option) => (
                                                         <div key={option.value as string}
-                                                             className="flex align-center gap-xs">
+                                                            className="flex align-center gap-xs">
                                                             <input
                                                                 id={option.value as string}
                                                                 type="checkbox"

@@ -1,34 +1,34 @@
-import {useActions, useAdd, useData, usePaginatedData, usePagination, useTypedSelector} from 'hooks'
-import {Button, Card, Form, NumberFormattedInput, PageTitle, Pagination, ReactTable, Select} from 'components'
-import {Controller, useFieldArray, useForm} from 'react-hook-form'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {operatorOrderSchema} from 'helpers/yup'
-import {calculateTotalGlueUsageInL, decimalToInteger, formatSelectOptions, getSelectValue} from 'utilities/common'
-import {ISelectOption} from 'interfaces/form.interface'
-import {useTranslation} from 'react-i18next'
-import {BUTTON_THEME} from 'constants/fields'
-import {FC, useEffect, useMemo, useState} from 'react'
-import {useNavigate, useParams} from 'react-router-dom'
-import {IGroupOrder} from 'interfaces/groupOrders.interface'
+import { useActions, useAdd, useData, usePaginatedData, usePagination, useTypedSelector } from 'hooks'
+import { Button, Card, Form, Input, NumberFormattedInput, PageTitle, Pagination, ReactTable, Select } from 'components'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { operatorOrderSchema } from 'helpers/yup'
+import { calculateTotalGlueUsageInL, decimalToInteger, formatSelectOptions, getSelectValue } from 'utilities/common'
+import { ISelectOption } from 'interfaces/form.interface'
+import { useTranslation } from 'react-i18next'
+import { BUTTON_THEME } from 'constants/fields'
+import { FC, useEffect, useMemo, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { IGroupOrder } from 'interfaces/groupOrders.interface'
 import HighGroupOrders from 'components/HighGroupOrders'
-import {Column} from 'react-table'
-import {IOrderDetail} from 'interfaces/orders.interface'
-import {getDate} from 'utilities/date'
-import {cutOptions} from 'helpers/options'
+import { Column } from 'react-table'
+import { IOrderDetail } from 'interfaces/orders.interface'
+import { getDate } from 'utilities/date'
+import { cutOptions } from 'helpers/options'
 
 
 const Index: FC = () => {
-	const {t} = useTranslation()
-	const {id} = useParams()
-	const {groupOrders} = useTypedSelector(state => state.groupOrders)
+	const { t } = useTranslation()
+	const { id } = useParams()
+	const { groupOrders } = useTypedSelector(state => state.groupOrders)
 	const navigate = useNavigate()
-	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
-	const {data: warehouses = []} = useData<ISelectOption[]>('accounts/warehouses-select')
+	const { data: materials = [] } = useData<ISelectOption[]>('products/materials/select')
+	const { data: warehouses = [] } = useData<ISelectOption[]>('accounts/warehouses-select')
 	const [isAdding, setIsAdding] = useState<boolean>(false)
-	const {page, pageSize} = usePagination()
-	const {addGroupOrder, clearGroupOrders} = useActions()
+	const { page, pageSize } = usePagination()
+	const { addGroupOrder, clearGroupOrders } = useActions()
 
-	const {data, totalPages, isPending: isLoading} = usePaginatedData<IGroupOrder[]>(`services/group-orders`,
+	const { data, totalPages, isPending: isLoading } = usePaginatedData<IGroupOrder[]>(`services/group-orders`,
 		{
 			page: page,
 			page_size: pageSize
@@ -57,7 +57,7 @@ const Index: FC = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -75,7 +75,7 @@ const Index: FC = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -93,7 +93,7 @@ const Index: FC = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -111,7 +111,7 @@ const Index: FC = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -129,7 +129,7 @@ const Index: FC = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -147,7 +147,7 @@ const Index: FC = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -165,7 +165,7 @@ const Index: FC = () => {
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
 							</>
 						))
@@ -190,7 +190,7 @@ const Index: FC = () => {
 									mini={true}
 									disabled={isSelected || isDifferentFormat}
 									onClick={() => {
-										addGroupOrder({...row})
+										addGroupOrder({ ...row })
 										setIsAdding(false)
 									}}
 								>
@@ -211,28 +211,30 @@ const Index: FC = () => {
 		handleSubmit,
 		watch,
 		getValues,
-		formState: {errors}
+		register,
+		formState: { errors }
 	} = useForm({
 		mode: 'onTouched',
 		defaultValues: {
 			data: [],
 			warehouse: undefined,
 			glue: undefined,
-			glue_amount: undefined
+			glue_amount: undefined,
+			comment: ''
 		},
 		resolver: yupResolver(operatorOrderSchema)
 	})
 
-	const {data: glues = []} = useData<ISelectOption[]>('chemicals/glues-select', !!watch('warehouse'), {
+	const { data: glues = [] } = useData<ISelectOption[]>('chemicals/glues-select', !!watch('warehouse'), {
 		warehouse: watch('warehouse')
 	})
 
-	const {fields} = useFieldArray({
+	const { fields } = useFieldArray({
 		control,
 		name: 'data' as never
 	})
 
-	const {mutateAsync: addGroupOrderForm, isPending: isAddLoading} = useAdd('services/consecutive-orders')
+	const { mutateAsync: addGroupOrderForm, isPending: isAddLoading } = useAdd('services/consecutive-orders')
 
 	useEffect(() => {
 		if (groupOrders?.length && materials?.length) {
@@ -293,7 +295,7 @@ const Index: FC = () => {
 		}
 	}, [groupOrders, materials])
 
-	const {data: rolls = []} = useData<ISelectOption[]>('products/base-materials/select', !!watch('warehouse') && !!groupOrders?.[0]?.separated_raw_materials_format?.id, {
+	const { data: rolls = [] } = useData<ISelectOption[]>('products/base-materials/select', !!watch('warehouse') && !!groupOrders?.[0]?.separated_raw_materials_format?.id, {
 		format_: groupOrders?.[0]?.separated_raw_materials_format?.id,
 		warehouse: watch('warehouse'),
 		group_order: id ? id : null
@@ -325,6 +327,7 @@ const Index: FC = () => {
 									})),
 									warehouse: data?.warehouse,
 									glue: data?.glue,
+									comment: data?.comment,
 									glue_amount: (Number(data?.glue_amount) / groupOrders.length).toFixed(2)
 								}
 								addGroupOrderForm(newData)
@@ -346,14 +349,14 @@ const Index: FC = () => {
 					</Button>
 				</div>
 			</PageTitle>
-			<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
+			<Card className="span-12" screen={false} style={{ padding: '1.5rem' }}>
 				<Form className="grid  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 					<div className="grid gap-lg span-12">
 						<div className="span-3">
 							<Controller
 								name="warehouse"
 								control={control}
-								render={({field: {value, ref, onChange, onBlur}}) => (
+								render={({ field: { value, ref, onChange, onBlur } }) => (
 									<Select
 										id="warehouse"
 										label="Material warehouse"
@@ -372,7 +375,7 @@ const Index: FC = () => {
 							<Controller
 								name="glue"
 								control={control}
-								render={({field: {value, ref, onChange, onBlur}}) => (
+								render={({ field: { value, ref, onChange, onBlur } }) => (
 									<Select
 										id="glue"
 										label="Glue"
@@ -391,7 +394,7 @@ const Index: FC = () => {
 							<Controller
 								control={control}
 								name={`glue_amount`}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id={`glue_amount`}
 										maxLength={12}
@@ -406,10 +409,18 @@ const Index: FC = () => {
 						</div>
 						<div className="span-3 flex justify-end">
 							<div>
-								<Button style={{marginTop: '1.9rem'}} onClick={() => setIsAdding(true)}>
+								<Button style={{ marginTop: '1.9rem' }} onClick={() => setIsAdding(true)}>
 									Add order
 								</Button>
 							</div>
+						</div>
+						<div className="span-12">
+							<Input
+								id={`comment`}
+								label={t('Comment')}
+								error={errors?.comment?.message}
+								{...register('comment')}
+							/>
 						</div>
 					</div>
 					{
@@ -427,7 +438,7 @@ const Index: FC = () => {
 										<Controller
 											name={`data.${index}.layer`}
 											control={control}
-											render={({field: {value, ref, onChange, onBlur}}) => (
+											render={({ field: { value, ref, onChange, onBlur } }) => (
 												<Select
 													ref={ref}
 													top={true}
@@ -449,7 +460,7 @@ const Index: FC = () => {
 										<Controller
 											control={control}
 											name={`data.${index}.weight`}
-											render={({field}) => (
+											render={({ field }) => (
 												<NumberFormattedInput
 													id={`data.${index}.weight`}
 													maxLength={12}
@@ -467,7 +478,7 @@ const Index: FC = () => {
 										<Controller
 											name={`data.${index}.material`}
 											control={control}
-											render={({field: {value, ref, onChange, onBlur}}) => (
+											render={({ field: { value, ref, onChange, onBlur } }) => (
 												<Select
 													ref={ref}
 													id={`payment.${index}.material`}
@@ -495,16 +506,16 @@ const Index: FC = () => {
 			{
 				isAdding ?
 					<>
-						<Card style={{marginTop: '2rem'}}>
+						<Card style={{ marginTop: '2rem' }}>
 							<ReactTable
 								columns={columns}
 								data={data}
 								isLoading={isLoading}
 							/>
 						</Card>
-						<Pagination totalPages={totalPages}/>
+						<Pagination totalPages={totalPages} />
 					</> :
-					<HighGroupOrders groupOrders={groupOrders}/>
+					<HighGroupOrders groupOrders={groupOrders} />
 			}
 		</>
 	)
