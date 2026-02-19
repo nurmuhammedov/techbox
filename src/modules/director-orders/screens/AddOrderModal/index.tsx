@@ -1,6 +1,6 @@
-import {IFIle, ISelectOption} from 'interfaces/form.interface'
-import {IOrderDetail} from 'interfaces/orders.interface'
-import {FC, useEffect} from 'react'
+import { IFIle, ISelectOption } from 'interfaces/form.interface'
+import { IOrderDetail } from 'interfaces/orders.interface'
+import { FC, useEffect } from 'react'
 import {
 	Button,
 	Form,
@@ -9,32 +9,32 @@ import {
 	NumberFormattedInput,
 	Select, Wrapper, MaskInput, Modal
 } from 'components'
-import {IProductDetail} from 'interfaces/products.interface'
-import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {useForm, Controller, useFieldArray} from 'react-hook-form'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {useActions, useAdd, useData, useDetail, useSearchParams, useTypedSelector} from 'hooks'
-import {ordersSchema2} from 'helpers/yup'
-import {getSelectValue, modifyObjectField} from 'utilities/common'
-import {Box, Plus} from 'assets/icons'
-import {useTranslation} from 'react-i18next'
-import {getDate} from 'utilities/date'
-import {ISearchParams} from 'interfaces/params.interface'
-import {InferType} from 'yup'
+import { IProductDetail } from 'interfaces/products.interface'
+import { BUTTON_THEME, FIELD } from 'constants/fields'
+import { useForm, Controller, useFieldArray } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useActions, useAdd, useData, useDetail, useSearchParams, useTypedSelector } from 'hooks'
+import { ordersSchema2 } from 'helpers/yup'
+import { getSelectValue, modifyObjectField } from 'utilities/common'
+import { Box, Plus } from 'assets/icons'
+import { useTranslation } from 'react-i18next'
+import { formatDateToISO, getDate } from 'utilities/date'
+import { ISearchParams } from 'interfaces/params.interface'
+import { InferType } from 'yup'
 
 
 interface IProperties {
 	edit?: boolean;
 }
 
-const ProductPage: FC<IProperties> = ({edit = false}) => {
-	const {t} = useTranslation()
-	const {orders} = useTypedSelector(state => state.orders)
-	const {data: products = []} = useData<ISelectOption[]>('products/select')
-	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
-	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
-	const {addOrder: add} = useActions()
-	const {removeParams} = useSearchParams()
+const ProductPage: FC<IProperties> = ({ edit = false }) => {
+	const { t } = useTranslation()
+	const { orders } = useTypedSelector(state => state.orders)
+	const { data: products = [] } = useData<ISelectOption[]>('products/select')
+	const { data: materials = [] } = useData<ISelectOption[]>('products/materials/select')
+	const { data: formats = [] } = useData<ISelectOption[]>('products/formats/select')
+	const { addOrder: add } = useActions()
+	const { removeParams } = useSearchParams()
 
 	const {
 		handleSubmit,
@@ -43,7 +43,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		setValue,
 		reset,
 		watch,
-		formState: {errors}
+		formState: { errors }
 	} = useForm({
 		resolver: yupResolver(ordersSchema2),
 		mode: 'onTouched',
@@ -65,7 +65,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		}
 	})
 
-	const {fields, append, remove} = useFieldArray({
+	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'layer' as never
 	})
@@ -101,8 +101,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	useEffect(() => {
 		if (orders?.length && watch('length') && watch('width')) {
 			const count = orders[0]?.count_entered_leader || orders[0]?.count || 0
-			const length = (2* Number(orders[0]?.width || 0)) + 70 + (2 * Number(orders[0]?.length || 0))
-			const length2 = (2*Number(watch('width') || 0)) + 70 + (2 * Number(watch('length') || 0))
+			const length = (2 * Number(orders[0]?.width || 0)) + 70 + (2 * Number(orders[0]?.length || 0))
+			const length2 = (2 * Number(watch('width') || 0)) + 70 + (2 * Number(watch('length') || 0))
 
 			setValue('count', Math.floor(Number(((Number(count) * length) / length2)))?.toString())
 
@@ -110,7 +110,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	}, [watch('width'), watch('length')])
 
 	return (
-		<Modal title="Add order" id="addOrder" style={{height: '60rem', width: '100rem'}}>
+		<Modal title="Add order" id="addOrder" style={{ height: '60rem', width: '100rem' }}>
 			<Form className="grid gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 				{
 					!edit &&
@@ -119,7 +119,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							<Controller
 								name="product"
 								control={control}
-								render={({field: {value, ref, onChange, onBlur}}) => (
+								render={({ field: { value, ref, onChange, onBlur } }) => (
 									<Select
 										id="product"
 										label="Product"
@@ -151,7 +151,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					<Controller
 						name="format"
 						control={control}
-						render={({field: {value, ref, onChange, onBlur}}) => (
+						render={({ field: { value, ref, onChange, onBlur } }) => (
 							<Select
 								id="format"
 								label="Format"
@@ -171,7 +171,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					<Controller
 						control={control}
 						name="box_ear"
-						render={({field}) => (
+						render={({ field }) => (
 							<NumberFormattedInput
 								id="box_ear"
 								maxLength={3}
@@ -189,7 +189,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					<Controller
 						name="logo"
 						control={control}
-						render={({field: {value, ref, onChange, onBlur}}) => (
+						render={({ field: { value, ref, onChange, onBlur } }) => (
 							<FileUpLoader
 								id="logo"
 								ref={ref}
@@ -208,7 +208,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					<Controller
 						control={control}
 						name="width"
-						render={({field}) => (
+						render={({ field }) => (
 							<NumberFormattedInput
 								id="width"
 								label={`${t('Sizes')} (${t('mm')})`}
@@ -225,7 +225,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					<Controller
 						control={control}
 						name="length"
-						render={({field}) => (
+						render={({ field }) => (
 							<NumberFormattedInput
 								id="length"
 								maxLength={3}
@@ -241,7 +241,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					<Controller
 						control={control}
 						name="height"
-						render={({field}) => (
+						render={({ field }) => (
 							<NumberFormattedInput
 								id="height"
 								maxLength={3}
@@ -256,7 +256,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				</div>
 
 				<Wrapper className="span-4 align-center justify-center">
-					<Box/>
+					<Box />
 				</Wrapper>
 
 				<div className="span-12 grid gap-lg">
@@ -266,7 +266,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 								<Controller
 									name={`layer.${index}`}
 									control={control}
-									render={({field: {value, ref, onChange, onBlur}}) => (
+									render={({ field: { value, ref, onChange, onBlur } }) => (
 										<Select
 											id={`layer-${index + 1}`}
 											label={`${index + 1}-${t('Layer')?.toLowerCase()}`}
@@ -287,12 +287,12 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					}
 
 
-					<div className="span-4" style={{marginTop: '2rem'}}>
+					<div className="span-4" style={{ marginTop: '2rem' }}>
 						<Button
 							theme={BUTTON_THEME.PRIMARY}
 							type="button"
 							disabled={(watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
-							icon={<Plus/>}
+							icon={<Plus />}
 							onClick={() => append('')}
 						>
 							Add layer
@@ -306,7 +306,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							name="count"
 							control={control}
-							render={({field}) => (
+							render={({ field }) => (
 								<NumberFormattedInput
 									id="count"
 									maxLength={9}
@@ -324,7 +324,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							name="deadline"
 							control={control}
-							render={({field}) => (
+							render={({ field }) => (
 								<MaskInput
 									id="deadline"
 									label="Deadline"
@@ -341,7 +341,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							name="price"
 							control={control}
-							render={({field}) => (
+							render={({ field }) => (
 								<NumberFormattedInput
 									id="price"
 									maxLength={13}
@@ -359,7 +359,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							name="money_paid"
 							control={control}
-							render={({field}) => (
+							render={({ field }) => (
 								<NumberFormattedInput
 									id="money_paid"
 									maxLength={13}
@@ -391,12 +391,13 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						handleSubmit((data) =>
 							addOrder(modifyObjectField({
 								...data,
+								deadline: formatDateToISO(data?.deadline as string | undefined),
 								customer: null
 							} as ISearchParams, 'logo') as InferType<typeof ordersSchema2>)
 								.then((data) => {
 									add({
 										...data,
-										format: {id: data?.format as unknown as number, format: '600', name: '11'}
+										format: { id: data?.format as unknown as number, format: '600', name: '11' }
 									})
 									reset({
 										product: undefined,

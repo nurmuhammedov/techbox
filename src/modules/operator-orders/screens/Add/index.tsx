@@ -327,7 +327,7 @@ const Index: FC = () => {
 									})),
 									warehouse: data?.warehouse,
 									glue: data?.glue,
-									comment: data?.comment,
+									comment: data?.comment || null,
 									glue_amount: (Number(data?.glue_amount) / groupOrders.length).toFixed(2)
 								}
 								addGroupOrderForm(newData)

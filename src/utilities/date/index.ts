@@ -1,4 +1,4 @@
-import {ISelectOption} from 'interfaces/form.interface'
+import { ISelectOption } from 'interfaces/form.interface'
 
 
 function formatDate(isoDateString: string | null | undefined): string {
@@ -39,15 +39,26 @@ function generateYearList(startYear: number = 1900): ISelectOption[] {
 	const years: ISelectOption[] = []
 
 	for (let year = startYear; year <= currentYear; year++) {
-		years.push({value: year.toString(), label: year.toString()})
+		years.push({ value: year.toString(), label: year.toString() })
 	}
 
 	return years.reverse()
 }
 
 
+const formatDateToISO = (dateStr?: string): string | null => {
+	if (!dateStr || dateStr.length < 10) {
+		return null
+	}
+	const [day, month, year] = dateStr.split('.')
+	if (!day || !month || !year) return null
+	return `${year}-${month}-${day}`
+}
+
+
 export {
 	generateYearList,
 	formatDate,
-	getDate
+	getDate,
+	formatDateToISO
 }

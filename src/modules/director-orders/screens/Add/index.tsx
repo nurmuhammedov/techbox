@@ -50,7 +50,7 @@ import {
 	getSelectValue,
 	hasDifferentLayers
 } from 'utilities/common'
-import { getDate } from 'utilities/date'
+import { formatDateToISO, getDate } from 'utilities/date'
 
 
 const Index = () => {
@@ -286,7 +286,7 @@ const Index = () => {
 				x: data?.x,
 				has_addition: data?.has_addition,
 				stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true)?.filter(i => i !== 'has_addition')?.reverse(),
-				deadline: data?.deadline || null,
+				deadline: formatDateToISO(data?.deadline as string | undefined) || null,
 				count: data?.count
 			}
 
@@ -1033,7 +1033,7 @@ const Index = () => {
 					onSubmit={
 						handleEditSubmit((data) => {
 							const newData = {
-								deadline: data?.deadline,
+								deadline: formatDateToISO(data?.deadline),
 								count_entered_leader: data?.count_entered_leader,
 								layer: data?.layer,
 								piece: data?.piece,

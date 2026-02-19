@@ -1,5 +1,5 @@
-import {IFIle, ISelectOption} from 'interfaces/form.interface'
-import {FC, useEffect} from 'react'
+import { IFIle, ISelectOption } from 'interfaces/form.interface'
+import { FC, useEffect } from 'react'
 import {
 	Button,
 	Card,
@@ -11,32 +11,32 @@ import {
 	NumberFormattedInput,
 	Select, Wrapper, MaskInput
 } from 'components'
-import {IProductDetail} from 'interfaces/products.interface'
-import {useNavigate, useParams} from 'react-router-dom'
-import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {useForm, Controller, useFieldArray} from 'react-hook-form'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {useAdd, useData, useDetail, useUpdate} from 'hooks'
-import {ordersSchema} from 'helpers/yup'
-import {getSelectValue, modifyObjectField} from 'utilities/common'
-import {Box, Plus} from 'assets/icons'
-import {useTranslation} from 'react-i18next'
-import {IOrderDetail} from 'interfaces/orders.interface'
-import {getDate} from 'utilities/date'
-import {ISearchParams} from 'interfaces/params.interface'
+import { IProductDetail } from 'interfaces/products.interface'
+import { useNavigate, useParams } from 'react-router-dom'
+import { BUTTON_THEME, FIELD } from 'constants/fields'
+import { useForm, Controller, useFieldArray } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useAdd, useData, useDetail, useUpdate } from 'hooks'
+import { ordersSchema } from 'helpers/yup'
+import { getSelectValue, modifyObjectField } from 'utilities/common'
+import { Box, Plus } from 'assets/icons'
+import { useTranslation } from 'react-i18next'
+import { IOrderDetail } from 'interfaces/orders.interface'
+import { formatDateToISO, getDate } from 'utilities/date'
+import { ISearchParams } from 'interfaces/params.interface'
 
 
 interface IProperties {
 	edit?: boolean;
 }
 
-const ProductPage: FC<IProperties> = ({edit = false}) => {
+const ProductPage: FC<IProperties> = ({ edit = false }) => {
 	const navigate = useNavigate()
-	const {t} = useTranslation()
-	const {orderId: id = undefined, id: customer = undefined} = useParams()
-	const {data: products = []} = useData<ISelectOption[]>('products/select', !!customer, {customer: customer})
-	const {data: materials = []} = useData<ISelectOption[]>('products/material-types-seller/select')
-	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
+	const { t } = useTranslation()
+	const { orderId: id = undefined, id: customer = undefined } = useParams()
+	const { data: products = [] } = useData<ISelectOption[]>('products/select', !!customer, { customer: customer })
+	const { data: materials = [] } = useData<ISelectOption[]>('products/material-types-seller/select')
+	const { data: formats = [] } = useData<ISelectOption[]>('products/formats/select')
 
 	const {
 		handleSubmit,
@@ -44,7 +44,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		register,
 		reset,
 		watch,
-		formState: {errors}
+		formState: { errors }
 	} = useForm({
 		resolver: yupResolver(ordersSchema),
 		mode: 'onTouched',
@@ -67,13 +67,13 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		}
 	})
 
-	const {fields, append, remove} = useFieldArray({
+	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'layer_seller' as never
 	})
 
-	const {mutateAsync: addOrder, isPending: isAdding} = useAdd('services/orders')
-	const {mutateAsync: updateOrder, isPending: isUpdating} = useUpdate('services/orders/', id)
+	const { mutateAsync: addOrder, isPending: isAdding } = useAdd('services/orders')
+	const { mutateAsync: updateOrder, isPending: isUpdating } = useUpdate('services/orders/', id)
 
 	const {
 		data: detail,
@@ -124,7 +124,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	}, [detail, edit])
 
 	if (isDetailLoading && edit) {
-		return <Loader/>
+		return <Loader />
 	}
 
 	return (
@@ -143,6 +143,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 								handleSubmit((data) =>
 									addOrder(modifyObjectField({
 										...data,
+										deadline: formatDateToISO(data?.deadline as string | undefined),
 										product: data?.product ? data?.product : null,
 										customer
 									} as ISearchParams, 'logo'))
@@ -171,6 +172,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 								handleSubmit((data) =>
 									updateOrder(modifyObjectField({
 										...data,
+										deadline: formatDateToISO(data?.deadline as string | undefined),
 										product: data?.product ? data?.product : null,
 										customer
 									} as ISearchParams, 'logo'))
@@ -202,7 +204,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					</Button>
 				</div>
 			</PageTitle>
-			<Card style={{padding: '1.5rem'}}>
+			<Card style={{ padding: '1.5rem' }}>
 				<Form className="grid gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 					{
 						!edit &&
@@ -211,7 +213,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 								<Controller
 									name="product"
 									control={control}
-									render={({field: {value, ref, onChange, onBlur}}) => (
+									render={({ field: { value, ref, onChange, onBlur } }) => (
 										<Select
 											id="product"
 											label="Product"
@@ -243,7 +245,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							name="format"
 							control={control}
-							render={({field: {value, ref, onChange, onBlur}}) => (
+							render={({ field: { value, ref, onChange, onBlur } }) => (
 								<Select
 									id="format"
 									label="Format"
@@ -263,7 +265,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							control={control}
 							name="box_ear"
-							render={({field}) => (
+							render={({ field }) => (
 								<NumberFormattedInput
 									id="box_ear"
 									maxLength={3}
@@ -281,7 +283,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							name="logo"
 							control={control}
-							render={({field: {value, ref, onChange, onBlur}}) => (
+							render={({ field: { value, ref, onChange, onBlur } }) => (
 								<FileUpLoader
 									id="logo"
 									ref={ref}
@@ -300,7 +302,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							control={control}
 							name="width"
-							render={({field}) => (
+							render={({ field }) => (
 								<NumberFormattedInput
 									id="width"
 									label={`${t('Sizes')} (${t('mm')})`}
@@ -317,7 +319,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							control={control}
 							name="length"
-							render={({field}) => (
+							render={({ field }) => (
 								<NumberFormattedInput
 									id="length"
 									maxLength={3}
@@ -333,7 +335,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							control={control}
 							name="height"
-							render={({field}) => (
+							render={({ field }) => (
 								<NumberFormattedInput
 									id="height"
 									maxLength={3}
@@ -348,7 +350,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					</div>
 
 					<Wrapper className="span-4 align-center justify-center">
-						<Box/>
+						<Box />
 					</Wrapper>
 
 					<div className="span-12 grid gap-lg">
@@ -358,7 +360,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 									<Controller
 										name={`layer_seller.${index}`}
 										control={control}
-										render={({field: {value, ref, onChange, onBlur}}) => (
+										render={({ field: { value, ref, onChange, onBlur } }) => (
 											<Select
 												id={`layer_seller-${index + 1}`}
 												label={`${index + 1}-${t('Layer')?.toLowerCase()}`}
@@ -379,12 +381,12 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						}
 
 
-						<div className="span-4" style={{marginTop: '2rem'}}>
+						<div className="span-4" style={{ marginTop: '2rem' }}>
 							<Button
 								theme={BUTTON_THEME.PRIMARY}
 								type="button"
 								disabled={(watch('layer_seller')?.length !== 0 && watch('layer_seller')?.[(watch('layer_seller')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
-								icon={<Plus/>}
+								icon={<Plus />}
 								onClick={() => append('')}
 							>
 								Add layer
@@ -398,7 +400,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							<Controller
 								name="count"
 								control={control}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="count"
 										maxLength={6}
@@ -416,7 +418,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							<Controller
 								name="deadline"
 								control={control}
-								render={({field}) => (
+								render={({ field }) => (
 									<MaskInput
 										id="deadline"
 										label="Deadline"
@@ -433,7 +435,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							<Controller
 								name="price"
 								control={control}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="price"
 										maxLength={13}
@@ -451,7 +453,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							<Controller
 								name="money_paid"
 								control={control}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="money_paid"
 										maxLength={13}

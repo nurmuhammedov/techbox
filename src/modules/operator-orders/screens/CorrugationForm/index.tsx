@@ -36,6 +36,11 @@ interface IDetailData {
     glue?: number
     glue_amount?: number
     materials?: (IIDName & { weight?: number | string })[]
+    weight_materials?: {
+        id: number
+        weight: number | string
+        materials: (IIDName & { material_name?: string })[]
+    }[]
 }
 
 interface ICorrugationProperties {
@@ -58,6 +63,7 @@ interface IFormItem {
 interface ILeftoverItem {
     id: number
     weight: string
+    name?: string
 }
 
 interface IFormValues {
@@ -157,7 +163,11 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({ detail = false }) => {
                 })
             })
 
-            const mappedLeftovers: ILeftoverItem[] = responseData?.materials?.map(matId => ({
+            const mappedLeftovers: ILeftoverItem[] = responseData?.weight_materials?.map(wm => ({
+                id: wm.id,
+                weight: wm.weight ? String(wm.weight) : '',
+                name: wm.materials.map(m => `${m.name} (${m.material_name})`).join(', ')
+            })) || responseData?.materials?.map(matId => ({
                 id: matId?.id,
                 weight: matId?.weight ? String(matId.weight) : ''
             })) || []
@@ -257,7 +267,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({ detail = false }) => {
                         <Card className="span-12" screen={false} style={{ padding: '1.5rem' }}>
                             <div className="grid gap-lg span-12">
                                 {leftoverFields.map((field, index) => {
-                                    const materialLabel = `${responseData?.materials?.find(m => m.id == watch(`leftover.${index}.id`))?.material_name || '-'}/${responseData?.materials?.find(m => m.id == watch(`leftover.${index}.id`))?.name || '-'}`
+                                    const materialLabel = watch(`leftover.${index}.name`) || `${responseData?.materials?.find(m => m.id == watch(`leftover.${index}.id`))?.material_name || '-'}/${responseData?.materials?.find(m => m.id == watch(`leftover.${index}.id`))?.name || '-'}`
                                     return (
                                         <div key={field.id} className="grid gap-lg span-12 align-end">
                                             <div className="span-4">
