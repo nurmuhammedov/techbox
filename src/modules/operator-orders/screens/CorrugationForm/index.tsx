@@ -28,7 +28,6 @@ import { showMessage } from 'utilities/alert'
 import * as yup from 'yup'
 import { IIDName } from 'interfaces/configuration.interface'
 
-
 interface IDetailData {
     id: number
     group_order: IGroupOrder[]
@@ -91,7 +90,7 @@ const schema = yup.object().shape({
     ),
     leftover: yup.array().of(
         yup.object().shape({
-            id: yup.number().required('This field is required'),
+            id: yup.number().required(),
             weight: yup.string().required('This field is required')
         })
     )
@@ -108,10 +107,6 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({ detail = false }) => {
         mutateAsync: updateOrders,
         isPending: isPendingOrders
     } = useUpdate('services/consecutive-orders/', id, 'patch', '')
-    // const {
-    //     mutateAsync: updateWeights,
-    //     isPending: isPendingWeights
-    // } = useUpdate('products/', 'base-material-update-weight', 'put', '')
 
     const {
         control,
@@ -153,31 +148,27 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({ detail = false }) => {
                 }))
             }))
 
-            const uniqueMaterialIds = new Set<number>()
+            let mappedLeftovers: ILeftoverItem[] = []
 
-            responseData.group_order.forEach(group => {
-                group.orders.forEach(order => {
-                    order.layer?.forEach(layerId => {
-                        uniqueMaterialIds.add(Number(layerId))
-                    })
-                })
-            })
-
-            const mappedLeftovers: ILeftoverItem[] = responseData?.weight_materials?.map(wm => ({
-                id: wm.id,
-                weight: wm.weight ? String(wm.weight) : '',
-                name: wm.materials.map(m => `${m.name} (${m.material_name})`).join(', ')
-            })) || responseData?.materials?.map(matId => ({
-                id: matId?.id,
-                weight: matId?.weight ? String(matId.weight) : ''
-            })) || []
+            if (detail && responseData?.weight_materials?.length) {
+                mappedLeftovers = responseData.weight_materials.map(wm => ({
+                    id: wm.id,
+                    weight: wm.weight ? String(wm.weight) : '',
+                    name: wm.materials.map(m => `${m.name} (${m.material_name})`).join(', ')
+                }))
+            } else {
+                mappedLeftovers = responseData?.materials?.map(mat => ({
+                    id: mat.id,
+                    weight: mat.weight ? String(mat.weight) : ''
+                })) || []
+            }
 
             reset({
                 items: mappedItems,
                 leftover: mappedLeftovers
             })
         }
-    }, [responseData, reset])
+    }, [responseData, reset, detail])
 
     const onSubmit = async (data: IFormValues) => {
         const countAfterProcessing: { order: number, count: string }[] = []
@@ -214,14 +205,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({ detail = false }) => {
         }
 
         try {
-            const promises = []
-            promises.push(updateOrders(mainPayload))
-            //
-            // if (leftoverPayload.length > 0) {
-            //     promises.push(updateWeights(leftoverPayload))
-            // }
-
-            await Promise.all(promises)
+            await updateOrders(mainPayload)
             showMessage(t('Updated successfully'), 'success')
             navigate(-1)
         } catch (error) {
@@ -285,7 +269,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({ detail = false }) => {
                                                     render={({ field }) => (
                                                         <NumberFormattedInput
                                                             id={`leftover.${index}.weight`}
-                                                            label={`${t('Excess roll')} (${t('kg')})`}
+                                                            label={`${detail ? t('Ajratilgan rulon') : t('Ortib qolgan rulon')} (${t('kg')})`}
                                                             maxLength={12}
                                                             allowDecimals={true}
                                                             {...field}
