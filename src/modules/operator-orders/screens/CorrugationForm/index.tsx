@@ -153,13 +153,13 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({ detail = false }) => {
             if (detail && responseData?.weight_materials?.length) {
                 mappedLeftovers = responseData.weight_materials.map(wm => ({
                     id: wm.id,
-                    weight: wm.weight ? String(wm.weight) : '',
+                    weight: wm.weight ==0 ? '0' : wm.weight ? String(wm.weight) : '',
                     name: wm.materials.map(m => `${m.name} (${m.material_name})`).join(', ')
                 }))
             } else {
                 mappedLeftovers = responseData?.materials?.map(mat => ({
                     id: mat.id,
-                    weight: mat.weight ? String(mat.weight) : ''
+                    weight: mat.weight ==0 ? '0' : mat.weight ? String(mat.weight) : ''
                 })) || []
             }
 
