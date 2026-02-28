@@ -1,4 +1,4 @@
-import { ISelectOption } from 'interfaces/form.interface'
+import {ISelectOption} from 'interfaces/form.interface'
 
 
 function formatDate(isoDateString: string | null | undefined): string {
@@ -13,10 +13,12 @@ function formatDate(isoDateString: string | null | undefined): string {
 	return `${day}.${month}.${year} - ${hours}:${minutes}`
 }
 
-const getDate = (dateStr?: string): string => {
+const getDate = (dateStr?: string | null): string => {
 	let date: Date
-
-	if (!dateStr) {
+	if (dateStr === undefined) {
+		date = new Date()
+	}
+	if (!dateStr && dateStr !== undefined) {
 		return ''
 	}
 
@@ -39,7 +41,7 @@ function generateYearList(startYear: number = 1900): ISelectOption[] {
 	const years: ISelectOption[] = []
 
 	for (let year = startYear; year <= currentYear; year++) {
-		years.push({ value: year.toString(), label: year.toString() })
+		years.push({value: year.toString(), label: year.toString()})
 	}
 
 	return years.reverse()
@@ -47,11 +49,18 @@ function generateYearList(startYear: number = 1900): ISelectOption[] {
 
 
 const formatDateToISO = (dateStr?: string): string | null => {
+	console.log(dateStr, '2')
 	if (!dateStr || dateStr.length < 10) {
 		return null
 	}
 	const [day, month, year] = dateStr.split('.')
-	if (!day || !month || !year) return null
+	if (!day || !month || !year) {
+		const [y, m, d] = dateStr.split('-')
+		if (!y || !m || !d) {
+			return null
+		}
+		return `${y}-${m}-${d}`
+	}
 	return `${year}-${month}-${day}`
 }
 

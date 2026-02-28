@@ -1,4 +1,4 @@
-import { yupResolver } from '@hookform/resolvers/yup'
+import {yupResolver} from '@hookform/resolvers/yup'
 import classNames from 'classnames'
 import {
 	Button,
@@ -18,9 +18,9 @@ import {
 	Select
 } from 'components'
 import styles from 'components/HOC/GroupOrderDetail/styles.module.scss'
-import { BUTTON_THEME, FIELD } from 'constants/fields'
-import { activityOptions, booleanOptions, cutOptions, statusOptions } from 'helpers/options'
-import { groupOrdersSchema, temporaryOrderSchema } from 'helpers/yup'
+import {BUTTON_THEME, FIELD} from 'constants/fields'
+import {activityOptions, booleanOptions, cutOptions, statusOptions} from 'helpers/options'
+import {groupOrdersSchema, temporaryOrderSchema} from 'helpers/yup'
 import {
 	useActions,
 	useAdd,
@@ -32,17 +32,17 @@ import {
 	useTypedSelector,
 	useUpdate
 } from 'hooks'
-import { ISelectOption } from 'interfaces/form.interface'
-import { IOrderDetail } from 'interfaces/orders.interface'
-import { ISearchParams } from 'interfaces/params.interface'
-import { interceptor } from 'libraries/index'
+import {ISelectOption} from 'interfaces/form.interface'
+import {IOrderDetail} from 'interfaces/orders.interface'
+import {ISearchParams} from 'interfaces/params.interface'
+import {interceptor} from 'libraries/index'
 import AddOrderModal from 'modules/director-orders/screens/AddOrderModal'
-import { useEffect, useMemo, useState } from 'react'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { Column } from 'react-table'
-import { showMessage } from 'utilities/alert'
+import {useEffect, useMemo, useState} from 'react'
+import {Controller, useFieldArray, useForm} from 'react-hook-form'
+import {useTranslation} from 'react-i18next'
+import {useNavigate} from 'react-router-dom'
+import {Column} from 'react-table'
+import {showMessage} from 'utilities/alert'
 import {
 	areAllFieldsPresent,
 	decimalToInteger,
@@ -50,26 +50,26 @@ import {
 	getSelectValue,
 	hasDifferentLayers
 } from 'utilities/common'
-import { formatDateToISO, getDate } from 'utilities/date'
+import {formatDateToISO, getDate} from 'utilities/date'
 
 
 const Index = () => {
-	const { t } = useTranslation()
+	const {t} = useTranslation()
 	const navigate = useNavigate()
 	const {
 		removeParams,
 		addParams,
-		paramsObject: { updateId = undefined, deleteId = undefined, ordering }
+		paramsObject: {updateId = undefined, deleteId = undefined, ordering}
 	} = useSearchParams()
-	const { deleteOrder, addOrder, updateOrder, clearOrders } = useActions()
+	const {deleteOrder, addOrder, updateOrder, clearOrders} = useActions()
 	const [isAdding, setIsAdding] = useState<boolean>(false)
-	const { page, pageSize } = usePagination()
-	const { orders } = useTypedSelector(state => state.orders)
-	const { data: formats = [] } = useData<ISelectOption[]>('products/formats/select')
-	const { data: materials = [] } = useData<ISelectOption[]>('products/materials/select')
-	const { data: sellerMaterials = [] } = useData<ISelectOption[]>('products/material-types-seller/select')
+	const {page, pageSize} = usePagination()
+	const {orders} = useTypedSelector(state => state.orders)
+	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
+	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
+	const {data: sellerMaterials = []} = useData<ISelectOption[]>('products/material-types-seller/select')
 
-	const { data, totalPages, isPending: isLoading, refetch } = usePaginatedData<IOrderDetail[]>(
+	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IOrderDetail[]>(
 		`/services/orders-with-detail`,
 		{
 			page: page,
@@ -126,13 +126,13 @@ const Index = () => {
 							mini={true}
 							disabled={!!orders?.find(order => order?.id == row?.id)}
 							onClick={() => {
-								addOrder({ ...row })
+								addOrder({...row})
 								setIsAdding(false)
 							}}
 						>
 							Choose
 						</Button>
-						<DeleteButton id={row.id} />
+						<DeleteButton id={row.id}/>
 					</div>
 				)
 			}
@@ -150,7 +150,7 @@ const Index = () => {
 		watch,
 		trigger,
 		setFocus,
-		formState: { errors }
+		formState: {errors}
 	} = useForm({
 		resolver: yupResolver(groupOrdersSchema),
 		mode: 'onTouched',
@@ -180,7 +180,7 @@ const Index = () => {
 		setValue: setValueEdit,
 		watch: watchEdit,
 		control,
-		formState: { errors: editErrors }
+		formState: {errors: editErrors}
 	} = useForm({
 		mode: 'onTouched',
 		defaultValues: {
@@ -206,12 +206,12 @@ const Index = () => {
 	})
 
 
-	const { fields } = useFieldArray({
+	const {fields} = useFieldArray({
 		control,
 		name: 'layer' as never
 	})
 
-	const { mutateAsync: addGroupOrder, isPending: isAddLoading } = useAdd('services/group-orders')
+	const {mutateAsync: addGroupOrder, isPending: isAddLoading} = useAdd('services/group-orders')
 
 
 	const {
@@ -254,17 +254,14 @@ const Index = () => {
 	const y = watch('y')
 
 	useEffect(() => {
-		if (watch('has_addition') && x && y) {
+		if (watch('has_addition') && x) {
 			const totalLength = selectedOrders.reduce((acc, order) => {
-				const orderL = (2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))
-				return acc + (Number(order.count || 0) * orderL)
+				const orderL = ((2 * Number(order.width || 0) + 70) + (2 * Number(order.length || 0)))
+				return acc + Math.floor(Number(order.count_entered_leader || order.count || 0) / (cutOptions?.find(i => i.value == order?.piece)?.material || 1)) * orderL
 			}, 0)
 
-			const g = Number(glueSquare) || 0.05
-			const area = Number(x) + Number(y)
-
-			if (area > 0) {
-				const calculatedCount = Math.round((totalLength * g) / area)
+			if (Number(x) > 0) {
+				const calculatedCount = Math.floor(totalLength / Number(x || 1))
 				setValue('count', calculatedCount.toString())
 			}
 		}
@@ -326,19 +323,19 @@ const Index = () => {
 						Back
 					</Button>
 					<Button onClick={handleSubmit(onSubmit)}
-						disabled={isAddLoading || isAdding}>
+					        disabled={isAddLoading || isAdding}>
 						Send
 					</Button>
 				</div>
 			</PageTitle>
 			<div className={classNames(styles.root, 'grid gap-lg')}>
-				<Card className="span-12" screen={false} style={{ padding: '1.5rem' }}>
+				<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
 					<Form className="grid-10  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 						<div className="span-3">
 							<Controller
 								name="separated_raw_materials_format"
 								control={controlAdd}
-								render={({ field: { value, ref, onChange, onBlur } }) => (
+								render={({field: {value, ref, onChange, onBlur}}) => (
 									<Select
 										id="separated_raw_materials_format"
 										label="Production format"
@@ -357,7 +354,7 @@ const Index = () => {
 							<Controller
 								name="has_addition"
 								control={controlAdd}
-								render={({ field: { value, ref, onChange, onBlur } }) => (
+								render={({field: {value, ref, onChange, onBlur}}) => (
 									<Select
 										id="has_addition"
 										label="Cutting"
@@ -376,10 +373,10 @@ const Index = () => {
 							<Controller
 								name="glue_square"
 								control={controlAdd}
-								render={({ field }) => (
+								render={({field}) => (
 									<Input id="glue_square" {...field} type="text"
-										label={`${t('Glue amount')} ${t('(m²)')} `}
-										error={errors?.glue_square?.message} />
+									       label={`${t('Glue amount')} ${t('(m²)')} `}
+									       error={errors?.glue_square?.message}/>
 								)}
 							/>
 						</div>
@@ -391,7 +388,7 @@ const Index = () => {
 											Add order
 										</Button>
 										<Button
-											onClick={() => addParams({ modal: 'addOrder' })}>
+											onClick={() => addParams({modal: 'addOrder'})}>
 											Standing order
 										</Button>
 									</div> :
@@ -409,14 +406,14 @@ const Index = () => {
 				{
 					isAdding ?
 						<>
-							<Card style={{ marginTop: '2rem' }}>
+							<Card style={{marginTop: '2rem'}}>
 								<ReactTable
 									columns={columns}
 									data={data}
 									isLoading={isLoading}
 								/>
 							</Card>
-							<Pagination totalPages={totalPages} />
+							<Pagination totalPages={totalPages}/>
 						</> :
 						<div className="grid gap-lg span-12">
 							{
@@ -424,12 +421,12 @@ const Index = () => {
 									<Card
 										key={order.id}
 										screen={false}
-										style={{ padding: '1.5rem' }}
+										style={{padding: '1.5rem'}}
 										className="span-6"
 									>
 										<div className="grid gap-md">
 											<div
-												style={{ marginBottom: '1.5rem' }}
+												style={{marginBottom: '1.5rem'}}
 												className="flex span-12 justify-between gap-lg align-center"
 											>
 												<div className={styles.title}>
@@ -539,7 +536,7 @@ const Index = () => {
 
 											{
 												(order?.piece && order?.piece != 'total') &&
-												<div className="grid span-12" style={{ marginTop: '.75rem' }}>
+												<div className="grid span-12" style={{marginTop: '.75rem'}}>
 													<CutDiagram
 														sections={cutOptions?.find(i => i.value == order?.piece)?.material || 2}
 														// length={
@@ -584,7 +581,7 @@ const Index = () => {
 
 											}
 
-											<div className="grid span-12" style={{ marginTop: '.75rem' }}>
+											<div className="grid span-12" style={{marginTop: '.75rem'}}>
 												<Diagram
 													l0={
 														<Input
@@ -737,7 +734,7 @@ const Index = () => {
 
 										<div
 											className="flex justify-between gap-lg"
-											style={{ marginTop: 'auto' }}
+											style={{marginTop: 'auto'}}
 										>
 											<Button
 												theme={BUTTON_THEME.DANGER}
@@ -750,7 +747,7 @@ const Index = () => {
 												if (!isValid) {
 													setFocus('separated_raw_materials_format')
 												} else {
-													addParams({ updateId: order.id, modal: 'edit' })
+													addParams({updateId: order.id, modal: 'edit'})
 												}
 											}}>
 												Update
@@ -764,7 +761,7 @@ const Index = () => {
 								<div className="span-6">
 									<Card
 										screen={false}
-										style={{ padding: '1.5rem' }}
+										style={{padding: '1.5rem'}}
 										className="grid gap-md"
 									>
 										<div className="span-12">
@@ -795,7 +792,7 @@ const Index = () => {
 											<Controller
 												name="count"
 												control={controlAdd}
-												render={({ field }) => (
+												render={({field}) => (
 													<NumberFormattedInput
 														id="count"
 														maxLength={6}
@@ -813,7 +810,7 @@ const Index = () => {
 											<Controller
 												name="deadline"
 												control={controlAdd}
-												render={({ field }) => (
+												render={({field}) => (
 													<MaskInput
 														id="deadline"
 														label="Deadline"
@@ -829,7 +826,7 @@ const Index = () => {
 
 										<div
 											className="span-12 flex gap-md"
-											style={{ marginTop: '.75rem', marginBottom: '1.5rem' }}
+											style={{marginTop: '.75rem', marginBottom: '1.5rem'}}
 										>
 											<div className="span-4 flex gap-md align-end justify-start">
 												<input
@@ -1027,7 +1024,7 @@ const Index = () => {
 			<EditModal
 				isLoading={isDetailLoading && !detail}
 				title={`${t('Order number')}: #${updateId}`}
-				style={{ height: '45rem' }}
+				style={{height: '45rem'}}
 			>
 				<Form
 					onSubmit={
@@ -1050,11 +1047,11 @@ const Index = () => {
 								const newData = data as unknown as IOrderDetail
 								updateOrder({
 									...newData,
-									format: { id: newData.format as unknown as number, name: '', format: '' },
+									format: {id: newData.format as unknown as number, name: '', format: ''},
 									// deadline: newData?.deadline ? getDate(detail?.deadline) : '',
 									id: +(updateId || 0)
 								})
-								resetEdit({ deadline: '', layer: [], l0: '', l1: '', l2: '', l3: '', l4: '', l5: '' })
+								resetEdit({deadline: '', layer: [], l0: '', l1: '', l2: '', l3: '', l4: '', l5: ''})
 								removeParams('modal', 'updateId')
 							})
 						})
@@ -1069,7 +1066,7 @@ const Index = () => {
 									<Controller
 										name={`layer.${index}`}
 										control={control}
-										render={({ field: { value, ref, onChange, onBlur } }) => (
+										render={({field: {value, ref, onChange, onBlur}}) => (
 											<Select
 												id={`layer-${index + 1}`}
 												label={`${index + 1}-${t('layer')}`}
@@ -1123,7 +1120,7 @@ const Index = () => {
 						}
 
 
-						<div className="grid span-12" style={{ marginTop: '.75rem' }}>
+						<div className="grid span-12" style={{marginTop: '.75rem'}}>
 							<Diagram
 								l0={
 									<Input
@@ -1186,7 +1183,7 @@ const Index = () => {
 
 					<div
 						className="span-12 flex gap-md"
-						style={{ marginTop: '.75rem', marginBottom: '1.5rem' }}
+						style={{marginTop: '.75rem', marginBottom: '1.5rem'}}
 					>
 						<div className="span-4 flex gap-md align-end justify-start">
 							<input
@@ -1379,7 +1376,7 @@ const Index = () => {
 							<Controller
 								name="deadline"
 								control={control}
-								render={({ field }) => (
+								render={({field}) => (
 									<MaskInput
 										id="deadline"
 										label="Deadline"
@@ -1396,7 +1393,7 @@ const Index = () => {
 							<Controller
 								name="count_entered_leader"
 								control={control}
-								render={({ field }) => (
+								render={({field}) => (
 									<NumberFormattedInput
 										id="count_entered_leader"
 										maxLength={9}
@@ -1414,7 +1411,7 @@ const Index = () => {
 							<Controller
 								name={`piece`}
 								control={control}
-								render={({ field: { value, ref, onChange, onBlur } }) => (
+								render={({field: {value, ref, onChange, onBlur}}) => (
 									<Select
 										id={`piece`}
 										label={`Cut`}
@@ -1433,7 +1430,7 @@ const Index = () => {
 					</div>
 
 					<Button
-						style={{ marginTop: 'auto' }}
+						style={{marginTop: 'auto'}}
 						type={FIELD.SUBMIT}
 						disabled={isUpdating}
 					>
@@ -1442,11 +1439,11 @@ const Index = () => {
 				</Form>
 			</EditModal>
 
-			<AddOrderModal />
+			<AddOrderModal/>
 			<DeleteModal endpoint="services/orders/" onDelete={async () => {
 				await refetch()
 				deleteOrder(Number(deleteId || 0))
-			}} />
+			}}/>
 		</>
 	)
 }
