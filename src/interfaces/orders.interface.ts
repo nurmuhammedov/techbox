@@ -30,7 +30,6 @@ interface IOrderDetail {
 	length: string;
 	size: string;
 	layer: string[];
-	layer_seller: string[];
 	layers: number;
 	box_ear: string;
 

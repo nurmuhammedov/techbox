@@ -1,4 +1,4 @@
-import {yupResolver} from '@hookform/resolvers/yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 import {
 	Button,
 	Card,
@@ -13,23 +13,23 @@ import {
 	Form,
 	NumberFormattedInput
 } from 'components'
-import {FIELD} from 'constants/fields'
-import {materialSchema} from 'helpers/yup'
-import {useAdd, useDetail, usePaginatedData, usePagination, useSearchParams, useUpdate} from 'hooks'
-import {IMaterialItemDetail} from 'interfaces/materials.interface'
-import {useEffect, useMemo} from 'react'
-import {Controller, useForm} from 'react-hook-form'
-import {useTranslation} from 'react-i18next'
-import {Column} from 'react-table'
-import {decimalToInteger} from 'utilities/common'
+import { FIELD } from 'constants/fields'
+import { materialSchema } from 'helpers/yup'
+import { useAdd, useDetail, usePaginatedData, usePagination, useSearchParams, useUpdate } from 'hooks'
+import { IMaterialItemDetail } from 'interfaces/materials.interface'
+import { useEffect, useMemo } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { Column } from 'react-table'
+import { decimalToInteger } from 'utilities/common'
 
 
 const Index = () => {
-	const {t} = useTranslation()
-	const {page, pageSize} = usePagination()
-	const {removeParams, paramsObject: {updateId = undefined}} = useSearchParams()
+	const { t } = useTranslation()
+	const { page, pageSize } = usePagination()
+	const { removeParams, paramsObject: { updateId = undefined } } = useSearchParams()
 
-	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IMaterialItemDetail[]>(
+	const { data, totalPages, isPending: isLoading, refetch } = usePaginatedData<IMaterialItemDetail[]>(
 		'products/materials',
 		{
 			page: page,
@@ -42,39 +42,43 @@ const Index = () => {
 		register: registerAdd,
 		reset: resetAdd,
 		control: controlAdd,
-		formState: {errors: addErrors}
+		formState: { errors: addErrors }
 	} = useForm({
 		mode: 'onTouched',
-		defaultValues: {name: '', weight_1x1: ''},
+		defaultValues: { name: '', name_seller: '', weight_1x1: '' },
 		resolver: yupResolver(materialSchema)
 	})
 
 	const columns: Column<IMaterialItemDetail>[] = useMemo(() =>
-			[
-				{
-					Header: t('№'),
-					accessor: (_: IMaterialItemDetail, index: number) => ((page - 1) * pageSize) + (index + 1),
-					style: {
-						width: '3rem',
-						textAlign: 'center'
-					}
-				},
-				{
-					Header: t('Name'),
-					accessor: (row: IMaterialItemDetail) => row.name
-				},
-				{
-					Header: `${t('Weight 1x1')} (${t('gr')})`,
-					accessor: (row: IMaterialItemDetail) => decimalToInteger(row.weight_1x1 || '')
-				},
-				{
-					Header: t('Actions'),
-					accessor: (row: IMaterialItemDetail) => <div className="flex items-start gap-lg">
-						<EditButton id={row.id}/>
-						<DeleteButton id={row.id}/>
-					</div>
+		[
+			{
+				Header: t('№'),
+				accessor: (_: IMaterialItemDetail, index: number) => ((page - 1) * pageSize) + (index + 1),
+				style: {
+					width: '3rem',
+					textAlign: 'center'
 				}
-			],
+			},
+			{
+				Header: t('Name'),
+				accessor: (row: IMaterialItemDetail) => row.name
+			},
+			{
+				Header: t('Sotuvchi uchun nom'),
+				accessor: (row: IMaterialItemDetail) => row.name_seller
+			},
+			{
+				Header: `${t('Weight 1x1')} (${t('gr')})`,
+				accessor: (row: IMaterialItemDetail) => decimalToInteger(row.weight_1x1 || '')
+			},
+			{
+				Header: t('Actions'),
+				accessor: (row: IMaterialItemDetail) => <div className="flex items-start gap-lg">
+					<EditButton id={row.id} />
+					<DeleteButton id={row.id} />
+				</div>
+			}
+		],
 		[page, pageSize]
 	)
 
@@ -83,31 +87,31 @@ const Index = () => {
 		register: registerEdit,
 		reset: resetEdit,
 		control: controlEdit,
-		formState: {errors: editErrors}
+		formState: { errors: editErrors }
 	} = useForm({
 		mode: 'onTouched',
-		defaultValues: {name: '', weight_1x1: ''},
+		defaultValues: { name: '', name_seller: '', weight_1x1: '' },
 		resolver: yupResolver(materialSchema)
 	})
 
-	const {mutateAsync, isPending: isAdding} = useAdd('products/materials')
-	const {mutateAsync: update, isPending: isUpdating} = useUpdate('products/materials/', updateId)
-	const {data: detail, isPending: isDetailLoading} = useDetail<IMaterialItemDetail>('products/materials/', updateId)
+	const { mutateAsync, isPending: isAdding } = useAdd('products/materials')
+	const { mutateAsync: update, isPending: isUpdating } = useUpdate('products/materials/', updateId)
+	const { data: detail, isPending: isDetailLoading } = useDetail<IMaterialItemDetail>('products/materials/', updateId)
 
 	useEffect(() => {
 		if (detail) {
-			resetEdit({name: detail.name, weight_1x1: detail.weight_1x1})
+			resetEdit({ name: detail.name, name_seller: detail.name_seller, weight_1x1: detail.weight_1x1 })
 		}
 	}, [detail, resetEdit])
 
 	return (
 		<>
 			<Card>
-				<ReactTable columns={columns} data={data} isLoading={isLoading}/>
+				<ReactTable columns={columns} data={data} isLoading={isLoading} />
 			</Card>
-			<Pagination totalPages={totalPages}/>
+			<Pagination totalPages={totalPages} />
 
-			<Modal title="Add material type" id="materialTypes" style={{height: '40rem'}}>
+			<Modal title="Add material type" id="materialTypes" style={{ height: '40rem' }}>
 				<Form
 					onSubmit={
 						handleAddSubmit((data) => mutateAsync(data).then(async () => {
@@ -125,10 +129,18 @@ const Index = () => {
 						{...registerAdd('name')}
 					/>
 
+					<Input
+						id="name_seller"
+						type={FIELD.TEXT}
+						label="Sotuvchi uchun nom"
+						error={addErrors?.name_seller?.message}
+						{...registerAdd('name_seller')}
+					/>
+
 					<Controller
 						control={controlAdd}
 						name="weight_1x1"
-						render={({field}) => (
+						render={({ field }) => (
 							<NumberFormattedInput
 								id="weight_1x1"
 								label={`${t('Weight 1x1')} (${t('gr')})`}
@@ -142,7 +154,7 @@ const Index = () => {
 					/>
 
 					<Button
-						style={{marginTop: 'auto'}}
+						style={{ marginTop: 'auto' }}
 						type={FIELD.SUBMIT}
 						disabled={isAdding}
 					>
@@ -151,7 +163,7 @@ const Index = () => {
 				</Form>
 			</Modal>
 
-			<EditModal isLoading={isDetailLoading && !detail} style={{height: '40rem'}}>
+			<EditModal isLoading={isDetailLoading && !detail} style={{ height: '40rem' }}>
 				<Form
 					onSubmit={
 						handleEditSubmit((data) => update(data).then(async () => {
@@ -170,10 +182,19 @@ const Index = () => {
 						{...registerEdit('name')}
 					/>
 
+					<Input
+						id="name_seller"
+						type={FIELD.TEXT}
+						label="Sotuvchi uchun nom"
+						placeholder="Sotuvchi uchun nomni kiriting"
+						error={editErrors?.name_seller?.message}
+						{...registerEdit('name_seller')}
+					/>
+
 					<Controller
 						control={controlEdit}
 						name="weight_1x1"
-						render={({field}) => (
+						render={({ field }) => (
 							<NumberFormattedInput
 								id="weight_1x1"
 								label={`${t('Weight 1x1')} (${t('gr')})`}
@@ -187,7 +208,7 @@ const Index = () => {
 					/>
 
 					<Button
-						style={{marginTop: 'auto'}}
+						style={{ marginTop: 'auto' }}
 						type={FIELD.SUBMIT}
 						disabled={isUpdating}
 					>
@@ -196,7 +217,7 @@ const Index = () => {
 				</Form>
 			</EditModal>
 
-			<DeleteModal endpoint="products/materials/" onDelete={() => refetch()}/>
+			<DeleteModal endpoint="products/materials/" onDelete={() => refetch()} />
 		</>
 	)
 }

@@ -1,23 +1,23 @@
-import {Plus} from 'assets/icons'
-import {Button, Card, EditButton, PageTitle, Pagination, ReactTable} from 'components'
-import {usePaginatedData, usePagination, useSearchParams} from 'hooks'
-import {IBaseMaterialList} from 'interfaces/materials.interface'
-import {useMemo} from 'react'
-import {useTranslation} from 'react-i18next'
-import {useNavigate} from 'react-router-dom'
-import {Column} from 'react-table'
-import {decimalToInteger} from 'utilities/common'
-import {getDate} from 'utilities/date'
+import { Plus } from 'assets/icons'
+import { Button, Card, EditButton, PageTitle, Pagination, ReactTable } from 'components'
+import { usePaginatedData, usePagination, useSearchParams } from 'hooks'
+import { IBaseMaterialList } from 'interfaces/materials.interface'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { Column } from 'react-table'
+import { decimalToInteger } from 'utilities/common'
+import { getDate } from 'utilities/date'
 import Filter from 'components/Filter'
 
 
 const Index = () => {
 	const navigate = useNavigate()
-	const {t} = useTranslation()
-	const {page, pageSize} = usePagination()
-	const {paramsObject: {format = undefined, ...rest}} = useSearchParams()
+	const { t } = useTranslation()
+	const { page, pageSize } = usePagination()
+	const { paramsObject: { format = undefined, ...rest } } = useSearchParams()
 
-	const {data, totalPages, isPending: isLoading} = usePaginatedData<IBaseMaterialList[]>(
+	const { data, totalPages, isPending: isLoading } = usePaginatedData<IBaseMaterialList[]>(
 		`products/base-materials`,
 		{
 			...rest,
@@ -52,8 +52,12 @@ const Index = () => {
 				dynamicFilter: 'format'
 			},
 			{
-				Header: `${t('Total weight')} (${t('kg')})`,
-				accessor: (row: IBaseMaterialList) => `${decimalToInteger(row.remaining_weight as unknown as string || '0')}/${decimalToInteger(row.weight as unknown as string || '0')}`
+				Header: `${t('Kelgan vazni')} (${t('kg')})`,
+				accessor: (row: IBaseMaterialList) => decimalToInteger(row.weight as unknown as string || '0')
+			},
+			{
+				Header: `${t('Qolgan vazni')} (${t('kg')})`,
+				accessor: (row: IBaseMaterialList) => decimalToInteger(row.remaining_weight as unknown as string || '0')
 			},
 			{
 				Header: `${t('Roll')} ${t('Count')}`,
@@ -68,7 +72,7 @@ const Index = () => {
 				Header: t('Actions'),
 				accessor: (row: IBaseMaterialList) => <div className="flex items-start gap-lg">
 					<EditButton
-						onClick={() => navigate(`edit/${row.id || 'detail'}?created_at=${row?.created_at}&warehouse=${row?.warehouse?.id}&format=${row?.format?.id}&material=${row?.material?.id}`)}/>
+						onClick={() => navigate(`edit/${row.id || 'detail'}?created_at=${row?.created_at}&warehouse=${row?.warehouse?.id}&format=${row?.format?.id}&material=${row?.material?.id}`)} />
 				</div>
 			}
 		],
@@ -78,19 +82,19 @@ const Index = () => {
 	return (
 		<>
 			<PageTitle title={t('Material')}>
-				<Button icon={<Plus/>} onClick={() => navigate(`add`)}>
+				<Button icon={<Plus />} onClick={() => navigate(`add`)}>
 					Add material
 				</Button>
 			</PageTitle>
 			<Card>
-				<Filter fieldsToShow={['name', 'material', 'format']}/>
+				<Filter fieldsToShow={['name', 'material', 'format']} />
 				<ReactTable
 					columns={columns}
 					data={data}
 					isLoading={isLoading}
 				/>
 			</Card>
-			<Pagination totalPages={totalPages}/>
+			<Pagination totalPages={totalPages} />
 		</>
 	)
 }
