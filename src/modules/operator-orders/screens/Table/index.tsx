@@ -26,7 +26,6 @@ import { Column } from 'react-table'
 import { getDate } from 'utilities/date'
 import { decimalToInteger } from 'utilities/common'
 import { activityOptions, bossStatusOptions } from 'helpers/options'
-import { IGroupOrder } from 'interfaces/groupOrders.interface'
 
 
 const Index = () => {
@@ -41,16 +40,19 @@ const Index = () => {
 		paramsObject: { status = bossStatusOptions[0].value, updateId = undefined }
 	} = useSearchParams()
 
-	const { data, refetch, totalPages, isPending: isLoading } = usePaginatedData<IGroupOrder[]>(
-		status == bossStatusOptions[2].value ? `services/consecutive-orders` : status == bossStatusOptions[1].value ? `services/consecutive-orders` : status == bossStatusOptions[3].value ? `services/orders/list-for-proces` : `services/group-orders`,
+	const isYmo2 = status === 'ymo2'
+
+	const { data, refetch, totalPages, isPending: isLoading } = usePaginatedData<any>(
+		isYmo2 ? `/services/orders-with-detail` : (status == bossStatusOptions[2].value ? `services/consecutive-orders` : status == bossStatusOptions[1].value ? `services/consecutive-orders` : status == bossStatusOptions[3].value ? `services/orders/list-for-proces` : `services/group-orders`),
 		{
 			page: page,
 			page_size: pageSize,
-			is_separated: status != bossStatusOptions[3].value ? status : null,
-			confirmed: status == bossStatusOptions[3].value ? 'not_confirmed' : null,
-			activity: status == bossStatusOptions[1].value ? 'gofra' : null,
-			operator: status == bossStatusOptions[1].value ? 'new' : null,
-			pass_activity: status == bossStatusOptions[2].value ? 'gofra' : null
+			is_separated: !isYmo2 && status != bossStatusOptions[3].value ? status : null,
+			confirmed: !isYmo2 && status == bossStatusOptions[3].value ? 'not_confirmed' : null,
+			activity: isYmo2 ? 'ymo2' : (status == bossStatusOptions[1].value ? 'gofra' : null),
+			status: isYmo2 ? 'in_proces' : null,
+			operator: !isYmo2 && status == bossStatusOptions[1].value ? 'new' : null,
+			pass_activity: !isYmo2 && status == bossStatusOptions[2].value ? 'gofra' : null
 		}
 	)
 
@@ -60,11 +62,11 @@ const Index = () => {
 		isPending: isDetailLoading
 	} = useDetail<IOrderDetail>('services/orders/', updateId, !!updateId && status == bossStatusOptions[2]?.value)
 
-	const columns: Column<IGroupOrder>[] = useMemo(
+	const columns: Column<any>[] = useMemo(
 		() => [
 			{
 				Header: t('№'),
-				accessor: (_: IGroupOrder, index: number) => (page - 1) * pageSize + (index + 1),
+				accessor: (_: any, index: number) => (page - 1) * pageSize + (index + 1),
 				style: {
 					width: '3rem',
 					textAlign: 'center'
@@ -72,142 +74,151 @@ const Index = () => {
 			},
 			{
 				Header: t('Order number'),
-				accessor: (row: IGroupOrder) => <div>
+				accessor: (row: any) => <div>
 					{
-						row?.orders?.map((order: IOrderDetail, index) => (
-							<>
-								<div>
-									#{order.id}
+						isYmo2 ? `#${row.id}` :
+							row?.orders?.map((order: IOrderDetail, index: number) => (
+								<div key={order.id}>
+									<div>
+										#{order.id}
+									</div>
+									{
+										row?.orders?.length !== index + 1 &&
+										<br />
+									}
 								</div>
-								{
-									row?.orders?.length !== index + 1 &&
-									<br />
-								}
-							</>
-						))
+							))
 					}
 				</div>
 			},
 			{
 				Header: t('Company name'),
-				accessor: (row: IGroupOrder) => <div>
+				accessor: (row: any) => <div>
 					{
-						row?.orders?.map((order, index) => (
-							<>
-								<div>
-									{order?.company_name}
+						isYmo2 ? row.company_name :
+							row?.orders?.map((order: IOrderDetail, index: number) => (
+								<div key={order.id}>
+									<div>
+										{order?.company_name}
+									</div>
+									{
+										row?.orders?.length !== index + 1 &&
+										<br />
+									}
 								</div>
-								{
-									row?.orders?.length !== index + 1 &&
-									<br />
-								}
-							</>
-						))
+							))
 					}
 				</div>
 			},
 			{
 				Header: t('Name'),
-				accessor: (row: IGroupOrder) => <div>
+				accessor: (row: any) => <div>
 					{
-						row?.orders?.map((order, index) => (
-							<>
-								<div>
-									{order?.name}
+						isYmo2 ? row.name :
+							row?.orders?.map((order: IOrderDetail, index: number) => (
+								<div key={order.id}>
+									<div>
+										{order?.name}
+									</div>
+									{
+										row?.orders?.length !== index + 1 &&
+										<br />
+									}
 								</div>
-								{
-									row?.orders?.length !== index + 1 &&
-									<br />
-								}
-							</>
-						))
+							))
 					}
 				</div>
 			},
 			{
 				Header: `${t('Sizes')} (${t('mm')})`,
-				accessor: (row: IGroupOrder) => <div>
+				accessor: (row: any) => <div>
 					{
-						row?.orders?.map((order, index) => (
-							<>
-								<div>
-									{`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
+						isYmo2 ? `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}` :
+							row?.orders?.map((order: IOrderDetail, index: number) => (
+								<div key={order.id}>
+									<div>
+										{`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
+									</div>
+									{
+										row?.orders?.length !== index + 1 &&
+										<br />
+									}
 								</div>
-								{
-									row?.orders?.length !== index + 1 &&
-									<br />
-								}
-							</>
-						))
+							))
 					}
 				</div>
 			},
 			{
 				Header: t('Layer'),
-				accessor: (row: IGroupOrder) => <div>
+				accessor: (row: any) => <div>
 					{
-						row?.orders?.map((order, index) => (
-							<>
-								<div>
-									{order?.layer?.length || order?.layer?.length || 0}
+						isYmo2 ? (row.layer_count || 0) :
+							row?.orders?.map((order: IOrderDetail, index: number) => (
+								<div key={order.id}>
+									<div>
+										{order?.layer?.length || 0}
+									</div>
+									{
+										row?.orders?.length !== index + 1 &&
+										<br />
+									}
 								</div>
-								{
-									row?.orders?.length !== index + 1 &&
-									<br />
-								}
-							</>
-						))
+							))
 					}
 				</div>
 			},
 			{
 				Header: t('Count'),
-				accessor: (row: IGroupOrder) => <div>
+				accessor: (row: any) => <div>
 					{
-						row?.orders?.map((order, index) => (
-							<>
-								<div>
-									{decimalToInteger(order?.count_last || order?.count_after_bet || order?.count_after_gluing || order?.count_after_flex || order?.count_after_processing || order?.count_entered_leader || order?.count || 0)}
+						isYmo2 ? decimalToInteger(row.count || '') :
+							row?.orders?.map((order: IOrderDetail, index: number) => (
+								<div key={order.id}>
+									<div>
+										{decimalToInteger(order?.count_last || order?.count_after_bet || order?.count_after_gluing || order?.count_after_flex || order?.count_after_processing || order?.count_entered_leader || order?.count || 0)}
+									</div>
+									{
+										row?.orders?.length !== index + 1 &&
+										<br />
+									}
 								</div>
-								{
-									row?.orders?.length !== index + 1 &&
-									<br />
-								}
-							</>
-						))
+							))
 					}
 				</div>
 			},
 			{
 				Header: t('Deadline'),
-				accessor: (row: IGroupOrder) => <div>
+				accessor: (row: any) => <div>
 					{
-						row?.orders?.map((order, index) => (
-							<>
-								<div>
-									{order?.deadline ? getDate(order?.deadline) : null}
+						isYmo2 ? (row.deadline ? getDate(row.deadline) : null) :
+							row?.orders?.map((order: IOrderDetail, index: number) => (
+								<div key={order.id}>
+									<div>
+										{order?.deadline ? getDate(order?.deadline) : null}
+									</div>
+									{
+										row?.orders?.length !== index + 1 &&
+										<br />
+									}
 								</div>
-								{
-									row?.orders?.length !== index + 1 &&
-									<br />
-								}
-							</>
-						))
+							))
 					}
 				</div>
 			},
-			{
-				Header: `${t('Production format')}`,
-				accessor: (row: IGroupOrder) => decimalToInteger(row.separated_raw_materials_format?.format)
-			},
+			...(isYmo2 ? [] : [
+				{
+					Header: `${t('Production format')}`,
+					accessor: (row: any) => decimalToInteger(row.separated_raw_materials_format?.format)
+				}
+			]),
 			{
 				Header: t('Yub. sana'),
-				accessor: (row: IGroupOrder) => getDate(row.created_at)
+				accessor: (row: any) => getDate(row.created_at)
 			},
-			...(status == bossStatusOptions[2].value ? [
+			...(status == bossStatusOptions[2].value || isYmo2 ? [
 				{
 					Header: t('Yak. sana'),
-					accessor: (row: IGroupOrder) => getDate(row.end_date)
+					accessor: (row: any) => isYmo2 ? (row.end_date ? getDate(row.end_date) : '') : getDate(row.end_date)
 				}
 			] : []),
 
@@ -215,32 +226,35 @@ const Index = () => {
 			...([
 				{
 					Header: t('Actions'),
-					accessor: (row: IGroupOrder) => (
+					accessor: (row: any) => (
 						<div className="flex items-start gap-lg">
 							{
-								status == bossStatusOptions[3].value ?
-									<Button
-										mini={true}
-										onClick={() => {
-											addParams({ modal: 'edit', updateId: row?.id })
-										}}
-									>
-										Go flex
-									</Button> :
-									status == bossStatusOptions[0].value ?
+								isYmo2 ?
+									<EditButton
+										onClick={() => navigate(`/operator-orders/process/${row.id}`)} /> :
+									status == bossStatusOptions[3].value ?
 										<Button
 											mini={true}
 											onClick={() => {
-												navigate(`add`)
-												addGroupOrder(row)
+												addParams({ modal: 'edit', updateId: row?.id })
 											}}
 										>
-											Choosing
+											Go flex
 										</Button> :
-										(status == bossStatusOptions[1].value || status == bossStatusOptions[2].value) ?
-											<EditButton
-												onClick={() => navigate(`/operator-orders/detail/${row.id}`)} /> :
-											<EditButton onClick={() => navigate(`detail/${row.id}`)} />
+										status == bossStatusOptions[0].value ?
+											<Button
+												mini={true}
+												onClick={() => {
+													navigate(`add`)
+													addGroupOrder(row)
+												}}
+											>
+												Choosing
+											</Button> :
+											(status == bossStatusOptions[1].value || status == bossStatusOptions[2].value) ?
+												<EditButton
+													onClick={() => navigate(`/operator-orders/detail/${row.id}`)} /> :
+												<EditButton onClick={() => navigate(`detail/${row.id}`)} />
 							}
 						</div>
 					)
@@ -248,7 +262,7 @@ const Index = () => {
 			])
 
 		],
-		[page, pageSize, status]
+		[page, pageSize, status, isYmo2]
 	)
 
 	const {

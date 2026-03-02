@@ -203,6 +203,10 @@ function useAppRoutes() {
 				{
 					path: 'detail/:id',
 					element: <CorrugationForm detail={true} />
+				},
+				{
+					path: 'process/:id',
+					element: <Process update={true} />
 				}
 			]
 		},

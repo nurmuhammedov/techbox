@@ -1,32 +1,32 @@
-import {Plus} from 'assets/icons'
-import {FC, useEffect} from 'react'
-import {Button, Card, Form, Input, Loader, NumberFormattedInput, PageTitle, Select} from 'components'
-import {useNavigate, useParams} from 'react-router-dom'
-import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {Controller, useFieldArray, useForm} from 'react-hook-form'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {useAdd, useData, useDetail, useSearchParams, useUpdate} from 'hooks'
-import {materialSchema, warehouseOrdersSchema} from 'helpers/yup'
-import {decimalToInteger, getSelectValue} from 'utilities/common'
-import {IBaseMaterialList, IMaterialItemDetail} from 'interfaces/materials.interface'
-import {ISelectOption} from 'interfaces/form.interface'
-import {useTranslation} from 'react-i18next'
+import { Plus } from 'assets/icons'
+import { FC, useEffect } from 'react'
+import { Button, Card, Form, Input, Loader, NumberFormattedInput, PageTitle, Select } from 'components'
+import { useNavigate, useParams } from 'react-router-dom'
+import { BUTTON_THEME, FIELD } from 'constants/fields'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useAdd, useData, useDetail, useSearchParams, useUpdate } from 'hooks'
+import { materialSchema, warehouseOrdersSchema } from 'helpers/yup'
+import { decimalToInteger, getSelectValue } from 'utilities/common'
+import { IBaseMaterialList, IMaterialItemDetail } from 'interfaces/materials.interface'
+import { ISelectOption } from 'interfaces/form.interface'
+import { useTranslation } from 'react-i18next'
 
 
 interface IProperties {
 	edit?: boolean;
 }
 
-const ProductPage: FC<IProperties> = ({edit = false}) => {
+const ProductPage: FC<IProperties> = ({ edit = false }) => {
 	const navigate = useNavigate()
-	const {paramsObject: {created_at, format, material, warehouse}} = useSearchParams()
-	const {t} = useTranslation()
-	const {orderId: id = undefined, id: customer = undefined} = useParams()
-	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
-	const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
-	const {data: warehouses = []} = useData<ISelectOption[]>('accounts/warehouses-select')
-	const {data: countries = []} = useData<ISelectOption[]>('products/countries/select')
-	const {data: suppliers = []} = useData<ISelectOption[]>('products/suppliers/select')
+	const { paramsObject: { created_at, format, material, warehouse } } = useSearchParams()
+	const { t } = useTranslation()
+	const { orderId: id = undefined, id: customer = undefined } = useParams()
+	const { data: materials = [] } = useData<ISelectOption[]>('products/materials/select')
+	const { data: formats = [] } = useData<ISelectOption[]>('products/formats/select')
+	const { data: warehouses = [] } = useData<ISelectOption[]>('accounts/warehouses-select')
+	const { data: countries = [] } = useData<ISelectOption[]>('products/countries/select')
+	const { data: suppliers = [] } = useData<ISelectOption[]>('products/suppliers/select')
 
 	const {
 		handleSubmit: orderHandleSubmit,
@@ -34,7 +34,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		reset: orderReset,
 		watch: orderWatch,
 		register: orderRegister,
-		formState: {errors: orderErrors}
+		formState: { errors: orderErrors }
 	} = useForm({
 		resolver: yupResolver(warehouseOrdersSchema),
 		mode: 'onTouched',
@@ -52,7 +52,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 		}
 	})
 
-	const {fields, append, remove} = useFieldArray({
+	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'weight' as never
 	})
@@ -60,16 +60,16 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	const {
 		reset: resetAdd,
 		control: controlAdd,
-		formState: {errors: addErrors}
+		formState: { errors: addErrors }
 	} = useForm({
 		mode: 'onTouched',
-		defaultValues: {weight_1x1: ''},
+		defaultValues: { weight_1x1: '' },
 		resolver: yupResolver(materialSchema)
 	})
 
 
-	const {mutateAsync: addOrder, isPending: isAdding} = useAdd('products/base-materials')
-	const {mutateAsync: updateOrder, isPending: isUpdating} = useUpdate('products/base-materials/', id, 'patch')
+	const { mutateAsync: addOrder, isPending: isAdding } = useAdd('products/base-materials')
+	const { mutateAsync: updateOrder, isPending: isUpdating } = useUpdate('products/base-materials/', id, 'patch')
 
 	const {
 		data: detail,
@@ -101,7 +101,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				warehouse: detail.warehouse?.id,
 				weight: detail.weight?.map(i => ({
 					...i,
-					weight: `${decimalToInteger(i?.remaining_weight || '0')}/${decimalToInteger(i?.weight || '0')}`
+					weight: decimalToInteger(i?.weight || '0'),
+					remaining_weight: decimalToInteger(i?.remaining_weight || '0')
 				})),
 				format: detail.format?.id
 			})
@@ -110,7 +111,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 
 
 	if (isDetailLoading && edit) {
-		return <Loader/>
+		return <Loader />
 	}
 
 	const toNumber = (value: unknown): number => {
@@ -141,7 +142,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							onClick={() => {
 								if (!edit) {
 									orderHandleSubmit((data) =>
-										addOrder({...data, customer})
+										addOrder({ ...data, customer })
 											.then(async () => {
 												orderReset({
 													material: undefined,
@@ -159,7 +160,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 									)()
 								} else {
 									orderHandleSubmit((data) =>
-										updateOrder({...data, customer})
+										updateOrder({ ...data, customer })
 											.then(async () => {
 												orderReset({
 													material: undefined,
@@ -183,13 +184,13 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					}
 				</div>
 			</PageTitle>
-			<Card style={{padding: '1.5rem'}}>
+			<Card style={{ padding: '1.5rem' }}>
 				<Form className="grid gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 					<div className="span-3">
 						<Controller
 							name="material"
 							control={control}
-							render={({field: {value, ref, onChange, onBlur}}) => (
+							render={({ field: { value, ref, onChange, onBlur } }) => (
 								<Select
 									id="material"
 									label="Material"
@@ -210,7 +211,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							name="warehouse"
 							control={control}
-							render={({field: {value, ref, onChange, onBlur}}) => (
+							render={({ field: { value, ref, onChange, onBlur } }) => (
 								<Select
 									id="warehouse"
 									label="Material warehouse"
@@ -231,7 +232,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Controller
 							name="format"
 							control={control}
-							render={({field: {value, ref, onChange, onBlur}}) => (
+							render={({ field: { value, ref, onChange, onBlur } }) => (
 								<Select
 									id="format"
 									label="Format"
@@ -256,7 +257,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 								<Controller
 									control={controlAdd}
 									name="weight_1x1"
-									render={({field}) => (
+									render={({ field }) => (
 										<NumberFormattedInput
 											id="weight_1x1"
 											label={`${t('Weight 1x1')} (${t('gr')})`}
@@ -291,17 +292,26 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 									<div className="flex-2">
 										{
 											detail ?
-												<Input
-													id={`weight.${index}.weight`}
-													type={FIELD.TEXT}
-													label={`${index + 1}-${t('Roll weight')?.toLowerCase()} (${t('kg')})`}
-													disabled={true}
-													{...orderRegister(`weight.${index}.weight`)}
-												/> :
+												<div className="flex gap-md">
+													<Input
+														id={`weight.${index}.weight`}
+														type={FIELD.TEXT}
+														label={`${t('Kelgan vazni')} (${t('kg')})`}
+														disabled={true}
+														{...orderRegister(`weight.${index}.weight`)}
+													/>
+													<Input
+														id={`weight.${index}.remaining_weight`}
+														type={FIELD.TEXT}
+														label={`${t('Qolgan vazni')} (${t('kg')})`}
+														disabled={true}
+														{...orderRegister(`weight.${index}.remaining_weight` as never)}
+													/>
+												</div> :
 												<Controller
 													control={control}
 													name={`weight.${index}.weight`}
-													render={({field}) => (
+													render={({ field }) => (
 														<NumberFormattedInput
 															id={`weight.${index + 1}.weight`}
 															label={`${index + 1}-${t('Roll weight')?.toLowerCase()} (${t('kg')})`}
@@ -320,7 +330,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 										<Controller
 											name={`weight.${index}.price`}
 											control={control}
-											render={({field}) => (
+											render={({ field }) => (
 												<NumberFormattedInput
 													id="price"
 													maxLength={13}
@@ -342,7 +352,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 													type={FIELD.TEXT}
 													label={`${t('Roll')} ${t('Price')?.toLowerCase()}`}
 													disabled={true}
-													value={Number(toNumber(orderWatch(`weight.${index}.weight`)?.split('/')?.[1]) * toNumber(orderWatch(`weight.${index}.price`)))?.toFixed(2)}
+													value={Number(toNumber(orderWatch(`weight.${index}.weight`)) * toNumber(orderWatch(`weight.${index}.price`)))?.toFixed(2)}
 												/> :
 												<Input
 													id={`all.price`}
@@ -357,7 +367,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 										<Controller
 											name={`weight.${index}.supplier`}
 											control={control}
-											render={({field: {value, ref, onChange, onBlur}}) => (
+											render={({ field: { value, ref, onChange, onBlur } }) => (
 												<Select
 													id={`supplier-${index}`}
 													label={t('Supplier')}
@@ -376,7 +386,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 										<Controller
 											name={`weight.${index}.made_in`}
 											control={control}
-											render={({field: {value, ref, onChange, onBlur}}) => (
+											render={({ field: { value, ref, onChange, onBlur } }) => (
 												<Select
 													id={`made_in-${index}`}
 													label={t('Country')}
@@ -399,12 +409,12 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					{
 						!edit &&
 						<div className="span-12 grid gap-xl">
-							<div className="span-4" style={{marginTop: '2rem'}}>
+							<div className="span-4" style={{ marginTop: '2rem' }}>
 								<Button
 									theme={BUTTON_THEME.PRIMARY}
 									type="button"
 									disabled={orderWatch('weight')?.length !== 0 && orderWatch('weight')?.[(orderWatch('weight')?.length ?? 1) - 1]?.toString()?.trim() === ''}
-									icon={<Plus/>}
+									icon={<Plus />}
 									onClick={() => append('')}
 								>
 									Add roll
