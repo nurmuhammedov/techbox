@@ -77,6 +77,29 @@ interface IOrderDetail {
 	stages_to_passed?: 'gofra' | 'ym01' | 'fleksa' | 'ymo2' | 'tikish' | 'yelimlash' | 'is_last';
 }
 
+export interface IPallet {
+	id: number;
+	status: 'new' | 'in_process' | 'in_proces' | 'finished' | 'in_line';
+	activity: 'gofra' | 'ymo1' | 'fleksa' | 'ymo2' | 'tikish' | 'yelimlash' | 'is_last';
+	x: number;
+	y: number;
+	deadline: string | null;
+	count: number;
+	end_count: number | null;
+	end_date: string | null;
+	stages_to_passed?: string[];
+	pallet_count_after_gofra?: number;
+	after_gofra_date?: string;
+	start_gofra_date?: string;
+	pallet_count_after_flex?: number;
+	after_flex_date?: string;
+	start_flex_date?: string;
+	start_gluing_date?: string;
+	start_bet_date?: string;
+	warehouse?: IIDName;
+	warehouse_same_finished?: IIDName;
+	warehouse_finished?: IIDName;
+}
 
 export type {
 	IOrderDetail

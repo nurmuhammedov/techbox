@@ -1,6 +1,6 @@
-import {User} from 'assets/icons'
-import {ROLE_LIST} from 'constants/roles'
-import {IMenuItem} from 'interfaces/configuration.interface'
+import { User } from 'assets/icons'
+import { ROLE_LIST } from 'constants/roles'
+import { IMenuItem } from 'interfaces/configuration.interface'
 
 
 export const menu: IMenuItem[] = [
@@ -266,6 +266,54 @@ export const menu: IMenuItem[] = [
 		],
 		order: {
 			[ROLE_LIST.EMPLOYEE]: 20
+		}
+	},
+	{
+		id: 'pallet_leader',
+		label: 'Rahbar paddonlari',
+		href: '/pallet-leader',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.EMPLOYEE]: 21
+		}
+	},
+	{
+		id: 'pallet_flex',
+		label: 'Fleksa paddonlari',
+		href: '/pallet-flex',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.EMPLOYEE]: 22
+		}
+	},
+	{
+		id: 'pallet_glue',
+		label: 'Yelimlash paddonlari',
+		href: '/pallet-glue',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.EMPLOYEE]: 23
+		}
+	},
+	{
+		id: 'pallet_bet',
+		label: 'Tikish paddonlari',
+		href: '/pallet-bet',
+		icon: User,
+		allowedRoles: [
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.EMPLOYEE]: 24
 		}
 	}
 ]

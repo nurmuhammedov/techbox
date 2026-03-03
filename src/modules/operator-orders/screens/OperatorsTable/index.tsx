@@ -1,29 +1,31 @@
-import {Button, Card, EditButton, Pagination, ReactTable, Tab} from 'components'
-import {usePaginatedData, usePagination, useSearchParams} from 'hooks'
-import {IOrderDetail} from 'interfaces/orders.interface'
-import {FC, useMemo} from 'react'
-import {useTranslation} from 'react-i18next'
-import {useNavigate} from 'react-router-dom'
-import {Column} from 'react-table'
-import {getDate} from 'utilities/date'
-import {decimalToInteger} from 'utilities/common'
-import {operatorsStatusOptions} from 'helpers/options'
-import {IGroupOrder} from 'interfaces/groupOrders.interface'
-import {interceptor} from 'libraries'
-import {showMessage} from 'utilities/alert'
+import { Button, Card, EditButton, Pagination, ReactTable, Tab } from 'components'
+import { usePaginatedData, usePagination, useSearchParams } from 'hooks'
+import { IOrderDetail } from 'interfaces/orders.interface'
+import { FC, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { Column } from 'react-table'
+import { getDate } from 'utilities/date'
+import { decimalToInteger } from 'utilities/common'
+import { operatorsStatusOptions } from 'helpers/options'
+import { IGroupOrder } from 'interfaces/groupOrders.interface'
+import { interceptor } from 'libraries'
+import { showMessage } from 'utilities/alert'
 
 
 interface IProperties {
 	type?: 'gofra' | 'fleksa' | 'tikish' | 'yelimlash'
 }
 
-const Index: FC<IProperties> = ({type = 'gofra'}) => {
-	const navigate = useNavigate()
-	const {t} = useTranslation()
-	const {page, pageSize} = usePagination()
-	const {paramsObject: {status = operatorsStatusOptions[0].value}} = useSearchParams()
+import CorrugationPalletsTable from '../CorrugationPalletsTable'
 
-	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<IGroupOrder[]>(
+const Index: FC<IProperties> = ({ type = 'gofra' }) => {
+	const navigate = useNavigate()
+	const { t } = useTranslation()
+	const { page, pageSize } = usePagination()
+	const { paramsObject: { status = operatorsStatusOptions[0].value } } = useSearchParams()
+
+	const { data, totalPages, isPending: isLoading, refetch } = usePaginatedData<IGroupOrder[]>(
 		type == 'gofra' ? 'services/consecutive-orders' : 'services/group-orders',
 		{
 			page: page,
@@ -50,51 +52,33 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 				accessor: (row: IGroupOrder) => <div>
 					{
 						row?.orders?.map((order: IOrderDetail, index) => (
-							<>
+							<div key={order.id}>
 								<div>
 									#{order.id}
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
-							</>
+							</div>
 						))
 					}
 				</div>
 			},
-			// {
-			// 	Header: t('Company name'),
-			// 	accessor: (row: IGroupOrder) => <div>
-			// 		{
-			// 			row?.orders?.map((order, index) => (
-			// 				<>
-			// 					<div>
-			// 						{order?.company_name}
-			// 					</div>
-			// 					{
-			// 						row?.orders?.length !== index + 1 &&
-			// 						<br />
-			// 					}
-			// 				</>
-			// 			))
-			// 		}
-			// 	</div>
-			// },
 			{
 				Header: t('Name'),
 				accessor: (row: IGroupOrder) => <div>
 					{
 						row?.orders?.map((order, index) => (
-							<>
+							<div key={order.id}>
 								<div>
 									{order?.name}
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
-							</>
+							</div>
 						))
 					}
 				</div>
@@ -104,15 +88,15 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 				accessor: (row: IGroupOrder) => <div>
 					{
 						row?.orders?.map((order, index) => (
-							<>
+							<div key={order.id}>
 								<div>
 									{`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
-							</>
+							</div>
 						))
 					}
 				</div>
@@ -122,15 +106,15 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 				accessor: (row: IGroupOrder) => <div>
 					{
 						row?.orders?.map((order, index) => (
-							<>
+							<div key={order.id}>
 								<div>
 									{order?.layer?.length || order?.layer_seller?.length || 0}
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
-							</>
+							</div>
 						))
 					}
 				</div>
@@ -140,41 +124,19 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 				accessor: (row: IGroupOrder) => <div>
 					{
 						row?.orders?.map((order, index) => (
-							<>
+							<div key={order.id}>
 								<div>
 									{decimalToInteger(order?.count_last || order?.count_after_bet || order?.count_after_gluing || order?.count_after_flex || order?.count_after_processing || order?.count_entered_leader || order?.count || 0)}
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
-									<br/>
+									<br />
 								}
-							</>
+							</div>
 						))
 					}
 				</div>
 			},
-			// {
-			// 	Header: t('Deadline'),
-			// 	accessor: (row: IGroupOrder) => <div>
-			// 		{
-			// 			row?.orders?.map((order, index) => (
-			// 				<>
-			// 					<div>
-			// 						{order?.deadline ? getDate(order?.deadline) : null}
-			// 					</div>
-			// 					{
-			// 						row?.orders?.length !== index + 1 &&
-			// 						<br />
-			// 					}
-			// 				</>
-			// 			))
-			// 		}
-			// 	</div>
-			// },
-			// {
-			// 	Header: `${t('Production format')} (${t('mm')})`,
-			// 	accessor: (row: IGroupOrder) => decimalToInteger(row.separated_raw_materials_format?.format)
-			// },
 			{
 				Header: t('Yub. sana'),
 				accessor: (row: IGroupOrder) => getDate(row.created_at)
@@ -214,8 +176,8 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 								>
 									Transfer to process
 								</Button> : status == operatorsStatusOptions[1].value ?
-									<EditButton onClick={() => navigate(`edit/${row.id}`)}/> :
-									<EditButton onClick={() => navigate(`detail/${row.id}`)}/>
+									<EditButton onClick={() => navigate(`edit/${row.id}`)} /> :
+									<EditButton onClick={() => navigate(`detail/${row.id}`)} />
 						}
 					</div>
 				)
@@ -226,17 +188,23 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
 
 	return (
 		<>
-			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
-				<Tab query="status" fallbackValue={operatorsStatusOptions[0].value} tabs={operatorsStatusOptions}/>
+			<div className="flex align-center justify-between gap-lg" style={{ marginBottom: '.5rem' }}>
+				<Tab query="status" fallbackValue={operatorsStatusOptions[0].value} tabs={operatorsStatusOptions} />
 			</div>
-			<Card>
-				<ReactTable
-					columns={columns}
-					data={data}
-					isLoading={isLoading}
-				/>
-			</Card>
-			<Pagination totalPages={totalPages}/>
+			{status == 4 ? (
+				<CorrugationPalletsTable />
+			) : (
+				<>
+					<Card>
+						<ReactTable
+							columns={columns}
+							data={data}
+							isLoading={isLoading}
+						/>
+					</Card>
+					<Pagination totalPages={totalPages} />
+				</>
+			)}
 		</>
 	)
 }

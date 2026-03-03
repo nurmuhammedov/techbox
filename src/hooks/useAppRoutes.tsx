@@ -25,7 +25,11 @@ import {
 	Process,
 	WarehouseDetail,
 	SemiFinishedDetail,
-	FinishedDetail, CompanyOperations
+	FinishedDetail, CompanyOperations,
+	PalletLeaderTable,
+	OperatorPalletsTable,
+	PalletForm,
+	PalletDetail
 } from 'modules'
 import { Navigate, useRoutes } from 'react-router-dom'
 import { routeByRole } from 'utilities/authentication'
@@ -293,6 +297,74 @@ function useAppRoutes() {
 				{
 					path: 'detail/:id',
 					element: <FlexOrderForm retrieve={true} type="gluing" />
+				}
+			]
+		},
+		{
+			id: 'pallet_leader',
+			path: 'pallet-leader',
+			children: [
+				{
+					index: true,
+					element: <PalletLeaderTable />
+				},
+				{
+					path: 'detail/:id',
+					element: <PalletDetail />
+				}
+			]
+		},
+		{
+			id: 'pallet_flex',
+			path: 'pallet-flex',
+			children: [
+				{
+					index: true,
+					element: <OperatorPalletsTable type="flex" />
+				},
+				{
+					path: 'edit/:id',
+					element: <PalletForm />
+				},
+				{
+					path: 'detail/:id',
+					element: <PalletForm retrieve={true} />
+				}
+			]
+		},
+		{
+			id: 'pallet_glue',
+			path: 'pallet-glue',
+			children: [
+				{
+					index: true,
+					element: <OperatorPalletsTable type="glue" />
+				},
+				{
+					path: 'edit/:id',
+					element: <PalletForm />
+				},
+				{
+					path: 'detail/:id',
+					element: <PalletForm retrieve={true} />
+				}
+			]
+		},
+		{
+			id: 'pallet_bet',
+			path: 'pallet-bet',
+			children: [
+				{
+					index: true,
+					element: <OperatorPalletsTable type="bet" />
+				},
+				{
+					path: 'edit/:id',
+					element: <PalletForm />
+				},
+				{
+					path: 'detail/:id',
+					element: <PalletForm retrieve={true} />
 				}
 			]
 		},
