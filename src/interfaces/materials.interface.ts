@@ -1,10 +1,11 @@
-import {IIDName} from 'interfaces/configuration.interface'
+import { IIDName } from 'interfaces/configuration.interface'
 
 
 interface IMaterialItemDetail {
 	id: number;
 	warehouse?: number | null;
 	name: string;
+	name_seller: string;
 	weight_1x1: string;
 	weight: string;
 	format: string;

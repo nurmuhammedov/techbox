@@ -99,7 +99,7 @@ const CombinedCreatePage: FC = () => {
 			length: '',
 			box_ear: '',
 			format: undefined,
-			layer_seller: [],
+			layer: [],
 			logo: undefined
 		}
 	})
@@ -109,7 +109,7 @@ const CombinedCreatePage: FC = () => {
 
 	const { fields, append, remove } = useFieldArray({
 		control: control,
-		name: 'layer_seller' as never
+		name: 'layer' as never
 	})
 
 	const {
@@ -128,7 +128,7 @@ const CombinedCreatePage: FC = () => {
 				box_ear: productDetail.box_ear,
 				format: productDetail.format,
 				logo: productDetail.logo || undefined,
-				layer_seller: productDetail?.layer_seller || [' ']
+				layer: productDetail?.layer || [' ']
 			}))
 		}
 	}, [productDetail])
@@ -430,17 +430,17 @@ const CombinedCreatePage: FC = () => {
 							fields?.map((field, index) => (
 								<div className="span-4" key={field.id}>
 									<Controller
-										name={`layer_seller.${index}`}
+										name={`layer.${index}`}
 										control={control}
 										render={({ field: { value, ref, onChange, onBlur } }) => (
 											<Select
-												id={`layer_seller-${index + 1}`}
+												id={`layer-${index + 1}`}
 												label={`${index + 1}-${t('layer')}`}
 												options={materials}
 												top={true}
 												handleDelete={() => remove(index)}
 												value={getSelectValue(materials, value)}
-												error={errors?.layer_seller?.[index]?.message}
+												error={errors?.layer?.[index]?.message}
 												ref={ref}
 												onBlur={onBlur}
 												defaultValue={getSelectValue(materials, value)}
@@ -457,7 +457,7 @@ const CombinedCreatePage: FC = () => {
 							<Button
 								theme={BUTTON_THEME.PRIMARY}
 								type="button"
-								disabled={(watch('layer_seller')?.length !== 0 && watch('layer_seller')?.[(watch('layer_seller')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
+								disabled={(watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
 								icon={<Plus />}
 								onClick={() => append('')}
 							>

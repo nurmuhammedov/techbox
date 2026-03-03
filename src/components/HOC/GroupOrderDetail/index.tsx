@@ -1,22 +1,22 @@
-import {useData, useDetail} from 'hooks'
-import {Card, CutDiagram, Diagram, Input, Loader, Select} from 'components'
-import {decimalToInteger, getSelectValue} from 'utilities/common'
-import {ISelectOption} from 'interfaces/form.interface'
-import {useTranslation} from 'react-i18next'
+import { useData, useDetail } from 'hooks'
+import { Card, CutDiagram, Diagram, Input, Loader, Select } from 'components'
+import { decimalToInteger, getSelectValue } from 'utilities/common'
+import { ISelectOption } from 'interfaces/form.interface'
+import { useTranslation } from 'react-i18next'
 import styles from './styles.module.scss'
 import classNames from 'classnames'
-import {getDate} from 'utilities/date'
-import {ComponentType} from 'react'
-import {activityOptions, cutOptions} from 'helpers/options'
-import {useParams} from 'react-router-dom'
-import {IGroupOrder} from 'interfaces/groupOrders.interface'
+import { getDate } from 'utilities/date'
+import { ComponentType } from 'react'
+import { activityOptions, cutOptions } from 'helpers/options'
+import { useParams } from 'react-router-dom'
+import { IGroupOrder } from 'interfaces/groupOrders.interface'
 
 
 const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 	return (props: P) => {
-		const {t} = useTranslation()
-		const {id} = useParams()
-		const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
+		const { t } = useTranslation()
+		const { id } = useParams()
+		const { data: materials = [] } = useData<ISelectOption[]>('products/materials/select')
 
 		const {
 			data: detail,
@@ -25,26 +25,26 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 
 
 		if (isDetailLoading) {
-			return <Loader/>
+			return <Loader />
 		}
 
 
 		return (
 			<>
-				<WrappedComponent {...(props as P)} detail={detail}/>
-				<div className={classNames(styles.root, 'grid gap-lg')} style={{marginTop: '1rem'}}>
+				<WrappedComponent {...(props as P)} detail={detail} />
+				<div className={classNames(styles.root, 'grid gap-lg')} style={{ marginTop: '1rem' }}>
 					<div className="grid gap-lg span-12">
 						{
 							detail?.orders?.map((order) => (
 								<Card
 									key={order.id}
 									screen={false}
-									style={{padding: '1.5rem'}}
+									style={{ padding: '1.5rem' }}
 									className="span-6"
 								>
 									<div className="grid gap-md">
 										<div
-											style={{marginBottom: '1.5rem'}}
+											style={{ marginBottom: '1.5rem' }}
 											className="flex span-12 justify-between gap-lg align-center"
 										>
 											<div className={styles.title}>
@@ -88,7 +88,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 												id="layer"
 												disabled={true}
 												label="Layer"
-												value={order?.layer?.length || order?.layer_seller?.length || 0}
+												value={order?.layer?.length || order?.layer?.length || 0}
 											/>
 										</div>
 
@@ -132,7 +132,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 											<Select
 												id="piece"
 												disabled={true}
-												label="Cut"
+												label={t('Cut')}
 												options={cutOptions}
 												value={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
 												defaultValue={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
@@ -141,7 +141,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 
 										{
 											order?.piece && order?.piece != 'total' &&
-											<div className="grid span-12" style={{marginTop: '.75rem'}}>
+											<div className="grid span-12" style={{ marginTop: '.75rem' }}>
 												<CutDiagram
 													sections={cutOptions?.find(i => i.value == order?.piece)?.material || 2}
 													// length={
@@ -184,7 +184,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 												/>
 											</div>
 										}
-										<div className="grid span-12" style={{marginTop: '.7rem'}}>
+										<div className="grid span-12" style={{ marginTop: '.7rem' }}>
 											<Diagram
 												l0={
 													<Input
@@ -342,7 +342,7 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 							<div className="span-6">
 								<Card
 									screen={false}
-									style={{padding: '1.5rem'}}
+									style={{ padding: '1.5rem' }}
 									className="grid gap-md"
 								>
 									<div className="span-12">

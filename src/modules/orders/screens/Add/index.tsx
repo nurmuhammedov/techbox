@@ -64,14 +64,14 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			length: '',
 			box_ear: '',
 			format: undefined,
-			layer_seller: [' '],
+			layer: [' '],
 			logo: undefined
 		}
 	})
 
 	const {fields, append, remove} = useFieldArray({
 		control,
-		name: 'layer_seller' as never
+		name: 'layer' as never
 	})
 
 	const {mutateAsync: addOrder, isPending: isAdding} = useAdd('services/orders')
@@ -98,7 +98,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				box_ear: productDetail.box_ear,
 				format: productDetail.format,
 				logo: productDetail.logo || undefined,
-				layer_seller: productDetail?.layer_seller || [' ']
+				layer: productDetail?.layer || [' ']
 			}))
 		}
 	}, [productDetail, edit])
@@ -120,7 +120,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				box_ear: detail.box_ear,
 				format: detail.format?.id,
 				logo: detail.logo || undefined,
-				layer_seller: detail?.layer_seller || [' ']
+				layer: detail?.layer || [' ']
 			})
 		}
 	}, [detail, edit])
@@ -142,35 +142,33 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						disabled={isAdding || isUpdating}
 						onClick={() => {
 							if (!edit) {
-								handleSubmit((data) => {
-									console.log(data?.deadline,'1')
-										addOrder(modifyObjectField({
-											...data,
-											deadline: formatDateToISO(data?.deadline as string | undefined),
-											product: data?.product ? data?.product : null,
-											customer
-										} as ISearchParams, 'logo'))
-											.then(async () => {
-												reset({
-													product: undefined,
-													comment: '',
-													price: '',
-													deadline: '',
-													money_paid: '',
-													count: '',
-													// product
-													name: '',
-													width: '',
-													height: '',
-													length: '',
-													box_ear: '',
-													format: undefined,
-													layer_seller: [],
-													logo: undefined
-												})
-												navigate(-1)
+								handleSubmit((data) =>
+									addOrder(modifyObjectField({
+										...data,
+										deadline: formatDateToISO(data?.deadline as string | undefined),
+										product: data?.product ? data?.product : null,
+										customer
+									} as ISearchParams, 'logo'))
+										.then(async () => {
+											reset({
+												product: undefined,
+												comment: '',
+												price: '',
+												deadline: '',
+												money_paid: '',
+												count: '',
+												// product
+												name: '',
+												width: '',
+												height: '',
+												length: '',
+												box_ear: '',
+												format: undefined,
+												layer: [],
+												logo: undefined
 											})
-									}
+											navigate(-1)
+										})
 								)()
 
 							} else {
@@ -196,7 +194,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 												length: '',
 												box_ear: '',
 												format: undefined,
-												layer_seller: [],
+												layer: [],
 												logo: undefined
 											})
 											navigate(-1)
@@ -363,17 +361,17 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							fields?.map((field, index) => (
 								<div className="span-4" key={field.id}>
 									<Controller
-										name={`layer_seller.${index}`}
+										name={`layer.${index}`}
 										control={control}
 										render={({field: {value, ref, onChange, onBlur}}) => (
 											<Select
-												id={`layer_seller-${index + 1}`}
+												id={`layer-${index + 1}`}
 												label={`${index + 1}-${t('Layer')?.toLowerCase()}`}
 												options={materials}
 												top={true}
 												handleDelete={() => remove(index)}
 												value={getSelectValue(materials, value)}
-												error={errors?.layer_seller?.[index]?.message}
+												error={errors?.layer?.[index]?.message}
 												ref={ref}
 												onBlur={onBlur}
 												defaultValue={getSelectValue(materials, value)}
@@ -390,8 +388,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							<Button
 								theme={BUTTON_THEME.PRIMARY}
 								type="button"
-								disabled={(watch('layer_seller')?.length !== 0 && watch('layer_seller')?.[(watch('layer_seller')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
-								icon={<Plus/>}
+								disabled={(watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
+								icon={<Plus />}
 								onClick={() => append('')}
 							>
 								Add layer
@@ -458,7 +456,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							<Controller
 								name="money_paid"
 								control={control}
-								render={({field}) => (
+								render={({ field }) => (
 									<NumberFormattedInput
 										id="money_paid"
 										maxLength={13}

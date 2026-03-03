@@ -213,6 +213,10 @@ const materialSchema = yup.object().shape({
 		.string()
 		.trim()
 		.required('This field is required'),
+	name_seller: yup
+		.string()
+		.trim()
+		.required('This field is required'),
 	weight_1x1: yup
 		.string()
 		.trim()
@@ -350,7 +354,7 @@ const productSchema = yup.object().shape({
 		})
 		.nullable()
 		.notRequired(),
-	layer_seller: yup
+	layer: yup
 		.array()
 		.of(yup.string().trim().required('This field is required'))
 		.nullable()
@@ -418,7 +422,7 @@ const ordersSchema = yup.object().shape({
 		})
 		.nullable()
 		.notRequired(),
-	layer_seller: yup
+	layer: yup
 		.array()
 		.of(yup.string().trim().required('This field is required'))
 		.nullable()

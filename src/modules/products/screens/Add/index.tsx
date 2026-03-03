@@ -54,14 +54,14 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			length: '',
 			box_ear: '',
 			format: undefined,
-			layer_seller: [' '],
+			layer: [' '],
 			logo: undefined
 		}
 	})
 
 	const {fields, append, remove} = useFieldArray({
 		control,
-		name: 'layer_seller' as never
+		name: 'layer' as never
 	})
 
 	const {mutateAsync: addProduct, isPending: isAdding} = useAdd('products/')
@@ -78,7 +78,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				box_ear: data.box_ear,
 				format: data.format,
 				logo: data.logo || undefined,
-				layer_seller: data?.layer_seller || [' ']
+				layer: data?.layer || [' ']
 			})
 		}
 	}, [data, edit, reset])
@@ -252,15 +252,15 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						fields?.map((field, index) => (
 							<div className="span-4" key={field.id}>
 								<Controller
-									name={`layer_seller.${index}`}
+									name={`layer.${index}`}
 									control={control}
 									render={({field: {value, ref, onChange, onBlur}}) => (
 										<Select
-											id={`layer_seller-${index + 1}`}
-											label={`${index + 1}-${t('layer_seller')}`}
+											id={`layer-${index + 1}`}
+											label={`${index + 1}-${t('layer')}`}
 											top={true}
 											options={materials}
-											error={errors?.layer_seller?.[index]?.message}
+											error={errors?.layer?.[index]?.message}
 											handleDelete={() => remove(index)}
 											value={getSelectValue(materials, value)}
 											ref={ref}
@@ -278,7 +278,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						<Button
 							theme={BUTTON_THEME.PRIMARY}
 							type="button"
-							disabled={watch('layer_seller')?.length !== 0 && watch('layer_seller')?.[(watch('layer_seller')?.length ?? 1) - 1]?.toString()?.trim() === '' || fields.length >= 5}
+							disabled={watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '' || fields.length >= 5}
 							icon={<Plus/>}
 							onClick={() => append('')}
 						>

@@ -1,18 +1,18 @@
-import {useData} from 'hooks'
-import {Card, Diagram, FileUpLoader, Input, Select} from 'components'
-import {decimalToInteger, getSelectValue} from 'utilities/common'
-import {IFIle, ISelectOption} from 'interfaces/form.interface'
-import {useTranslation} from 'react-i18next'
+import { useData } from 'hooks'
+import { Card, CutDiagram, Diagram, FileUpLoader, Input, Select } from 'components'
+import { decimalToInteger, getSelectValue } from 'utilities/common'
+import { IFIle, ISelectOption } from 'interfaces/form.interface'
+import { useTranslation } from 'react-i18next'
 import styles from '../HOC/OrderDetail/styles.module.scss'
 import classNames from 'classnames'
-import {getDate} from 'utilities/date'
-import {activityOptions} from 'helpers/options'
-import {IOrderDetail} from 'interfaces/orders.interface'
+import { getDate } from 'utilities/date'
+import { activityOptions, cutOptions } from 'helpers/options'
+import { IOrderDetail } from 'interfaces/orders.interface'
 
 
-const Index = ({order}: { order: IOrderDetail }) => {
-	const {t} = useTranslation()
-	const {data: materials = []} = useData<ISelectOption[]>('products/materials/select')
+const Index = ({ order }: { order: IOrderDetail }) => {
+	const { t } = useTranslation()
+	const { data: materials = [] } = useData<ISelectOption[]>('products/materials/select')
 
 	return (
 		<>
@@ -20,12 +20,12 @@ const Index = ({order}: { order: IOrderDetail }) => {
 				<div className="grid gap-lg">
 					<Card
 						screen={false}
-						style={{padding: '1.5rem'}}
+						style={{ padding: '1.5rem' }}
 						className="span-12"
 					>
 						<div className="grid gap-md">
 							<div
-								style={{marginBottom: '1.5rem'}}
+								style={{ marginBottom: '1.5rem' }}
 								className="flex span-12 justify-between gap-lg align-center"
 							>
 								<div className={styles.title}>
@@ -69,7 +69,7 @@ const Index = ({order}: { order: IOrderDetail }) => {
 									id="layer"
 									disabled={true}
 									label="Layer"
-									value={order?.layer?.length || order?.layer_seller?.length || 0}
+									value={order?.layer?.length || order?.layer?.length || 0}
 								/>
 							</div>
 
@@ -106,7 +106,46 @@ const Index = ({order}: { order: IOrderDetail }) => {
 								/>
 							</div>
 
-							<div className="grid span-12" style={{marginTop: '.7rem'}}>
+							<div className="span-4">
+								<Select
+									id="piece"
+									disabled={true}
+									label={t('Cut')}
+									options={cutOptions}
+									value={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
+									defaultValue={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
+								/>
+							</div>
+
+							{
+								order?.piece && order?.piece != 'total' &&
+								<div className="grid span-12" style={{ marginTop: '.75rem' }}>
+									<CutDiagram
+										sections={cutOptions?.find(i => i.value == order?.piece)?.material || 2}
+										count={
+											<Input
+												id="l0"
+												mini={true}
+												disabled={true}
+												value={`${Math.ceil((Number(order?.count_last) || Number(order?.count) || 0) / (cutOptions?.find(i => i.value == order?.piece)?.material || 2))} tadan`}
+												placeholder=" "
+											/>
+										}
+										x={
+											<Input
+												id="format_dim"
+												mini={true}
+												disabled={true}
+												value={`${order?.format?.format || order?.format?.name || ''} mm`}
+												placeholder=" "
+											/>
+										}
+										className="span-12"
+									/>
+								</div>
+							}
+
+							<div className="grid span-12" style={{ marginTop: '.7rem' }}>
 								<Diagram
 									l0={
 										<Input

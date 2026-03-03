@@ -116,7 +116,7 @@ const Index = () => {
 			},
 			{
 				Header: t('Layer'),
-				accessor: (row: IOrderDetail) => row.layer?.length || row.layer_seller?.length || 0
+				accessor: (row: IOrderDetail) => row.layer?.length || row.layer?.length || 0
 			},
 			{
 				Header: t('Actions'),
@@ -227,7 +227,7 @@ const Index = () => {
 	useEffect(() => {
 		if (detail && updateId) {
 			resetEdit({
-				layer: detail?.layer || getLayerSellerArray(detail?.layer_seller) || [],
+				layer: detail?.layer || getLayerSellerArray(detail?.layer) || [],
 				deadline: detail?.deadline ? getDate(detail?.deadline) : '',
 				count_entered_leader: detail?.count_entered_leader || detail?.count || '0',
 				piece: detail?.piece?.toString() || cutOptions[0].value?.toString() || undefined,
@@ -473,12 +473,12 @@ const Index = () => {
 													id="layer"
 													disabled={true}
 													label="Layer"
-													value={order?.layer?.length || order?.layer_seller?.length || 0}
+													value={order?.layer?.length || order?.layer?.length || 0}
 												/>
 											</div>
 
 											{
-												!order?.layer?.length ? order?.layer_seller?.map((layer, index) => (
+												!order?.layer?.length ? order?.layer?.map((layer, index) => (
 													<div className="span-4" key={index}>
 														<Select
 															id={`layer-${index + 1}`}

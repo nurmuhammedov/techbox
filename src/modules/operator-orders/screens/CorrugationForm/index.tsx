@@ -3,6 +3,7 @@ import { Corrugation } from 'assets/icons'
 import {
     Button,
     Card,
+    CutDiagram,
     Diagram,
     Form,
     Input,
@@ -14,7 +15,7 @@ import {
 } from 'components'
 import OrderInfo from 'components/OrderInfo'
 import { BUTTON_THEME } from 'constants/fields'
-import { activityOptions, booleanOptions } from 'helpers/options'
+import { activityOptions, booleanOptions, cutOptions } from 'helpers/options'
 import { useDetail, useUpdate } from 'hooks'
 import { ISelectOption } from 'interfaces/form.interface'
 import { IGroupOrder } from 'interfaces/groupOrders.interface'
@@ -153,13 +154,13 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({ detail = false }) => {
             if (detail && responseData?.weight_materials?.length) {
                 mappedLeftovers = responseData.weight_materials.map(wm => ({
                     id: wm.id,
-                    weight: wm.weight ==0 ? '0' : wm.weight ? String(wm.weight) : '',
+                    weight: wm.weight == 0 ? '0' : wm.weight ? String(wm.weight) : '',
                     name: wm.materials.map(m => `${m.name} (${m.material_name})`).join(', ')
                 }))
             } else {
                 mappedLeftovers = responseData?.materials?.map(mat => ({
                     id: mat.id,
-                    weight: mat.weight ==0 ? '0' : mat.weight ? String(mat.weight) : ''
+                    weight: mat.weight == 0 ? '0' : mat.weight ? String(mat.weight) : ''
                 })) || []
             }
 
@@ -443,6 +444,55 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({ detail = false }) => {
                                                         }
                                                     />
                                                 </div>
+
+                                                <div className="span-12">
+                                                    <Select
+                                                        id="piece"
+                                                        disabled={true}
+                                                        label={t('Cut')}
+                                                        options={cutOptions}
+                                                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                        // @ts-ignore
+                                                        value={getSelectValue(cutOptions, groupOrderData?.piece || cutOptions[0].value)}
+                                                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                        // @ts-ignore
+                                                        defaultValue={getSelectValue(cutOptions, groupOrderData?.piece || cutOptions[0].value)}
+                                                    />
+                                                </div>
+
+                                                {
+                                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                    // @ts-ignore
+                                                    groupOrderData?.piece && groupOrderData?.piece != 'total' &&
+                                                    <div className="grid span-12" style={{ marginTop: '.75rem' }}>
+                                                        <CutDiagram
+                                                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                            // @ts-ignore
+                                                            sections={cutOptions?.find(i => i.value == groupOrderData?.piece)?.material || 2}
+                                                            count={
+                                                                <Input
+                                                                    id="l0"
+                                                                    mini={true}
+                                                                    disabled={true}
+                                                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                                    // @ts-ignore
+                                                                    value={`${Math.ceil((Number(groupOrderData?.count) || 0) / (cutOptions?.find(i => i.value == groupOrderData?.piece)?.material || 2))} tadan`}
+                                                                    placeholder=" "
+                                                                />
+                                                            }
+                                                            x={
+                                                                <Input
+                                                                    id="format_dim"
+                                                                    mini={true}
+                                                                    disabled={true}
+                                                                    value={`${groupOrderData?.separated_raw_materials_format?.format || ''} mm`}
+                                                                    placeholder=" "
+                                                                />
+                                                            }
+                                                            className="span-12"
+                                                        />
+                                                    </div>
+                                                }
 
                                                 <div className="span-6">
                                                     <NumberFormattedInput

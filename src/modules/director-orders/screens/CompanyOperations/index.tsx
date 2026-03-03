@@ -154,13 +154,14 @@ const Index = () => {
 				},
 				{
 					Header: `${t('Finished date')}`,
-					accessor: (row: IOrderDetail) => row?.end_date ? formatDate(row?.end_date) : ''
+					accessor: (row: IOrderDetail) => row?.end_date ? formatDate(row?.end_date) : '',
+					dynamicFilter: 'end_date',
 				}
 			] : [],
 			{
 				Header: t('CreatedAt'),
 				accessor: (row: IOrderDetail) => getDate(row.created_at),
-				// dynamicFilter: 'created_at',
+				dynamicFilter: 'created_at',
 			},
 			{
 				Header: t('Actions'),
