@@ -247,6 +247,10 @@ function useAppRoutes() {
 				{
 					path: 'detail/:id',
 					element: <CorrugationForm detail={true} />
+				},
+				{
+					path: 'pallet-detail/:id',
+					element: <PalletDetail />
 				}
 			]
 		},
@@ -328,11 +332,11 @@ function useAppRoutes() {
 				},
 				{
 					path: 'edit/:id',
-					element: <PalletForm />
+					element: <PalletForm type="flex" />
 				},
 				{
 					path: 'detail/:id',
-					element: <PalletForm retrieve={true} />
+					element: <PalletForm retrieve={true} type="flex" />
 				}
 			]
 		},
@@ -346,11 +350,11 @@ function useAppRoutes() {
 				},
 				{
 					path: 'edit/:id',
-					element: <PalletForm />
+					element: <PalletForm type="glue" />
 				},
 				{
 					path: 'detail/:id',
-					element: <PalletForm retrieve={true} />
+					element: <PalletForm retrieve={true} type="glue" />
 				}
 			]
 		},
@@ -364,11 +368,11 @@ function useAppRoutes() {
 				},
 				{
 					path: 'edit/:id',
-					element: <PalletForm />
+					element: <PalletForm type="bet" />
 				},
 				{
 					path: 'detail/:id',
-					element: <PalletForm retrieve={true} />
+					element: <PalletForm retrieve={true} type="bet" />
 				}
 			]
 		},

@@ -1,7 +1,8 @@
 import { FC } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Diagram, Card, Input, NumberFormattedInput, MaskInput, PageTitle } from 'components/index'
+import { Diagram, Card, Input, NumberFormattedInput, MaskInput, PageTitle, Button } from 'components/index'
+import { BUTTON_THEME } from 'constants/fields'
 import { activityOptions } from 'helpers/options'
 import { noop } from 'utilities/common'
 import { getDate } from 'utilities/date'
@@ -11,8 +12,9 @@ import { IPallet } from 'interfaces/orders.interface'
 const PalletDetail: FC = () => {
     const { id } = useParams()
     const { t } = useTranslation()
+    const navigate = useNavigate()
 
-    const { detail: pallet, isPending } = useDetail<IPallet>('services/pallets', id)
+    const { detail: pallet, isPending } = useDetail<IPallet>('services/pallets/', id)
 
     if (isPending) {
         return <div>{t('Loading...')}</div>
@@ -24,9 +26,15 @@ const PalletDetail: FC = () => {
 
     return (
         <div className="grid gap-lg">
-            <PageTitle title={`${t('Pallet detail')} #${pallet.id}`} />
+            <PageTitle title={`${t('Paddon tafsilotlari')} #${pallet.id}`}>
+                <div className="flex gap-sm justify-center align-center">
+                    <Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
+                        Orqaga
+                    </Button>
+                </div>
+            </PageTitle>
 
-            <Card className="grid gap-md span-8">
+            <Card className="grid gap-md span-8" style={{ padding: '1.5rem', backgroundColor: '#fff' }}>
                 <div className="span-12">
                     <Diagram
                         second={true}
@@ -79,15 +87,6 @@ const PalletDetail: FC = () => {
                         disabled={true}
                         label="Holati"
                         value={pallet.status || ''}
-                    />
-                </div>
-
-                <div className="span-6">
-                    <Input
-                        id="activity"
-                        disabled={true}
-                        label="Faoliyat"
-                        value={pallet.activity || ''}
                     />
                 </div>
 

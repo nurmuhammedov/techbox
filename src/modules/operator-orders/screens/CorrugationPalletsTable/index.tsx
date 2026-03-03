@@ -40,10 +40,6 @@ const Index: FC = () => {
                 accessor: (row: IPallet) => row.status
             },
             {
-                Header: t('Faoliyat'),
-                accessor: (row: IPallet) => row.activity
-            },
-            {
                 Header: t('Soni'),
                 accessor: (row: IPallet) => row.count
             },
@@ -59,7 +55,7 @@ const Index: FC = () => {
                 Header: t('Actions'),
                 accessor: (row: IPallet) => (
                     <div className="flex items-start gap-lg">
-                        <Button mini={true} onClick={() => navigate(`pallet-detail/${row.id}`)}>
+                        <Button mini={true} onClick={() => navigate(`/corrugation-orders/pallet-detail/${row.id}`)}>
                             Batafsil
                         </Button>
                     </div>

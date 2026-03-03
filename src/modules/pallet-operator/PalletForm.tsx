@@ -18,14 +18,15 @@ const schema = yup.object().shape({
 
 interface IProps {
     retrieve?: boolean
+    type?: 'flex' | 'glue' | 'bet'
 }
 
-const PalletForm: FC<IProps> = ({ retrieve = false }) => {
+const PalletForm: FC<IProps> = ({ retrieve = false, type }) => {
     const { id } = useParams()
     const { t } = useTranslation()
     const navigate = useNavigate()
 
-    const { detail: pallet, isPending } = useDetail<IPallet>('services/pallets', id)
+    const { detail: pallet, isPending } = useDetail<IPallet>('services/pallets/', id)
 
     const {
         control,
@@ -51,7 +52,13 @@ const PalletForm: FC<IProps> = ({ retrieve = false }) => {
     }, [pallet, retrieve, reset])
 
     const onSubmit = (data: any) => {
-        update({ end_count: data.end_count }).then(() => {
+        let payload: any = {}
+        if (type === 'flex') payload = { pallet_count_after_flex: data.end_count }
+        else if (type === 'glue') payload = { pallet_count_after_glue: data.end_count }
+        else if (type === 'bet') payload = { pallet_count_after_bet: data.end_count }
+        else payload = { end_count: data.end_count }
+
+        update(payload).then(() => {
             navigate(-1)
         })
     }
@@ -61,7 +68,7 @@ const PalletForm: FC<IProps> = ({ retrieve = false }) => {
 
     return (
         <div className="grid gap-lg">
-            <PageTitle title={`${t('Pallet detail')} #${pallet.id}`}>
+            <PageTitle title={`${t('Paddon tafsilotlari')} #${pallet.id}`}>
                 <div className="flex gap-sm justify-center align-center">
                     <Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
                         Orqaga
@@ -75,7 +82,7 @@ const PalletForm: FC<IProps> = ({ retrieve = false }) => {
             </PageTitle>
 
             <Form className="span-8" onSubmit={(e) => e.preventDefault()}>
-                <Card className="grid gap-md">
+                <Card className="grid gap-md" style={{ padding: '1.5rem', backgroundColor: '#fff' }}>
                     <div className="span-12">
                         <Diagram
                             second={true}
@@ -136,15 +143,6 @@ const PalletForm: FC<IProps> = ({ retrieve = false }) => {
                             disabled={true}
                             label="Holati"
                             value={pallet.status || ''}
-                        />
-                    </div>
-
-                    <div className="span-6">
-                        <Input
-                            id="activity"
-                            disabled={true}
-                            label="Faoliyat"
-                            value={pallet.activity || ''}
                         />
                     </div>
 

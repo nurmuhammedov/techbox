@@ -45,10 +45,6 @@ const PalletLeaderTable: FC = () => {
                 accessor: (row: IPallet) => row.status
             },
             {
-                Header: t('Faoliyat'),
-                accessor: (row: IPallet) => row.activity
-            },
-            {
                 Header: t('Soni'),
                 accessor: (row: IPallet) => row.count
             },

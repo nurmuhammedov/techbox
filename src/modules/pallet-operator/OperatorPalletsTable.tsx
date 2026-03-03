@@ -25,22 +25,34 @@ const OperatorPalletsTable: FC<IProps> = ({ type }) => {
     const { page, pageSize } = usePagination()
     const { paramsObject: { status_ = 'new' } } = useSearchParams()
 
-    // Determine the query param corresponding to the operator type
-    const queryKey = type === 'flex' ? 'flex' : type === 'glue' ? 'glue' : 'bet'
+    const getQueryParams = () => {
+        const params: any = { page, page_size: pageSize }
+
+        if (status_ === 'new') {
+            if (type === 'flex') params.ymo1 = 'ymo1'
+            if (type === 'glue') params.ymo2 = 'ymo2'
+            if (type === 'bet') params.ymo2 = 'ymo2'
+        } else if (status_ === 'in_proces') {
+            if (type === 'flex') params.flex = 'flex'
+            if (type === 'glue') params.glue = 'glue'
+            if (type === 'bet') params.bet = 'bet'
+        } else if (status_ === 'finished') {
+            if (type === 'flex') params.history_flex = 'history_flex'
+            if (type === 'glue') params.history_glue = 'history_glue'
+            if (type === 'bet') params.history_bet = 'history_bet'
+        }
+
+        return params
+    }
 
     const { data, totalPages, isPending: isLoading, refetch } = usePaginatedData<IPallet[]>(
         'services/pallets',
-        {
-            page,
-            page_size: pageSize,
-            status_,
-            [queryKey]: queryKey
-        }
+        getQueryParams()
     )
 
     const handleAccept = async (id: number) => {
         try {
-            await interceptor.get(`services/pallets/manager?pallet_id=${id}`)
+            await interceptor.get(`services/pallets/get-performance/${id}`)
             showMessage('Qabul qilindi', 'success')
             refetch()
         } catch (error) {

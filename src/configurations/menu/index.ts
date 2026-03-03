@@ -270,7 +270,7 @@ export const menu: IMenuItem[] = [
 	},
 	{
 		id: 'pallet_leader',
-		label: 'Rahbar paddonlari',
+		label: 'Paddonlar',
 		href: '/pallet-leader',
 		icon: User,
 		allowedRoles: [
@@ -282,7 +282,7 @@ export const menu: IMenuItem[] = [
 	},
 	{
 		id: 'pallet_flex',
-		label: 'Fleksa paddonlari',
+		label: 'Paddonlar',
 		href: '/pallet-flex',
 		icon: User,
 		allowedRoles: [
@@ -294,7 +294,7 @@ export const menu: IMenuItem[] = [
 	},
 	{
 		id: 'pallet_glue',
-		label: 'Yelimlash paddonlari',
+		label: 'Paddonlar',
 		href: '/pallet-glue',
 		icon: User,
 		allowedRoles: [
@@ -306,7 +306,7 @@ export const menu: IMenuItem[] = [
 	},
 	{
 		id: 'pallet_bet',
-		label: 'Tikish paddonlari',
+		label: 'Paddonlar',
 		href: '/pallet-bet',
 		icon: User,
 		allowedRoles: [

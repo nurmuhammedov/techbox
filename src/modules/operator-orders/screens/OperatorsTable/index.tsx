@@ -33,7 +33,8 @@ const Index: FC<IProperties> = ({ type = 'gofra' }) => {
 			activity: status != operatorsStatusOptions[2].value ? type : null,
 			operator: status == operatorsStatusOptions[0].value ? 'new' : status == operatorsStatusOptions[1].value ? 'operator' : 'gofra',
 			pass_activity: status == operatorsStatusOptions[2].value ? type : null
-		}
+		},
+		status != 4
 	)
 
 
