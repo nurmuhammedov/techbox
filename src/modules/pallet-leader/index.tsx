@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Column } from 'react-table'
 import { getDate } from 'utilities/date'
+import { translatePalletStatus } from 'utilities/common'
 import { IPallet } from 'interfaces/orders.interface'
 
 const palletStatusTabs = [
@@ -42,7 +43,7 @@ const PalletLeaderTable: FC = () => {
             },
             {
                 Header: t('Holati'),
-                accessor: (row: IPallet) => row.status
+                accessor: (row: IPallet) => translatePalletStatus(row.status)
             },
             {
                 Header: t('Soni'),

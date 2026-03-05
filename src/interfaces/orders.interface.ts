@@ -88,9 +88,12 @@ export interface IPallet {
 	end_date: string | null;
 	stages_to_passed?: string[];
 	pallet_count_after_gofra?: number;
+	pallet_count_after_glue?: number;
 	after_gofra_date?: string;
 	start_gofra_date?: string;
 	pallet_count_after_flex?: number;
+	pallet_count_after_gluing?: number;
+	pallet_count_after_bet?: number;
 	after_flex_date?: string;
 	start_flex_date?: string;
 	start_gluing_date?: string;

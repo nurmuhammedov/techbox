@@ -8,6 +8,7 @@ import { getDate } from 'utilities/date'
 import { IPallet } from 'interfaces/orders.interface'
 import { interceptor } from 'libraries'
 import { showMessage } from 'utilities/alert'
+import { translatePalletStatus } from 'utilities/common'
 
 const palletStatusTabs = [
     { value: 'new', label: 'Yangi' },
@@ -73,7 +74,7 @@ const OperatorPalletsTable: FC<IProps> = ({ type }) => {
             },
             {
                 Header: t('Holati'),
-                accessor: (row: IPallet) => row.status
+                accessor: (row: IPallet) => translatePalletStatus(row.status)
             },
             {
                 Header: t('Soni'),
@@ -81,7 +82,13 @@ const OperatorPalletsTable: FC<IProps> = ({ type }) => {
             },
             {
                 Header: t('Yakuniy soni'),
-                accessor: (row: IPallet) => row.end_count || '-'
+                accessor: (row: IPallet) => {
+                    if (type === 'flex') return row.pallet_count_after_flex ?? row.end_count ?? '-'
+                    if (type === 'glue') return row.pallet_count_after_gluing ?? row.end_count ?? '-'
+                    if (type === 'bet') return row.pallet_count_after_bet ?? row.end_count ?? '-'
+                    if (type === 'glue') return row.pallet_count_after_glue ?? row.end_count ?? '-'
+                    return row.end_count || '-'
+                }
             },
             {
                 Header: t('Muddati'),

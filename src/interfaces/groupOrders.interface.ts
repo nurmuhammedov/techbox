@@ -1,5 +1,5 @@
-import { IIDName } from 'interfaces/configuration.interface'
-import { IOrderDetail } from 'interfaces/orders.interface'
+import {IIDName} from 'interfaces/configuration.interface'
+import {IOrderDetail} from 'interfaces/orders.interface'
 
 
 interface IGroupOrder {
@@ -21,9 +21,11 @@ interface IGroupOrder {
 
 
 	pallet_count_after_gofra: string
+	gofra_pallet_count?: string
 	pallet_count_after_flex: string
 	pallet_count_after_gluing: string
 	pallet_count_after_bet: string
+	pallet_count_after_glue: string
 
 	deadline: string;
 	count: string;

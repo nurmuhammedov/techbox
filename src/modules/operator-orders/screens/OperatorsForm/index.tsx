@@ -1,18 +1,18 @@
-import {yupResolver} from '@hookform/resolvers/yup'
-import {Corrugation} from 'assets/icons'
-import {Button, Card, Form, Input, NumberFormattedInput, PageIcon, PageTitle, Select} from 'components'
-import {GroupOrderDetail} from 'components/HOC'
-import {BUTTON_THEME} from 'constants/fields'
-import {booleanOptions} from 'helpers/options'
-import {operatorsOrderSchema} from 'helpers/yup'
-import {useUpdate} from 'hooks'
-import {ISelectOption} from 'interfaces/form.interface'
-import {IGroupOrder} from 'interfaces/groupOrders.interface'
-import {FC, useEffect} from 'react'
-import {Controller, useFieldArray, useForm} from 'react-hook-form'
-import {useTranslation} from 'react-i18next'
-import {useNavigate, useParams} from 'react-router-dom'
-import {decimalToInteger, getSelectValue} from 'utilities/common'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Corrugation } from 'assets/icons'
+import { Button, Card, Form, Input, NumberFormattedInput, PageIcon, PageTitle, Select } from 'components'
+import { GroupOrderDetail } from 'components/HOC'
+import { BUTTON_THEME } from 'constants/fields'
+import { booleanOptions } from 'helpers/options'
+import { operatorsOrderSchema } from 'helpers/yup'
+import { useUpdate } from 'hooks'
+import { ISelectOption } from 'interfaces/form.interface'
+import { IGroupOrder } from 'interfaces/groupOrders.interface'
+import { FC, useEffect } from 'react'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { useNavigate, useParams } from 'react-router-dom'
+import { decimalToInteger, getSelectValue } from 'utilities/common'
 
 
 interface IProperties {
@@ -21,9 +21,9 @@ interface IProperties {
 	detail?: IGroupOrder
 }
 
-const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}) => {
-	const {id} = useParams()
-	const {t} = useTranslation()
+const Index: FC<IProperties> = ({ retrieve = false, detail, type = 'corrugation' }) => {
+	const { id } = useParams()
+	const { t } = useTranslation()
 	const navigate = useNavigate()
 
 	const {
@@ -32,7 +32,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 		register,
 		watch,
 		handleSubmit,
-		formState: {errors}
+		formState: { errors }
 	} = useForm({
 		mode: 'onTouched',
 		defaultValues: {
@@ -50,7 +50,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 		resolver: yupResolver(operatorsOrderSchema)
 	})
 
-	const {fields} = useFieldArray({
+	const { fields } = useFieldArray({
 		control,
 		name: 'data' as never
 	})
@@ -67,7 +67,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 					percentage: detail?.percentage_after_processing,
 					weight: detail?.invalid_material_in_processing,
 					area: detail?.mkv_after_processing,
-					pallet: detail?.pallet_count_after_gofra,
+					pallet: detail?.gofra_pallet_count,
 					warehouse: detail?.pallet_warehouse?.id,
 					data: detail?.count_after_processing?.length ? detail?.count_after_processing : []
 				})
@@ -134,7 +134,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 									let newData = undefined
 									if (type === 'corrugation') {
 										newData = {
-											pallet_count_after_gofra: data?.pallet,
+											gofra_pallet_count: data?.pallet,
 											count_after_processing: data?.data
 										}
 									} else if (type === 'flex') {
@@ -177,11 +177,11 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 					}
 				</div>
 			</PageTitle>
-			<Card className="span-12" screen={false} style={{padding: '1.5rem'}}>
+			<Card className="span-12" screen={false} style={{ padding: '1.5rem' }}>
 				<Form className="grid  gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 					<div className="grid gap-lg span-12">
 						<PageIcon className="span-2">
-							<Corrugation/>
+							<Corrugation />
 						</PageIcon>
 						<div className="span-3">
 							<Input
@@ -219,7 +219,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 									<Controller
 										control={control}
 										name={`data.${index}.count`}
-										render={({field}) => (
+										render={({ field }) => (
 											<NumberFormattedInput
 												id={`data.${index}.count`}
 												maxLength={12}
@@ -244,7 +244,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'corrugation'}
 								<Controller
 									control={control}
 									name={`pallet`}
-									render={({field}) => (
+									render={({ field }) => (
 										<NumberFormattedInput
 											id={`pallet`}
 											maxLength={12}

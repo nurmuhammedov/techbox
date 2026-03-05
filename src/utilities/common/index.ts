@@ -1,13 +1,13 @@
-import {cutOptions, roleOptions} from 'helpers/options'
-import {TFunction} from 'i18next'
-import {IFIle, ISelectOption} from 'interfaces/form.interface'
-import {IOrderDetail} from 'interfaces/orders.interface'
-import {ISearchParams} from 'interfaces/params.interface'
-import {showMessage} from 'utilities/alert'
+import { cutOptions, roleOptions } from 'helpers/options'
+import { TFunction } from 'i18next'
+import { IFIle, ISelectOption } from 'interfaces/form.interface'
+import { IOrderDetail } from 'interfaces/orders.interface'
+import { ISearchParams } from 'interfaces/params.interface'
+import { showMessage } from 'utilities/alert'
 
 
-const noop = (): void => {}
-const noopAsync = async (): Promise<undefined> => {}
+const noop = (): void => { }
+const noopAsync = async (): Promise<undefined> => { }
 
 function joinArray(arr: string[], t: TFunction) {
 	if (!Array.isArray(arr)) {
@@ -46,7 +46,7 @@ function getSelectValue(options: ISelectOption[], value: string | number | boole
 }
 
 function modifyObjectField(obj: ISearchParams, key: string): ISearchParams {
-	const updatedObj = {...obj}
+	const updatedObj = { ...obj }
 
 	if (updatedObj[key]) {
 		const field = updatedObj[key] as unknown as IFIle
@@ -58,7 +58,18 @@ function modifyObjectField(obj: ISearchParams, key: string): ISearchParams {
 }
 
 const getSelectOptionsByKey = (data: ISearchParams[], key: string = 'name'): ISelectOption[] => {
-	return data.map((item) => ({value: Number(item?.id || 0), label: String(item?.[key] || '')}))
+	return data.map((item) => ({ value: Number(item?.id || 0), label: String(item?.[key] || '') }))
+}
+
+const translatePalletStatus = (status?: string | null): string => {
+	switch (status) {
+		case 'new': return 'Yangi'
+		case 'in_proces':
+		case 'in_process': return 'Jarayonda'
+		case 'in_line': return 'Navbatda'
+		case 'finished': return 'Yakunlangan'
+		default: return status || '-'
+	}
 }
 
 
@@ -184,5 +195,6 @@ export {
 	modifyObjectField,
 	formatSelectOptions,
 	areAllFieldsPresent,
-	getSelectOptionsByKey
+	getSelectOptionsByKey,
+	translatePalletStatus
 }

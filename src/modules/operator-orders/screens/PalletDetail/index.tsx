@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Diagram, Card, Input, NumberFormattedInput, MaskInput, PageTitle, Button } from 'components/index'
 import { BUTTON_THEME } from 'constants/fields'
 import { activityOptions } from 'helpers/options'
-import { noop } from 'utilities/common'
+import { noop, translatePalletStatus } from 'utilities/common'
 import { getDate } from 'utilities/date'
 import { useDetail } from 'hooks'
 import { IPallet } from 'interfaces/orders.interface'
@@ -77,7 +77,7 @@ const PalletDetail: FC = () => {
                         disableGroupSeparators={false}
                         allowDecimals={false}
                         label="Yakuniy soni"
-                        value={pallet.end_count || 0}
+                        value={window.location.pathname.includes('corrugation-orders') ? (pallet.pallet_count_after_gofra ?? pallet.end_count ?? 0) : (pallet.end_count ?? 0)}
                     />
                 </div>
 
@@ -86,7 +86,7 @@ const PalletDetail: FC = () => {
                         id="status"
                         disabled={true}
                         label="Holati"
-                        value={pallet.status || ''}
+                        value={translatePalletStatus(pallet.status) || ''}
                     />
                 </div>
 

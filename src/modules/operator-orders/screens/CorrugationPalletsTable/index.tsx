@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Column } from 'react-table'
 import { getDate } from 'utilities/date'
+import { translatePalletStatus } from 'utilities/common'
 import { IPallet } from 'interfaces/orders.interface'
 
 const Index: FC = () => {
@@ -37,7 +38,7 @@ const Index: FC = () => {
             },
             {
                 Header: t('Holati'),
-                accessor: (row: IPallet) => row.status
+                accessor: (row: IPallet) => translatePalletStatus(row.status)
             },
             {
                 Header: t('Soni'),
@@ -45,7 +46,7 @@ const Index: FC = () => {
             },
             {
                 Header: t('Yakuniy soni'),
-                accessor: (row: IPallet) => row.end_count || '-'
+                accessor: (row: IPallet) => row.pallet_count_after_gofra ?? row.end_count ?? '-'
             },
             {
                 Header: t('Yak. sana'),
