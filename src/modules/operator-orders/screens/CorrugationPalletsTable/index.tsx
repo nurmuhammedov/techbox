@@ -18,7 +18,7 @@ const Index: FC = () => {
         {
             page: page,
             page_size: pageSize,
-            history_gofra: 'history_gofra'
+            history: 'gofra'
         }
     )
 

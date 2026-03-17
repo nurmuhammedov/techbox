@@ -30,17 +30,32 @@ const OperatorPalletsTable: FC<IProps> = ({ type }) => {
         const params: any = { page, page_size: pageSize }
 
         if (status_ === 'new') {
-            if (type === 'flex') params.ymo1 = 'ymo1'
-            if (type === 'glue') params.ymo2 = 'ymo2'
-            if (type === 'bet') params.ymo2 = 'ymo2'
+            if (type === 'flex') params.ymo = 'ymo1'
+            if (type === 'glue') {
+                params.ymo = 'ymo2'
+                params.rol = 'glue'
+            }
+            if (type === 'bet') {
+                params.ymo = 'ymo2'
+                params.rol = 'bet'
+            }
         } else if (status_ === 'in_proces') {
-            if (type === 'flex') params.flex = 'flex'
-            if (type === 'glue') params.glue = 'glue'
-            if (type === 'bet') params.bet = 'bet'
+            if (type === 'flex') {
+                params.activity = 'fleksa'
+                params.role = 'flex'
+            }
+            if (type === 'glue') {
+                params.activity = 'yelimlash'
+                params.role = 'glue'
+            }
+            if (type === 'bet') {
+                params.activity = 'tikish'
+                params.role = 'bet'
+            }
         } else if (status_ === 'finished') {
-            if (type === 'flex') params.history_flex = 'history_flex'
-            if (type === 'glue') params.history_glue = 'history_glue'
-            if (type === 'bet') params.history_bet = 'history_bet'
+            if (type === 'flex') params.history = 'flex'
+            if (type === 'glue') params.history = 'glue'
+            if (type === 'bet') params.history = 'bet'
         }
 
         return params
