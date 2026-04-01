@@ -86,6 +86,11 @@ const yesNoOptions: ISearchParams[] = [
 	{ value: false, label: 'No' }
 ]
 
+const verticalOptions: ISearchParams[] = [
+	{ value: false, label: 'Gorizontal' },
+	{ value: true, label: 'Vertikal' }
+]
+
 const activityOptions: ISelectOption[] = [
 	{ value: 'gofra', label: 'Corrugation' },
 	{ value: 'ymo1', label: 'YMO' },
@@ -93,7 +98,7 @@ const activityOptions: ISelectOption[] = [
 	{ value: 'ymo2', label: 'YMO2' },
 	{ value: 'tikish', label: 'Sewing' },
 	{ value: 'yelimlash', label: 'Gluing' },
-	{ value: 'is_list', label: 'Warehouse' }
+	{ value: 'is_last', label: 'Warehouse' }
 ]
 
 const cutOptions: ISelectOption[] = [
@@ -111,6 +116,7 @@ export {
 	activityOptions,
 	booleanOptions,
 	yesNoOptions,
+	verticalOptions,
 	statusOptions,
 	cutOptions,
 	roleOptions

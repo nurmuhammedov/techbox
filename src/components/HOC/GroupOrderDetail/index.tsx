@@ -7,7 +7,7 @@ import styles from './styles.module.scss'
 import classNames from 'classnames'
 import { getDate } from 'utilities/date'
 import { ComponentType } from 'react'
-import { activityOptions, cutOptions } from 'helpers/options'
+import { activityOptions, cutOptions, verticalOptions } from 'helpers/options'
 import { useParams } from 'react-router-dom'
 import { IGroupOrder } from 'interfaces/groupOrders.interface'
 
@@ -141,8 +141,21 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 											/>
 										</div>
 
+										<div className="span-4">
+											<Select
+												id="is_vertical"
+												disabled={true}
+  										        label={t('Joylashuv')}
+												options={verticalOptions as unknown as ISelectOption[]}
+												value={getSelectValue(verticalOptions as unknown as ISelectOption[], order?.is_vertical)}
+												defaultValue={getSelectValue(verticalOptions as unknown as ISelectOption[], order?.is_vertical)}
+											/>
+										</div>
+
+
+
 										{
-											order?.piece && order?.piece != 'total' && !order.is_list &&
+											order?.piece && order?.piece != 'total' &&
 											<div className="grid span-12" style={{ marginTop: '.75rem' }}>
 												<CutDiagram
 													sections={cutOptions?.find(i => i.value == order?.piece)?.material || 2}
@@ -370,6 +383,17 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 											disabled={true}
 											label="Deadline"
 											value={getDate(detail?.deadline || '')}
+										/>
+									</div>
+
+									<div className="span-4">
+										<Select
+											id="is_vertical_group"
+											disabled={true}
+											label={t('Joylashuv')}
+											options={verticalOptions as unknown as ISelectOption[]}
+											value={getSelectValue(verticalOptions as unknown as ISelectOption[], detail?.is_vertical)}
+											defaultValue={getSelectValue(verticalOptions as unknown as ISelectOption[], detail?.is_vertical)}
 										/>
 									</div>
 									<div

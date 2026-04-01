@@ -16,6 +16,7 @@ interface IGroupOrder {
 		name: string;
 	};
 	has_addition?: boolean;
+	is_vertical?: boolean;
 	x?: number;
 	y?: number;
 	comment?: string;

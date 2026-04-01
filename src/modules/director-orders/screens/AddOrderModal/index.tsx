@@ -67,6 +67,7 @@ const ProductPage: FC<IProperties> = ({ edit = false }) => {
 		}
 	})
 
+
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'layer' as never

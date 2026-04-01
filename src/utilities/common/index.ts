@@ -1,4 +1,4 @@
-import { cutOptions, roleOptions } from 'helpers/options'
+	import { cutOptions, roleOptions } from 'helpers/options'
 import { TFunction } from 'i18next'
 import { IFIle, ISelectOption } from 'interfaces/form.interface'
 import { IOrderDetail } from 'interfaces/orders.interface'

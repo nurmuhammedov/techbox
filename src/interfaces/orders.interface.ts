@@ -29,6 +29,7 @@ interface IOrderDetail {
 	height: string;
 	length: string;
 	is_list: boolean;
+	is_vertical?: boolean;
 	size: string;
 	layer: string[];
 	layers: number;

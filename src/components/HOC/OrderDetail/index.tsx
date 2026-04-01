@@ -8,7 +8,7 @@ import styles from './styles.module.scss'
 import classNames from 'classnames'
 import { getDate } from 'utilities/date'
 import { ComponentType } from 'react'
-import { activityOptions, cutOptions } from 'helpers/options'
+import { activityOptions, cutOptions, verticalOptions } from 'helpers/options'
 import { useParams } from 'react-router-dom'
 
 
@@ -132,6 +132,17 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 										options={cutOptions}
 										value={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
 										defaultValue={getSelectValue(cutOptions, order?.piece || cutOptions[0].value)}
+									/>
+								</div>
+
+								<div className="span-4">
+									<Select
+										id="is_vertical"
+										disabled={true}
+										label={t('Joylashuv')}
+										options={verticalOptions as unknown as ISelectOption[]}
+										value={getSelectValue(verticalOptions as unknown as ISelectOption[], order?.is_vertical)}
+										defaultValue={getSelectValue(verticalOptions as unknown as ISelectOption[], order?.is_vertical)}
 									/>
 								</div>
 

@@ -386,7 +386,7 @@ const Index = () => {
 			ymo2: false,
 			tikish: false,
 			yelimlash: false,
-			is_list: false
+			is_last: false
 		},
 		resolver: yupResolver(YMOOrderSchema)
 	})
@@ -400,7 +400,7 @@ const Index = () => {
 				ymo2: detail?.stages_to_passed?.includes('ymo2'),
 				tikish: detail?.stages_to_passed?.includes('tikish'),
 				yelimlash: detail?.stages_to_passed?.includes('yelimlash'),
-				is_list: detail?.stages_to_passed?.includes('is_list')
+				is_last: detail?.stages_to_passed?.includes('is_last')
 			})
 		}
 	}, [detail, updateId])
@@ -532,7 +532,7 @@ const Index = () => {
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_list', false)
+										setValueEdit('is_last', false)
 									} else {
 										setValueEdit('gofra', false)
 										setValueEdit('ymo1', false)
@@ -540,7 +540,7 @@ const Index = () => {
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_list', false)
+										setValueEdit('is_last', false)
 									}
 								}}
 							/>
@@ -562,14 +562,14 @@ const Index = () => {
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_list', false)
+										setValueEdit('is_last', false)
 									} else {
 										setValueEdit('ymo1', false)
 										setValueEdit('fleksa', false)
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_list', true)
+										setValueEdit('is_last', true)
 									}
 								}}
 							/>
@@ -591,13 +591,13 @@ const Index = () => {
 										setValueEdit('ymo2', true)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_list', false)
+										setValueEdit('is_last', false)
 									} else {
 										setValueEdit('fleksa', false)
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_list', false)
+										setValueEdit('is_last', false)
 									}
 								}}
 							/>
@@ -619,12 +619,12 @@ const Index = () => {
 										setValueEdit('ymo2', true)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_list', false)
+										setValueEdit('is_last', false)
 									} else {
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_list', true)
+										setValueEdit('is_last', true)
 									}
 								}}
 							/>
@@ -646,11 +646,11 @@ const Index = () => {
 										setValueEdit('ymo2', true)
 										setValueEdit('tikish', true)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_list', true)
+										setValueEdit('is_last', true)
 									} else {
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', true)
-										setValueEdit('is_list', true)
+										setValueEdit('is_last', true)
 									}
 								}}
 							/>
@@ -672,11 +672,11 @@ const Index = () => {
 										setValueEdit('ymo2', true)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', true)
-										setValueEdit('is_list', true)
+										setValueEdit('is_last', true)
 									} else {
 										setValueEdit('tikish', true)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_list', true)
+										setValueEdit('is_last', true)
 									}
 								}}
 							/>
@@ -689,12 +689,12 @@ const Index = () => {
 								id={activityOptions[6].value as string}
 								type="checkbox"
 								className="checkbox"
-								{...registerEdit('is_list')}
+								{...registerEdit('is_last')}
 								onChange={() => {
-									if (watchEdit('is_list')) {
-										setValueEdit('is_list', true)
+									if (watchEdit('is_last')) {
+										setValueEdit('is_last', true)
 									} else {
-										setValueEdit('is_list', false)
+										setValueEdit('is_last', false)
 									}
 								}}
 							/>
