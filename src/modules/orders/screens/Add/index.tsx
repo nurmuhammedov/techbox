@@ -22,7 +22,7 @@ import {useAdd, useData, useDetail, useUpdate} from 'hooks'
 import {ordersSchema} from 'helpers/yup'
 import {getSelectValue, modifyObjectField} from 'utilities/common'
 import {Box, Plus} from 'assets/icons'
-import {booleanOptions} from 'helpers/options'
+import {yesNoOptions} from 'helpers/options'
 import {useTranslation} from 'react-i18next'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {formatDateToISO, getDate} from 'utilities/date'
@@ -211,9 +211,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			</PageTitle>
 			<Card style={{padding: '1.5rem'}}>
 				<Form className="grid gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
-					{
-						!edit &&
-						<div className="grid span-12 gap-xl flex-0">
+					<div className="grid span-12 gap-xl flex-0">
+						{!edit && (
 							<div className="span-4">
 								<Controller
 									name="product"
@@ -233,27 +232,27 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 									)}
 								/>
 							</div>
-							<div className="span-4">
-								<Controller
-									name="is_list"
-									control={control}
-									render={({field: {value, ref, onChange, onBlur}}) => (
-										<Select
-											id="is_list"
-											label="Listmi?"
-											options={booleanOptions as unknown as ISelectOption[]}
-											error={errors?.is_list?.message}
-											value={getSelectValue(booleanOptions as unknown as ISelectOption[], value)}
-											ref={ref}
-											onBlur={onBlur}
-											defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], value)}
-											handleOnChange={(e) => onChange(e as boolean)}
-										/>
-									)}
-								/>
-							</div>
+						)}
+						<div className="span-4">
+							<Controller
+								name="is_list"
+								control={control}
+								render={({field: {value, ref, onChange, onBlur}}) => (
+									<Select
+										id="is_list"
+										label="Listmi?"
+										options={yesNoOptions as unknown as ISelectOption[]}
+										error={errors?.is_list?.message}
+										value={getSelectValue(yesNoOptions as unknown as ISelectOption[], value)}
+										ref={ref}
+										onBlur={onBlur}
+										defaultValue={getSelectValue(yesNoOptions as unknown as ISelectOption[], value)}
+										handleOnChange={(e) => onChange(e as boolean)}
+									/>
+								)}
+							/>
 						</div>
-					}
+					</div>
 
 					<div className="span-4">
 						<Input

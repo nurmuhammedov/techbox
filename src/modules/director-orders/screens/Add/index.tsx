@@ -35,7 +35,6 @@ import {
 import {ISelectOption} from 'interfaces/form.interface'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {ISearchParams} from 'interfaces/params.interface'
-import {interceptor} from 'libraries/index'
 import AddOrderModal from 'modules/director-orders/screens/AddOrderModal'
 import {useEffect, useMemo, useState} from 'react'
 import {Controller, useFieldArray, useForm} from 'react-hook-form'
@@ -107,7 +106,7 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Sizes')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => row.is_list ? row.length : `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}`
+				accessor: (row: IOrderDetail) => row.is_list ? `${row.format?.name || row.format?.format || row.width || ''}*${row.length}` : `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}`
 			},
 			{
 				Header: `${t('Format')} (${t('mm')})`,
@@ -177,7 +176,6 @@ const Index = () => {
 		handleSubmit: handleEditSubmit,
 		register: registerEdit,
 		reset: resetEdit,
-		setValue: setValueEdit,
 		watch: watchEdit,
 		control,
 		formState: {errors: editErrors}
@@ -447,8 +445,8 @@ const Index = () => {
 												<Input
 													id="sizes"
 													disabled={true}
-													label={order.is_list ? t('Length') : `${t('Sizes')} (${t('mm')})`}
-													value={order.is_list ? order.length : `${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
+													label={order.is_list ? t('Sizes') : `${t('Sizes')} (${t('mm')})`}
+													value={order.is_list ? `${order.format?.name || order.format?.format || order.width || ''}*${order.length}` : `${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
 												/>
 											</div>
 											{!order.is_list && (

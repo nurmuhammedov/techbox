@@ -15,7 +15,7 @@ import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useActions, useAdd, useData, useDetail, useSearchParams, useTypedSelector } from 'hooks'
 import { ordersSchema2 } from 'helpers/yup'
-import { booleanOptions } from 'helpers/options'
+import { yesNoOptions} from 'helpers/options'
 import { getSelectValue, modifyObjectField } from 'utilities/common'
 import { Box, Plus } from 'assets/icons'
 import { useTranslation } from 'react-i18next'
@@ -145,12 +145,12 @@ const ProductPage: FC<IProperties> = ({ edit = false }) => {
 									<Select
 										id="is_list"
 										label="Listmi?"
-										options={booleanOptions as unknown as ISelectOption[]}
+										options={yesNoOptions as unknown as ISelectOption[]}
 										error={errors?.is_list?.message}
-										value={getSelectValue(booleanOptions as unknown as ISelectOption[], value)}
+										value={getSelectValue(yesNoOptions as unknown as ISelectOption[], value)}
 										ref={ref}
 										onBlur={onBlur}
-										defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], value)}
+										defaultValue={getSelectValue(yesNoOptions as unknown as ISelectOption[], value)}
 										handleOnChange={(e) => onChange(e as boolean)}
 									/>
 								)}

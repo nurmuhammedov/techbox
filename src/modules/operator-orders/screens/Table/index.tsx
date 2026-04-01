@@ -133,11 +133,11 @@ const Index = () => {
 				Header: `${t('Sizes')} (${t('mm')})`,
 				accessor: (row: any) => <div>
 					{
-						isYmo2 ? `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}` :
+						isYmo2 ? (row.is_list ? `${row.format?.name || row.format?.format || row.width || ''}*${row.length || ''}` : `${row.width || ''}*${row.length || ''}${row.height ? `*${row.height}` : ''}`) :
 							row?.orders?.map((order: IOrderDetail, index: number) => (
 								<div key={order.id}>
 									<div>
-										{`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
+										{order.is_list ? `${order.format?.name || order.format?.format || order.width || ''}*${order.length || ''}` : `${order.width || ''}*${order.length || ''}${order.height ? `*${order.height}` : ''}`}
 									</div>
 									{
 										row?.orders?.length !== index + 1 &&
@@ -310,7 +310,7 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Sizes')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}`
+				accessor: (row: IOrderDetail) => row.is_list ? `${row.format?.name || row.format?.format || row.width || ''}*${row.length || ''}` : `${row.width || ''}*${row.length || ''}${row.height ? `*${row.height}` : ''}`
 			},
 			{
 				Header: t('Layer'),

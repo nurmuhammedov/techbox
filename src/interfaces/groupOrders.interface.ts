@@ -13,6 +13,7 @@ interface IGroupOrder {
 	separated_raw_materials_format: {
 		id: number;
 		format: string;
+		name: string;
 	};
 	has_addition?: boolean;
 	x?: number;

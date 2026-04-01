@@ -63,24 +63,26 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 											<Input
 												id="sizes"
 												disabled={true}
-												label={`${t('Sizes')} (${t('mm')})`}
-												value={`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
+												label={order.is_list ? t('Sizes') : `${t('Sizes')} (${t('mm')})`}
+												value={order.is_list ? `${order.format?.name || order.format?.format || order.width || ''}*${order.length || ''}` : `${order.width || ''}*${order.length || ''}${order.height ? `*${order.height}` : ''}`}
 											/>
 										</div>
-										<div className="span-4">
-											<Input
-												id="L"
-												disabled={true}
-												label={`L (${t('mm')})`}
-												value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))}`}
-											/>
-										</div>
+										{!order.is_list && (
+											<div className="span-4">
+												<Input
+													id="L"
+													disabled={true}
+													label={`L (${t('mm')})`}
+													value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))}`}
+												/>
+											</div>
+										)}
 										<div className="span-4">
 											<Input
 												id="format"
 												disabled={true}
 												label="Format"
-												value={order?.format?.name}
+												value={order?.format?.name || order?.format?.format || order?.width}
 											/>
 										</div>
 										<div className="span-4">
@@ -140,19 +142,10 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 										</div>
 
 										{
-											order?.piece && order?.piece != 'total' &&
+											order?.piece && order?.piece != 'total' && !order.is_list &&
 											<div className="grid span-12" style={{ marginTop: '.75rem' }}>
 												<CutDiagram
 													sections={cutOptions?.find(i => i.value == order?.piece)?.material || 2}
-													// length={
-													// 	<Input
-													// 		id="length"
-													// 		mini={true}
-													// 		disabled={true}
-													// 		value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))} mm`}
-													// 		placeholder=" "
-													// 	/>
-													// }
 													count={
 														<Input
 															id="l0"
@@ -162,21 +155,12 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 															placeholder=" "
 														/>
 													}
-													// l1={
-													// 	<Input
-													// 		id="l1"
-													// 		mini={true}
-													// 		disabled={true}
-													// 		value={`${order?.format?.name || ''} mm`}
-													// 		placeholder="mm"
-													// 	/>
-													// }
 													x={
 														<Input
 															id="l3"
 															mini={true}
 															disabled={true}
-															value={`${detail?.separated_raw_materials_format?.format || ''} mm`}
+															value={`${detail?.separated_raw_materials_format?.name || detail?.separated_raw_materials_format?.format || ''} mm`}
 															placeholder=" "
 														/>
 													}
@@ -184,65 +168,67 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 												/>
 											</div>
 										}
-										<div className="grid span-12" style={{ marginTop: '.7rem' }}>
-											<Diagram
-												l0={
-													<Input
-														id="l0"
-														mini={true}
-														disabled={true}
-														value={order?.l0 || ''}
-														placeholder="mm"
-													/>
-												}
-												l1={
-													<Input
-														id="l1"
-														mini={true}
-														disabled={true}
-														value={order?.l1 || ''}
-														placeholder="mm"
-													/>
-												}
-												l2={
-													<Input
-														id="l2"
-														mini={true}
-														disabled={true}
-														value={order?.l2 || ''}
-														placeholder="mm"
-													/>
-												}
-												l3={
-													<Input
-														id="l3"
-														mini={true}
-														disabled={true}
-														value={order?.l3 || ''}
-														placeholder="mm"
-													/>
-												}
-												l4={
-													<Input
-														id="l4"
-														mini={true}
-														disabled={true}
-														value={order?.l4 || ''}
-														placeholder="mm"
-													/>
-												}
-												l5={
-													<Input
-														id="l5"
-														mini={true}
-														disabled={true}
-														value={order?.l5 || ''}
-														placeholder="mm"
-													/>
-												}
-												className="span-12"
-											/>
-										</div>
+										{!order.is_list && (
+											<div className="grid span-12" style={{ marginTop: '.7rem' }}>
+												<Diagram
+													l0={
+														<Input
+															id="l0"
+															mini={true}
+															disabled={true}
+															value={order?.l0 || ''}
+															placeholder="mm"
+														/>
+													}
+													l1={
+														<Input
+															id="l1"
+															mini={true}
+															disabled={true}
+															value={order?.l1 || ''}
+															placeholder="mm"
+														/>
+													}
+													l2={
+														<Input
+															id="l2"
+															mini={true}
+															disabled={true}
+															value={order?.l2 || ''}
+															placeholder="mm"
+														/>
+													}
+													l3={
+														<Input
+															id="l3"
+															mini={true}
+															disabled={true}
+															value={order?.l3 || ''}
+															placeholder="mm"
+														/>
+													}
+													l4={
+														<Input
+															id="l4"
+															mini={true}
+															disabled={true}
+															value={order?.l4 || ''}
+															placeholder="mm"
+														/>
+													}
+													l5={
+														<Input
+															id="l5"
+															mini={true}
+															disabled={true}
+															value={order?.l5 || ''}
+															placeholder="mm"
+														/>
+													}
+													className="span-12"
+												/>
+											</div>
+										)}
 
 										<div
 											className="span-12 flex gap-md"

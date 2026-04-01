@@ -60,8 +60,8 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 									<Input
 										id="sizes"
 										disabled={true}
-										label={order.is_list ? t('Length') : `${t('Sizes')} (${t('mm')})`}
-										value={order.is_list ? order.length : `${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
+										label={order.is_list ? t('Sizes') : `${t('Sizes')} (${t('mm')})`}
+										value={order.is_list ? `${order.format?.name || order.format?.format || order.width || ''}*${order.length}` : `${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
 									/>
 								</div>
 								{!order.is_list && (

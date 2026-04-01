@@ -47,7 +47,7 @@ const Index = ({groupOrders, detail = false}: { groupOrders: IGroupOrder[], deta
 									id="format"
 									disabled={true}
 									label={`${t('Production format')} (${t('mm')})`}
-									value={decimalToInteger(Number(item?.separated_raw_materials_format?.format || 0))}
+									value={decimalToInteger(item?.separated_raw_materials_format?.name || item?.separated_raw_materials_format?.format || 0)}
 								/>
 							</div>
 							<div className="span-3">
