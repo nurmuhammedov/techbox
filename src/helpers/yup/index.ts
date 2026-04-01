@@ -387,6 +387,7 @@ const ordersSchema = yup.object().shape({
 		.transform(v => v ? v : '0')
 		.optional()
 		.nullable(),
+	is_list: yup.boolean().nullable(),
 	name: yup
 		.string()
 		.trim()
@@ -395,12 +396,19 @@ const ordersSchema = yup.object().shape({
 	width: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.when('is_list', {
+			is: true,
+			then: (schema) => schema.nullable(),
+			otherwise: (schema) => schema.required('This field is required')
+		}),
 	height: yup
 		.string()
 		.trim()
-		.nullable()
-		.transform(v => v ? v : null),
+		.when('is_list', {
+			is: true,
+			then: (schema) => schema.nullable(),
+			otherwise: (schema) => schema.required('This field is required')
+		}),
 	length: yup
 		.string()
 		.trim()
@@ -408,8 +416,11 @@ const ordersSchema = yup.object().shape({
 	box_ear: yup
 		.string()
 		.trim()
-		.nullable()
-		.transform(v => v ? v : null),
+		.when('is_list', {
+			is: true,
+			then: (schema) => schema.nullable(),
+			otherwise: (schema) => schema.required('This field is required')
+		}),
 	format: yup
 		.number()
 		.required('This field is required'),
@@ -462,11 +473,19 @@ const ordersSchema2 = yup.object().shape({
 	width: yup
 		.string()
 		.trim()
-		.required('This field is required'),
+		.when('is_list', {
+			is: true,
+			then: (schema) => schema.nullable(),
+			otherwise: (schema) => schema.required('This field is required')
+		}),
 	height: yup
 		.string()
 		.trim()
-		.nullable()
+		.when('is_list', {
+			is: true,
+			then: (schema) => schema.nullable(),
+			otherwise: (schema) => schema.required('This field is required')
+		})
 		.transform(v => v ? v : null),
 	length: yup
 		.string()
@@ -475,7 +494,11 @@ const ordersSchema2 = yup.object().shape({
 	box_ear: yup
 		.string()
 		.trim()
-		.nullable()
+		.when('is_list', {
+			is: true,
+			then: (schema) => schema.nullable(),
+			otherwise: (schema) => schema.required('This field is required')
+		})
 		.transform(v => v ? v : null),
 	format: yup
 		.number()
@@ -494,6 +517,7 @@ const ordersSchema2 = yup.object().shape({
 		.of(yup.string().trim().required('This field is required'))
 		.nullable()
 		.transform(value => value?.length > 0 ? value : null),
+	is_list: yup.boolean().nullable(),
 	deadline: yup
 		.string()
 		.trim()
@@ -528,7 +552,7 @@ const groupOrdersSchema = yup.object().shape({
 	ymo2: yup.boolean().nullable(),
 	tikish: yup.boolean().nullable(),
 	yelimlash: yup.boolean().nullable(),
-	is_last: yup.boolean().nullable(),
+	is_list: yup.boolean().nullable(),
 	x: yup
 		.string()
 		.trim()
@@ -581,7 +605,7 @@ const temporaryOrderSchema = yup.object().shape({
 	ymo2: yup.boolean().nullable(),
 	tikish: yup.boolean().nullable(),
 	yelimlash: yup.boolean().nullable(),
-	is_last: yup.boolean().nullable(),
+	is_list: yup.boolean().nullable(),
 	l0: yup
 		.string()
 		.trim()
@@ -615,6 +639,10 @@ const temporaryOrderSchema = yup.object().shape({
 		.string()
 		.trim()
 		.required('This field is required'),
+	length: yup
+		.string()
+		.trim()
+		.required('This field is required'),
 	piece: yup
 		.string()
 		.trim()
@@ -628,7 +656,7 @@ const YMOOrderSchema = yup.object().shape({
 	ymo2: yup.boolean().nullable(),
 	tikish: yup.boolean().nullable(),
 	yelimlash: yup.boolean().nullable(),
-	is_last: yup.boolean().nullable()
+	is_list: yup.boolean().nullable()
 })
 
 const operatorOrderSchema = yup.object().shape({

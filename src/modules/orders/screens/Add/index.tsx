@@ -22,6 +22,7 @@ import {useAdd, useData, useDetail, useUpdate} from 'hooks'
 import {ordersSchema} from 'helpers/yup'
 import {getSelectValue, modifyObjectField} from 'utilities/common'
 import {Box, Plus} from 'assets/icons'
+import {booleanOptions} from 'helpers/options'
 import {useTranslation} from 'react-i18next'
 import {IOrderDetail} from 'interfaces/orders.interface'
 import {formatDateToISO, getDate} from 'utilities/date'
@@ -65,7 +66,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 			box_ear: '',
 			format: undefined,
 			layer: [' '],
-			logo: undefined
+			logo: undefined,
+			is_list: false
 		}
 	})
 
@@ -98,21 +100,20 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				box_ear: productDetail.box_ear,
 				format: productDetail.format,
 				logo: productDetail.logo || undefined,
-				layer: productDetail?.layer || [' ']
+				layer: productDetail?.layer || [' '],
+				is_list: false
 			}))
 		}
 	}, [productDetail, edit])
-
 	useEffect(() => {
 		if (detail && edit) {
 			reset({
-				// product: undefined,
+				product: detail.product?.id,
 				count: detail.count,
 				money_paid: detail.money_paid,
 				deadline: getDate(detail.deadline),
 				price: detail.price,
 				comment: detail.comment,
-				// product
 				name: detail.name,
 				width: detail.width,
 				height: detail.height,
@@ -120,7 +121,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				box_ear: detail.box_ear,
 				format: detail.format?.id,
 				logo: detail.logo || undefined,
-				layer: detail?.layer || [' ']
+				layer: detail?.layer || [' '],
+				is_list: detail?.is_list || false
 			})
 		}
 	}, [detail, edit])
@@ -157,7 +159,6 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 												deadline: '',
 												money_paid: '',
 												count: '',
-												// product
 												name: '',
 												width: '',
 												height: '',
@@ -165,7 +166,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 												box_ear: '',
 												format: undefined,
 												layer: [],
-												logo: undefined
+												logo: undefined,
+												is_list: false
 											})
 											navigate(-1)
 										})
@@ -187,7 +189,6 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 												deadline: '',
 												money_paid: '',
 												count: '',
-												// product
 												name: '',
 												width: '',
 												height: '',
@@ -195,7 +196,8 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 												box_ear: '',
 												format: undefined,
 												layer: [],
-												logo: undefined
+												logo: undefined,
+												is_list: false
 											})
 											navigate(-1)
 										})
@@ -227,6 +229,25 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 											onBlur={onBlur}
 											defaultValue={getSelectValue(products, value)}
 											handleOnChange={(e) => onChange(e as string)}
+										/>
+									)}
+								/>
+							</div>
+							<div className="span-4">
+								<Controller
+									name="is_list"
+									control={control}
+									render={({field: {value, ref, onChange, onBlur}}) => (
+										<Select
+											id="is_list"
+											label="Listmi?"
+											options={booleanOptions as unknown as ISelectOption[]}
+											error={errors?.is_list?.message}
+											value={getSelectValue(booleanOptions as unknown as ISelectOption[], value)}
+											ref={ref}
+											onBlur={onBlur}
+											defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], value)}
+											handleOnChange={(e) => onChange(e as boolean)}
 										/>
 									)}
 								/>
@@ -264,60 +285,70 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 						/>
 					</div>
 
-					<div className="span-4">
-						<Controller
-							control={control}
-							name="box_ear"
-							render={({field}) => (
-								<NumberFormattedInput
-									id="box_ear"
-									maxLength={3}
-									disableGroupSeparators
-									allowDecimals={false}
-									label={`${t('Box ear')} (${t('mm')})`}
-									error={errors?.box_ear?.message}
-									{...field}
-								/>
-							)}
-						/>
-					</div>
+					{
+						!watch('is_list') && (
+							<>
+								<div className="span-4">
+									<Controller
+										control={control}
+										name="box_ear"
+										render={({field}) => (
+											<NumberFormattedInput
+												id="box_ear"
+												maxLength={3}
+												disableGroupSeparators
+												allowDecimals={false}
+												label={`${t('Box ear')} (${t('mm')})`}
+												error={errors?.box_ear?.message}
+												{...field}
+											/>
+										)}
+									/>
+								</div>
 
-					<div className="span-4">
-						<Controller
-							name="logo"
-							control={control}
-							render={({field: {value, ref, onChange, onBlur}}) => (
-								<FileUpLoader
-									id="logo"
-									ref={ref}
-									type="image"
-									value={value as IFIle}
-									onBlur={onBlur}
-									onChange={onChange}
-									label="Logo"
-									error={errors?.logo?.message}
-								/>
-							)}
-						/>
-					</div>
+								<div className="span-4">
+									<Controller
+										name="logo"
+										control={control}
+										render={({field: {value, ref, onChange, onBlur}}) => (
+											<FileUpLoader
+												id="logo"
+												ref={ref}
+												type="image"
+												value={value as IFIle}
+												onBlur={onBlur}
+												onChange={onChange}
+												label="Logo"
+												error={errors?.logo?.message}
+											/>
+										)}
+									/>
+								</div>
+							</>
+						)
+					}
 
 					<div className="span-4 flex flex-col gap-lg">
-						<Controller
-							control={control}
-							name="width"
-							render={({field}) => (
-								<NumberFormattedInput
-									id="width"
-									label={`${t('Sizes')} (${t('mm')})`}
-									maxLength={3}
-									disableGroupSeparators={true}
-									allowDecimals={false}
-									placeholder={`a (${t('mm')})`}
-									error={errors?.width?.message}
-									{...field}
+						{
+							!watch('is_list') && (
+								<Controller
+									control={control}
+									name="width"
+									render={({field}) => (
+										<NumberFormattedInput
+											id="width"
+											label={`${t('Sizes')} (${t('mm')})`}
+											maxLength={9}
+											disableGroupSeparators={true}
+											allowDecimals={false}
+											placeholder={`a (${t('mm')})`}
+											error={errors?.width?.message}
+											{...field}
+										/>
+									)}
 								/>
-							)}
-						/>
+							)
+						}
 
 						<Controller
 							control={control}
@@ -325,36 +356,45 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							render={({field}) => (
 								<NumberFormattedInput
 									id="length"
-									maxLength={3}
+									maxLength={9}
 									disableGroupSeparators
 									allowDecimals={false}
-									placeholder={`b (${t('mm')})`}
+									label={watch('is_list') ? `${t('Uzunligi')} (${t('mm')})` : undefined}
+									placeholder={watch('is_list') ? ' ' : `b (${t('mm')})`}
 									error={errors?.length?.message}
 									{...field}
 								/>
 							)}
 						/>
 
-						<Controller
-							control={control}
-							name="height"
-							render={({field}) => (
-								<NumberFormattedInput
-									id="height"
-									maxLength={3}
-									disableGroupSeparators
-									allowDecimals={false}
-									placeholder={`c (${t('mm')})`}
-									error={errors?.height?.message}
-									{...field}
+						{
+							!watch('is_list') && (
+								<Controller
+									control={control}
+									name="height"
+									render={({field}) => (
+										<NumberFormattedInput
+											id="height"
+											maxLength={9}
+											disableGroupSeparators
+											allowDecimals={false}
+											placeholder={`c (${t('mm')})`}
+											error={errors?.height?.message}
+											{...field}
+										/>
+									)}
 								/>
-							)}
-						/>
+							)
+						}
 					</div>
 
-					<Wrapper className="span-4 align-center justify-center">
-						<Box/>
-					</Wrapper>
+					{
+						!watch('is_list') && (
+							<Wrapper className="span-4 align-center justify-center">
+								<Box/>
+							</Wrapper>
+						)
+					}
 
 					<div className="span-12 grid gap-lg">
 						{

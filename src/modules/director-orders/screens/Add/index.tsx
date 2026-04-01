@@ -107,7 +107,7 @@ const Index = () => {
 			},
 			{
 				Header: `${t('Sizes')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}`
+				accessor: (row: IOrderDetail) => row.is_list ? row.length : `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}`
 			},
 			{
 				Header: `${t('Format')} (${t('mm')})`,
@@ -167,7 +167,7 @@ const Index = () => {
 			ymo2: false,
 			tikish: false,
 			yelimlash: false,
-			is_last: false,
+			is_list: false,
 			has_addition: false
 		}
 	})
@@ -200,7 +200,8 @@ const Index = () => {
 			ymo2: false,
 			tikish: false,
 			yelimlash: false,
-			is_last: false
+			is_list: false,
+			length: ''
 		},
 		resolver: yupResolver(temporaryOrderSchema)
 	})
@@ -243,10 +244,11 @@ const Index = () => {
 				ymo2: detail?.stages_to_passed?.includes('ymo2'),
 				tikish: detail?.stages_to_passed?.includes('tikish'),
 				yelimlash: detail?.stages_to_passed?.includes('yelimlash'),
-				is_last: detail?.stages_to_passed?.includes('is_last')
+				is_list: detail?.stages_to_passed?.includes('is_list'),
+				length: detail?.length || ''
 			})
 		}
-	}, [detail, updateId])
+	}, [detail, updateId, resetEdit])
 
 	const selectedOrders = orders || []
 	const glueSquare = watch('glue_square')
@@ -304,7 +306,7 @@ const Index = () => {
 						ymo2: false,
 						tikish: false,
 						yelimlash: false,
-						is_last: false,
+						is_list: false,
 						has_addition: false
 					})
 				})
@@ -350,7 +352,7 @@ const Index = () => {
 								)}
 							/>
 						</div>
-						<div className="span-3">
+						<div className="span-2">
 							<Controller
 								name="has_addition"
 								control={controlAdd}
@@ -364,7 +366,7 @@ const Index = () => {
 										ref={ref}
 										onBlur={onBlur}
 										defaultValue={getSelectValue(booleanOptions as unknown as ISelectOption[], value)}
-										handleOnChange={(e) => onChange(e as string)}
+										handleOnChange={(e) => onChange(e as boolean)}
 									/>
 								)}
 							/>
@@ -445,18 +447,20 @@ const Index = () => {
 												<Input
 													id="sizes"
 													disabled={true}
-													label={`${t('Sizes')} (${t('mm')})`}
-													value={`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
+													label={order.is_list ? t('Length') : `${t('Sizes')} (${t('mm')})`}
+													value={order.is_list ? order.length : `${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
 												/>
 											</div>
-											<div className="span-4">
-												<Input
-													id="L"
-													disabled={true}
-													label={`L (${t('mm')})`}
-													value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))}`}
-												/>
-											</div>
+											{!order.is_list && (
+												<div className="span-4">
+													<Input
+														id="L"
+														disabled={true}
+														label={`L (${t('mm')})`}
+														value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))}`}
+													/>
+												</div>
+											)}
 											<div className="span-4">
 												<Select
 													id="format"
@@ -535,19 +539,10 @@ const Index = () => {
 											</div>
 
 											{
-												(order?.piece && order?.piece != 'total') &&
+												(order?.piece && order?.piece != 'total' && !order.is_list) &&
 												<div className="grid span-12" style={{marginTop: '.75rem'}}>
 													<CutDiagram
 														sections={cutOptions?.find(i => i.value == order?.piece)?.material || 2}
-														// length={
-														// 	<Input
-														// 		id="length"
-														// 		mini={true}
-														// 		disabled={true}
-														// 		value={`${decimalToInteger(2 * Number(order.width || 0) + 70 + 2 * Number(order.length || 0))} mm`}
-														// 		placeholder=" "
-														// 	/>
-														// }
 														count={
 															<Input
 																id="l0"
@@ -557,15 +552,6 @@ const Index = () => {
 																placeholder=" "
 															/>
 														}
-														// l1={
-														// 	<Input
-														// 		id="l1"
-														// 		mini={true}
-														// 		disabled={true}
-														// 		value={`${formats?.find(i => i?.value == order?.format?.id)?.label || ''} mm`}
-														// 		placeholder="mm"
-														// 	/>
-														// }
 														x={
 															<Input
 																id="l3"
@@ -578,70 +564,69 @@ const Index = () => {
 														className="span-12"
 													/>
 												</div>
-
 											}
 
-											<div className="grid span-12" style={{marginTop: '.75rem'}}>
-												<Diagram
-													l0={
-														<Input
-															id="l0"
-															mini={true}
-															disabled={true}
-															value={order?.l0 || ''}
-															placeholder="mm"
-														/>
-													}
-													l1={
-														<Input
-															id="l1"
-															mini={true}
-															disabled={true}
-															value={order?.l1 || ''}
-															placeholder="mm"
-														/>
-													}
-													l2={
-														<Input
-															id="l2"
-															mini={true}
-															disabled={true}
-															value={order?.l2 || ''}
-															placeholder="mm"
-														/>
-													}
-													l3={
-														<Input
-															id="l3"
-															mini={true}
-															disabled={true}
-															value={order?.l3 || ''}
-															placeholder="mm"
-														/>
-													}
-													l4={
-														<Input
-															id="l4"
-															mini={true}
-															disabled={true}
-															value={order?.l4 || ''}
-															placeholder="mm"
-														/>
-													}
-													l5={
-														<Input
-															id="l5"
-															mini={true}
-															disabled={true}
-															value={order?.l5 || ''}
-															placeholder="mm"
-														/>
-													}
-													className="span-12"
-												/>
-
-
-											</div>
+											{!order.is_list && (
+												<div className="grid span-12" style={{marginTop: '.75rem'}}>
+													<Diagram
+														l0={
+															<Input
+																id="l0"
+																mini={true}
+																disabled={true}
+																value={order?.l0 || ''}
+																placeholder="mm"
+															/>
+														}
+														l1={
+															<Input
+																id="l1"
+																mini={true}
+																disabled={true}
+																value={order?.l1 || ''}
+																placeholder="mm"
+															/>
+														}
+														l2={
+															<Input
+																id="l2"
+																mini={true}
+																disabled={true}
+																value={order?.l2 || ''}
+																placeholder="mm"
+															/>
+														}
+														l3={
+															<Input
+																id="l3"
+																mini={true}
+																disabled={true}
+																value={order?.l3 || ''}
+																placeholder="mm"
+															/>
+														}
+														l4={
+															<Input
+																id="l4"
+																mini={true}
+																disabled={true}
+																value={order?.l4 || ''}
+																placeholder="mm"
+															/>
+														}
+														l5={
+															<Input
+																id="l5"
+																mini={true}
+																disabled={true}
+																value={order?.l5 || ''}
+																placeholder="mm"
+															/>
+														}
+														className="span-12"
+													/>
+												</div>
+											)}
 
 											<div
 												className="span-12 flex gap-md"
@@ -842,7 +827,7 @@ const Index = () => {
 															setValue('ymo2', false)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
-															setValue('is_last', false)
+															setValue('is_list', false)
 														} else {
 															setValue('gofra', false)
 															setValue('ymo1', false)
@@ -850,7 +835,7 @@ const Index = () => {
 															setValue('ymo2', false)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
-															setValue('is_last', false)
+															setValue('is_list', false)
 														}
 													}}
 												/>
@@ -872,14 +857,14 @@ const Index = () => {
 															setValue('ymo2', false)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
-															setValue('is_last', false)
+															setValue('is_list', false)
 														} else {
 															setValue('ymo1', false)
 															setValue('fleksa', false)
 															setValue('ymo2', false)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
-															setValue('is_last', true)
+															setValue('is_list', true)
 														}
 													}}
 												/>
@@ -901,13 +886,13 @@ const Index = () => {
 															setValue('ymo2', true)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
-															setValue('is_last', false)
+															setValue('is_list', false)
 														} else {
 															setValue('fleksa', false)
 															setValue('ymo2', false)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
-															setValue('is_last', false)
+															setValue('is_list', false)
 														}
 													}}
 												/>
@@ -929,12 +914,12 @@ const Index = () => {
 															setValue('ymo2', true)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
-															setValue('is_last', false)
+															setValue('is_list', false)
 														} else {
 															setValue('ymo2', false)
 															setValue('tikish', false)
 															setValue('yelimlash', false)
-															setValue('is_last', true)
+															setValue('is_list', true)
 														}
 													}}
 												/>
@@ -956,11 +941,11 @@ const Index = () => {
 															setValue('ymo2', true)
 															setValue('tikish', true)
 															setValue('yelimlash', false)
-															setValue('is_last', true)
+															setValue('is_list', true)
 														} else {
 															setValue('tikish', false)
 															setValue('yelimlash', true)
-															setValue('is_last', true)
+															setValue('is_list', true)
 														}
 													}}
 												/>
@@ -982,11 +967,11 @@ const Index = () => {
 															setValue('ymo2', true)
 															setValue('tikish', false)
 															setValue('yelimlash', true)
-															setValue('is_last', true)
+															setValue('is_list', true)
 														} else {
 															setValue('tikish', true)
 															setValue('yelimlash', false)
-															setValue('is_last', true)
+															setValue('is_list', true)
 														}
 													}}
 												/>
@@ -999,12 +984,12 @@ const Index = () => {
 													id={activityOptions[6].value as string}
 													type="checkbox"
 													className="checkbox"
-													{...register('is_last')}
+													{...register('is_list')}
 													onChange={() => {
-														if (watch('is_last')) {
-															setValue('is_last', true)
+														if (watch('is_list')) {
+															setValue('is_list', true)
 														} else {
-															setValue('is_last', false)
+															setValue('is_list', false)
 														}
 													}}
 												/>
@@ -1040,15 +1025,13 @@ const Index = () => {
 								l3: data?.l3,
 								l4: data?.l4,
 								l5: data?.l5,
-								stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true)?.reverse()
+								length: data?.length,
+								stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true && key !== 'length')?.reverse()
 							}
 
 							update(newData).then(async (data) => {
-								const newData = data as unknown as IOrderDetail
 								updateOrder({
-									...newData,
-									format: {id: newData.format as unknown as number, name: '', format: ''},
-									// deadline: newData?.deadline ? getDate(detail?.deadline) : '',
+									...data as any,
 									id: +(updateId || 0)
 								})
 								resetEdit({deadline: '', layer: [], l0: '', l1: '', l2: '', l3: '', l4: '', l5: ''})
@@ -1076,42 +1059,7 @@ const Index = () => {
 												ref={ref}
 												onBlur={onBlur}
 												defaultValue={getSelectValue(materials, value)}
-												handleOnChange={(e) => {
-													if (e) {
-														interceptor
-															.get('services/get-weight-material-by-warehouse', {
-																params: {
-																	material: e,
-																	format_: watch('separated_raw_materials_format')
-																}
-															})
-															.then((res) => {
-																const sum = decimalToInteger(res?.data?.reduce((accumulator: number, currentValue: {
-																	weight: string
-																}) => {
-																	return accumulator + Number(currentValue?.weight || 0)
-																}, 0))
-																if (Array.isArray(res?.data)) {
-																	if (!sum && !Number(sum)) {
-																		showMessage(t('Material alert', {
-																			material: materials?.find(i => i.value == e)?.label || '',
-																			weight: sum || '0',
-																			number: `#${updateId}`,
-																			separationWeight: '0'
-																		}), 'alert', 20000)
-																	} else {
-																		showMessage(t('Material alert', {
-																			material: materials?.find(i => i.value == e)?.label || '',
-																			weight: sum || '0',
-																			number: `#${updateId}`,
-																			separationWeight: '0'
-																		}), 'success', 20000)
-																	}
-																}
-															})
-													}
-													onChange(e as string)
-												}}
+												handleOnChange={(e) => onChange(e as string)}
 											/>
 										)}
 									/>
@@ -1120,65 +1068,27 @@ const Index = () => {
 						}
 
 
-						<div className="grid span-12" style={{marginTop: '.75rem'}}>
-							<Diagram
-								l0={
-									<Input
-										id="l0"
-										mini={true}
-										placeholder="mm"
-										err={!!editErrors?.l0?.message}
-										{...registerEdit('l0')}
+						{
+							!watchEdit('is_list') && (
+								<div className="grid span-12" style={{marginTop: '.75rem'}}>
+									<Diagram
+										l0={<Input id="l0" mini={true} placeholder="mm"
+										           err={!!editErrors?.l0?.message} {...registerEdit('l0')} />}
+										l1={<Input id="l1" mini={true} placeholder="mm"
+										           err={!!editErrors?.l1?.message} {...registerEdit('l1')} />}
+										l2={<Input id="l2" mini={true} placeholder="mm"
+										           err={!!editErrors?.l2?.message} {...registerEdit('l2')} />}
+										l3={<Input id="l3" mini={true} placeholder="mm"
+										           err={!!editErrors?.l3?.message} {...registerEdit('l3')} />}
+										l4={<Input id="l4" mini={true} placeholder="mm"
+										           err={!!editErrors?.l4?.message} {...registerEdit('l4')} />}
+										l5={<Input id="l5" mini={true} placeholder="mm"
+										           err={!!editErrors?.l5?.message} {...registerEdit('l5')} />}
+										className="span-12"
 									/>
-								}
-								l1={
-									<Input
-										id="l1"
-										mini={true}
-										err={!!editErrors?.l1?.message}
-										{...registerEdit('l1')}
-										placeholder="mm"
-									/>
-								}
-								l2={
-									<Input
-										id="l2"
-										mini={true}
-										err={!!editErrors?.l2?.message}
-										{...registerEdit('l2')}
-										placeholder="mm"
-									/>
-								}
-								l3={
-									<Input
-										id="l3"
-										mini={true}
-										err={!!editErrors?.l3?.message}
-										{...registerEdit('l3')}
-										placeholder="mm"
-									/>
-								}
-								l4={
-									<Input
-										id="l4"
-										mini={true}
-										err={!!editErrors?.l4?.message}
-										{...registerEdit('l4')}
-										placeholder="mm"
-									/>
-								}
-								l5={
-									<Input
-										id="l5"
-										mini={true}
-										err={!!editErrors?.l5?.message}
-										{...registerEdit('l5')}
-										placeholder="mm"
-									/>
-								}
-								className="span-12"
-							/>
-						</div>
+								</div>
+							)
+						}
 					</div>
 
 					<div
@@ -1186,188 +1096,34 @@ const Index = () => {
 						style={{marginTop: '.75rem', marginBottom: '1.5rem'}}
 					>
 						<div className="span-4 flex gap-md align-end justify-start">
-							<input
-								id={activityOptions[0].value as string}
-								type="checkbox"
-								className="checkbox"
-								{...registerEdit('gofra')}
-								onChange={(e) => {
-									if (e.target.checked) {
-										setValueEdit('gofra', true)
-										setValueEdit('ymo1', true)
-										setValueEdit('fleksa', false)
-										setValueEdit('ymo2', false)
-										setValueEdit('tikish', false)
-										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
-									} else {
-										setValueEdit('gofra', false)
-										setValueEdit('ymo1', false)
-										setValueEdit('fleksa', false)
-										setValueEdit('ymo2', false)
-										setValueEdit('tikish', false)
-										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
-									}
-								}}
-							/>
-							<p className="checkbox-label">
-								{t(activityOptions[0].label as string)}
-							</p>
+							<input id={activityOptions[0].value as string} type="checkbox"
+							       className="checkbox" {...registerEdit('gofra')} />
+							<p className="checkbox-label">{t(activityOptions[0].label as string)}</p>
 						</div>
 						<div className="span-4 flex gap-md align-end justify-start">
-							<input
-								id={activityOptions[1].value as string}
-								type="checkbox"
-								className="checkbox"
-								{...registerEdit('ymo1')}
-								onChange={(e) => {
-									if (e.target.checked) {
-										setValueEdit('gofra', true)
-										setValueEdit('ymo1', true)
-										setValueEdit('fleksa', false)
-										setValueEdit('ymo2', false)
-										setValueEdit('tikish', false)
-										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
-									} else {
-										setValueEdit('ymo1', false)
-										setValueEdit('fleksa', false)
-										setValueEdit('ymo2', false)
-										setValueEdit('tikish', false)
-										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', true)
-									}
-								}}
-							/>
-							<p className="checkbox-label">
-								{t(activityOptions[1].label as string)}
-							</p>
+							<input id={activityOptions[1].value as string} type="checkbox"
+							       className="checkbox" {...registerEdit('ymo1')} />
+							<p className="checkbox-label">{t(activityOptions[1].label as string)}</p>
 						</div>
 						<div className="span-4 flex gap-md align-end justify-start">
-							<input
-								id={activityOptions[2].value as string}
-								type="checkbox"
-								className="checkbox"
-								{...registerEdit('fleksa')}
-								onChange={(e) => {
-									if (e.target.checked) {
-										setValueEdit('gofra', true)
-										setValueEdit('ymo1', true)
-										setValueEdit('fleksa', true)
-										setValueEdit('ymo2', true)
-										setValueEdit('tikish', false)
-										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
-									} else {
-										setValueEdit('fleksa', false)
-										setValueEdit('ymo2', false)
-										setValueEdit('tikish', false)
-										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
-									}
-								}}
-							/>
-							<p className="checkbox-label">
-								{t(activityOptions[2].label as string)}
-							</p>
+							<input id={activityOptions[2].value as string} type="checkbox"
+							       className="checkbox" {...registerEdit('fleksa')} />
+							<p className="checkbox-label">{t(activityOptions[2].label as string)}</p>
 						</div>
 						<div className="span-4 flex gap-md align-end justify-start">
-							<input
-								id={activityOptions[3].value as string}
-								type="checkbox"
-								className="checkbox"
-								{...registerEdit('ymo2')}
-								onChange={(e) => {
-									if (e.target.checked) {
-										setValueEdit('gofra', true)
-										setValueEdit('ymo1', true)
-										setValueEdit('fleksa', true)
-										setValueEdit('ymo2', true)
-										setValueEdit('tikish', false)
-										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
-									} else {
-										setValueEdit('ymo2', false)
-										setValueEdit('tikish', false)
-										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', true)
-									}
-								}}
-							/>
-							<p className="checkbox-label">
-								{t(activityOptions[3].label as string)}
-							</p>
+							<input id={activityOptions[3].value as string} type="checkbox"
+							       className="checkbox" {...registerEdit('ymo2')} />
+							<p className="checkbox-label">{t(activityOptions[3].label as string)}</p>
 						</div>
 						<div className="span-4 flex gap-md align-end justify-start">
-							<input
-								id={activityOptions[4].value as string}
-								type="checkbox"
-								className="checkbox"
-								{...registerEdit('tikish')}
-								onChange={(e) => {
-									if (e.target.checked) {
-										setValueEdit('gofra', true)
-										setValueEdit('ymo1', true)
-										setValueEdit('fleksa', true)
-										setValueEdit('ymo2', true)
-										setValueEdit('tikish', true)
-										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', true)
-									} else {
-										setValueEdit('tikish', false)
-										setValueEdit('yelimlash', true)
-										setValueEdit('is_last', true)
-									}
-								}}
-							/>
-							<p className="checkbox-label">
-								{t(activityOptions[4].label as string)}
-							</p>
+							<input id={activityOptions[4].value as string} type="checkbox"
+							       className="checkbox" {...registerEdit('tikish')} />
+							<p className="checkbox-label">{t(activityOptions[4].label as string)}</p>
 						</div>
 						<div className="span-4 flex gap-md align-end justify-start">
-							<input
-								id={activityOptions[5].value as string}
-								type="checkbox"
-								className="checkbox"
-								{...registerEdit('yelimlash')}
-								onChange={(e) => {
-									if (e.target.checked) {
-										setValueEdit('gofra', true)
-										setValueEdit('ymo1', true)
-										setValueEdit('fleksa', true)
-										setValueEdit('ymo2', true)
-										setValueEdit('tikish', false)
-										setValueEdit('yelimlash', true)
-										setValueEdit('is_last', true)
-									} else {
-										setValueEdit('tikish', true)
-										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', true)
-									}
-								}}
-							/>
-							<p className="checkbox-label">
-								{t(activityOptions[5].label as string)}
-							</p>
-						</div>
-						<div className="span-4 flex gap-md align-end justify-start">
-							<input
-								id={activityOptions[6].value as string}
-								type="checkbox"
-								className="checkbox"
-								{...registerEdit('is_last')}
-								onChange={() => {
-									if (watchEdit('is_last')) {
-										setValueEdit('is_last', true)
-									} else {
-										setValueEdit('is_last', false)
-									}
-								}}
-							/>
-							<p className="checkbox-label">
-								{t(activityOptions[6].label as string)}
-							</p>
+							<input id={activityOptions[5].value as string} type="checkbox"
+							       className="checkbox" {...registerEdit('yelimlash')} />
+							<p className="checkbox-label">{t(activityOptions[5].label as string)}</p>
 						</div>
 					</div>
 
@@ -1423,6 +1179,23 @@ const Index = () => {
 										onBlur={onBlur}
 										defaultValue={getSelectValue(cutOptions, value)}
 										handleOnChange={(e) => onChange(e as string)}
+									/>
+								)}
+							/>
+						</div>
+						<div className="span-4">
+							<Controller
+								name="length"
+								control={control}
+								render={({ field }) => (
+									<NumberFormattedInput
+										id="length"
+										maxLength={3}
+										disableGroupSeparators
+										allowDecimals={false}
+										label={`${t('Uzunligi')} (${t('mm')})`}
+										error={editErrors?.length?.message}
+										{...field}
 									/>
 								)}
 							/>

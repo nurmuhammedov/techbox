@@ -28,6 +28,7 @@ interface IOrderDetail {
 	end_date: string;
 	height: string;
 	length: string;
+	is_list: boolean;
 	size: string;
 	layer: string[];
 	layers: number;
@@ -72,14 +73,14 @@ interface IOrderDetail {
 	l3: string;
 	l4: string;
 	l5: string;
-	activity?: 'gofra' | 'ymo1' | 'fleksa' | 'ymo2' | 'tikish' | 'yelimlash' | 'is_last';
-	stages_to_passed?: 'gofra' | 'ym01' | 'fleksa' | 'ymo2' | 'tikish' | 'yelimlash' | 'is_last';
+	activity?: 'gofra' | 'ymo1' | 'fleksa' | 'ymo2' | 'tikish' | 'yelimlash' | 'is_list';
+	stages_to_passed?: 'gofra' | 'ym01' | 'fleksa' | 'ymo2' | 'tikish' | 'yelimlash' | 'is_list';
 }
 
 export interface IPallet {
 	id: number;
 	status: 'new' | 'in_process' | 'in_proces' | 'finished' | 'in_line';
-	activity: 'gofra' | 'ymo1' | 'fleksa' | 'ymo2' | 'tikish' | 'yelimlash' | 'is_last';
+	activity: 'gofra' | 'ymo1' | 'fleksa' | 'ymo2' | 'tikish' | 'yelimlash' | 'is_list';
 	x: number;
 	y: number;
 	deadline: string | null;

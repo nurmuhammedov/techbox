@@ -242,15 +242,18 @@ const Index = () => {
 											Go flex
 										</Button> :
 										status == bossStatusOptions[0].value ?
-											<Button
-												mini={true}
-												onClick={() => {
-													navigate(`add`)
-													addGroupOrder(row)
-												}}
-											>
-												Choosing
-											</Button> :
+											<div className="flex gap-sm items-center">
+												<Button
+													mini={true}
+													onClick={() => {
+														navigate(`add`)
+														addGroupOrder(row)
+													}}
+												>
+													Choosing
+												</Button>
+												<EditButton onClick={() => navigate(`edit-group/${row.id}`)} />
+											</div> :
 											(status == bossStatusOptions[1].value || status == bossStatusOptions[2].value) ?
 												<EditButton
 													onClick={() => navigate(`/operator-orders/detail/${row.id}`)} /> :
@@ -383,7 +386,7 @@ const Index = () => {
 			ymo2: false,
 			tikish: false,
 			yelimlash: false,
-			is_last: false
+			is_list: false
 		},
 		resolver: yupResolver(YMOOrderSchema)
 	})
@@ -397,7 +400,7 @@ const Index = () => {
 				ymo2: detail?.stages_to_passed?.includes('ymo2'),
 				tikish: detail?.stages_to_passed?.includes('tikish'),
 				yelimlash: detail?.stages_to_passed?.includes('yelimlash'),
-				is_last: detail?.stages_to_passed?.includes('is_last')
+				is_list: detail?.stages_to_passed?.includes('is_list')
 			})
 		}
 	}, [detail, updateId])
@@ -529,7 +532,7 @@ const Index = () => {
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
+										setValueEdit('is_list', false)
 									} else {
 										setValueEdit('gofra', false)
 										setValueEdit('ymo1', false)
@@ -537,7 +540,7 @@ const Index = () => {
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
+										setValueEdit('is_list', false)
 									}
 								}}
 							/>
@@ -559,14 +562,14 @@ const Index = () => {
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
+										setValueEdit('is_list', false)
 									} else {
 										setValueEdit('ymo1', false)
 										setValueEdit('fleksa', false)
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', true)
+										setValueEdit('is_list', true)
 									}
 								}}
 							/>
@@ -588,13 +591,13 @@ const Index = () => {
 										setValueEdit('ymo2', true)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
+										setValueEdit('is_list', false)
 									} else {
 										setValueEdit('fleksa', false)
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
+										setValueEdit('is_list', false)
 									}
 								}}
 							/>
@@ -616,12 +619,12 @@ const Index = () => {
 										setValueEdit('ymo2', true)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', false)
+										setValueEdit('is_list', false)
 									} else {
 										setValueEdit('ymo2', false)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', true)
+										setValueEdit('is_list', true)
 									}
 								}}
 							/>
@@ -643,11 +646,11 @@ const Index = () => {
 										setValueEdit('ymo2', true)
 										setValueEdit('tikish', true)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', true)
+										setValueEdit('is_list', true)
 									} else {
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', true)
-										setValueEdit('is_last', true)
+										setValueEdit('is_list', true)
 									}
 								}}
 							/>
@@ -669,11 +672,11 @@ const Index = () => {
 										setValueEdit('ymo2', true)
 										setValueEdit('tikish', false)
 										setValueEdit('yelimlash', true)
-										setValueEdit('is_last', true)
+										setValueEdit('is_list', true)
 									} else {
 										setValueEdit('tikish', true)
 										setValueEdit('yelimlash', false)
-										setValueEdit('is_last', true)
+										setValueEdit('is_list', true)
 									}
 								}}
 							/>
@@ -686,12 +689,12 @@ const Index = () => {
 								id={activityOptions[6].value as string}
 								type="checkbox"
 								className="checkbox"
-								{...registerEdit('is_last')}
+								{...registerEdit('is_list')}
 								onChange={() => {
-									if (watchEdit('is_last')) {
-										setValueEdit('is_last', true)
+									if (watchEdit('is_list')) {
+										setValueEdit('is_list', true)
 									} else {
-										setValueEdit('is_last', false)
+										setValueEdit('is_list', false)
 									}
 								}}
 							/>

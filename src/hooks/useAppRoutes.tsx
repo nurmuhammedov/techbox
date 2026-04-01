@@ -29,7 +29,8 @@ import {
 	PalletLeaderTable,
 	OperatorPalletsTable,
 	PalletForm,
-	PalletDetail
+	PalletDetail,
+	UpdateDirectorOrder
 } from 'modules'
 import { Navigate, useRoutes } from 'react-router-dom'
 import { routeByRole } from 'utilities/authentication'
@@ -211,6 +212,10 @@ function useAppRoutes() {
 				{
 					path: 'process/:id',
 					element: <Process update={true} />
+				},
+				{
+					path: 'edit-group/:id',
+					element: <UpdateDirectorOrder />
 				}
 			]
 		},

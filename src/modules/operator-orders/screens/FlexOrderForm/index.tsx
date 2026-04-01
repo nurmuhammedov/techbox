@@ -20,7 +20,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'flex'}) => {
 	const {id} = useParams()
 	// const {t} = useTranslation()
 	const navigate = useNavigate()
-	// const {data: warehouses = []} = useData<ISelectOption[]>((type === 'flex' && !(!detail?.stages_to_passed?.includes('ymo2') && detail?.stages_to_passed?.includes('is_last'))) ? 'accounts/warehouses/same-finished-select' : 'accounts/warehouses/finished-select')
+	// const {data: warehouses = []} = useData<ISelectOption[]>((type === 'flex' && !(!detail?.stages_to_passed?.includes('ymo2') && detail?.stages_to_passed?.includes('is_list'))) ? 'accounts/warehouses/same-finished-select' : 'accounts/warehouses/finished-select')
 	const {
 		reset,
 		control,
@@ -153,7 +153,7 @@ const Index: FC<IProperties> = ({retrieve = false, detail, type = 'flex'}) => {
 					{/*		render={({field: {value, ref, onChange, onBlur}}) => (*/}
 					{/*			<Select*/}
 					{/*				id="warehouse"*/}
-					{/*				label={(type === 'flex' && !(!detail?.stages_to_passed?.includes('ymo2') && detail?.stages_to_passed?.includes('is_last'))) ? `Semi-finished warehouse` : 'Ready-made warehouse'}*/}
+					{/*				label={(type === 'flex' && !(!detail?.stages_to_passed?.includes('ymo2') && detail?.stages_to_passed?.includes('is_list'))) ? `Semi-finished warehouse` : 'Ready-made warehouse'}*/}
 					{/*				options={warehouses}*/}
 					{/*				disabled={retrieve}*/}
 					{/*				error={errors?.warehouse?.message}*/}

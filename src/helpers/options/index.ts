@@ -93,7 +93,7 @@ const activityOptions: ISelectOption[] = [
 	{ value: 'ymo2', label: 'YMO2' },
 	{ value: 'tikish', label: 'Sewing' },
 	{ value: 'yelimlash', label: 'Gluing' },
-	{ value: 'is_last', label: 'Warehouse' }
+	{ value: 'is_list', label: 'Warehouse' }
 ]
 
 const cutOptions: ISelectOption[] = [

@@ -507,14 +507,14 @@ const Index: FC<IProperties> = ({update: edit = false}) => {
 						</>
 					)}
 
-					{detail?.stages_to_passed?.includes('is_last') && (
+					{detail?.stages_to_passed?.includes('is_list') && (
 						<>
 							<div className={styles.arrow}>
 								<RightArrow/>
 							</div>
 							<div
 								className={classNames(styles.item, {
-									[styles.inactive]: detail?.activity !== 'is_last'
+									[styles.inactive]: detail?.activity !== 'is_list'
 								})}
 							>
 								<h1>{t('Warehouse')}</h1>

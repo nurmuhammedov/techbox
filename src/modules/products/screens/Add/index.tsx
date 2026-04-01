@@ -162,7 +162,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							render={({field}) => (
 								<NumberFormattedInput
 									id="box_ear"
-									maxLength={3}
+									maxLength={9}
 									disableGroupSeparators
 									allowDecimals={false}
 									label={`${t('Box ear')} (${t('mm')})`}
@@ -200,7 +200,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 								<NumberFormattedInput
 									id="width"
 									label={`${t('Sizes')} (${t('mm')})`}
-									maxLength={3}
+									maxLength={9}
 									disableGroupSeparators
 									allowDecimals={false}
 									placeholder={`a (${t('mm')})`}
@@ -216,7 +216,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							render={({field}) => (
 								<NumberFormattedInput
 									id="length"
-									maxLength={3}
+									maxLength={9}
 									disableGroupSeparators
 									allowDecimals={false}
 									placeholder={`b (${t('mm')})`}
@@ -232,7 +232,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 							render={({field}) => (
 								<NumberFormattedInput
 									id="height"
-									maxLength={3}
+									maxLength={9}
 									disableGroupSeparators
 									allowDecimals={false}
 									placeholder={`c (${t('mm')})`}
