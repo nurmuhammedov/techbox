@@ -1001,6 +1001,10 @@ const splitSchema = yup.object().shape({
             file: yup.string().nullable()
         })
         .required('This field is required'),
+    out_of: yup
+        .string()
+        .trim()
+        .required('This field is required'),
     comment: yup
         .string()
         .trim()

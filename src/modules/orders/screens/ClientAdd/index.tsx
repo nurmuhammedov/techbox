@@ -1,6 +1,6 @@
-import {ISearchParams} from 'interfaces/params.interface'
-import {IProductDetail} from 'interfaces/products.interface'
-import {FC, useEffect} from 'react'
+import { ISearchParams } from 'interfaces/params.interface'
+import { IProductDetail } from 'interfaces/products.interface'
+import { FC, useEffect } from 'react'
 import {
     Button,
     Card,
@@ -13,29 +13,29 @@ import {
     Select,
     Wrapper
 } from 'components'
-import {useNavigate} from 'react-router-dom'
-import {BUTTON_THEME, FIELD} from 'constants/fields'
-import {Controller, useFieldArray, useForm} from 'react-hook-form'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {useAdd, useData, useDetail} from 'hooks'
-import {clientsSchema2, ordersSchema} from 'helpers/yup'
-import {getSelectValue, modifyObjectField} from 'utilities/common'
-import {Box, Plus} from 'assets/icons'
-import {useTranslation} from 'react-i18next'
-import {IFIle, ISelectOption} from 'interfaces/form.interface'
-import {yesNoOptions} from 'helpers/options'
-import {formatDateToISO, generateYearList, getDate} from 'utilities/date'
-import {InferType} from 'yup'
-import {IClientDetail} from 'interfaces/clients.interface'
+import { useNavigate } from 'react-router-dom'
+import { BUTTON_THEME, FIELD } from 'constants/fields'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useAdd, useData, useDetail } from 'hooks'
+import { clientsSchema2, ordersSchema } from 'helpers/yup'
+import { getSelectValue, modifyObjectField } from 'utilities/common'
+import { Box, Plus } from 'assets/icons'
+import { useTranslation } from 'react-i18next'
+import { IFIle, ISelectOption } from 'interfaces/form.interface'
+import { yesNoOptions } from 'helpers/options'
+import { formatDateToISO, generateYearList, getDate } from 'utilities/date'
+import { InferType } from 'yup'
+import { IClientDetail } from 'interfaces/clients.interface'
 
 
 const CombinedCreatePage: FC = () => {
     const navigate = useNavigate()
-    const {t} = useTranslation()
+    const { t } = useTranslation()
 
 
-    const {data: materials = []} = useData<ISelectOption[]>('products/material-types-seller/select')
-    const {data: formats = []} = useData<ISelectOption[]>('products/formats/select')
+    const { data: materials = [] } = useData<ISelectOption[]>('products/material-types-seller/select')
+    const { data: formats = [] } = useData<ISelectOption[]>('products/formats/select')
 
     // Customer Form
     const {
@@ -44,7 +44,7 @@ const CombinedCreatePage: FC = () => {
         register: customerRegister,
         reset: customerReset,
         watch: customerWatch,
-        formState: {errors: customerErrors}
+        formState: { errors: customerErrors }
     } = useForm({
         resolver: yupResolver(clientsSchema2),
         mode: 'onTouched',
@@ -58,7 +58,7 @@ const CombinedCreatePage: FC = () => {
     })
 
 
-    const {data: customers = []} = useData<ISelectOption[]>('services/customers/select')
+    const { data: customers = [] } = useData<ISelectOption[]>('services/customers/select')
     const {
         data: customerDetail,
         isPending: isCustomerDetailLoading
@@ -84,7 +84,7 @@ const CombinedCreatePage: FC = () => {
         register,
         reset,
         watch,
-        formState: {errors}
+        formState: { errors }
     } = useForm({
         resolver: yupResolver(ordersSchema),
         mode: 'onTouched',
@@ -108,9 +108,9 @@ const CombinedCreatePage: FC = () => {
     })
 
 
-    const {data: products = []} = useData<ISelectOption[]>('products/select', !!customerWatch('customer'), {customer: customerWatch('customer')})
+    const { data: products = [] } = useData<ISelectOption[]>('products/select', !!customerWatch('customer'), { customer: customerWatch('customer') })
 
-    const {fields, append, remove} = useFieldArray({
+    const { fields, append, remove } = useFieldArray({
         control: control,
         name: 'layer' as never
     })
@@ -138,14 +138,33 @@ const CombinedCreatePage: FC = () => {
     }, [productDetail])
 
 
-    const {mutateAsync: addOrder, isPending: isAddingOrder} = useAdd('services/orders')
+    const { mutateAsync: addOrder, isPending: isAddingOrder } = useAdd('services/orders')
+    const { mutateAsync: addProduct, isPending: isAddingProduct } = useAdd('products/')
 
     const onSubmit = async (customerData: InferType<typeof clientsSchema2>, orderData: InferType<typeof ordersSchema>) => {
         try {
+            let productId = orderData?.product
+            if (!productId) {
+                const productData = {
+                    name: orderData.name,
+                    width: orderData.width,
+                    height: orderData.height,
+                    length: orderData.length,
+                    box_ear: orderData.box_ear,
+                    format: orderData.format,
+                    layer: orderData.layer,
+                    logo: orderData.logo,
+                    customer: Number(customerData?.customer)
+                }
+                const newProduct = await addProduct(modifyObjectField(productData as ISearchParams, 'logo'))
+                productId = (newProduct as any)?.id
+            }
+
             const orderPayload = {
                 ...orderData,
                 deadline: formatDateToISO(orderData?.deadline as string | undefined),
-                customer: customerData?.customer
+                customer: customerData?.customer,
+                product: productId || null
             }
             await addOrder(modifyObjectField(orderPayload as ISearchParams, 'logo'))
 
@@ -174,7 +193,7 @@ const CombinedCreatePage: FC = () => {
                     <Button
                         type={FIELD.BUTTON}
                         theme={BUTTON_THEME.PRIMARY}
-                        disabled={isAddingOrder}
+                        disabled={isAddingOrder || isAddingProduct}
                         onClick={handleCombinedSubmit}
                     >
                         Save
@@ -183,13 +202,13 @@ const CombinedCreatePage: FC = () => {
             </PageTitle>
 
 
-            <Card style={{padding: '1.5rem', marginBottom: '2rem'}}>
+            <Card style={{ padding: '1.5rem', marginBottom: '2rem' }}>
                 <Form className="grid gap-xl" onSubmit={(e) => e.preventDefault()}>
                     <div className="span-12">
                         <Controller
                             name="customer"
                             control={customerControl}
-                            render={({field: {value, ref, onChange, onBlur}}) => (
+                            render={({ field: { value, ref, onChange, onBlur } }) => (
                                 <Select
                                     id="customer"
                                     label="Client"
@@ -228,7 +247,7 @@ const CombinedCreatePage: FC = () => {
                         <Controller
                             name="phone"
                             control={customerControl}
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <MaskInput
                                     id="phone"
                                     disabled={true}
@@ -243,7 +262,7 @@ const CombinedCreatePage: FC = () => {
                         <Controller
                             name="partnership_year"
                             control={customerControl}
-                            render={({field: {value, ref, onChange, onBlur}}) => (
+                            render={({ field: { value, ref, onChange, onBlur } }) => (
                                 <Select
                                     ref={ref}
                                     isDisabled={true}
@@ -263,7 +282,7 @@ const CombinedCreatePage: FC = () => {
                         <Controller
                             control={customerControl}
                             name="stir"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <NumberFormattedInput
                                     id="stir"
                                     maxLength={9}
@@ -281,7 +300,7 @@ const CombinedCreatePage: FC = () => {
             </Card>
 
             {/* Order Form Card */}
-            <Card style={{padding: '1.5rem'}}>
+            <Card style={{ padding: '1.5rem' }}>
                 <Form className="grid gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
 
                     <div className="grid span-12 gap-xl flex-0">
@@ -289,7 +308,7 @@ const CombinedCreatePage: FC = () => {
                             <Controller
                                 name="product"
                                 control={control}
-                                render={({field: {value, ref, onChange, onBlur}}) => (
+                                render={({ field: { value, ref, onChange, onBlur } }) => (
                                     <Select
                                         id="product"
                                         label="Product"
@@ -308,7 +327,7 @@ const CombinedCreatePage: FC = () => {
                             <Controller
                                 name="is_list"
                                 control={control}
-                                render={({field: {value, ref, onChange, onBlur}}) => (
+                                render={({ field: { value, ref, onChange, onBlur } }) => (
                                     <Select
                                         id="is_list"
                                         label="Listmi?"
@@ -340,7 +359,7 @@ const CombinedCreatePage: FC = () => {
                         <Controller
                             name="format"
                             control={control}
-                            render={({field: {value, ref, onChange, onBlur}}) => (
+                            render={({ field: { value, ref, onChange, onBlur } }) => (
                                 <Select
                                     id="format"
                                     label="Format"
@@ -363,7 +382,7 @@ const CombinedCreatePage: FC = () => {
                                     <Controller
                                         control={control}
                                         name="box_ear"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <NumberFormattedInput
                                                 id="box_ear"
                                                 maxLength={3}
@@ -381,7 +400,7 @@ const CombinedCreatePage: FC = () => {
                                     <Controller
                                         name="logo"
                                         control={control}
-                                        render={({field: {value, ref, onChange, onBlur}}) => (
+                                        render={({ field: { value, ref, onChange, onBlur } }) => (
                                             <FileUpLoader
                                                 id="logo"
                                                 ref={ref}
@@ -405,7 +424,7 @@ const CombinedCreatePage: FC = () => {
                                 <Controller
                                     control={control}
                                     name="width"
-                                    render={({field}) => (
+                                    render={({ field }) => (
                                         <NumberFormattedInput
                                             id="width"
                                             label={`${t('Sizes')} (${t('mm')})`}
@@ -424,7 +443,7 @@ const CombinedCreatePage: FC = () => {
                         <Controller
                             control={control}
                             name="length"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <NumberFormattedInput
                                     id="length"
                                     maxLength={9}
@@ -443,7 +462,7 @@ const CombinedCreatePage: FC = () => {
                                 <Controller
                                     control={control}
                                     name="height"
-                                    render={({field}) => (
+                                    render={({ field }) => (
                                         <NumberFormattedInput
                                             id="height"
                                             maxLength={9}
@@ -462,7 +481,7 @@ const CombinedCreatePage: FC = () => {
                     {
                         !watch('is_list') && (
                             <Wrapper className="span-4 align-center justify-center">
-                                <Box/>
+                                <Box />
                             </Wrapper>
                         )
                     }
@@ -474,7 +493,7 @@ const CombinedCreatePage: FC = () => {
                                     <Controller
                                         name={`layer.${index}`}
                                         control={control}
-                                        render={({field: {value, ref, onChange, onBlur}}) => (
+                                        render={({ field: { value, ref, onChange, onBlur } }) => (
                                             <Select
                                                 id={`layer-${index + 1}`}
                                                 label={`${index + 1}-${t('layer')}`}
@@ -495,12 +514,12 @@ const CombinedCreatePage: FC = () => {
                         }
 
 
-                        <div className="span-4" style={{marginTop: '2rem'}}>
+                        <div className="span-4" style={{ marginTop: '2rem' }}>
                             <Button
                                 theme={BUTTON_THEME.PRIMARY}
                                 type="button"
                                 disabled={(watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '') || fields.length >= 5}
-                                icon={<Plus/>}
+                                icon={<Plus />}
                                 onClick={() => append('')}
                             >
                                 Add layer
@@ -514,7 +533,7 @@ const CombinedCreatePage: FC = () => {
                             <Controller
                                 name="count"
                                 control={control}
-                                render={({field}) => (
+                                render={({ field }) => (
                                     <NumberFormattedInput
                                         id="count"
                                         maxLength={6}
@@ -532,7 +551,7 @@ const CombinedCreatePage: FC = () => {
                             <Controller
                                 name="deadline"
                                 control={control}
-                                render={({field}) => (
+                                render={({ field }) => (
                                     <MaskInput
                                         id="deadline"
                                         label="Deadline"
@@ -549,7 +568,7 @@ const CombinedCreatePage: FC = () => {
                             <Controller
                                 name="price"
                                 control={control}
-                                render={({field}) => (
+                                render={({ field }) => (
                                     <NumberFormattedInput
                                         id="price"
                                         maxLength={13}
@@ -567,7 +586,7 @@ const CombinedCreatePage: FC = () => {
                             <Controller
                                 name="money_paid"
                                 control={control}
-                                render={({field}) => (
+                                render={({ field }) => (
                                     <NumberFormattedInput
                                         id="money_paid"
                                         maxLength={13}

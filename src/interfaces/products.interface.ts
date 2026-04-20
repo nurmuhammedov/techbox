@@ -12,6 +12,7 @@ interface IProductDetail {
 	layer: string[];
 	layers: number;
 	box_ear: string;
+	customer: string;
 	format: number;
 }
 

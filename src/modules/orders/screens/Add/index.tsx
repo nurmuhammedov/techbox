@@ -77,6 +77,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 	})
 
 	const {mutateAsync: addOrder, isPending: isAdding} = useAdd('services/orders')
+	const {mutateAsync: addProduct, isPending: isAddingProduct} = useAdd('products/')
 	const {mutateAsync: updateOrder, isPending: isUpdating} = useUpdate('services/orders/', id)
 
 	const {
@@ -141,14 +142,31 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 					<Button
 						type={FIELD.BUTTON}
 						theme={BUTTON_THEME.PRIMARY}
-						disabled={isAdding || isUpdating}
+						disabled={isAdding || isUpdating || isAddingProduct}
 						onClick={() => {
 							if (!edit) {
-								handleSubmit((data) =>
-									addOrder(modifyObjectField({
+								handleSubmit(async (data) => {
+									let productId = data?.product
+									if (!productId) {
+										const productData = {
+											name: data.name,
+											width: data.width,
+											height: data.height,
+											length: data.length,
+											box_ear: data.box_ear,
+											format: data.format,
+											layer: data.layer,
+											logo: data.logo,
+											customer: Number(customer)
+										}
+										const newProduct = await addProduct(modifyObjectField(productData as ISearchParams, 'logo'))
+										productId = (newProduct as any)?.id
+									}
+
+									return addOrder(modifyObjectField({
 										...data,
 										deadline: formatDateToISO(data?.deadline as string | undefined),
-										product: data?.product ? data?.product : null,
+										product: productId ? productId : null,
 										customer
 									} as ISearchParams, 'logo'))
 										.then(async () => {
@@ -171,7 +189,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 											})
 											navigate(-1)
 										})
-								)()
+								})()
 
 							} else {
 								handleSubmit((data) =>

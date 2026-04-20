@@ -7,6 +7,7 @@ import {
 	FileUpLoader,
 	Form,
 	Input,
+	MaskInput,
 	Modal,
 	NumberFormattedInput,
 	Pagination,
@@ -280,7 +281,8 @@ const Index = () => {
 		defaultValues: {
 			logo: undefined,
 			comment: '',
-			count: ''
+			count: '',
+			out_of: ''
 		}
 	})
 
@@ -451,6 +453,21 @@ const Index = () => {
 								{...register(`comment`)}
 							/>
 						</div>
+						<div className="span-6">
+							<Controller
+								name="out_of"
+								control={control}
+								render={({field}) => (
+									<MaskInput
+										id="out_of"
+										label="Bitta mahsulot uchun list soni"
+										mask="9\*9"
+										error={errors?.out_of?.message}
+										{...field}
+									/>
+								)}
+							/>
+						</div>
 
 						<div className="span-12">
 							<Controller
@@ -484,7 +501,8 @@ const Index = () => {
 									reset({
 										logo: undefined,
 										comment: '',
-										count: ''
+										count: '',
+										out_of: ''
 									})
 									removeParams('modal')
 									await refetch()
