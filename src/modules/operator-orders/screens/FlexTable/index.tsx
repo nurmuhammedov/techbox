@@ -63,7 +63,7 @@ const Index: FC<IProperties> = ({type = 'fleksa'}) => {
 			},
 			{
 				Header: `${t('Sizes')} (${t('mm')})`,
-				accessor: (row: IOrderDetail) => `${row.width}*${row.length}${row.height ? `*${row.height}` : ''}`
+				accessor: (row: IOrderDetail) => (row.is_list ? `${row.format?.name || row.format?.format || row.width || ''}*${row.length || ''}` : `${row.width || ''}*${row.length || ''}${row.height ? `*${row.height}` : ''}` ),
 			},
 			{
 				Header: t('Layer'),

@@ -422,7 +422,7 @@ const Index = () => {
 			</Card>
 			<Pagination totalPages={totalPages} />
 			<Modal
-				title={`#${updateId} - ${t('Split order')?.toLowerCase()}`}
+				title={`#${updateId} - ${t('split order')?.toLowerCase()}`}
 				style={{ height: '40rem', width: '50rem' }}
 				id="split"
 			>
@@ -446,14 +446,6 @@ const Index = () => {
 							/>
 						</div>
 						<div className="span-6">
-							<Input
-								id="comment"
-								label={`Comment`}
-								error={errors?.comment?.message}
-								{...register(`comment`)}
-							/>
-						</div>
-						<div className="span-6">
 							<Controller
 								name="out_of"
 								control={control}
@@ -466,6 +458,15 @@ const Index = () => {
 										{...field}
 									/>
 								)}
+							/>
+
+						</div>
+						<div className="span-12">
+							<Input
+								id="comment"
+								label={`Comment`}
+								error={errors?.comment?.message}
+								{...register(`comment`)}
 							/>
 						</div>
 

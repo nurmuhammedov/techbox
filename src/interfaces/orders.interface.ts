@@ -21,6 +21,7 @@ interface IOrderDetail {
 	backlog: number;
 	weight: string;
 	piece: string;
+	out_of: string;
 
 	logo?: IFIle;
 	name: string;

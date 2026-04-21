@@ -1004,7 +1004,9 @@ const splitSchema = yup.object().shape({
     out_of: yup
         .string()
         .trim()
-        .required('This field is required'),
+        .nullable()
+        .optional()
+        .transform(v => v === '' ? null : v),
     comment: yup
         .string()
         .trim()

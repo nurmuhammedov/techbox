@@ -1,5 +1,5 @@
 import { useData, useDetail } from 'hooks'
-import { Card, CutDiagram, Diagram, FileUpLoader, Input, Loader, Select } from 'components'
+import {Card, CutDiagram, Diagram, FileUpLoader, Input, Loader, Select} from 'components'
 import { IOrderDetail } from 'interfaces/orders.interface'
 import { decimalToInteger, getSelectValue } from 'utilities/common'
 import { IFIle, ISelectOption } from 'interfaces/form.interface'
@@ -143,6 +143,14 @@ const Index = <P extends object>(WrappedComponent: ComponentType<P>) => {
 										options={verticalOptions as unknown as ISelectOption[]}
 										value={getSelectValue(verticalOptions as unknown as ISelectOption[], order?.is_vertical)}
 										defaultValue={getSelectValue(verticalOptions as unknown as ISelectOption[], order?.is_vertical)}
+									/>
+								</div>
+								<div className="span-4">
+									<Input
+										id="out_of"
+										disabled={true}
+										label="Bitta mahsulot uchun list soni"
+										value={order?.out_of || ' '}
 									/>
 								</div>
 
