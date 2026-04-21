@@ -107,7 +107,8 @@ const Index: FC = () => {
 						row?.orders?.map((order, index) => (
 							<>
 								<div>
-									{`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}
+									{order.is_list ? `${order.format?.name || order.format?.format || order.width || ''}*${order.length || ''}` : `${order.width || ''}*${order.length || ''}${order.height ? `*${order.height}` : ''}`}
+									{/*{`${order.width}*${order.length}${order.height ? `*${order.height}` : ''}`}*/}
 								</div>
 								{
 									row?.orders?.length !== index + 1 &&
