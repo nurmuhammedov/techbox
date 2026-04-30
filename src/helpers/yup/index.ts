@@ -22,7 +22,7 @@ const passwordSchema = yup
     .min(8, 'Password must be at least 8 characters long')
     .max(30, 'Password must not exceed 30 characters')
     .matches(/^\S*$/, 'You cannot leave a space in the password')
-    .matches(/^[a-zA-Z0-9!@#$%^&*()]+$/, 'Password can only contain letters, numbers, and special characters (!@#$%^&*)')
+    .matches(/^[a-zA-Z0-9!@#$%^&*()_]+$/, 'Password can only contain letters, numbers, underscores, and special characters (!@#$%^&*)')
 
 const dateField = yup
     .string()

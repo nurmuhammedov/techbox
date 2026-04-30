@@ -50,7 +50,7 @@
   "Login cannot start with a number": "Loginni raqam bilan boshlash mumkin emas",
   "Login cannot begin or end with an underscore": "Loginni pastki chiziq bilan boshlash yoki yakunlash mumkin emas",
   "It is not possible to type consecutive underscores in a login": "Loginda ketma-ket pastki chiziqni yozish mumkin emas",
-  "Password can only contain letters, numbers, and special characters (!@#$%^&*)": "Parol faqat lotin harflari (a-z va A-Z), raqamlar (0-9) va maxsus belgilar bo‘lishi mumkin (!@#$%^&*)",
+  "Password can only contain letters, numbers, underscores, and special characters (!@#$%^&*)": "Parol faqat lotin harflari (a-z va A-Z), raqamlar (0-9), pastki chiziq va maxsus belgilar bo‘lishi mumkin (!@#$%^&*)",
   "Passwords did not match": "Parollar mos kelmadi",
   "Confirm password": "Parolni takror kiriting",
   "This field is required": "Ushbu maydon to‘ldirilishi shart",
@@ -252,5 +252,6 @@
   "Remaining": "Qoldiq",
   "Amount": "Miqdori",
   "Glue amount": "Yelim miqdori",
-  "Add chemicals": "Kimyoviy modda qo‘shish"
+  "Add chemicals": "Kimyoviy modda qo‘shish",
+  "Komunallar": "Komunal to‘lovlar"
 }
