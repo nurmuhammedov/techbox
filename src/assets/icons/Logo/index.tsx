@@ -1,7 +1,6 @@
 const Index = () => {
 	return (
 		<svg
-			style={{maxWidth: '2.19rem', minWidth: '2.19rem', width: '100%', height: 'auto'}}
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 35 36"
 			fill="none"

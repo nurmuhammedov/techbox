@@ -5,8 +5,11 @@ import classNames from 'classnames'
 import {IMenuItem} from 'interfaces/configuration.interface'
 import styles from './styles.module.scss'
 
+interface SidebarItemProps extends IMenuItem {
+	isCollapsed?: boolean;
+}
 
-const Index: FC<IMenuItem> = ({href, label, icon}) => {
+const Index: FC<SidebarItemProps> = ({href, label, icon: Icon, isCollapsed}) => {
 	const {t} = useTranslation()
 	const location = useLocation()
 	const isRootActive = href === '/' && location.pathname === '/'
@@ -14,11 +17,16 @@ const Index: FC<IMenuItem> = ({href, label, icon}) => {
 	return (
 		<NavLink
 			to={href}
-			className={({isActive}: NavLinkRenderProps) => classNames(styles.navItem, {[styles.active]: isActive || isRootActive})}
+			className={({isActive}: NavLinkRenderProps) => classNames(styles.navItem, {
+				[styles.active]: isActive || isRootActive,
+				[styles.collapsed]: isCollapsed
+			})}
+			data-label={t(label)}
 		>
-			<span className={classNames(styles.icon)}>{icon ? icon() : null}</span>
-			<span className={styles.title}>{t(label)}</span>
-			<div className={styles.right}></div>
+			<span className={classNames(styles.icon)}>
+				{Icon ? <Icon size={22} strokeWidth={1.5} /> : null}
+			</span>
+			{!isCollapsed && <span className={styles.title}>{t(label)}</span>}
 		</NavLink>
 	)
 }

@@ -12,12 +12,19 @@ export function useLogin() {
 	const {setUser, setIsLoading} = useAppContext()
 	const navigate = useNavigate()
 
-	const handleLogin = (userData: ILogin) => {
+	const handleLogin = async (userData: ILogin) => {
 		setIsLoading(true)
-		setUser(buildUser(userData))
-		setTimeout(() => setIsLoading(false), 1250)
-		navigate(routeByRole(userData?.role?.value))
-		showMessage('Successful', 'success')
+		try {
+			const res = await AuthenticationService.me()
+			setUser(buildUser(res.data))
+			navigate(routeByRole(res.data?.role?.value))
+			showMessage('Successful', 'success')
+		} catch {
+			setUser(buildUser(userData))
+			navigate(routeByRole(userData?.role?.value))
+		} finally {
+			setTimeout(() => setIsLoading(false), 1250)
+		}
 	}
 
 	const {isPending, mutate: login} = useMutation({

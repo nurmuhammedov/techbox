@@ -1,23 +1,22 @@
 .root {
-  position: absolute;
-  width: calc(100% - 16.5rem);
+  position: sticky;
   top: 0;
-  z-index: 1;
-  padding: 0.875rem 1rem 0.875rem 1.5rem;
-  border-bottom: 1px solid var(--gray-pale);
-  background: var(--white);
+  z-index: 10;
+  padding: 0.875rem 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: white;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
+  min-height: 5.5rem;
 
-  .role-label {
-    color: var(--blue-deep);
-    font-family: Poppins, Arial, Helvetica, sans-serif;
-    font-size: 1.75rem;
-    font-style: normal;
-    font-weight: 600;
+  .pageTitle {
+    color: #1e293b;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
     line-height: normal;
   }
 
@@ -32,34 +31,58 @@
       justify-content: center;
       cursor: pointer;
       align-items: center;
-      padding-right: .5rem;
-      gap: 1.5rem;
+      padding: 0.5rem;
+      gap: 1rem;
+      border-radius: 0.75rem;
+      transition: background 0.2s;
+      
+      &:hover {
+        background: #f8fafc;
+      }
 
       .status-wrapper {
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.875rem;
 
         .status {
-          width: 2.8125rem;
-          height: 2.8125rem;
+          width: 2.75rem;
+          height: 2.75rem;
           display: flex;
           align-items: center;
           justify-content: center;
           border-radius: 50%;
-          background-color: var(--gray-lightest);
-          border: 1px solid var(--gray-softer);
+          background-color: #f1f5f9;
+          border: 1px solid #e2e8f0;
+          color: #64748b;
+          
+          svg {
+             width: 1.25rem;
+             height: 1.25rem;
+          }
         }
 
-        .name {
-          color: var(--navy-dark);
-          font-feature-settings: 'liga' off, 'clig' off;
-          font-family: Poppins, Arial, Helvetica, sans-serif;
-          font-size: 1rem;
-          font-style: normal;
-          font-weight: 500;
-          line-height: 150%; /* 1.5rem */
+        .userInfo {
+          display: flex;
+          flex-direction: column;
+          gap: 0.125rem;
+
+          .name {
+            color: #1e293b;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.2;
+          }
+          
+          .role {
+            color: #64748b;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            line-height: 1;
+          }
         }
       }
 
@@ -67,11 +90,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        color: #94a3b8;
 
         svg {
           transition: all .3s ease-out;
-          max-width: 1.25rem !important;
-          min-width: 1.25rem !important;
+          width: 1.25rem;
         }
       }
 
@@ -83,47 +106,54 @@
     }
 
     .account {
-      min-width: 10rem;
-      box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.13);
-      background: var(--white);
+      min-width: 12rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      background: white;
       position: absolute;
-      border-radius: .5rem;
+      border-radius: .75rem;
       padding: .5rem;
       display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      top: 110%;
+      flex-direction: column;
+      top: calc(100% + 0.5rem);
       right: 0;
-      gap: .5rem;
-      z-index: 1;
+      z-index: 100;
       opacity: 0;
       visibility: hidden;
-      transition: all .1s ease-out;
-      border: 1px solid var(--gray-softer);
-
+      transition: all 0.2s ease;
+      border: 1px solid #e2e8f0;
 
       .logout {
-        padding: .5rem;
+        padding: 0.75rem 1rem;
         cursor: pointer;
         display: flex;
-        justify-content: flex-start;
         align-items: center;
-        gap: .5rem;
+        gap: 0.75rem;
         width: 100%;
+        border-radius: 0.5rem;
+        transition: background 0.2s;
+        
+        &:hover {
+           background: #fef2f2;
+           
+           span {
+             color: #dc2626;
+           }
+        }
 
         span {
-          color: var(--red);
-          text-align: center;
-          font-family: Poppins, Arial, Helvetica, sans-serif;
-          font-size: 1rem;
-          font-style: normal;
-          font-weight: 400;
-          line-height: normal;
+          color: #64748b;
+          font-family: 'Inter', sans-serif;
+          font-size: 0.875rem;
+          font-weight: 500;
         }
 
         svg {
+          width: 1.25rem;
+          height: 1.25rem;
+          color: #ef4444;
+          
           path {
-            fill: var(--red) !important;
+            fill: #ef4444 !important;
           }
         }
       }

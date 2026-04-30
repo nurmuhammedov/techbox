@@ -202,6 +202,27 @@ const userSchema = yup.object().shape({
     password_confirm: confirmPasswordSchema
 })
 
+const communalsSchema = yup.object().shape({
+    name: yup.string().required('This field is required'),
+    unit_of: yup.string().required('This field is required'),
+    type: yup.string().required('This field is required'),
+})
+
+const tariffsSchema = yup.object().shape({
+    resource: yup.number().required('This field is required'),
+    price: yup.string().required('This field is required'),
+    from_value: yup.number().optional().nullable(),
+    to_value: yup.number().optional().nullable(),
+})
+
+const reportsSchema = yup.object().shape({
+    resource: yup.number().required('This field is required'),
+    year: yup.number().required('This field is required'),
+    month: yup.number().required('This field is required'),
+    meter_value: yup.string().required('This field is required'),
+    amount_paid: yup.string().required('This field is required'),
+})
+
 const userUpdateSchema = yup.object().shape({
     role: yup.number().required('This field is required'),
     username: usernameSchema
@@ -1052,6 +1073,9 @@ export {
     schema,
     productSchema,
     clientsSchema,
+    communalsSchema,
+    tariffsSchema,
+    reportsSchema,
     formatSchema,
     ordersSchema,
     loginSchema,

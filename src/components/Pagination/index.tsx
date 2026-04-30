@@ -22,7 +22,6 @@ const Index: FC<IProps> = ({totalPages = 1, pageName, pageSizeName, mini = false
 		onPageChange(event.selected + 1)
 	}
 
-	console.log(page, 'page')
 
 	return (
 		<div className={styles.root}>

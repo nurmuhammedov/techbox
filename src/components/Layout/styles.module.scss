@@ -4,20 +4,31 @@
   position: relative;
   height: 100vh;
   max-height: 100vh;
+  transition: grid-template-columns 0.3s ease;
+
+  &.collapsed {
+    grid-template-columns: 5rem 1fr;
+    
+    // Ensure sidebar content can overflow for tooltips
+    aside {
+      overflow: visible !important;
+    }
+  }
 
   .main {
     display: flex;
     flex-direction: column;
     max-height: 100vh;
     height: 100%;
+    overflow: hidden;
 
     .wrapper {
-      margin-top: 4.7rem;
       flex: 1;
       padding: 1.5rem;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
+      background-color: #f8fafc;
     }
   }
 }

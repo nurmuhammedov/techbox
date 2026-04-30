@@ -34,7 +34,8 @@ const roleOptions: ISelectOption[] = [
 	{ value: 'pallet_leader', label: 'Rahbar paddonlari' },
 	{ value: 'pallet_flex', label: 'Fleksa paddonlari' },
 	{ value: 'pallet_glue', label: 'Yelimlash paddonlari' },
-	{ value: 'pallet_bet', label: 'Tikish paddonlari' }
+	{ value: 'pallet_bet', label: 'Tikish paddonlari' },
+	{ value: 'communal', label: 'Komunallar' }
 ]
 
 

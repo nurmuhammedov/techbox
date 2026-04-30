@@ -1,14 +1,36 @@
-import { User } from 'assets/icons'
+import { 
+    Users, 
+    ShieldCheck, 
+    Boxes, 
+    Layout, 
+    Key, 
+    Warehouse, 
+    Package, 
+    Contact, 
+    ShoppingCart, 
+    Container, 
+    ClipboardList, 
+    ListTodo, 
+    Layers, 
+    Printer, 
+    Scissors, 
+    Droplets, 
+    Activity, 
+    FlaskConical, 
+    TestTube2, 
+    Sticker, 
+    Columns, 
+    Zap 
+} from 'lucide-react'
 import { ROLE_LIST } from 'constants/roles'
 import { IMenuItem } from 'interfaces/configuration.interface'
-
 
 export const menu: IMenuItem[] = [
 	{
 		id: 'human_resources',
 		label: 'Employees',
 		href: '/employees',
-		icon: User,
+		icon: Users,
 		allowedRoles: [
 			ROLE_LIST.HEAD_DEPARTMENT,
 			ROLE_LIST.EMPLOYEE
@@ -22,7 +44,7 @@ export const menu: IMenuItem[] = [
 		id: 'role',
 		label: 'Roles',
 		href: '/roles',
-		icon: User,
+		icon: ShieldCheck,
 		allowedRoles: [
 			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
@@ -36,7 +58,7 @@ export const menu: IMenuItem[] = [
 		id: 'material_type',
 		label: 'Material types',
 		href: '/materials',
-		icon: User,
+		icon: Boxes,
 		allowedRoles: [
 			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
@@ -50,7 +72,7 @@ export const menu: IMenuItem[] = [
 		id: 'format',
 		label: 'Formats',
 		href: '/formats',
-		icon: User,
+		icon: Layout,
 		allowedRoles: [
 			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
@@ -64,7 +86,7 @@ export const menu: IMenuItem[] = [
 		id: 'permissions',
 		label: 'Permissions',
 		href: '/permissions',
-		icon: User,
+		icon: Key,
 		allowedRoles: [
 			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
@@ -78,7 +100,7 @@ export const menu: IMenuItem[] = [
 		id: 'storekeeper',
 		label: 'Warehouses',
 		href: '/warehouses',
-		icon: User,
+		icon: Warehouse,
 		allowedRoles: [
 			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
@@ -92,7 +114,7 @@ export const menu: IMenuItem[] = [
 		id: 'products',
 		label: 'Products',
 		href: '/products',
-		icon: User,
+		icon: Package,
 		allowedRoles: [
 			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
@@ -106,7 +128,7 @@ export const menu: IMenuItem[] = [
 		id: 'customers',
 		label: 'Clients',
 		href: '/clients',
-		icon: User,
+		icon: Contact,
 		allowedRoles: [
 			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
@@ -120,7 +142,7 @@ export const menu: IMenuItem[] = [
 		id: 'orders',
 		label: 'Orders',
 		href: '/orders',
-		icon: User,
+		icon: ShoppingCart,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -133,7 +155,7 @@ export const menu: IMenuItem[] = [
 		id: 'materials',
 		label: 'Materials',
 		href: '/warehouses-man',
-		icon: User,
+		icon: Container,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -146,7 +168,7 @@ export const menu: IMenuItem[] = [
 		id: 'leader',
 		label: 'Director orders',
 		href: '/director-orders',
-		icon: User,
+		icon: ClipboardList,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -159,7 +181,7 @@ export const menu: IMenuItem[] = [
 		id: 'operator',
 		label: 'Orders',
 		href: '/operator-orders',
-		icon: User,
+		icon: ListTodo,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -172,7 +194,7 @@ export const menu: IMenuItem[] = [
 		id: 'operator_gofra',
 		label: 'Corrugation orders',
 		href: '/corrugation-orders',
-		icon: User,
+		icon: Layers,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -185,7 +207,7 @@ export const menu: IMenuItem[] = [
 		id: 'operator_fleksa',
 		label: 'Flex orders',
 		href: '/flex-orders',
-		icon: User,
+		icon: Printer,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -198,7 +220,7 @@ export const menu: IMenuItem[] = [
 		id: 'operator_tikish',
 		label: 'Sewing orders',
 		href: '/sewing-orders',
-		icon: User,
+		icon: Scissors,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -211,7 +233,7 @@ export const menu: IMenuItem[] = [
 		id: 'operator_yelimlash',
 		label: 'Gluing orders',
 		href: '/gluing-orders',
-		icon: User,
+		icon: Droplets,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -224,7 +246,7 @@ export const menu: IMenuItem[] = [
 		id: 'company_operations',
 		label: 'Company operations',
 		href: '/company-operations',
-		icon: User,
+		icon: Activity,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -236,7 +258,7 @@ export const menu: IMenuItem[] = [
 		id: 'chemical_types',
 		label: 'Chemical types',
 		href: '/chemical-types',
-		icon: User,
+		icon: FlaskConical,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -248,7 +270,7 @@ export const menu: IMenuItem[] = [
 		id: 'chemicals',
 		label: 'Chemicals',
 		href: '/chemicals',
-		icon: User,
+		icon: TestTube2,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -260,7 +282,7 @@ export const menu: IMenuItem[] = [
 		id: 'glue',
 		label: 'Glue',
 		href: '/glue',
-		icon: User,
+		icon: Sticker,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -272,7 +294,7 @@ export const menu: IMenuItem[] = [
 		id: 'pallet_leader',
 		label: 'Paddonlar',
 		href: '/pallet-leader',
-		icon: User,
+		icon: Columns,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -283,8 +305,8 @@ export const menu: IMenuItem[] = [
 	{
 		id: 'pallet_flex',
 		label: 'Paddonlar',
-		href: '/pallet-flex',
-		icon: User,
+		href: '/pallet-operator-flex',
+		icon: Columns,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -295,8 +317,8 @@ export const menu: IMenuItem[] = [
 	{
 		id: 'pallet_glue',
 		label: 'Paddonlar',
-		href: '/pallet-glue',
-		icon: User,
+		href: '/pallet-operator-glue',
+		icon: Columns,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
@@ -307,14 +329,27 @@ export const menu: IMenuItem[] = [
 	{
 		id: 'pallet_bet',
 		label: 'Paddonlar',
-		href: '/pallet-bet',
-		icon: User,
+		href: '/pallet-operator-sewing',
+		icon: Columns,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
 			[ROLE_LIST.EMPLOYEE]: 24
 		}
+	},
+	{
+		id: 'communal',
+		label: 'Komunallar',
+		href: '/communals',
+		icon: Zap,
+		allowedRoles: [
+			ROLE_LIST.ADMIN,
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 25,
+			[ROLE_LIST.EMPLOYEE]: 25
+		}
 	}
 ]
-
