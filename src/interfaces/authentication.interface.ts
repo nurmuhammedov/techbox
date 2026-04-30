@@ -19,7 +19,7 @@ interface IUser {
 	fullName: string
 	role: IRole
 	roleLabel: string
-	permissions: string[]
+	categories: string[]
 }
 
 export type{

@@ -5,6 +5,7 @@ import OperatorOrdersTable from './screens/Table'
 import FlexTable from './screens/FlexTable'
 import EditOperatorOrder from './screens/Add'
 import PalletDetail from './screens/PalletDetail'
+import CorrugationForm from './screens/CorrugationForm'
 
 
 export {
@@ -14,5 +15,6 @@ export {
 	FlexOrderForm,
 	OperatorsForm,
 	PalletDetail,
-	FlexTable
+	FlexTable,
+	CorrugationForm
 }

@@ -18,7 +18,7 @@ import { BUTTON_THEME, FIELD } from 'constants/fields'
 import { defectiveSchema, schema, soldDefectiveSchema, soldSchema } from 'helpers/yup'
 import { useActions, useAdd, useData, useDetail, usePaginatedData, usePagination, useSearchParams } from 'hooks'
 import { ISelectOption } from 'interfaces/form.interface'
-import { useEffect, useMemo } from 'react'
+import { FC, useEffect, useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -29,7 +29,12 @@ import { decimalToInteger, decimalToPrice, getSelectValue } from 'utilities/comm
 import { activityOptions, statusOptions } from 'helpers/options'
 
 
-const Index = () => {
+interface IProperties {
+    leader?: boolean
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Index: FC<IProperties> = ({ leader: _leader = false }) => {
     const navigate = useNavigate()
     const { t } = useTranslation()
     const { page, pageSize } = usePagination()

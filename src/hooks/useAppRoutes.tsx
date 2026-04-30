@@ -1,3 +1,8 @@
+import {useMemo} from 'react'
+import {Navigate, RouteObject, useRoutes} from 'react-router-dom'
+import {useAppContext} from 'hooks'
+import {ROLE_LIST} from 'constants/roles'
+import {Layout} from 'components'
 import {
 	AddEmployee,
 	EmployeesTable,
@@ -25,144 +30,101 @@ import {
 	Process,
 	WarehouseDetail,
 	SemiFinishedDetail,
-	FinishedDetail, CompanyOperations,
+	FinishedDetail,
+	CompanyOperations,
 	PalletLeaderTable,
 	OperatorPalletsTable,
 	PalletForm,
 	PalletDetail,
 	UpdateDirectorOrder,
 	CommunalsTable,
-	AddCommunal,
 	AddTariff,
-	AddReport
+	AddReport,
+	ChemicalTypesTable,
+	ChemicalsTable,
+	AddChemicals as AddChemical,
+	GlueTable,
+	AddGlue,
+	CorrugationForm
 } from 'modules'
-import { Navigate, useRoutes } from 'react-router-dom'
-import { routeByRole } from 'utilities/authentication'
-import { ROLE_LIST } from 'constants/roles'
-import { useAppContext } from 'hooks'
-import { Layout } from 'components'
-import { ChemicalTypesTable } from 'modules/chemical-types'
-import { AddChemicals, ChemicalsTable } from 'modules/chemicals'
-import { AddGlue, GlueTable } from 'modules/Glue'
-import CorrugationForm from 'modules/operator-orders/screens/CorrugationForm'
 
 
-function useAppRoutes() {
-	const { user } = useAppContext()
+const routeByRole = (role?: string) => {
+	switch (role) {
+		case ROLE_LIST.ADMIN:
+			return '/employees'
+		case ROLE_LIST.LEADER:
+			return '/director-orders'
+		case ROLE_LIST.EMPLOYEE:
+			return '/operator-orders'
+		case ROLE_LIST.STOREKEEPER:
+			return '/warehouses'
+		case ROLE_LIST.OPERATOR:
+			return '/operator-orders'
+		case ROLE_LIST.HEAD_DEPARTMENT:
+			return '/employees'
+		default:
+			return '/login'
+	}
+}
 
-	const userPermissions = user?.permissions || []
+const useAppRoutes = () => {
+	const {user} = useAppContext()
+	const userCategories = useMemo(() => {
+		return user?.categories || []
+	}, [user])
 
-	const employeeRoutes = [
+	const employeeRoutes: (RouteObject & { id: string })[] = [
 		{
-			id: 'leader',
-			path: 'director-orders',
+			id: 'human_resources',
+			path: 'employees',
 			children: [
 				{
 					index: true,
-					element: <DirectorOrdersTable />
+					element: <EmployeesTable />
 				},
 				{
 					path: 'add',
-					element: <AddDirectorOrder />
+					element: <AddEmployee />
 				},
 				{
 					path: 'edit/:id',
-					element: <UpdateDirectorOrder />
+					element: <AddEmployee edit={true} />
 				}
 			]
 		},
 		{
-			id: 'operator',
-			path: 'operator-orders',
+			id: 'role',
+			path: 'roles',
 			children: [
 				{
 					index: true,
-					element: <OperatorOrdersTable />
-				},
-				{
-					path: 'edit/:id',
-					element: <EditOperatorOrder />
-				},
-				{
-					path: 'detail/:id',
-					element: <EditOperatorOrder retrieve={true} />
+					element: <RolesTable />
 				}
 			]
 		},
 		{
-			id: 'operator_gofra',
-			path: 'corrugation-orders',
+			id: 'permissions',
+			path: 'permissions',
 			children: [
 				{
 					index: true,
-					element: <OperatorsTable type="gofra" />
-				},
-				{
-					path: 'edit/:id',
-					element: <CorrugationForm />
-				},
-				{
-					path: 'detail/:id',
-					element: <CorrugationForm retrieve={true} />
+					element: <EmployeesTable />
 				}
 			]
 		},
 		{
-			id: 'operator_fleksa',
-			path: 'flex-orders',
+			id: 'chemical_types',
+			path: 'chemical-types',
 			children: [
 				{
 					index: true,
-					element: <FlexTable />
-				},
-				{
-					path: 'edit/:id',
-					element: <FlexOrderForm />
-				},
-				{
-					path: 'detail/:id',
-					element: <FlexOrderForm retrieve={true} />
+					element: <ChemicalTypesTable />
 				}
 			]
 		},
 		{
-			id: 'operator_tikish',
-			path: 'sewing-orders',
-			children: [
-				{
-					index: true,
-					element: <OperatorsTable type="tikish" />
-				},
-				{
-					path: 'edit/:id',
-					element: <Process type="sewing" />
-				},
-				{
-					path: 'detail/:id',
-					element: <Process retrieve={true} type="sewing" />
-				}
-			]
-		},
-		{
-			id: 'operator_yelimlash',
-			path: 'gluing-orders',
-			children: [
-				{
-					index: true,
-					element: <OperatorsTable type="yelimlash" />
-				},
-				{
-					path: 'edit/:id',
-					element: <Process type="gluing" />
-				},
-				{
-					path: 'detail/:id',
-					element: <Process retrieve={true} type="gluing" />
-				}
-			]
-		},
-		{
-			id: 'materials',
+			id: 'material_type',
 			path: 'materials',
 			children: [
 				{
@@ -216,8 +178,250 @@ function useAppRoutes() {
 					element: <AddProduct />
 				},
 				{
-					path: 'edit/:productId',
+					path: 'edit/:id',
 					element: <AddProduct edit={true} />
+				}
+			]
+		},
+		{
+			id: 'chemicals',
+			path: 'chemicals',
+			children: [
+				{
+					index: true,
+					element: <ChemicalsTable />
+				},
+				{
+					path: 'add',
+					element: <AddChemical />
+				},
+				{
+					path: 'edit/:id',
+					element: <AddChemical edit={true} />
+				}
+			]
+		},
+		{
+			id: 'glue',
+			path: 'glue',
+			children: [
+				{
+					index: true,
+					element: <GlueTable />
+				},
+				{
+					path: 'add',
+					element: <AddGlue />
+				},
+				{
+					path: 'edit/:id',
+					element: <AddGlue edit={true} />
+				}
+			]
+		},
+		{
+			id: 'leader',
+			path: 'director-orders',
+			children: [
+				{
+					index: true,
+					element: <DirectorOrdersTable leader={true}/>
+				},
+				{
+					path: 'add',
+					element: <AddDirectorOrder />
+				},
+				{
+					path: 'process/:id',
+					element: <Process />
+				}
+			]
+		},
+		{
+			id: 'operator',
+			path: 'operator-orders',
+			children: [
+				{
+					index: true,
+					element: <OperatorOrdersTable />
+				},
+				{
+					path: 'add',
+					element: <EditOperatorOrder />
+				},
+				{
+					path: 'detail/:id',
+					element: <EditOperatorOrder retrieve={true} />
+				},
+				{
+					path: 'process/:id',
+					element: <Process update={true} />
+				},
+				{
+					path: 'edit-group/:id',
+					element: <UpdateDirectorOrder />
+				}
+			]
+		},
+		{
+			id: 'company_operations',
+			path: 'company-operations',
+			children: [
+				{
+					index: true,
+					element: <CompanyOperations />
+				},
+				{
+					path: 'add',
+					element: <AddDirectorOrder />
+				},
+				{
+					path: 'process/:id',
+					element: <Process update={true} />
+				}
+			]
+		},
+		{
+			id: 'operator_gofra',
+			path: 'corrugation-orders',
+			children: [
+				{
+					index: true,
+					element: <OperatorsTable type="gofra" />
+				},
+				{
+					path: 'edit/:id',
+					element: <CorrugationForm />
+				},
+				{
+					path: 'detail/:id',
+					element: <CorrugationForm retrieve={true} />
+				},
+				{
+					path: 'pallet-detail/:id',
+					element: <PalletDetail />
+				}
+			]
+		},
+		{
+			id: 'operator_fleksa',
+			path: 'flex-orders',
+			children: [
+				{
+					index: true,
+					element: <FlexTable type="fleksa" />
+				},
+				{
+					path: 'edit/:id',
+					element: <FlexOrderForm />
+				},
+				{
+					path: 'detail/:id',
+					element: <FlexOrderForm retrieve={true} />
+				}
+			]
+		},
+		{
+			id: 'operator_tikish',
+			path: 'sewing-orders',
+			children: [
+				{
+					index: true,
+					element: <FlexTable type="tikish" />
+				},
+				{
+					path: 'edit/:id',
+					element: <FlexOrderForm type="sewing" />
+				},
+				{
+					path: 'detail/:id',
+					element: <FlexOrderForm retrieve={true} type="sewing" />
+				}
+			]
+		},
+		{
+			id: 'operator_yelimlash',
+			path: 'gluing-orders',
+			children: [
+				{
+					index: true,
+					element: <FlexTable type="yelimlash" />
+				},
+				{
+					path: 'edit/:id',
+					element: <FlexOrderForm type="gluing" />
+				},
+				{
+					path: 'detail/:id',
+					element: <FlexOrderForm retrieve={true} type="gluing" />
+				}
+			]
+		},
+		{
+			id: 'pallet_leader',
+			path: 'pallet-leader',
+			children: [
+				{
+					index: true,
+					element: <PalletLeaderTable />
+				},
+				{
+					path: 'detail/:id',
+					element: <PalletDetail />
+				}
+			]
+		},
+		{
+			id: 'pallet_flex',
+			path: 'pallet-flex',
+			children: [
+				{
+					index: true,
+					element: <OperatorPalletsTable type="flex" />
+				},
+				{
+					path: 'edit/:id',
+					element: <PalletForm type="flex" />
+				},
+				{
+					path: 'detail/:id',
+					element: <PalletForm retrieve={true} type="flex" />
+				}
+			]
+		},
+		{
+			id: 'pallet_glue',
+			path: 'pallet-glue',
+			children: [
+				{
+					index: true,
+					element: <OperatorPalletsTable type="glue" />
+				},
+				{
+					path: 'edit/:id',
+					element: <PalletForm type="glue" />
+				},
+				{
+					path: 'detail/:id',
+					element: <PalletForm retrieve={true} type="glue" />
+				}
+			]
+		},
+		{
+			id: 'pallet_bet',
+			path: 'pallet-bet',
+			children: [
+				{
+					index: true,
+					element: <OperatorPalletsTable type="bet" />
+				},
+				{
+					path: 'edit/:id',
+					element: <PalletForm type="bet" />
+				},
+				{
+					path: 'detail/:id',
+					element: <PalletForm retrieve={true} type="bet" />
 				}
 			]
 		},
@@ -271,114 +475,7 @@ function useAppRoutes() {
 			]
 		},
 		{
-			id: 'company_operations',
-			path: 'company-operations',
-			element: <CompanyOperations />
-		},
-		{
-			id: 'pallet_leader',
-			path: 'pallet-leader',
-			children: [
-				{
-					index: true,
-					element: <PalletLeaderTable />
-				},
-				{
-					path: 'detail/:id',
-					element: <PalletDetail />
-				}
-			]
-		},
-		{
-			id: 'pallet_flex',
-			path: 'pallet-operator-flex',
-			children: [
-				{
-					index: true,
-					element: <OperatorPalletsTable type="fleksa" />
-				},
-				{
-					path: 'add',
-					element: <PalletForm type="fleksa" />
-				}
-			]
-		},
-		{
-			id: 'pallet_glue',
-			path: 'pallet-operator-glue',
-			children: [
-				{
-					index: true,
-					element: <OperatorPalletsTable type="yelimlash" />
-				},
-				{
-					path: 'add',
-					element: <PalletForm type="yelimlash" />
-				}
-			]
-		},
-		{
-			id: 'pallet_bet',
-			path: 'pallet-operator-sewing',
-			children: [
-				{
-					index: true,
-					element: <OperatorPalletsTable type="tikish" />
-				},
-				{
-					path: 'add',
-					element: <PalletForm type="tikish" />
-				}
-			]
-		},
-		{
-			id: 'chemical_types',
-			path: 'chemical-types',
-			children: [
-				{
-					index: true,
-					element: <ChemicalTypesTable />
-				}
-			]
-		},
-		{
-			id: 'chemicals',
-			path: 'chemicals',
-			children: [
-				{
-					index: true,
-					element: <ChemicalsTable />
-				},
-				{
-					path: 'add',
-					element: <AddChemicals />
-				},
-				{
-					path: 'edit/:id',
-					element: <AddChemicals edit={true} />
-				}
-			]
-		},
-		{
-			id: 'glue',
-			path: 'glue',
-			children: [
-				{
-					index: true,
-					element: <GlueTable />
-				},
-				{
-					path: 'add',
-					element: <AddGlue />
-				},
-				{
-					path: 'edit/:id',
-					element: <AddGlue edit={true} />
-				}
-			]
-		},
-		{
-			id: 'storekeeper',
+			id: 'materials',
 			path: 'warehouses-man',
 			children: [
 				{
@@ -404,14 +501,6 @@ function useAppRoutes() {
 					element: <CommunalsTable />
 				},
 				{
-					path: 'add',
-					element: <AddCommunal />
-				},
-				{
-					path: 'edit/:id',
-					element: <AddCommunal edit={true} />
-				},
-				{
 					path: 'add-tariff',
 					element: <AddTariff />
 				},
@@ -431,264 +520,85 @@ function useAppRoutes() {
 		}
 	]
 
-	const adminChildren = [
-		{
-			index: true,
-			element: <Navigate to={routeByRole(user?.role)} replace />
-		},
-		{
-			id: 'role',
-			path: 'roles',
-			children: [
-				{
-					index: true,
-					element: <RolesTable />
-				}
-			]
-		},
-		{
-			id: 'permissions',
-			path: 'permissions',
-			children: [
-				{
-					index: true,
-					element: <EmployeesTable />
-				}
-			]
-		},
-		{
-			id: 'materials',
-			path: 'materials',
-			children: [
-				{
-					index: true,
-					element: <MaterialsTable />
-				}
-			]
-		},
-		{
-			id: 'format',
-			path: 'formats',
-			children: [
-				{
-					index: true,
-					element: <FormatsTable />
-				}
-			]
-		},
-		{
-			id: 'storekeeper',
-			path: 'warehouses',
-			children: [
-				{
-					index: true,
-					element: <WarehouseTable />
-				},
-				{
-					path: 'warehouse-detail/:id',
-					element: <WarehouseDetail />
-				},
-				{
-					path: 'semi-finished-detail/:id',
-					element: <SemiFinishedDetail />
-				},
-				{
-					path: 'finished-detail/:id',
-					element: <FinishedDetail />
-				}
-			]
-		},
-		{
-			id: 'chemical_types',
-			path: 'chemical-types',
-			children: [
-				{
-					index: true,
-					element: <ChemicalTypesTable />
-				}
-			]
-		},
-		{
-			id: 'chemicals',
-			path: 'chemicals',
-			children: [
-				{
-					index: true,
-					element: <ChemicalsTable />
-				},
-				{
-					path: 'add',
-					element: <AddChemicals />
-				},
-				{
-					path: 'edit/:id',
-					element: <AddChemicals edit={true} />
-				}
-			]
-		},
-		{
-			id: 'glue',
-			path: 'glue',
-			children: [
-				{
-					index: true,
-					element: <GlueTable />
-				},
-				{
-					path: 'add',
-					element: <AddGlue />
-				},
-				{
-					path: 'edit/:id',
-					element: <AddGlue edit={true} />
-				}
-			]
-		},
-		{
-			id: 'products',
-			path: 'products',
-			children: [
-				{
-					index: true,
-					element: <ProductsTable />
-				},
-				{
-					path: 'add',
-					element: <AddProduct />
-				},
-				{
-					path: 'edit/:productId',
-					element: <AddProduct edit={true} />
-				}
-			]
-		},
-		{
-			id: 'customers',
-			path: 'clients',
-			children: [
-				{
-					index: true,
-					element: <ClientsTable />
-				},
-				{
-					path: 'add',
-					element: <AddClient />
-				},
-				{
-					path: 'edit/:id',
-					element: <AddClient edit={true} />
-				}
-			]
-		},
-		{
-			id: 'communal',
-			path: 'communals',
-			children: [
-				{
-					index: true,
-					element: <CommunalsTable />
-				},
-				{
-					path: 'add',
-					element: <AddCommunal />
-				},
-				{
-					path: 'edit/:id',
-					element: <AddCommunal edit={true} />
-				},
-				{
-					path: 'add-tariff',
-					element: <AddTariff />
-				},
-				{
-					path: 'edit-tariff/:id',
-					element: <AddTariff edit={true} />
-				},
-				{
-					path: 'add-report',
-					element: <AddReport />
-				},
-				{
-					path: 'edit-report/:id',
-					element: <AddReport edit={true} />
-				}
-			]
-		}
-	]
-
-	const filteredEmployeeRoutes = employeeRoutes.filter(route => userPermissions.includes(route?.id))
-	const filteredAdminRoutes = adminChildren.filter(route => route.index || userPermissions.includes(route?.id))
+	const filteredEmployeeRoutes = employeeRoutes.filter(route => userCategories.includes(route?.id as string))
 
 	let url = routeByRole(user?.role)
 	if (user?.role === ROLE_LIST.EMPLOYEE && filteredEmployeeRoutes?.length) {
 		url = '/' + filteredEmployeeRoutes[0].path
 	}
 
+	const commonChildren: RouteObject[] = [
+		{
+			index: true,
+			element: <Navigate to={url} replace />
+		},
+		...employeeRoutes
+	]
+
+	const adminChildren: RouteObject[] = [
+		{
+			index: true,
+			element: <Navigate to={url} replace />
+		},
+		...employeeRoutes
+	]
+
 	const routes = {
 		[ROLE_LIST.ADMIN]: [
 			{
 				path: '/',
-				element: <Layout />,
-				children: filteredAdminRoutes
-			},
-			{
-				path: '*',
-				element: <Navigate to={routeByRole(user?.role)} replace />
+				element: user?.role ? <Layout /> : <Login />,
+				children: adminChildren
 			}
 		],
-		[ROLE_LIST.HEAD_DEPARTMENT]: [
+		[ROLE_LIST.LEADER]: [
 			{
 				path: '/',
-				element: <Layout />,
-				children: [
-					{
-						index: true,
-						element: <Navigate to={routeByRole(user?.role)} replace />
-					},
-					{
-						path: 'employees',
-						children: [
-							{
-								index: true,
-								element: <EmployeesTable />
-							},
-							{
-								path: 'add',
-								element: <AddEmployee />
-							},
-							{
-								path: 'edit/:id',
-								element: <AddEmployee edit={true} />
-							}
-						]
-					}
-				]
-			},
-			{
-				path: '*',
-				element: <Navigate to={routeByRole(user?.role)} replace />
+				element: user?.role ? <Layout /> : <Login />,
+				children: commonChildren
 			}
 		],
 		[ROLE_LIST.EMPLOYEE]: [
 			{
 				path: '/',
-				element: <Layout />,
-				children: [
-					{
-						index: true,
-						element: <Navigate to={url} replace />
-					},
-					...filteredEmployeeRoutes
-				]
+				element: user?.role ? <Layout /> : <Login />,
+				children: commonChildren
+			}
+		],
+		[ROLE_LIST.STOREKEEPER]: [
+			{
+				path: '/',
+				element: user?.role ? <Layout /> : <Login />,
+				children: commonChildren
+			}
+		],
+		[ROLE_LIST.OPERATOR]: [
+			{
+				path: '/',
+				element: user?.role ? <Layout /> : <Login />,
+				children: commonChildren
+			}
+		],
+		[ROLE_LIST.HEAD_DEPARTMENT]: [
+			{
+				path: '/',
+				element: user?.role ? <Layout /> : <Login />,
+				children: adminChildren
+			}
+		],
+		default: [
+			{
+				path: '/login',
+				element: <Login />
 			},
 			{
 				path: '*',
-				element: <Navigate to={routeByRole(user?.role)} replace />
+				element: <Navigate to="/login" replace />
 			}
 		]
 	}
 
-	return useRoutes(user ? routes[user.role] : [{ path: '*', element: <Login /> }])
+	return useRoutes(routes[user?.role as keyof typeof routes] || routes.default)
 }
 
 export default useAppRoutes

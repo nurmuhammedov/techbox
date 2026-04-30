@@ -1,5 +1,4 @@
 import {Logo} from 'assets/icons'
-import {ROLE_LIST} from 'constants/roles'
 import {useAppContext, useSideMenu} from 'hooks'
 import {FC} from 'react'
 import {useTranslation} from 'react-i18next'

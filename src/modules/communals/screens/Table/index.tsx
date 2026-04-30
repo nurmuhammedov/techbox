@@ -5,7 +5,6 @@ import {
 	DeleteButton,
 	DeleteModal,
 	EditButton,
-	PageTitle,
 	Pagination,
 	ReactTable,
 	Tab
@@ -110,7 +109,7 @@ const Index: FC = () => {
 				accessor: (row: ICommunalTariff) => (
 					<div className="flex items-start gap-lg">
 						<EditButton onClick={() => navigate(`edit-tariff/${row.id}`)}/>
-						<DeleteButton id={row.id} endpoint="communal/tariffs/"/>
+						<DeleteButton id={row.id}/>
 					</div>
 				)
 			}
@@ -160,7 +159,7 @@ const Index: FC = () => {
 				accessor: (row: ICommunalReport) => (
 					<div className="flex items-start gap-lg">
 						<EditButton onClick={() => navigate(`edit-report/${row.id}`)}/>
-						<DeleteButton id={row.id} endpoint="communal/reports/"/>
+						<DeleteButton id={row.id}/>
 					</div>
 				)
 			}
@@ -169,16 +168,16 @@ const Index: FC = () => {
 	)
 
 	const columns = useMemo(() => {
-		if (tab === 'tariffs') return tariffColumns
-		if (tab === 'reports') return reportColumns
-		return resourceColumns
+		if (tab === 'tariffs') return tariffColumns as any[]
+		if (tab === 'reports') return reportColumns as any[]
+		return resourceColumns as any[]
 	}, [tab, resourceColumns, tariffColumns, reportColumns])
 
 	return (
 		<>
 			<div className="flex justify-between items-center" style={{marginBottom: '1rem'}}>
 				<Tab query="tab" fallbackValue="resources" tabs={communalTabs} />
-				<Button icon={<Plus/>} onClick={() => navigate(`add${tab === 'resources' ? '' : `-${tab.slice(0, -1)}`}`)}>
+				<Button icon={<Plus/>} onClick={() => navigate(`add${tab === 'resources' ? '' : `-${(tab as string).slice(0, -1)}`}`)}>
 					{t('Add')}
 				</Button>
 			</div>

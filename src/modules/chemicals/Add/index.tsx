@@ -24,7 +24,13 @@ const options = [
 	{value: 'kg', label: 'KG'}
 ]
 
-const ChemicalsBulkCreatePage = () => {
+import {FC} from 'react'
+
+interface IProperties {
+	edit?: boolean
+}
+
+const ChemicalsBulkCreatePage: FC<IProperties> = () => {
 	const navigate = useNavigate()
 	const {mutateAsync: add, isPending} = useAdd('chemicals/chemicals-bulk-create')
 

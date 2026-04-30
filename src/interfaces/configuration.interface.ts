@@ -8,7 +8,7 @@ interface RoleOrder {
 interface IMenuItem {
 	id: string
 	label: string
-	icon?: () => React.ReactNode
+	icon?: React.ElementType
 	href: string
 	allowedRoles: string[]
 	order: RoleOrder

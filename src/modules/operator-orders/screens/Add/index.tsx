@@ -17,7 +17,12 @@ import { getDate } from 'utilities/date'
 import { cutOptions } from 'helpers/options'
 
 
-const Index: FC = () => {
+interface IProperties {
+	retrieve?: boolean
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Index: FC<IProperties> = ({ retrieve: _retrieve = false }) => {
 	const { t } = useTranslation()
 	const { id } = useParams()
 	const { groupOrders } = useTypedSelector(state => state.groupOrders)

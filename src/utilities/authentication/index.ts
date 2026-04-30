@@ -8,7 +8,7 @@ function buildUser(userData: ILogin | undefined): IUser | null {
 		fullName: userData?.fullname,
 		roleLabel: [ROLE_LIST.ADMIN, ROLE_LIST, ROLE_LIST.HEAD_DEPARTMENT].includes(userData?.role?.value) ? ROLE_LABEL[userData?.role?.value] : userData?.role?.label ?? 'Employee',
 		role: userData?.role?.value ?? ROLE_LIST.EMPLOYEE,
-		permissions: userData?.role?.categories ?? []
+		categories: userData?.role?.categories ?? []
 	}
 }
 

@@ -23,7 +23,13 @@ const schema = yup.object().shape({
 		.required('This field is required')
 })
 
-const GlueCreatePage = () => {
+import {FC} from 'react'
+
+interface IProperties {
+	edit?: boolean
+}
+
+const GlueCreatePage: FC<IProperties> = () => {
 	const navigate = useNavigate()
 	const {mutateAsync: add, isPending} = useAdd('chemicals/glue-create')
 	const {data: warehouses = []} = useData<ISelectOption[]>('accounts/warehouses-select')

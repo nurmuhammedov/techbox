@@ -45,7 +45,7 @@ interface IDetailData {
 }
 
 interface ICorrugationProperties {
-	detail?: boolean
+	retrieve?: boolean
 }
 
 interface IFormOrder {
@@ -98,12 +98,12 @@ const schema = yup.object().shape({
 	)
 })
 
-const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
+export const CorrugationOrder: FC<ICorrugationProperties> = ({retrieve = false}) => {
 	const {t} = useTranslation()
 	const navigate = useNavigate()
 	const {id} = useParams()
 
-	const {data: responseData} = useDetail<IDetailData>('services/consecutive-orders/', id)
+	const {detail: responseData} = useDetail<IDetailData>('services/consecutive-orders/', id)
 
 	const {
 		mutateAsync: updateOrders,
@@ -152,7 +152,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
 
 			let mappedLeftovers: ILeftoverItem[] = []
 
-			if (detail && responseData?.weight_materials?.length) {
+			if (retrieve && responseData?.weight_materials?.length) {
 				mappedLeftovers = responseData.weight_materials.map(wm => ({
 					id: wm.id,
 					weight: wm.weight == 0 ? '0' : wm.weight ? String(wm.weight) : '',
@@ -170,7 +170,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
 				leftover: mappedLeftovers
 			})
 		}
-	}, [responseData, reset, detail])
+	}, [responseData, reset, retrieve])
 
 	const onSubmit = async (data: IFormValues) => {
 		const countAfterProcessing: { order: number, count: string }[] = []
@@ -226,7 +226,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
 						Back
 					</Button>
 					{
-						!detail &&
+						!retrieve &&
 						<Button
 							onClick={handleSubmit(onSubmit)}
 							disabled={isPendingOrders}
@@ -271,11 +271,11 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
 													render={({field}) => (
 														<NumberFormattedInput
 															id={`leftover.${index}.weight`}
-															label={`${detail ? t('Ajratilgan rulon') : t('Ortib qolgan rulon')} (${t('kg')})`}
+															label={`${retrieve ? t('Ajratilgan rulon') : t('Ortib qolgan rulon')} (${t('kg')})`}
 															maxLength={12}
 															allowDecimals={true}
 															{...field}
-															disabled={detail}
+															disabled={retrieve}
 															error={errors?.leftover?.[index]?.weight?.message}
 														/>
 													)}
@@ -351,7 +351,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
 														disableGroupSeparators={false}
 														allowDecimals={true}
 														label="Pallet count"
-														disabled={detail}
+														disabled={retrieve}
 														error={errors?.items?.[groupIndex]?.pallet?.message}
 														{...field}
 													/>
@@ -382,7 +382,7 @@ const CorrugationOrder: FC<ICorrugationProperties> = ({detail = false}) => {
 																disableGroupSeparators={false}
 																allowDecimals={true}
 																label="Count"
-																disabled={detail}
+																disabled={retrieve}
 																error={errors?.items?.[groupIndex]?.orders?.[orderIndex]?.count?.message}
 																{...field}
 															/>
