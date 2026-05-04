@@ -189,7 +189,7 @@ const Index: FC = () => {
 				/>
 			</Card>
 			<Pagination totalPages={totalPages}/>
-			<DeleteModal endpoint={endpoint} onDelete={() => refetch()}/>
+			<DeleteModal endpoint={`${endpoint}/`} onDelete={() => refetch()}/>
 		</>
 	)
 }
