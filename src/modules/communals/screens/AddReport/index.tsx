@@ -58,11 +58,11 @@ const Index: FC<IProperties> = ({edit = false}) => {
 	})
 
 	const {mutateAsync, isPending: isAdding} = useAdd('communal/reports')
-	const {mutateAsync: update, isPending: isUpdating} = useUpdate('communal/reports', id)
+	const {mutateAsync: update, isPending: isUpdating} = useUpdate('communal/reports/', id)
 	const {
 		data,
 		isPending: isDetailLoading
-	} = useDetail<ICommunalReport>('communal/reports', id, edit)
+	} = useDetail<ICommunalReport>('communal/reports/', id, edit)
 
 	useEffect(() => {
 		if (data && edit) {

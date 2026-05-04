@@ -40,7 +40,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 	})
 
 	const {mutateAsync, isPending: isAdding} = useAdd('communal/tariffs')
-	const {mutateAsync: update, isPending: isUpdating} = useUpdate('communal/tariffs', id)
+	const {mutateAsync: update, isPending: isUpdating} = useUpdate('communal/tariffs/', id)
 	const {
 		data,
 		isPending: isDetailLoading
