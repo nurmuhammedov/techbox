@@ -35,9 +35,9 @@ const Index: FC = () => {
 	const {paramsObject: {tab = 'resources'}} = useSearchParams()
 
 	const endpoint = useMemo(() => {
-		if (tab === 'tariffs') return 'communal/tariffs/'
-		if (tab === 'reports') return 'communal/reports/'
-		return 'communal/resources/'
+		if (tab === 'tariffs') return 'communal/tariffs'
+		if (tab === 'reports') return 'communal/reports'
+		return 'communal/resources'
 	}, [tab])
 
 	const {data, totalPages, isPending: isLoading, refetch} = usePaginatedData<any[]>(

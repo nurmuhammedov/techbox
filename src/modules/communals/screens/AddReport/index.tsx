@@ -37,7 +37,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 	]
 	const {id = undefined} = useParams()
 
-	const {data: resources = []} = useData<ISelectOption[]>('communal/resources-select/')
+	const {data: resources = []} = useData<ISelectOption[]>('communal/resources-select')
 	const years = generateYearList(2020)
 
 	const {
@@ -57,12 +57,12 @@ const Index: FC<IProperties> = ({edit = false}) => {
 		resolver: yupResolver(reportsSchema)
 	})
 
-	const {mutateAsync, isPending: isAdding} = useAdd('communal/reports/')
-	const {mutateAsync: update, isPending: isUpdating} = useUpdate('communal/reports/', id)
+	const {mutateAsync, isPending: isAdding} = useAdd('communal/reports')
+	const {mutateAsync: update, isPending: isUpdating} = useUpdate('communal/reports', id)
 	const {
 		data,
 		isPending: isDetailLoading
-	} = useDetail<ICommunalReport>('communal/reports/', id, edit)
+	} = useDetail<ICommunalReport>('communal/reports', id, edit)
 
 	useEffect(() => {
 		if (data && edit) {

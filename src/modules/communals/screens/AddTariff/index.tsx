@@ -21,7 +21,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 	const {t} = useTranslation()
 	const {id = undefined} = useParams()
 
-	const {data: resources = []} = useData<ISelectOption[]>('communal/resources-select/')
+	const {data: resources = []} = useData<ISelectOption[]>('communal/resources-select')
 
 	const {
 		handleSubmit,
@@ -39,8 +39,8 @@ const Index: FC<IProperties> = ({edit = false}) => {
 		resolver: yupResolver(tariffsSchema)
 	})
 
-	const {mutateAsync, isPending: isAdding} = useAdd('communal/tariffs/')
-	const {mutateAsync: update, isPending: isUpdating} = useUpdate('communal/tariffs/', id)
+	const {mutateAsync, isPending: isAdding} = useAdd('communal/tariffs')
+	const {mutateAsync: update, isPending: isUpdating} = useUpdate('communal/tariffs', id)
 	const {
 		data,
 		isPending: isDetailLoading

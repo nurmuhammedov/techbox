@@ -47,12 +47,12 @@ const Index: FC<IProperties> = ({edit = false}) => {
 		resolver: yupResolver(communalsSchema)
 	})
 
-	const {mutateAsync, isPending: isAdding} = useAdd('communal/resources/')
-	const {mutateAsync: update, isPending: isUpdating} = useUpdate('communal/resources/', id)
+	const {mutateAsync, isPending: isAdding} = useAdd('communal/resources')
+	const {mutateAsync: update, isPending: isUpdating} = useUpdate('communal/resources', id)
 	const {
 		data,
 		isPending: isDetailLoading
-	} = useDetail<ICommunalResource>('communal/resources/', id, edit)
+	} = useDetail<ICommunalResource>('communal/resources', id, edit)
 
 	useEffect(() => {
 		if (data && edit) {
