@@ -45,7 +45,7 @@ import {
 	AddChemicals as AddChemical,
 	GlueTable,
 	AddGlue,
-	CorrugationForm
+	CorrugationForm, AddCommunal
 } from 'modules'
 
 
@@ -499,6 +499,14 @@ const useAppRoutes = () => {
 				{
 					index: true,
 					element: <CommunalsTable />
+				},
+				{
+					path: 'add',
+					element: <AddCommunal />
+				},
+				{
+					path: 'edit/:id',
+					element: <AddCommunal edit={true} />
 				},
 				{
 					path: 'add-tariff',
