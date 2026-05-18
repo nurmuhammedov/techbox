@@ -150,7 +150,7 @@ const LaborProtectionTable = () => {
 						rel="noreferrer"
 						style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontWeight: '500' }}
 					>
-						{t('Download')}
+						{row.file.name || t('Download')}
 					</a>
 				) : '-'
 			},
