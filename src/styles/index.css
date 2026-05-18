@@ -540,7 +540,8 @@ ol {
   padding: 0 !important;
   flex-direction: column !important;
   border-radius: 1rem !important;
-  background: var(--gray-lightest) !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 button:focus-visible, a:focus-visible {
