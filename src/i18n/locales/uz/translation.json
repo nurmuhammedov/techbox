@@ -327,5 +327,22 @@
   "File": "Fayl",
   "Time": "Vaqt",
   "event_type": "Baxtsiz hodisa turi",
-  "root_cause": "Kelib chiqish sababi"
+  "root_cause": "Kelib chiqish sababi",
+  "Dashboard": "Statistika",
+  "yearly_expenses": "YILLIK XARAJATLAR",
+  "monthly_expenses": "OYLIK XARAJATLAR",
+  "photo_reports": "Foto hisobotlar",
+  "expense_name": "XARAJA NOMI",
+  "tariff_price": "TARIF NARXI",
+  "this_month_usage": "USHBU OYDAGI SARFI",
+  "tariff_changes_count": "TARIF O‘ZGARISHLAR SONI",
+  "paid_som": "TO‘LANDI (SO‘M)",
+  "remaining_som": "QOLDIQ (SO‘M)",
+  "edit_report": "TAHRIRLASH",
+  "Gaz": "Gaz",
+  "Suv": "Suv",
+  "Elektr energiyasi": "Elektr energiyasi",
+  "Arenda": "Arenda",
+  "Svet": "Elektr energiyasi",
+  "No data available": "Ma‘lumotlar mavjud emas"
 }

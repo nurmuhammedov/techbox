@@ -14,25 +14,53 @@ import {
 	usePagination,
 	useSearchParams
 } from 'hooks'
-import {FC, useMemo} from 'react'
+import {FC, useMemo, useState, useEffect, useRef} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {ICommunalResource, ICommunalTariff, ICommunalReport} from 'interfaces/communals.interface'
 import {decimalToPrice} from 'utilities/common'
-
+import {Calendar, ChevronLeft, ChevronRight} from 'lucide-react'
+import Dashboard from './Dashboard'
+import classes from './Dashboard.module.scss'
 
 const Index: FC = () => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
 
+	const [currentDate, setCurrentDate] = useState<Date>(new Date())
+	const [isPickerOpen, setIsPickerOpen] = useState(false)
+	const [pickerYear, setPickerYear] = useState<number>(currentDate.getFullYear())
+	const pickerRef = useRef<HTMLDivElement>(null)
+
+	const monthsUz = useMemo(() => [
+		t('Yanvar'), t('Fevral'), t('Mart'), t('Aprel'), t('May'), t('Iyun'),
+		t('Iyul'), t('Avgust'), t('Sentabr'), t('Oktabr'), t('Noyabr'), t('Dekabr')
+	], [t])
+
+	const monthsShort = useMemo(() => [
+		'Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyu',
+		'Iyl', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'
+	], [])
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
+				setIsPickerOpen(false)
+			}
+		}
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => document.removeEventListener('mousedown', handleClickOutside)
+	}, [])
+
 	const communalTabs = [
+		{value: 'dashboard', label: t('Dashboard')},
 		{value: 'resources', label: t('Resources')},
 		{value: 'tariffs', label: t('Tariflar')},
 		{value: 'reports', label: t('Hisobotlar')}
 	]
 	const {page, pageSize} = usePagination()
-	const {paramsObject: {tab = 'resources'}} = useSearchParams()
+	const {paramsObject: {tab = 'dashboard'}} = useSearchParams()
 
 	const endpoint = useMemo(() => {
 		if (tab === 'tariffs') return 'communal/tariffs'
@@ -45,9 +73,9 @@ const Index: FC = () => {
 		{
 			page: page,
 			page_size: pageSize,
-		}
+		},
+		tab !== 'dashboard'
 	)
-
 
 	const resourceColumns: Column<ICommunalResource>[] = useMemo(
 		() => [
@@ -131,11 +159,7 @@ const Index: FC = () => {
 			{
 				Header: t('Period'),
 				accessor: (row: ICommunalReport) => {
-					const months = [
-						t('Yanvar'), t('Fevral'), t('Mart'), t('Aprel'), t('May'), t('Iyun'),
-						t('Iyul'), t('Avgust'), t('Sentabr'), t('Oktabr'), t('Noyabr'), t('Dekabr')
-					];
-					return (row.month && row.year) ? `${months[row.month - 1]} ${row.year}` : '-';
+					return (row.month && row.year) ? `${monthsUz[row.month - 1]} ${row.year}` : '-';
 				}
 			},
 			{
@@ -164,7 +188,7 @@ const Index: FC = () => {
 				)
 			}
 		],
-		[t, page, pageSize, navigate]
+		[t, page, pageSize, navigate, monthsUz]
 	)
 
 	const columns = useMemo(() => {
@@ -173,10 +197,76 @@ const Index: FC = () => {
 		return resourceColumns as any[]
 	}, [tab, resourceColumns, tariffColumns, reportColumns])
 
+	if (tab === 'dashboard') {
+		return (
+			<>
+				<div className="flex justify-between items-center" style={{marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem'}}>
+					<Tab query="tab" fallbackValue="dashboard" tabs={communalTabs} />
+					
+					<div className="flex items-center gap-md" style={{ position: 'relative' }} ref={pickerRef}>
+						<button 
+							className={classes.monthYearTrigger}
+							style={{ height: '2.5rem' }}
+							onClick={() => {
+								setPickerYear(currentDate.getFullYear())
+								setIsPickerOpen(!isPickerOpen)
+							}}
+						>
+							<Calendar size={18} />
+							<span>{monthsUz[currentDate.getMonth()]} {currentDate.getFullYear()}</span>
+						</button>
+
+						{isPickerOpen && (
+							<div className={classes.monthDropdown} style={{ right: 0 }}>
+								<div className={classes.dropdownHeader}>
+									<button 
+										type="button" 
+										className={classes.yearButton}
+										onClick={() => setPickerYear(prev => prev - 1)}
+									>
+										<ChevronLeft size={16} />
+									</button>
+									<span className={classes.yearLabel}>{pickerYear}</span>
+									<button 
+										type="button" 
+										className={classes.yearButton}
+										onClick={() => setPickerYear(prev => prev + 1)}
+									>
+										<ChevronRight size={16} />
+									</button>
+								</div>
+								
+								<div className={classes.monthsGrid}>
+									{monthsShort.map((mName, index) => {
+										const isActive = currentDate.getFullYear() === pickerYear && currentDate.getMonth() === index
+										return (
+											<button
+												key={mName}
+												type="button"
+												className={`${classes.monthButton} ${isActive ? classes.active : ''}`}
+												onClick={() => {
+													setCurrentDate(new Date(pickerYear, index, 1))
+													setIsPickerOpen(false)
+												}}
+											>
+												{mName}
+											</button>
+										)
+									})}
+								</div>
+							</div>
+						)}
+					</div>
+				</div>
+				<Dashboard currentDate={currentDate} />
+			</>
+		)
+	}
+
 	return (
 		<>
 			<div className="flex justify-between items-center" style={{marginBottom: '1rem'}}>
-				<Tab query="tab" fallbackValue="resources" tabs={communalTabs} />
+				<Tab query="tab" fallbackValue="dashboard" tabs={communalTabs} />
 				<Button icon={<Plus/>} onClick={() => navigate(`add${tab === 'resources' ? '' : `-${(tab as string).slice(0, -1)}`}`)}>
 					{t('Add')}
 				</Button>

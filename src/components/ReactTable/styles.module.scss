@@ -35,6 +35,13 @@
             cursor: pointer;
           }
 
+          &[style*="text-align: right"],
+          &[style*="text-align:right"] {
+            .headerContent {
+              justify-content: flex-end;
+            }
+          }
+
           .sortIcons {
             display: flex;
             flex-direction: column;
