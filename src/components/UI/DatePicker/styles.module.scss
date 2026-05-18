@@ -1,0 +1,176 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.dateWrapper {
+  width: 100% !important;
+  display: block !important;
+}
+
+.dateInput {
+  cursor: pointer;
+}
+
+.customHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.headerBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--navy-dark);
+  font-size: 1.25rem;
+  font-weight: bold;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease-in-out;
+
+  &:hover:not(:disabled) {
+    background-color: var(--gray-lightest);
+  }
+
+  &:disabled {
+    color: var(--gray-light);
+    cursor: not-allowed;
+  }
+}
+
+.headerSelect {
+  background-color: var(--white);
+  border: 1px solid var(--gray-lightest);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  color: var(--navy-dark);
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease-in-out;
+
+  &:hover {
+    border-color: var(--gray-light);
+  }
+
+  &:focus {
+    border-color: var(--primary-blue);
+  }
+}
+
+// Override react-datepicker theme variables and styles globally within this module
+:global {
+  .react-datepicker-wrapper {
+    width: 100% !important;
+  }
+
+  .react-datepicker {
+    font-family: Poppins, Arial, Helvetica, sans-serif !important;
+    border: 1px solid var(--gray-lightest) !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--white) !important;
+    overflow: hidden !important;
+  }
+
+  .react-datepicker__header {
+    background-color: transparent !important;
+    border-bottom: none !important;
+    padding-top: 1rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  .react-datepicker__current-month {
+    color: var(--navy-dark) !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .react-datepicker__day-name {
+    color: var(--gray-light) !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    width: 2.25rem !important;
+    line-height: 2.25rem !important;
+    margin: 0.15rem !important;
+  }
+
+  .react-datepicker__day {
+    color: var(--navy-dark) !important;
+    font-size: 0.875rem !important;
+    width: 2.25rem !important;
+    line-height: 2.25rem !important;
+    margin: 0.15rem !important;
+    border-radius: 0.5rem !important;
+    transition: all 0.15s ease-in-out !important;
+
+    &:hover {
+      background-color: var(--gray-lightest) !important;
+      color: var(--primary-blue) !important;
+    }
+  }
+
+  .react-datepicker__day--selected,
+  .react-datepicker__day--keyboard-selected {
+    background-color: var(--primary-blue) !important;
+    color: var(--white) !important;
+    font-weight: 600 !important;
+
+    &:hover {
+      background-color: var(--primary-blue) !important;
+      color: var(--white) !important;
+    }
+  }
+
+  .react-datepicker__day--outside-month {
+    color: var(--gray-light) !important;
+    opacity: 0.5 !important;
+  }
+
+  .react-datepicker__navigation {
+    top: 1rem !important;
+  }
+
+  .react-datepicker__navigation-icon::before {
+    border-color: var(--navy-dark) !important;
+    border-width: 2px 2px 0 0 !important;
+  }
+
+  .react-datepicker__close-icon {
+    padding: 0 0.5rem 0 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    top: 0 !important;
+    right: 0.25rem !important;
+
+    &::after {
+      content: "" !important;
+      display: inline-block !important;
+      background-color: transparent !important;
+      width: 18px !important;
+      height: 18px !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      /* Lucide X SVG in gray */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+      background-position: center !important;
+    }
+    
+    &:hover::after {
+      /* Darker gray on hover */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%231e293b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") !important;
+    }
+  }
+}

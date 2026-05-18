@@ -15,3 +15,8 @@ export * from './pallet-operator'
 export * from './chemicals'
 export * from './chemical-types'
 export * from './Glue'
+export { default as LaborProtectionTable } from './labor-protection'
+export { default as EventsTable } from './events'
+export { default as AccidentsTable } from './accidents'
+export { default as ParticipationTable } from './participation'
+

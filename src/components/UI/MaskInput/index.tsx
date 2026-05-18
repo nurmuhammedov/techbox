@@ -46,10 +46,11 @@ const Index = forwardRef<HTMLInputElement, IProperties>(({
 				onChange={onChange}
 				onBlur={onBlur}
 				mask={mask}
-				placeholder={t(placeholder)}
+				placeholder={placeholder === '09:00' ? placeholder : t(placeholder)}
+				maskPlaceholder={null}
 				inputRef={ref}
 				className={classes.input}
-				alwaysShowMask={true}
+				alwaysShowMask={false}
 			/>
 		</Input>
 	)

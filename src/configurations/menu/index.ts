@@ -20,7 +20,11 @@ import {
     TestTube2, 
     Sticker, 
     Columns, 
-    Zap 
+    Zap,
+    ShieldAlert,
+    Calendar,
+    AlertTriangle,
+    Clock
 } from 'lucide-react'
 import { ROLE_LIST } from 'constants/roles'
 import { IMenuItem } from 'interfaces/configuration.interface'
@@ -352,6 +356,54 @@ export const menu: IMenuItem[] = [
 		order: {
 			[ROLE_LIST.ADMIN]: 25,
 			[ROLE_LIST.EMPLOYEE]: 25
+		}
+	},
+	{
+		id: 'labor_protection',
+		label: 'labor_protection',
+		href: '/labor-protection',
+		icon: ShieldAlert,
+		allowedRoles: [
+			ROLE_LIST.HEAD_DEPARTMENT
+		],
+		order: {
+			[ROLE_LIST.HEAD_DEPARTMENT]: 2
+		}
+	},
+	{
+		id: 'events',
+		label: 'events',
+		href: '/events',
+		icon: Calendar,
+		allowedRoles: [
+			ROLE_LIST.HEAD_DEPARTMENT
+		],
+		order: {
+			[ROLE_LIST.HEAD_DEPARTMENT]: 3
+		}
+	},
+	{
+		id: 'accidents',
+		label: 'accidents',
+		href: '/accidents',
+		icon: AlertTriangle,
+		allowedRoles: [
+			ROLE_LIST.HEAD_DEPARTMENT
+		],
+		order: {
+			[ROLE_LIST.HEAD_DEPARTMENT]: 4
+		}
+	},
+	{
+		id: 'participation',
+		label: 'participation',
+		href: '/participation',
+		icon: Clock,
+		allowedRoles: [
+			ROLE_LIST.HEAD_DEPARTMENT
+		],
+		order: {
+			[ROLE_LIST.HEAD_DEPARTMENT]: 5
 		}
 	}
 ]

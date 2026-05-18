@@ -1,4 +1,4 @@
-import {useCallback, useEffect, forwardRef, useState} from 'react'
+import {useCallback, useEffect, forwardRef, useState, useMemo} from 'react'
 import {useDropzone, FileWithPath} from 'react-dropzone'
 import {IFIle} from 'interfaces/form.interface'
 import {Delete, Download} from 'assets/icons'
@@ -150,6 +150,26 @@ const Index = forwardRef<HTMLInputElement, FileUploaderProps>(({
 			if (file) window.open(file, '_blank')
 		}
 
+		const normalizedValue = useMemo(() => {
+			const val = value as any
+			if (!val) return null
+			if (typeof val === 'string') {
+				return {
+					id: val,
+					file: val,
+					name: val.split('/').pop() || 'file'
+				}
+			}
+			if (typeof val === 'number') {
+				return {
+					id: val,
+					file: '',
+					name: `file_${val}`
+				}
+			}
+			return val as IFIle
+		}, [value])
+
 		return (
 			<Input
 				id={id}
@@ -220,19 +240,19 @@ const Index = forwardRef<HTMLInputElement, FileUploaderProps>(({
 									</div>
 								}
 							</> :
-							value ?
+							normalizedValue ?
 								<div className={styles.values}>
 									<div className={styles.value}>
 										{
 											type === 'image' ?
 												<img
 													style={{width: '250px', maxWidth: '100%', height: 'auto'}}
-													src={value.file}
+													src={normalizedValue.file}
 													alt="Image"
 												/> :
 												<Input
-													id={value.id as unknown as string}
-													value={value.name}
+													id={normalizedValue.id?.toString() || 'file'}
+													value={normalizedValue.name}
 													disabled={true}
 												/>
 										}
@@ -241,12 +261,12 @@ const Index = forwardRef<HTMLInputElement, FileUploaderProps>(({
 										!!onChange &&
 										<div
 											className={classNames(styles.icon, styles.delete, {[styles.isDelete]: isDeleteLoading})}
-											onClick={() => handleDelete(value.id)}
+											onClick={() => handleDelete(normalizedValue.id)}
 										>
 											<Delete/>
 										</div>
 									}
-									<div className={styles.icon} onClick={() => handleDownload(value.file)}>
+									<div className={styles.icon} onClick={() => handleDownload(normalizedValue.file)}>
 										<Download/>
 									</div>
 								</div> :

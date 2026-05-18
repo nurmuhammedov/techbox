@@ -1048,6 +1048,44 @@ const countSchema = yup.object().shape({
         .required('This field is required')
 })
 
+// HR SCHEMAS
+const laborProtectionSchema = yup.object().shape({
+    employee: yup.string().required('This field is required'),
+    certificate_number: yup.string().trim().required('This field is required'),
+    end_date: yup.string().required('This field is required'),
+    validity_period: yup.string().required('This field is required'),
+    is_daily: yup.string().optional(),
+    file: yup.mixed().optional().nullable()
+})
+
+const eventSchema = yup.object().shape({
+    name: yup.string().trim().required('This field is required')
+})
+
+const accidentSchema = yup.object().shape({
+    employee: yup.string().required('This field is required'),
+    event: yup.string().required('This field is required'),
+    date: yup.string().required('This field is required'),
+    description: yup.string().trim().required('This field is required')
+})
+
+const participationSchema = yup.object().shape({
+    employee: yup.string().required('This field is required'),
+    date: yup.string().required('This field is required'),
+    arrival_time: yup
+        .string()
+        .required('This field is required')
+        .matches(/^(?:[01]\d|2[0-3]):[0-5]\d$/, 'The entered date is not valid'),
+    time_leave: yup
+        .string()
+        .nullable()
+        .optional()
+        .transform((v) => (v === '' ? null : v))
+        .test('isValidTime', 'The entered date is not valid', (value) => !value || /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value)),
+    came_late: yup.string().optional(),
+    came_late_reason: yup.string().trim().optional().nullable().transform(v => v === '' ? null : v)
+})
+
 
 export {
     semiFinishedWarehouseSchema,
@@ -1080,5 +1118,9 @@ export {
     ordersSchema,
     loginSchema,
     rolesSchema,
-    userSchema
+    userSchema,
+    laborProtectionSchema,
+    eventSchema,
+    accidentSchema,
+    participationSchema
 }

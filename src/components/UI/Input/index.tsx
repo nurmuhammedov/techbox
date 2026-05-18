@@ -54,7 +54,7 @@ const Index = forwardRef<HTMLInputElement | HTMLTextAreaElement, IField>(
 								{...props}
 								data-title="input"
 								ref={ref as React.Ref<HTMLTextAreaElement>}
-								id={id.toString()}
+								id={id?.toString() || ''}
 								className={styles.input}
 								placeholder={props.placeholder ? t(props.placeholder as string) : t('Enter value')}
 								autoComplete={autocomplete ? 'on' : 'off'}
@@ -73,7 +73,7 @@ const Index = forwardRef<HTMLInputElement | HTMLTextAreaElement, IField>(
 									{...props}
 									title={props?.disabled ? props?.value?.toString() : undefined}
 									ref={ref as React.Ref<HTMLInputElement>}
-									id={id.toString()}
+									id={id?.toString() || ''}
 									type={type}
 									data-title="input"
 									className={styles.input}

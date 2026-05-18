@@ -46,7 +46,11 @@ import {
 	AddChemicals as AddChemical,
 	GlueTable,
 	AddGlue,
-	CorrugationForm, AddCommunal
+	CorrugationForm, AddCommunal,
+	LaborProtectionTable,
+	EventsTable,
+	AccidentsTable,
+	ParticipationTable
 } from 'modules'
 
 
@@ -543,6 +547,50 @@ const useAppRoutes = () => {
 		}
 	]
 
+	const headDepartmentChildren: RouteObject[] = [
+		{
+			index: true,
+			element: <Navigate to={url} replace />
+		},
+		{
+			path: 'employees',
+			children: [
+				{
+					index: true,
+					element: <EmployeesTable />
+				},
+				{
+					path: 'add',
+					element: <AddEmployee />
+				},
+				{
+					path: 'edit/:id',
+					element: <AddEmployee edit={true} />
+				}
+			]
+		},
+		{
+			path: 'labor-protection',
+			element: <LaborProtectionTable />
+		},
+		{
+			path: 'events',
+			element: <EventsTable />
+		},
+		{
+			path: 'accidents',
+			element: <AccidentsTable />
+		},
+		{
+			path: 'participation',
+			element: <ParticipationTable />
+		},
+		{
+			path: '*',
+			element: <Navigate to={url} replace />
+		}
+	]
+
 	const routes = {
 		[ROLE_LIST.ADMIN]: [
 			{
@@ -562,7 +610,7 @@ const useAppRoutes = () => {
 			{
 				path: '/',
 				element: user?.role ? <Layout /> : <Login />,
-				children: commonChildren
+				children: headDepartmentChildren
 			}
 		],
 		default: [

@@ -1,5 +1,5 @@
-import {yupResolver} from '@hookform/resolvers/yup'
-import {Plus} from 'assets/icons'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Plus } from 'assets/icons'
 import {
 	Button,
 	Card,
@@ -15,9 +15,9 @@ import {
 	ReactTable,
 	Select
 } from 'components'
-import {FIELD} from 'constants/fields'
-import {ROLE_LIST} from 'constants/roles'
-import {userSchema, userUpdateSchema} from 'helpers/yup'
+import { FIELD } from 'constants/fields'
+import { ROLE_LIST } from 'constants/roles'
+import { userSchema, userUpdateSchema } from 'helpers/yup'
 import {
 	useAdd,
 	useAppContext,
@@ -28,26 +28,26 @@ import {
 	useSearchParams,
 	useUpdate
 } from 'hooks'
-import {IEmployeesItemDetail, IUserItemDetail} from 'interfaces/employees.interface'
-import {ISelectOption} from 'interfaces/form.interface'
-import {useEffect, useMemo} from 'react'
-import {Controller, useForm} from 'react-hook-form'
-import {useTranslation} from 'react-i18next'
-import {useNavigate} from 'react-router-dom'
-import {Column} from 'react-table'
-import {getSelectValue, joinArray} from 'utilities/common'
+import { IEmployeesItemDetail, IUserItemDetail } from 'interfaces/employees.interface'
+import { ISelectOption } from 'interfaces/form.interface'
+import { useEffect, useMemo } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { Column } from 'react-table'
+import { getSelectValue, joinArray } from 'utilities/common'
 
 
 const Index = () => {
 	const navigate = useNavigate()
-	const {user} = useAppContext()
-	const {t} = useTranslation()
-	const {page, pageSize} = usePagination()
-	const {addParams, removeParams, paramsObject: {updateId = undefined, modal = undefined}} = useSearchParams()
-	const {data: roles = []} = useData<ISelectOption[]>('accounts/roles/select', (modal === 'permission' || modal === 'edit') && user?.role === ROLE_LIST.ADMIN)
-	const {data: employees = []} = useData<ISelectOption[]>('accounts/employees/select', (modal === 'permission' || modal === 'edit') && user?.role === ROLE_LIST.ADMIN)
+	const { user } = useAppContext()
+	const { t } = useTranslation()
+	const { page, pageSize } = usePagination()
+	const { addParams, removeParams, paramsObject: { updateId = undefined, modal = undefined } } = useSearchParams()
+	const { data: roles = [] } = useData<ISelectOption[]>('accounts/roles/select', (modal === 'permission' || modal === 'edit') && user?.role === ROLE_LIST.ADMIN)
+	const { data: employees = [] } = useData<ISelectOption[]>('accounts/employees/select', (modal === 'permission' || modal === 'edit') && user?.role === ROLE_LIST.ADMIN)
 
-	const {data, totalPages, isPending: isLoading} = usePaginatedData<IEmployeesItemDetail[]>(
+	const { data, totalPages, isPending: isLoading } = usePaginatedData<IEmployeesItemDetail[]>(
 		'accounts/employees',
 		{
 			page: page,
@@ -75,7 +75,7 @@ const Index = () => {
 		register: registerAdd,
 		reset: resetAdd,
 		control: controlAdd,
-		formState: {errors: addErrors}
+		formState: { errors: addErrors }
 	} = useForm({
 		mode: 'onTouched',
 		defaultValues: {
@@ -93,7 +93,7 @@ const Index = () => {
 		register: registerEdit,
 		reset: resetEdit,
 		control: controlEdit,
-		formState: {errors: editErrors}
+		formState: { errors: editErrors }
 	} = useForm({
 		mode: 'onTouched',
 		defaultValues: {
@@ -139,7 +139,7 @@ const Index = () => {
 				Header: t('Actions'),
 				accessor: (row: IEmployeesItemDetail) => (
 					<div className="flex items-start gap-lg">
-						<EditButton onClick={() => navigate(`edit/${row.id}`)}/>
+						<EditButton onClick={() => navigate(`edit/${row.id}`)} />
 					</div>
 				)
 			}
@@ -182,8 +182,8 @@ const Index = () => {
 				Header: t('Actions'),
 				accessor: (row) => (
 					<div className="flex items-start gap-lg">
-						<EditButton id={row.id}/>
-						<DeleteButton id={row.id}/>
+						<EditButton id={row.id} />
+						<DeleteButton id={row.id} />
 					</div>
 				)
 			}
@@ -192,9 +192,9 @@ const Index = () => {
 	)
 
 
-	const {mutateAsync, isPending: isAdding} = useAdd('accounts/')
-	const {mutateAsync: update, isPending: isUpdating} = useUpdate('accounts/', updateId)
-	const {data: detail, isPending: isDetailLoading} = useDetail<IUserItemDetail>('accounts/', updateId)
+	const { mutateAsync, isPending: isAdding } = useAdd('accounts/')
+	const { mutateAsync: update, isPending: isUpdating } = useUpdate('accounts/', updateId)
+	const { data: detail, isPending: isDetailLoading } = useDetail<IUserItemDetail>('accounts/', updateId)
 
 	useEffect(() => {
 		if (detail) {
@@ -212,11 +212,11 @@ const Index = () => {
 			<PageTitle title={user?.role === ROLE_LIST.ADMIN ? 'Permissions' : 'Employees'}>
 				{
 					user?.role === ROLE_LIST.ADMIN ?
-						<Button icon={<Plus/>} onClick={() => addParams({modal: 'permission'})}>
+						<Button icon={<Plus />} onClick={() => addParams({ modal: 'permission' })}>
 							Granting a permission
 						</Button> :
 						user?.role === ROLE_LIST.HEAD_DEPARTMENT ?
-							<Button icon={<Plus/>} onClick={() => navigate(`add`)}>
+							<Button icon={<Plus />} onClick={() => navigate(`add`)}>
 								Add employee
 							</Button> : null
 				}
@@ -231,7 +231,7 @@ const Index = () => {
 								isLoading={isAdminDataLoading}
 							/>
 						</Card>
-						<Pagination totalPages={adminTotalPages}/>
+						<Pagination totalPages={adminTotalPages} />
 					</> :
 					<>
 						<Card>
@@ -241,13 +241,13 @@ const Index = () => {
 								isLoading={isLoading}
 							/>
 						</Card>
-						<Pagination totalPages={totalPages}/>
+						<Pagination totalPages={totalPages} />
 					</>
 			}
 			{
 				user?.role === ROLE_LIST.ADMIN &&
 				<>
-					<Modal title="Granting a permission" id="permission" style={{height: '60rem', width: '50rem'}}>
+					<Modal title="Granting a permission" id="permission" style={{ height: '60rem', width: '50rem' }}>
 						<Form onSubmit={
 							handleAddSubmit(
 								(data) => {
@@ -264,7 +264,7 @@ const Index = () => {
 							<Controller
 								name="employee"
 								control={controlAdd}
-								render={({field: {value, ref, onChange, onBlur}}) => (
+								render={({ field: { value, ref, onChange, onBlur } }) => (
 									<Select
 										ref={ref}
 										id="employee"
@@ -282,7 +282,7 @@ const Index = () => {
 							<Controller
 								name="role"
 								control={controlAdd}
-								render={({field: {value, ref, onChange, onBlur}}) => (
+								render={({ field: { value, ref, onChange, onBlur } }) => (
 									<Select
 										ref={ref}
 										id="brand"
@@ -320,13 +320,13 @@ const Index = () => {
 								{...registerAdd('password_confirm')}
 							/>
 
-							<Button style={{marginTop: 'auto'}} type={FIELD.SUBMIT} disabled={isAdding}>Save</Button>
+							<Button style={{ marginTop: 'auto' }} type={FIELD.SUBMIT} disabled={isAdding}>Save</Button>
 						</Form>
 					</Modal>
 
 					<EditModal
 						isLoading={isDetailLoading && !detail}
-						style={{height: '35rem', width: '50rem'}}
+						style={{ height: '35rem', width: '50rem' }}
 					>
 						<Form
 							onSubmit={
@@ -363,7 +363,7 @@ const Index = () => {
 							<Controller
 								name="role"
 								control={controlEdit}
-								render={({field: {value, ref, onChange, onBlur}}) => (
+								render={({ field: { value, ref, onChange, onBlur } }) => (
 									<Select
 										ref={ref}
 										id="brand"
@@ -385,11 +385,11 @@ const Index = () => {
 								{...registerEdit('username')}
 							/>
 
-							<Button style={{marginTop: 'auto'}} type={FIELD.SUBMIT} disabled={isUpdating}>Save</Button>
+							<Button style={{ marginTop: 'auto' }} type={FIELD.SUBMIT} disabled={isUpdating}>Save</Button>
 						</Form>
 					</EditModal>
 
-					<DeleteModal endpoint={'accounts/'} onDelete={() => refetch()}/>
+					<DeleteModal endpoint={'accounts/'} onDelete={() => refetch()} />
 				</>
 			}
 
