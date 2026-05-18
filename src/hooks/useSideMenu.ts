@@ -1,5 +1,6 @@
 import {IMenuItem} from 'interfaces/configuration.interface'
 import {IRole} from 'interfaces/authentication.interface'
+import {ROLE_LIST} from 'constants/roles'
 import useAppContext from 'hooks/useAppContext'
 import {menu} from 'configurations/menu'
 import {useMemo} from 'react'
@@ -7,6 +8,9 @@ import {useMemo} from 'react'
 
 const pickOnlyAllowedMenu = (menuItem: IMenuItem, role: IRole, categories: string[]) => {
 	const isAllowedRole = menuItem.allowedRoles?.includes(role)
+	if (role === ROLE_LIST.ADMIN || role === ROLE_LIST.HEAD_DEPARTMENT) {
+		return isAllowedRole
+	}
 	const isAllowedPermission = menuItem.id ? categories.includes(menuItem.id) : true
 	return isAllowedRole && isAllowedPermission
 }

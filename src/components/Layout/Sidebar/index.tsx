@@ -23,7 +23,7 @@ const Index: FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
 	return (
 		<aside className={classNames(styles.sidebar, {[styles.collapsed]: isCollapsed})}>
 			<div className={styles.header}>
-				<div className={styles.logoWrapper} onClick={() => navigate(routeByRole(user?.role))}>
+				<div className={styles.logoWrapper} onClick={() => navigate(routeByRole(user?.role, user?.categories))}>
 					<Logo/>
 					{!isCollapsed && <p>{t('TechBox')}</p>}
 				</div>

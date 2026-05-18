@@ -3,6 +3,7 @@ import {Navigate, RouteObject, useRoutes} from 'react-router-dom'
 import {useAppContext} from 'hooks'
 import {ROLE_LIST} from 'constants/roles'
 import {Layout} from 'components'
+import {routeByRole} from 'utilities/authentication'
 import {
 	AddEmployee,
 	EmployeesTable,
@@ -49,24 +50,7 @@ import {
 } from 'modules'
 
 
-const routeByRole = (role?: string) => {
-	switch (role) {
-		case ROLE_LIST.ADMIN:
-			return '/employees'
-		case ROLE_LIST.LEADER:
-			return '/director-orders'
-		case ROLE_LIST.EMPLOYEE:
-			return '/operator-orders'
-		case ROLE_LIST.STOREKEEPER:
-			return '/warehouses'
-		case ROLE_LIST.OPERATOR:
-			return '/operator-orders'
-		case ROLE_LIST.HEAD_DEPARTMENT:
-			return '/employees'
-		default:
-			return '/login'
-	}
-}
+
 
 const useAppRoutes = () => {
 	const {user} = useAppContext()
@@ -530,7 +514,7 @@ const useAppRoutes = () => {
 
 	const filteredEmployeeRoutes = employeeRoutes.filter(route => userCategories.includes(route?.id as string))
 
-	let url = routeByRole(user?.role)
+	let url = routeByRole(user?.role, user?.categories)
 	if (user?.role === ROLE_LIST.EMPLOYEE && filteredEmployeeRoutes?.length) {
 		url = '/' + filteredEmployeeRoutes[0].path
 	}
@@ -540,7 +524,11 @@ const useAppRoutes = () => {
 			index: true,
 			element: <Navigate to={url} replace />
 		},
-		...employeeRoutes
+		...filteredEmployeeRoutes,
+		{
+			path: '*',
+			element: <Navigate to={url} replace />
+		}
 	]
 
 	const adminChildren: RouteObject[] = [
@@ -548,7 +536,11 @@ const useAppRoutes = () => {
 			index: true,
 			element: <Navigate to={url} replace />
 		},
-		...employeeRoutes
+		...employeeRoutes,
+		{
+			path: '*',
+			element: <Navigate to={url} replace />
+		}
 	]
 
 	const routes = {
@@ -559,28 +551,7 @@ const useAppRoutes = () => {
 				children: adminChildren
 			}
 		],
-		[ROLE_LIST.LEADER]: [
-			{
-				path: '/',
-				element: user?.role ? <Layout /> : <Login />,
-				children: commonChildren
-			}
-		],
 		[ROLE_LIST.EMPLOYEE]: [
-			{
-				path: '/',
-				element: user?.role ? <Layout /> : <Login />,
-				children: commonChildren
-			}
-		],
-		[ROLE_LIST.STOREKEEPER]: [
-			{
-				path: '/',
-				element: user?.role ? <Layout /> : <Login />,
-				children: commonChildren
-			}
-		],
-		[ROLE_LIST.OPERATOR]: [
 			{
 				path: '/',
 				element: user?.role ? <Layout /> : <Login />,
@@ -591,7 +562,7 @@ const useAppRoutes = () => {
 			{
 				path: '/',
 				element: user?.role ? <Layout /> : <Login />,
-				children: adminChildren
+				children: commonChildren
 			}
 		],
 		default: [

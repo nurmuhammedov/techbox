@@ -1,7 +1,7 @@
 import {ROLE_LIST} from 'constants/roles'
 
 
-type IRole = ROLE_LIST.EMPLOYEE | ROLE_LIST.ADMIN | ROLE_LIST.HEAD_DEPARTMENT
+type IRole = ROLE_LIST
 
 interface IRoleType {
 	label: string

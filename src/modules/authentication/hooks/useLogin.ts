@@ -17,11 +17,11 @@ export function useLogin() {
 		try {
 			const res = await AuthenticationService.me()
 			setUser(buildUser(res.data))
-			navigate(routeByRole(res.data?.role?.value))
+			navigate(routeByRole(res.data?.role?.value, res.data?.role?.categories))
 			showMessage('Successful', 'success')
 		} catch {
 			setUser(buildUser(userData))
-			navigate(routeByRole(userData?.role?.value))
+			navigate(routeByRole(userData?.role?.value, userData?.role?.categories))
 		} finally {
 			setTimeout(() => setIsLoading(false), 1250)
 		}

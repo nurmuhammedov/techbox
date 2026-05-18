@@ -33,11 +33,13 @@ export const menu: IMenuItem[] = [
 		icon: Users,
 		allowedRoles: [
 			ROLE_LIST.HEAD_DEPARTMENT,
-			ROLE_LIST.EMPLOYEE
+			ROLE_LIST.EMPLOYEE,
+			ROLE_LIST.ADMIN
 		],
 		order: {
 			[ROLE_LIST.HEAD_DEPARTMENT]: 1,
-			[ROLE_LIST.EMPLOYEE]: 1
+			[ROLE_LIST.EMPLOYEE]: 1,
+			[ROLE_LIST.ADMIN]: 1
 		}
 	},
 	{
@@ -305,7 +307,7 @@ export const menu: IMenuItem[] = [
 	{
 		id: 'pallet_flex',
 		label: 'Paddonlar',
-		href: '/pallet-operator-flex',
+		href: '/pallet-flex',
 		icon: Columns,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
@@ -317,7 +319,7 @@ export const menu: IMenuItem[] = [
 	{
 		id: 'pallet_glue',
 		label: 'Paddonlar',
-		href: '/pallet-operator-glue',
+		href: '/pallet-glue',
 		icon: Columns,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE
@@ -329,7 +331,7 @@ export const menu: IMenuItem[] = [
 	{
 		id: 'pallet_bet',
 		label: 'Paddonlar',
-		href: '/pallet-operator-sewing',
+		href: '/pallet-bet',
 		icon: Columns,
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE

@@ -40,5 +40,8 @@
   "Sentabr": "Sentabr",
   "Oktabr": "Oktabr",
   "Noyabr": "Noyabr",
-  "Dekabr": "Dekabr"
+  "Dekabr": "Dekabr",
+  "Invalid or missing authentication token": "Sizda tizimga kirish uchun ruxsat mavjud emas!",
+  "Invalid username or password": "Login yoki parol noto‘g‘ri",
+  "API not found": "So‘rov yuborilgan manzil topilmadi"
 }

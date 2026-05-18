@@ -1,19 +1,13 @@
 enum ROLE_LIST {
 	ADMIN = 'admin',
 	EMPLOYEE = 'employee',
-	HEAD_DEPARTMENT = 'hr',
-	LEADER = 'leader',
-	STOREKEEPER = 'storekeeper',
-	OPERATOR = 'operator'
+	HEAD_DEPARTMENT = 'hr'
 }
 
 const ROLE_LABEL: Record<ROLE_LIST, string> = {
 	[ROLE_LIST.EMPLOYEE]: 'Employee',
 	[ROLE_LIST.ADMIN]: 'Admin',
-	[ROLE_LIST.HEAD_DEPARTMENT]: 'Human resources department',
-	[ROLE_LIST.LEADER]: 'Leader',
-	[ROLE_LIST.STOREKEEPER]: 'Storekeeper',
-	[ROLE_LIST.OPERATOR]: 'Operator'
+	[ROLE_LIST.HEAD_DEPARTMENT]: 'Human resources department'
 }
 
 export {
