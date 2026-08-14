@@ -20,7 +20,7 @@ import {Controller, useFieldArray, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {useAdd, useData, useDetail, useUpdate} from 'hooks'
 import {ordersSchema} from 'helpers/yup'
-import {getSelectValue, modifyObjectField} from 'utilities/common'
+import {clearListFields, getSelectValue, modifyObjectField} from 'utilities/common'
 import {Box, Plus} from 'assets/icons'
 import {yesNoOptions} from 'helpers/options'
 import {useTranslation} from 'react-i18next'
@@ -102,7 +102,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 				format: productDetail.format,
 				logo: productDetail.logo || undefined,
 				layer: productDetail?.layer || [' '],
-				is_list: false
+				is_list: productDetail.is_list
 			}))
 		}
 	}, [productDetail, edit])
@@ -150,6 +150,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 									if (!productId) {
 										const productData = {
 											name: data.name,
+											is_list: data.is_list,
 											width: data.width,
 											height: data.height,
 											length: data.length,
@@ -159,16 +160,16 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 											logo: data.logo,
 											customer: Number(customer)
 										}
-										const newProduct = await addProduct(modifyObjectField(productData as ISearchParams, 'logo'))
+										const newProduct = await addProduct(clearListFields(modifyObjectField(productData as ISearchParams, 'logo')))
 										productId = (newProduct as any)?.id
 									}
 
-									return addOrder(modifyObjectField({
+									return addOrder(clearListFields(modifyObjectField({
 										...data,
 										deadline: formatDateToISO(data?.deadline as string | undefined),
 										product: productId ? productId : null,
 										customer
-									} as ISearchParams, 'logo'))
+									} as ISearchParams, 'logo')))
 										.then(async () => {
 											reset({
 												product: undefined,
@@ -193,12 +194,12 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 
 							} else {
 								handleSubmit((data) =>
-									updateOrder(modifyObjectField({
+									updateOrder(clearListFields(modifyObjectField({
 										...data,
 										deadline: formatDateToISO(data?.deadline as string | undefined),
 										product: data?.product ? data?.product : null,
 										customer
-									} as ISearchParams, 'logo'))
+									} as ISearchParams, 'logo')))
 										.then(async () => {
 											reset({
 												product: undefined,

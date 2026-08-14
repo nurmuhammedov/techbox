@@ -16,7 +16,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useActions, useAdd, useData, useDetail, useSearchParams, useTypedSelector } from 'hooks'
 import { ordersSchema2 } from 'helpers/yup'
 import { yesNoOptions} from 'helpers/options'
-import { getSelectValue, modifyObjectField } from 'utilities/common'
+import { clearListFields, getSelectValue, modifyObjectField } from 'utilities/common'
 import { Box, Plus } from 'assets/icons'
 import { useTranslation } from 'react-i18next'
 import { formatDateToISO, getDate } from 'utilities/date'
@@ -431,11 +431,11 @@ const ProductPage: FC<IProperties> = ({ edit = false }) => {
 					disabled={isAdding}
 					onClick={() => {
 						handleSubmit((data) =>
-							addOrder(modifyObjectField({
+							addOrder(clearListFields(modifyObjectField({
 								...data,
 								deadline: formatDateToISO(data?.deadline as string | undefined),
 								customer: null
-							} as ISearchParams, 'logo') as InferType<typeof ordersSchema2>)
+							} as ISearchParams, 'logo')) as InferType<typeof ordersSchema2>)
 								.then((data) => {
 									add({
 										...data,

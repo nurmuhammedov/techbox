@@ -19,7 +19,7 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useAdd, useData, useDetail } from 'hooks'
 import { clientsSchema2, ordersSchema } from 'helpers/yup'
-import { getSelectValue, modifyObjectField } from 'utilities/common'
+import { clearListFields, getSelectValue, modifyObjectField } from 'utilities/common'
 import { Box, Plus } from 'assets/icons'
 import { useTranslation } from 'react-i18next'
 import { IFIle, ISelectOption } from 'interfaces/form.interface'
@@ -132,7 +132,7 @@ const CombinedCreatePage: FC = () => {
                 format: productDetail.format,
                 logo: productDetail.logo || undefined,
                 layer: productDetail?.layer || [' '],
-                is_list: false
+                is_list: productDetail.is_list
             }))
         }
     }, [productDetail])
@@ -147,6 +147,7 @@ const CombinedCreatePage: FC = () => {
             if (!productId) {
                 const productData = {
                     name: orderData.name,
+                    is_list: orderData.is_list,
                     width: orderData.width,
                     height: orderData.height,
                     length: orderData.length,
@@ -156,7 +157,7 @@ const CombinedCreatePage: FC = () => {
                     logo: orderData.logo,
                     customer: Number(customerData?.customer)
                 }
-                const newProduct = await addProduct(modifyObjectField(productData as ISearchParams, 'logo'))
+                const newProduct = await addProduct(clearListFields(modifyObjectField(productData as ISearchParams, 'logo')))
                 productId = (newProduct as any)?.id
             }
 
@@ -166,7 +167,7 @@ const CombinedCreatePage: FC = () => {
                 customer: customerData?.customer,
                 product: productId || null
             }
-            await addOrder(modifyObjectField(orderPayload as ISearchParams, 'logo'))
+            await addOrder(clearListFields(modifyObjectField(orderPayload as ISearchParams, 'logo')))
 
             customerReset()
             reset()

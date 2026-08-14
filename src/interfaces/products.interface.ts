@@ -5,6 +5,7 @@ interface IProductDetail {
 	id: number;
 	logo?: IFIle;
 	name: string;
+	is_list: boolean;
 	width: string;
 	height: string;
 	length: string;

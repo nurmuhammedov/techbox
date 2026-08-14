@@ -345,10 +345,15 @@ const productSchema = yup.object().shape({
         .trim()
         .required('This field is required')
         .max(100, 'Must not exceed 100 characters'),
+    is_list: yup.boolean().nullable(),
     width: yup
         .string()
         .trim()
-        .required('This field is required'),
+        .when('is_list', {
+            is: true,
+            then: (schema) => schema.nullable(),
+            otherwise: (schema) => schema.required('This field is required')
+        }).transform(v => v ? v : null),
     height: yup
         .string()
         .trim()

@@ -57,6 +57,23 @@ function modifyObjectField(obj: ISearchParams, key: string): ISearchParams {
 	return updatedObj
 }
 
+function clearListFields(obj: ISearchParams, keepFlag: boolean = true): ISearchParams {
+	const updatedObj = { ...obj }
+
+	if (updatedObj.is_list) {
+		updatedObj.width = null
+		updatedObj.height = null
+		updatedObj.box_ear = null
+		updatedObj.logo = null
+	}
+
+	if (!keepFlag) {
+		delete updatedObj.is_list
+	}
+
+	return updatedObj
+}
+
 const getSelectOptionsByKey = (data: ISearchParams[], key: string = 'name'): ISelectOption[] => {
 	return data.map((item) => ({ value: Number(item?.id || 0), label: String(item?.[key] || '') }))
 }
@@ -193,6 +210,7 @@ export {
 	decimalToPrice,
 	decimalToInteger,
 	modifyObjectField,
+	clearListFields,
 	formatSelectOptions,
 	areAllFieldsPresent,
 	getSelectOptionsByKey,

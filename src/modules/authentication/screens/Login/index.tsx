@@ -6,13 +6,15 @@ import styles from './styles.module.scss'
 import {Button, Input} from 'components'
 import {useForm} from 'react-hook-form'
 import {loginSchema} from 'helpers/yup'
-import {LoginLogo} from 'assets/icons'
+import {Eye, EyeOff, LoginLogo} from 'assets/icons'
 import {FIELD} from 'constants/fields'
+import {useState} from 'react'
 
 
 const Index = () => {
 	const {t} = useTranslation()
 	const {isPending, login} = useLogin()
+	const [showPassword, setShowPassword] = useState(false)
 
 	const {
 		register,
@@ -22,7 +24,7 @@ const Index = () => {
 		mode: 'onTouched',
 		defaultValues: {
 			username: '',
-			password: '$_def951B'
+			password: ''
 		},
 		resolver: yupResolver(loginSchema)
 	})
@@ -50,9 +52,12 @@ const Index = () => {
 					/>
 					<Input
 						id="password"
-						type={FIELD.PASSWORD}
+						type={showPassword ? FIELD.TEXT : FIELD.PASSWORD}
 						label="Password"
 						required={true}
+						icon={showPassword ? <EyeOff/> : <Eye/>}
+						iconPosition="right"
+						handleIcon={() => setShowPassword(prev => !prev)}
 						error={errors?.password?.message}
 						placeholder="Enter your password"
 						{...register('password')}

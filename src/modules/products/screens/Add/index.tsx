@@ -19,7 +19,8 @@ import {Controller, useFieldArray, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {useAdd, useData, useDetail, useUpdate} from 'hooks'
 import {productSchema} from 'helpers/yup'
-import {getSelectValue, modifyObjectField} from 'utilities/common'
+import {yesNoOptions} from 'helpers/options'
+import {clearListFields, getSelectValue, modifyObjectField} from 'utilities/common'
 import {Box, Plus} from 'assets/icons'
 import {ISearchParams} from 'interfaces/params.interface'
 import {useTranslation} from 'react-i18next'
@@ -49,6 +50,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
         mode: 'onTouched',
         defaultValues: {
             name: '',
+            is_list: false,
             width: '',
             height: '',
             length: '',
@@ -72,6 +74,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
         if (data && edit) {
             reset({
                 name: data.name,
+                is_list: data.is_list,
                 width: data.width,
                 height: data.height,
                 length: data.length,
@@ -85,6 +88,10 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
             })
         }
     }, [data, edit, reset])
+
+
+    const buildPayload = (values: ISearchParams): ISearchParams =>
+        clearListFields(modifyObjectField(values, 'logo'))
 
 
     if (isDetailLoading && edit) {
@@ -105,7 +112,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
                         onClick={() => {
                             if (!edit) {
                                 handleSubmit((data) =>
-                                    addProduct(modifyObjectField(data as ISearchParams, 'logo'))
+                                    addProduct(buildPayload(data as ISearchParams))
                                         .then(async () => {
                                             reset()
                                             navigate(-1)
@@ -113,7 +120,7 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
                                 )()
                             } else {
                                 handleSubmit((data) =>
-                                    updateProduct(modifyObjectField(data as ISearchParams, 'logo'))
+                                    updateProduct(buildPayload(data as ISearchParams))
                                         .then(async () => {
                                             reset()
                                             navigate(-1)
@@ -140,6 +147,26 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
 
                     <div className="span-4">
                         <Controller
+                            name="is_list"
+                            control={control}
+                            render={({field: {value, ref, onChange, onBlur}}) => (
+                                <Select
+                                    id="is_list"
+                                    label="Listmi?"
+                                    options={yesNoOptions as unknown as ISelectOption[]}
+                                    error={errors?.is_list?.message}
+                                    value={getSelectValue(yesNoOptions as unknown as ISelectOption[], value)}
+                                    ref={ref}
+                                    onBlur={onBlur}
+                                    defaultValue={getSelectValue(yesNoOptions as unknown as ISelectOption[], value)}
+                                    handleOnChange={(e) => onChange(e as boolean)}
+                                />
+                            )}
+                        />
+                    </div>
+
+                    <div className="span-4">
+                        <Controller
                             name="format"
                             control={control}
                             render={({field: {value, ref, onChange, onBlur}}) => (
@@ -158,60 +185,49 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
                         />
                     </div>
 
-                    <div className="span-4">
-                        <Controller
-                            control={control}
-                            name="box_ear"
-                            render={({field}) => (
-                                <NumberFormattedInput
-                                    id="box_ear"
-                                    maxLength={9}
-                                    disableGroupSeparators
-                                    allowDecimals={false}
-                                    label={`${t('Box ear')} (${t('mm')})`}
-                                    error={errors?.box_ear?.message}
-                                    {...field}
+                    {
+                        !watch('is_list') && (
+                            <div className="span-4">
+                                <Controller
+                                    control={control}
+                                    name="box_ear"
+                                    render={({field}) => (
+                                        <NumberFormattedInput
+                                            id="box_ear"
+                                            maxLength={9}
+                                            disableGroupSeparators
+                                            allowDecimals={false}
+                                            label={`${t('Box ear')} (${t('mm')})`}
+                                            error={errors?.box_ear?.message}
+                                            {...field}
+                                        />
+                                    )}
                                 />
-                            )}
-                        />
-                    </div>
-
-                    <div className="span-4">
-                        <Controller
-                            name="logo"
-                            control={control}
-                            render={({field: {value, ref, onChange, onBlur}}) => (
-                                <FileUpLoader
-                                    id="logo"
-                                    ref={ref}
-                                    type="image"
-                                    value={value as IFIle}
-                                    onBlur={onBlur}
-                                    onChange={onChange}
-                                    label="Logo"
-                                    error={errors?.logo?.message}
-                                />
-                            )}
-                        />
-                    </div>
+                            </div>
+                        )
+                    }
 
                     <div className="span-4 flex flex-col gap-lg">
-                        <Controller
-                            control={control}
-                            name="width"
-                            render={({field}) => (
-                                <NumberFormattedInput
-                                    id="width"
-                                    label={`${t('Sizes')} (${t('mm')})`}
-                                    maxLength={9}
-                                    disableGroupSeparators
-                                    allowDecimals={false}
-                                    placeholder={`a (${t('mm')})`}
-                                    error={errors?.width?.message}
-                                    {...field}
+                        {
+                            !watch('is_list') && (
+                                <Controller
+                                    control={control}
+                                    name="width"
+                                    render={({field}) => (
+                                        <NumberFormattedInput
+                                            id="width"
+                                            label={`${t('Sizes')} (${t('mm')})`}
+                                            maxLength={9}
+                                            disableGroupSeparators
+                                            allowDecimals={false}
+                                            placeholder={`a (${t('mm')})`}
+                                            error={errors?.width?.message}
+                                            {...field}
+                                        />
+                                    )}
                                 />
-                            )}
-                        />
+                            )
+                        }
 
                         <Controller
                             control={control}
@@ -219,74 +235,106 @@ const ProductPage: FC<IProperties> = ({edit = false}) => {
                             render={({field}) => (
                                 <NumberFormattedInput
                                     id="length"
+                                    label={watch('is_list') ? `${t('Uzunligi')} (${t('mm')})` : undefined}
                                     maxLength={9}
                                     disableGroupSeparators
                                     allowDecimals={false}
-                                    placeholder={`b (${t('mm')})`}
+                                    placeholder={watch('is_list') ? ' ' : `b (${t('mm')})`}
                                     error={errors?.length?.message}
                                     {...field}
                                 />
                             )}
                         />
 
-                        <Controller
-                            control={control}
-                            name="height"
-                            render={({field}) => (
-                                <NumberFormattedInput
-                                    id="height"
-                                    maxLength={9}
-                                    disableGroupSeparators
-                                    allowDecimals={false}
-                                    placeholder={`c (${t('mm')})`}
-                                    error={errors?.height?.message}
-                                    {...field}
-                                />
-                            )}
-                        />
-
-                    </div>
-
-                    <Wrapper className="span-4 align-center justify-center">
-                        <Box/>
-                    </Wrapper>
-
-                    {
-                        fields?.map((field, index) => (
-                            <div className="span-4" key={field.id}>
+                        {
+                            !watch('is_list') && (
                                 <Controller
-                                    name={`layer.${index}`}
                                     control={control}
-                                    render={({field: {value, ref, onChange, onBlur}}) => (
-                                        <Select
-                                            id={`layer-${index + 1}`}
-                                            label={`${index + 1}-${t('layer')}`}
-                                            top={true}
-                                            options={materials}
-                                            error={errors?.layer?.[index]?.message}
-                                            handleDelete={() => remove(index)}
-                                            value={getSelectValue(materials, value)}
-                                            ref={ref}
-                                            onBlur={onBlur}
-                                            defaultValue={getSelectValue(materials, value)}
-                                            handleOnChange={(e) => onChange(e as string)}
+                                    name="height"
+                                    render={({field}) => (
+                                        <NumberFormattedInput
+                                            id="height"
+                                            maxLength={9}
+                                            disableGroupSeparators
+                                            allowDecimals={false}
+                                            placeholder={`c (${t('mm')})`}
+                                            error={errors?.height?.message}
+                                            {...field}
                                         />
                                     )}
                                 />
-                            </div>
-                        ))
+                            )
+                        }
+
+                    </div>
+
+                    {
+                        !watch('is_list') && (
+                            <>
+                                <Wrapper className="span-4 align-center justify-center">
+                                    <Box/>
+                                </Wrapper>
+
+                                <div className="span-4">
+                                    <Controller
+                                        name="logo"
+                                        control={control}
+                                        render={({field: {value, ref, onChange, onBlur}}) => (
+                                            <FileUpLoader
+                                                id="logo"
+                                                ref={ref}
+                                                type="image"
+                                                value={value as IFIle}
+                                                onBlur={onBlur}
+                                                onChange={onChange}
+                                                label="Logo"
+                                                error={errors?.logo?.message}
+                                            />
+                                        )}
+                                    />
+                                </div>
+                            </>
+                        )
                     }
 
-                    <div className="span-4" style={{marginTop: '2rem'}}>
-                        <Button
-                            theme={BUTTON_THEME.PRIMARY}
-                            type="button"
-                            disabled={watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '' || fields.length >= 5}
-                            icon={<Plus/>}
-                            onClick={() => append('')}
-                        >
-                            Add layer
-                        </Button>
+                    <div className="span-12 grid gap-lg">
+                        {
+                            fields?.map((field, index) => (
+                                <div className="span-4" key={field.id}>
+                                    <Controller
+                                        name={`layer.${index}`}
+                                        control={control}
+                                        render={({field: {value, ref, onChange, onBlur}}) => (
+                                            <Select
+                                                id={`layer-${index + 1}`}
+                                                label={`${index + 1}-${t('layer')}`}
+                                                top={true}
+                                                options={materials}
+                                                error={errors?.layer?.[index]?.message}
+                                                handleDelete={() => remove(index)}
+                                                value={getSelectValue(materials, value)}
+                                                ref={ref}
+                                                onBlur={onBlur}
+                                                defaultValue={getSelectValue(materials, value)}
+                                                handleOnChange={(e) => onChange(e as string)}
+                                            />
+                                        )}
+                                    />
+                                </div>
+                            ))
+                        }
+
+                        <div className="span-4" style={{marginTop: '2rem'}}>
+                            <Button
+                                theme={BUTTON_THEME.PRIMARY}
+                                type="button"
+                                disabled={watch('layer')?.length !== 0 && watch('layer')?.[(watch('layer')?.length ?? 1) - 1]?.toString()?.trim() === '' || fields.length >= 5}
+                                icon={<Plus/>}
+                                onClick={() => append('')}
+                            >
+                                Add layer
+                            </Button>
+                        </div>
                     </div>
 
                     <div className="span-12 grid gap-lg">

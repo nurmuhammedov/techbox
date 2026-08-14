@@ -20,6 +20,8 @@ import RightArrow from './RightArrow'
 import Flex from './Flex'
 import YMO from './YMO'
 import Loader from './Loader'
+import Eye from './Eye'
+import EyeOff from './EyeOff'
 
 
 export * from './sidebar'
@@ -37,6 +39,8 @@ export {
 	Gluing,
 	LoginLogo,
 	Password,
+	Eye,
+	EyeOff,
 	Download,
 	Status,
 	Delete,
