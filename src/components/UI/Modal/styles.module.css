@@ -20,6 +20,7 @@
   background: var(--gray-lightest);
   width: 100%;
   padding: 1.5rem;
+  z-index: 10;
 }
 .root .title-wrapper .title {
   color: var(--navy-dark);
@@ -48,6 +49,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+:global(.rodal-dialog) {
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 /*# sourceMappingURL=styles.module.css.map */

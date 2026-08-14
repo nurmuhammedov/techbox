@@ -32,6 +32,9 @@
   gap: 0.6rem;
   cursor: pointer;
 }
+.root table thead tr th[style*="text-align: right"] .headerContent, .root table thead tr th[style*="text-align:right"] .headerContent {
+  justify-content: flex-end;
+}
 .root table thead tr th .sortIcons {
   display: flex;
   flex-direction: column;
