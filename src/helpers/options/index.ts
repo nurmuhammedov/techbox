@@ -109,6 +109,23 @@ const cutOptions: ISelectOption[] = [
 	{ value: 'one_fourth', label: '1/4', material: 4 }
 ]
 
+// KOMMUNAL
+const resourceTypeOptions: ISelectOption[] = [
+	{ value: 'meter', label: 'Hisoblagichli' },
+	{ value: 'electric', label: 'Elektr energiyasi' },
+	{ value: 'fixed', label: 'Belgilangan' }
+]
+
+const currencyOptions: ISelectOption[] = [
+	{ value: 'uzs', label: 'So‘m' },
+	{ value: 'usd', label: 'Dollar' }
+]
+
+const currencySymbols: Record<string, string> = {
+	uzs: 'so‘m',
+	usd: '$'
+}
+
 export {
 	flexOperatorsStatusOptions,
 	companyOperationsOptions,
@@ -120,5 +137,8 @@ export {
 	verticalOptions,
 	statusOptions,
 	cutOptions,
-	roleOptions
+	roleOptions,
+	resourceTypeOptions,
+	currencyOptions,
+	currencySymbols
 }

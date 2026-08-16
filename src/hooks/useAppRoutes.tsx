@@ -39,6 +39,7 @@ import {
 	PalletDetail,
 	UpdateDirectorOrder,
 	CommunalsTable,
+	AddUnit,
 	AddTariff,
 	AddReport,
 	ChemicalTypesTable,
@@ -495,6 +496,14 @@ const useAppRoutes = () => {
 				{
 					path: 'edit/:id',
 					element: <AddCommunal edit={true} />
+				},
+				{
+					path: 'add-unit',
+					element: <AddUnit />
+				},
+				{
+					path: 'edit-unit/:id',
+					element: <AddUnit edit={true} />
 				},
 				{
 					path: 'add-tariff',

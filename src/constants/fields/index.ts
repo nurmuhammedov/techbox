@@ -5,6 +5,7 @@ enum FIELD {
 	NUMBER = 'number',
 	PASSWORD = 'password',
 	SUBMIT = 'submit',
+	TIME = 'time',
 }
 
 enum BUTTON_THEME {

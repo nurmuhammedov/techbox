@@ -344,5 +344,19 @@
   "Elektr energiyasi": "Elektr energiyasi",
   "Arenda": "Arenda",
   "Svet": "Elektr energiyasi",
-  "No data available": "Ma‘lumotlar mavjud emas"
+  "No data available": "Ma‘lumotlar mavjud emas",
+  "Units": "O‘lchov birliklari",
+  "Symbol": "Belgisi",
+  "Add unit": "O‘lchov birligi qo‘shish",
+  "Edit unit": "O‘lchov birligini tahrirlash",
+  "Currency": "Valyuta",
+  "So‘m": "So‘m",
+  "Dollar": "Dollar",
+  "Hisoblagichli": "Hisoblagichli",
+  "Belgilangan": "Belgilangan",
+  "Oraliq": "Oraliq",
+  "Tariff name": "Tarif nomi",
+  "From time": "Boshlanish vaqti",
+  "To time": "Tugash vaqti",
+  "bo‘sh = cheksiz": "bo‘sh = cheksiz"
 }

@@ -1,15 +1,15 @@
-import {Button, Card, Form, Loader, NumberFormattedInput, PageTitle, Select} from 'components'
+import {Button, Card, Form, Input, Loader, NumberFormattedInput, PageTitle, Select} from 'components'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {tariffsSchema} from 'helpers/yup'
-import {useAdd, useDetail, useUpdate, useData} from 'hooks'
-import {FC, useEffect} from 'react'
+import {useAdd, useDetail, useUpdate, usePaginatedData} from 'hooks'
+import {FC, useEffect, useMemo} from 'react'
 import {Controller, useForm} from 'react-hook-form'
 import {useNavigate, useParams} from 'react-router-dom'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {getSelectValue} from 'utilities/common'
-import {ICommunalTariff} from 'interfaces/communals.interface'
+import {ICommunalResource, ICommunalTariff} from 'interfaces/communals.interface'
+import {currencyOptions} from 'helpers/options'
 import {useTranslation} from 'react-i18next'
-import {ISelectOption} from 'interfaces/form.interface'
 
 
 interface IProperties {
@@ -21,11 +21,22 @@ const Index: FC<IProperties> = ({edit = false}) => {
 	const {t} = useTranslation()
 	const {id = undefined} = useParams()
 
-	const {data: resources = []} = useData<ISelectOption[]>('communal/resources-select')
+	// Resurs turini bilish uchun to'liq ro'yxat kerak (resources-select faqat value/label beradi)
+	const {data: resources = []} = usePaginatedData<ICommunalResource[]>(
+		'communal/resources',
+		{page: 1, page_size: 200}
+	)
+
+	const resourceOptions = useMemo(
+		() => resources.map((item) => ({value: item.id, label: item.name})),
+		[resources]
+	)
 
 	const {
 		handleSubmit,
 		control,
+		watch,
+		setValue,
 		reset,
 		formState: {errors}
 	} = useForm({
@@ -33,11 +44,28 @@ const Index: FC<IProperties> = ({edit = false}) => {
 		defaultValues: {
 			resource: undefined,
 			price: '',
-			from_value: 0,
-			to_value: null
+			currency: 'uzs',
+			is_time_based: false,
+			from_value: null,
+			to_value: null,
+			from_time: '',
+			to_time: '',
+			time_range: ''
 		},
 		resolver: yupResolver(tariffsSchema)
 	})
+
+	const selectedResource = watch('resource')
+	const isTimeBased = watch('is_time_based')
+
+	// Elektr resursi tanlansa — tarif vaqt oralig'i bo'yicha beriladi
+	useEffect(() => {
+		const resource = resources.find((item) => item.id === Number(selectedResource))
+		if (!resource) return
+
+		setValue('is_time_based', resource.type === 'electric')
+		setValue('currency', resource.currency)
+	}, [selectedResource, resources, setValue])
 
 	const {mutateAsync, isPending: isAdding} = useAdd('communal/tariffs')
 	const {mutateAsync: update, isPending: isUpdating} = useUpdate('communal/tariffs/', id)
@@ -51,8 +79,13 @@ const Index: FC<IProperties> = ({edit = false}) => {
 			reset({
 				resource: typeof data.resource === 'object' ? data.resource.id : data.resource,
 				price: String(data.price),
+				currency: data.currency || 'uzs',
+				is_time_based: !!(data.from_time || data.to_time),
 				from_value: data.from_value,
-				to_value: data.to_value
+				to_value: data.to_value,
+				from_time: data.from_time || '',
+				to_time: data.to_time || '',
+				time_range: data.time_range || ''
 			})
 		}
 	}, [data, edit, reset])
@@ -60,6 +93,18 @@ const Index: FC<IProperties> = ({edit = false}) => {
 
 	if (isDetailLoading && edit) {
 		return <Loader/>
+	}
+
+	// `is_time_based` faqat forma ichidagi bayroq — backendga yuborilmaydi,
+	// bo'sh oraliq maydonlari ham tozalanadi
+	const buildPayload = (values: Record<string, unknown>) => {
+		const {is_time_based, ...rest} = values
+
+		if (is_time_based) {
+			return {...rest, from_value: null, to_value: null}
+		}
+
+		return {...rest, from_time: null, to_time: null, time_range: null}
 	}
 
 	return (
@@ -75,16 +120,16 @@ const Index: FC<IProperties> = ({edit = false}) => {
 						disabled={isAdding || isUpdating}
 						onClick={() => {
 							if (!edit) {
-								handleSubmit((data) =>
-									mutateAsync(data)
+								handleSubmit((values) =>
+									mutateAsync(buildPayload(values))
 										.then(async () => {
 											navigate(-1)
 											reset()
 										})
 								)()
 							} else {
-								handleSubmit((data) =>
-									update(data)
+								handleSubmit((values) =>
+									update(buildPayload(values))
 										.then(async () => {
 											reset()
 											navigate(-1)
@@ -108,13 +153,13 @@ const Index: FC<IProperties> = ({edit = false}) => {
 								<Select
 									ref={ref}
 									id="resource"
-									options={resources}
+									options={resourceOptions}
 									onBlur={onBlur}
 									label={t('Resource')}
 									error={errors?.resource?.message}
-									value={getSelectValue(resources, value)}
-									defaultValue={getSelectValue(resources, value)}
-									handleOnChange={(e) => onChange(e as string)}
+									value={getSelectValue(resourceOptions, value)}
+									defaultValue={getSelectValue(resourceOptions, value)}
+									handleOnChange={(e) => onChange(e as number)}
 								/>
 							)}
 						/>
@@ -137,33 +182,112 @@ const Index: FC<IProperties> = ({edit = false}) => {
 
 					<div className="span-4">
 						<Controller
-							name="from_value"
+							name="currency"
 							control={control}
-							render={({field}) => (
-								<NumberFormattedInput
-									id="from_value"
-									label={t('From value')}
-									error={errors?.from_value?.message}
-									{...field}
+							render={({field: {value, ref, onChange, onBlur}}) => (
+								<Select
+									ref={ref}
+									id="currency"
+									options={currencyOptions}
+									onBlur={onBlur}
+									label={t('Currency')}
+									error={errors?.currency?.message}
+									value={getSelectValue(currencyOptions, value)}
+									defaultValue={getSelectValue(currencyOptions, value)}
+									handleOnChange={(e) => onChange(e as string)}
 								/>
 							)}
 						/>
 					</div>
 
-					<div className="span-4">
-						<Controller
-							name="to_value"
-							control={control}
-							render={({field}) => (
-								<NumberFormattedInput
-									id="to_value"
-									label={t('To value')}
-									error={errors?.to_value?.message}
-									{...field}
-								/>
-							)}
-						/>
-					</div>
+					{
+						isTimeBased ? (
+							<>
+								<div className="span-4">
+									<Controller
+										name="from_time"
+										control={control}
+										render={({field}) => (
+											<Input
+												id="from_time"
+												type={FIELD.TIME}
+												label={t('From time')}
+												error={errors?.from_time?.message}
+												{...field}
+												value={field.value ?? ''}
+											/>
+										)}
+									/>
+								</div>
+
+								<div className="span-4">
+									<Controller
+										name="to_time"
+										control={control}
+										render={({field}) => (
+											<Input
+												id="to_time"
+												type={FIELD.TIME}
+												label={t('To time')}
+												error={errors?.to_time?.message}
+												{...field}
+												value={field.value ?? ''}
+											/>
+										)}
+									/>
+								</div>
+
+								<div className="span-4">
+									<Controller
+										name="time_range"
+										control={control}
+										render={({field}) => (
+											<Input
+												id="time_range"
+												type={FIELD.TEXT}
+												label={t('Tariff name')}
+												error={errors?.time_range?.message}
+												{...field}
+												value={field.value ?? ''}
+											/>
+										)}
+									/>
+								</div>
+							</>
+						) : (
+							<>
+								<div className="span-4">
+									<Controller
+										name="from_value"
+										control={control}
+										render={({field}) => (
+											<NumberFormattedInput
+												id="from_value"
+												label={t('From value')}
+												error={errors?.from_value?.message}
+												{...field}
+											/>
+										)}
+									/>
+								</div>
+
+								<div className="span-4">
+									<Controller
+										name="to_value"
+										control={control}
+										render={({field}) => (
+											<NumberFormattedInput
+												id="to_value"
+												label={`${t('To value')} (${t('bo‘sh = cheksiz')})`}
+												error={errors?.to_value?.message}
+												{...field}
+											/>
+										)}
+									/>
+								</div>
+							</>
+						)
+					}
 				</Form>
 			</Card>
 		</>

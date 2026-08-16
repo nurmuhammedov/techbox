@@ -21,7 +21,9 @@ import {
   Pie, 
   Cell
 } from 'recharts'
-import { useData } from 'hooks'
+import { useData, usePaginatedData } from 'hooks'
+import { currencySymbols } from 'helpers/options'
+import { ICommunalResource } from 'interfaces/communals.interface'
 import { decimalToPrice } from 'utilities/common'
 import { DeleteModal, DeleteButton, EditButton, ReactTable, Card } from 'components'
 import classes from './Dashboard.module.scss'
@@ -67,6 +69,18 @@ const Index: FC<IDashboardProps> = ({ currentDate }) => {
     true,
     { year, month }
   )
+
+  // /table javobida valyuta va o'lchov birligi yo'q — resurslardan nomi bo'yicha olamiz
+  const { data: resources = [] } = usePaginatedData<ICommunalResource[]>(
+    'communal/resources',
+    { page: 1, page_size: 200 }
+  )
+
+  const resourceByName = useMemo(() => {
+    const map = new Map<string, ICommunalResource>()
+    resources.forEach((item) => map.set(item.name.toLowerCase(), item))
+    return map
+  }, [resources])
 
   const isLoading = isCardsLoading || isYearlyLoading || isMonthlyLoading || isTableLoading
 
@@ -132,22 +146,19 @@ const Index: FC<IDashboardProps> = ({ currentDate }) => {
       {
         Header: t('tariff_price'),
         accessor: (row: any) => {
-          const lowerName = row.resource_name.toLowerCase()
-          return `${decimalToPrice(row.tariff_price).split(',')[0]} ${lowerName.includes('arenda') ? '$' : "so‘m"}`
+          const resource = resourceByName.get(row.resource_name?.toLowerCase())
+          const currency = currencySymbols[resource?.currency || 'uzs']
+          return `${decimalToPrice(row.tariff_price).split(',')[0]} ${currency}`
         }
       },
       {
         Header: t('this_month_usage'),
         accessor: (row: any) => {
-          const lowerName = row.resource_name.toLowerCase()
-          let unit = ''
-          if (lowerName.includes('gaz')) unit = ' m³'
-          else if (lowerName.includes('suv')) unit = ' L'
-          else if (lowerName.includes('svet') || lowerName.includes('elektr')) unit = ' KV'
+          if (row.consumption === null || row.consumption === undefined) return '-'
 
-          return row.consumption !== null && row.consumption !== undefined ? (
-            lowerName.includes('arenda') ? '-' : `${row.consumption}${unit}`
-          ) : '-'
+          const resource = resourceByName.get(row.resource_name?.toLowerCase())
+          const unit = resource?.unit_of_details?.symbol || ''
+          return unit ? `${row.consumption} ${unit}` : `${row.consumption}`
         }
       },
       {
@@ -157,15 +168,19 @@ const Index: FC<IDashboardProps> = ({ currentDate }) => {
       {
         Header: t('paid_som'),
         accessor: (row: any) => {
-          const lowerName = row.resource_name.toLowerCase()
-          return `${decimalToPrice(row.amount_paid).split(',')[0]} ${lowerName.includes('arenda') ? '$' : "so‘m"}`
+          const resource = resourceByName.get(row.resource_name?.toLowerCase())
+          const currency = currencySymbols[resource?.currency || 'uzs']
+          return `${decimalToPrice(row.amount_paid).split(',')[0]} ${currency}`
         }
       },
       {
         Header: t('remaining_som'),
         accessor: (row: any) => {
-          const lowerName = row.resource_name.toLowerCase()
-          return row.debt > 0 ? `${decimalToPrice(row.debt).split(',')[0]} ${lowerName.includes('arenda') ? '$' : "so‘m"}` : '-'
+          if (!(row.debt > 0)) return '-'
+
+          const resource = resourceByName.get(row.resource_name?.toLowerCase())
+          const currency = currencySymbols[resource?.currency || 'uzs']
+          return `${decimalToPrice(row.debt).split(',')[0]} ${currency}`
         }
       },
       {
@@ -179,7 +194,7 @@ const Index: FC<IDashboardProps> = ({ currentDate }) => {
         style: { textAlign: 'center', width: '8rem' }
       }
     ],
-    [t, navigate]
+    [t, navigate, resourceByName]
   )
 
   const CustomBarTooltip = ({ active, payload }: any) => {

@@ -18,7 +18,8 @@ import {FC, useMemo, useState, useEffect, useRef} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
-import {ICommunalResource, ICommunalTariff, ICommunalReport} from 'interfaces/communals.interface'
+import {ICommunalResource, ICommunalTariff, ICommunalReport, ICommunalUnit} from 'interfaces/communals.interface'
+import {currencyOptions, currencySymbols, resourceTypeOptions} from 'helpers/options'
 import {decimalToPrice} from 'utilities/common'
 import {Calendar, ChevronLeft, ChevronRight} from 'lucide-react'
 import Dashboard from './Dashboard'
@@ -56,6 +57,7 @@ const Index: FC = () => {
 	const communalTabs = [
 		{value: 'dashboard', label: t('Dashboard')},
 		{value: 'resources', label: t('Resources')},
+		{value: 'units', label: t('Units')},
 		{value: 'tariffs', label: t('Tariflar')},
 		{value: 'reports', label: t('Hisobotlar')}
 	]
@@ -65,6 +67,7 @@ const Index: FC = () => {
 	const endpoint = useMemo(() => {
 		if (tab === 'tariffs') return 'communal/tariffs'
 		if (tab === 'reports') return 'communal/reports'
+		if (tab === 'units') return 'communal/units'
 		return 'communal/resources'
 	}, [tab])
 
@@ -90,17 +93,53 @@ const Index: FC = () => {
 			},
 			{
 				Header: t('Unit'),
-				accessor: (row: ICommunalResource) => row.unit_of ? t(row.unit_of) : '-'
+				accessor: (row: ICommunalResource) => row.unit_of_details
+					? `${row.unit_of_details.name}${row.unit_of_details.symbol ? ` (${row.unit_of_details.symbol})` : ''}`
+					: '-'
 			},
 			{
 				Header: t('Type'),
-				accessor: (row: ICommunalResource) => t(row.type)
+				accessor: (row: ICommunalResource) =>
+					t(resourceTypeOptions.find(item => item.value === row.type)?.label as string || row.type)
+			},
+			{
+				Header: t('Currency'),
+				accessor: (row: ICommunalResource) =>
+					t(currencyOptions.find(item => item.value === row.currency)?.label as string || row.currency)
 			},
 			{
 				Header: t('Actions'),
 				accessor: (row: ICommunalResource) => (
 					<div className="flex items-start gap-lg">
 						<EditButton onClick={() => navigate(`edit/${row.id}`)}/>
+						<DeleteButton id={row.id}/>
+					</div>
+				)
+			}
+		],
+		[t, page, pageSize, navigate]
+	)
+
+	const unitColumns: Column<ICommunalUnit>[] = useMemo(
+		() => [
+			{
+				Header: t('№'),
+				accessor: (_: ICommunalUnit, index: number) => (page - 1) * pageSize + (index + 1),
+				style: {width: '3rem', textAlign: 'center'}
+			},
+			{
+				Header: t('Name'),
+				accessor: (row: ICommunalUnit) => row.name
+			},
+			{
+				Header: t('Symbol'),
+				accessor: (row: ICommunalUnit) => row.symbol || '-'
+			},
+			{
+				Header: t('Actions'),
+				accessor: (row: ICommunalUnit) => (
+					<div className="flex items-start gap-lg">
+						<EditButton onClick={() => navigate(`edit-unit/${row.id}`)}/>
 						<DeleteButton id={row.id}/>
 					</div>
 				)
@@ -121,16 +160,19 @@ const Index: FC = () => {
 				accessor: (row: ICommunalTariff) => (typeof row.resource === 'object' ? row.resource.name : row.resource)
 			},
 			{
-				Header: t('From value'),
-				accessor: (row: ICommunalTariff) => row.from_value
+				Header: t('Oraliq'),
+				accessor: (row: ICommunalTariff) => row.from_time || row.to_time
+					? `${row.from_time?.slice(0, 5) || ''} - ${row.to_time?.slice(0, 5) || ''}`
+					: `${row.from_value ?? 0} - ${row.to_value ?? '∞'}`
 			},
 			{
-				Header: t('To value'),
-				accessor: (row: ICommunalTariff) => row.to_value || '∞'
+				Header: t('Tariff name'),
+				accessor: (row: ICommunalTariff) => row.time_range || '-'
 			},
 			{
 				Header: t('Price'),
-				accessor: (row: ICommunalTariff) => decimalToPrice(row.price)
+				accessor: (row: ICommunalTariff) =>
+					`${decimalToPrice(row.price)} ${currencySymbols[row.currency] || ''}`
 			},
 			{
 				Header: t('Actions'),
@@ -164,11 +206,17 @@ const Index: FC = () => {
 			},
 			{
 				Header: t('Meter value'),
-				accessor: (row: ICommunalReport) => row.meter_value
+				accessor: (row: ICommunalReport) => row.meter_value ?? '-'
 			},
 			{
 				Header: t('Usage'),
-				accessor: (row: ICommunalReport) => row.consumption || '-'
+				accessor: (row: ICommunalReport) => {
+					if (row.consumption == null) return '-'
+					const unit = typeof row.resource === 'object'
+						? row.resource.unit_of?.symbol || ''
+						: ''
+					return unit ? `${row.consumption} ${unit}` : row.consumption
+				}
 			},
 			{
 				Header: t('Total price'),
@@ -194,8 +242,9 @@ const Index: FC = () => {
 	const columns = useMemo(() => {
 		if (tab === 'tariffs') return tariffColumns as any[]
 		if (tab === 'reports') return reportColumns as any[]
+		if (tab === 'units') return unitColumns as any[]
 		return resourceColumns as any[]
-	}, [tab, resourceColumns, tariffColumns, reportColumns])
+	}, [tab, resourceColumns, unitColumns, tariffColumns, reportColumns])
 
 	if (tab === 'dashboard') {
 		return (

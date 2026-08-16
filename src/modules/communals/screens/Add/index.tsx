@@ -1,13 +1,15 @@
 import {Button, Card, Form, Input, Loader, PageTitle, Select} from 'components'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {communalsSchema} from 'helpers/yup'
-import {useAdd, useDetail, useUpdate} from 'hooks'
+import {useAdd, useData, useDetail, useUpdate} from 'hooks'
 import {FC, useEffect} from 'react'
 import {Controller, useForm} from 'react-hook-form'
 import {useNavigate, useParams} from 'react-router-dom'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {getSelectValue} from 'utilities/common'
 import {ICommunalResource} from 'interfaces/communals.interface'
+import {ISelectOption} from 'interfaces/form.interface'
+import {currencyOptions, resourceTypeOptions} from 'helpers/options'
 import {useTranslation} from 'react-i18next'
 
 
@@ -18,18 +20,9 @@ interface IProperties {
 const Index: FC<IProperties> = ({edit = false}) => {
 	const navigate = useNavigate()
 	const {t} = useTranslation()
-
-	const unitOptions = [
-		{label: t('Litr'), value: 'l'},
-		{label: t('mkv'), value: 'mkv'},
-		{label: t('kW'), value: 'kw'}
-	]
-
-	const typeOptions = [
-		{label: t('Meter'), value: 'meter'},
-		{label: t('Fixed'), value: 'fixed'}
-	]
 	const {id = undefined} = useParams()
+
+	const {data: unitOptions = []} = useData<ISelectOption[]>('communal/units-select')
 
 	const {
 		handleSubmit,
@@ -41,8 +34,9 @@ const Index: FC<IProperties> = ({edit = false}) => {
 		mode: 'onTouched',
 		defaultValues: {
 			name: '',
-			unit_of: '',
-			type: 'meter'
+			unit_of: undefined,
+			type: 'meter',
+			currency: 'uzs'
 		},
 		resolver: yupResolver(communalsSchema)
 	})
@@ -58,8 +52,9 @@ const Index: FC<IProperties> = ({edit = false}) => {
 		if (data && edit) {
 			reset({
 				name: data.name,
-				unit_of: data.unit_of,
-				type: data.type
+				unit_of: data.unit_of ?? undefined,
+				type: data.type,
+				currency: data.currency
 			})
 		}
 	}, [data, edit, reset])
@@ -131,7 +126,7 @@ const Index: FC<IProperties> = ({edit = false}) => {
 									error={errors?.unit_of?.message}
 									value={getSelectValue(unitOptions, value)}
 									defaultValue={getSelectValue(unitOptions, value)}
-									handleOnChange={(e) => onChange(e as string)}
+									handleOnChange={(e) => onChange(e as number)}
 								/>
 							)}
 						/>
@@ -145,12 +140,32 @@ const Index: FC<IProperties> = ({edit = false}) => {
 								<Select
 									ref={ref}
 									id="type"
-									options={typeOptions}
+									options={resourceTypeOptions}
 									onBlur={onBlur}
 									label={t('Type')}
 									error={errors?.type?.message}
-									value={getSelectValue(typeOptions, value)}
-									defaultValue={getSelectValue(typeOptions, value)}
+									value={getSelectValue(resourceTypeOptions, value)}
+									defaultValue={getSelectValue(resourceTypeOptions, value)}
+									handleOnChange={(e) => onChange(e as string)}
+								/>
+							)}
+						/>
+					</div>
+
+					<div className="span-4">
+						<Controller
+							name="currency"
+							control={control}
+							render={({field: {value, ref, onChange, onBlur}}) => (
+								<Select
+									ref={ref}
+									id="currency"
+									options={currencyOptions}
+									onBlur={onBlur}
+									label={t('Currency')}
+									error={errors?.currency?.message}
+									value={getSelectValue(currencyOptions, value)}
+									defaultValue={getSelectValue(currencyOptions, value)}
 									handleOnChange={(e) => onChange(e as string)}
 								/>
 							)}
