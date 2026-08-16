@@ -258,7 +258,10 @@ const Index: FC<IProperties> = ({ retrieve: _retrieve = false }) => {
 					const cutFactor = Number(cutOptions.find((item) => item?.value == order?.piece)?.material || 1)
 					const count = Math.ceil(Number(order?.count_entered_leader || order?.count || 0) / cutFactor)
 
-					const baseAreaMm2 = count * (2 * (width + length) + 70) * format
+					// list: tayyor o'lcham (format * length), karobka: yoyilma perimetri
+					const spanMm = order?.is_list ? length : (2 * (width + length) + 70)
+
+					const baseAreaMm2 = count * spanMm * format
 					const baseAreaM2 = baseAreaMm2 / 1_000_000
 
 					order?.layer?.forEach((layerIdStr, layerIndex) => {

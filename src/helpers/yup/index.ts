@@ -202,25 +202,98 @@ const userSchema = yup.object().shape({
     password_confirm: confirmPasswordSchema
 })
 
-const communalsSchema = yup.object().shape({
-    name: yup.string().required('This field is required'),
-    unit_of: yup.string().required('This field is required'),
-    type: yup.string().required('This field is required'),
+const unitsSchema = yup.object().shape({
+    name: yup.string().trim().required('This field is required'),
+    symbol: yup.string().trim().optional().nullable().transform(v => v ? v : null)
 })
 
+const communalsSchema = yup.object().shape({
+    name: yup.string().required('This field is required'),
+    unit_of: yup.number().required('This field is required'),
+    type: yup.string().required('This field is required'),
+    currency: yup.string().required('This field is required')
+})
+
+// Elektr resursida tarif vaqt oralig'i bilan, qolganlarida hajm oralig'i bilan beriladi.
+// `is_time_based` — faqat forma ichidagi yordamchi bayroq, backendga yuborilmaydi.
 const tariffsSchema = yup.object().shape({
     resource: yup.number().required('This field is required'),
     price: yup.string().required('This field is required'),
-    from_value: yup.number().optional().nullable(),
-    to_value: yup.number().optional().nullable(),
+    currency: yup.string().required('This field is required'),
+    is_time_based: yup.boolean().optional(),
+    from_value: yup
+        .number()
+        .nullable()
+        .transform((value, original) => original === '' || original === null ? null : value)
+        .when('is_time_based', {
+            is: true,
+            then: (schema) => schema.optional().nullable(),
+            otherwise: (schema) => schema.required('This field is required')
+        }),
+    to_value: yup
+        .number()
+        .nullable()
+        .transform((value, original) => original === '' || original === null ? null : value)
+        .optional(),
+    from_time: yup
+        .string()
+        .nullable()
+        .transform(v => v ? v : null)
+        .when('is_time_based', {
+            is: true,
+            then: (schema) => schema.required('This field is required'),
+            otherwise: (schema) => schema.optional().nullable()
+        }),
+    to_time: yup
+        .string()
+        .nullable()
+        .transform(v => v ? v : null)
+        .when('is_time_based', {
+            is: true,
+            then: (schema) => schema.required('This field is required'),
+            otherwise: (schema) => schema.optional().nullable()
+        }),
+    time_range: yup.string().trim().optional().nullable().transform(v => v ? v : null)
 })
 
+// Hisobot maydonlari resurs turiga bog'liq:
+//   meter    → meter_value majburiy, summa avtomatik
+//   electric → meter_value + total_price (summa qo'lda)
+//   fixed    → consumption majburiy
+// `resource_type` — forma ichidagi yordamchi maydon, backendga yuborilmaydi.
 const reportsSchema = yup.object().shape({
     resource: yup.number().required('This field is required'),
+    resource_type: yup.string().optional(),
     year: yup.number().required('This field is required'),
     month: yup.number().required('This field is required'),
-    meter_value: yup.string().required('This field is required'),
     amount_paid: yup.string().required('This field is required'),
+    meter_value: yup
+        .string()
+        .nullable()
+        .transform(v => v ? v : null)
+        .when('resource_type', {
+            is: (value: string) => value === 'meter' || value === 'electric',
+            then: (schema) => schema.required('This field is required'),
+            otherwise: (schema) => schema.optional().nullable()
+        }),
+    total_price: yup
+        .string()
+        .nullable()
+        .transform(v => v ? v : null)
+        .when('resource_type', {
+            is: 'electric',
+            then: (schema) => schema.required('This field is required'),
+            otherwise: (schema) => schema.optional().nullable()
+        }),
+    consumption: yup
+        .string()
+        .nullable()
+        .transform(v => v ? v : null)
+        .when('resource_type', {
+            is: 'fixed',
+            then: (schema) => schema.required('This field is required'),
+            otherwise: (schema) => schema.optional().nullable()
+        })
 })
 
 const userUpdateSchema = yup.object().shape({
@@ -740,6 +813,11 @@ const temporaryOrderSchema2 = yup.object().shape({
         .required('This field is required')
 })
 
+// Buyurtmani tahrirlash modalida `length` maydoni yo'q — u faqat guruh buyurtmani
+// tahrirlashda (operator-orders/edit-group) qoladi
+const temporaryOrderSchemaWithoutLength = temporaryOrderSchema.omit(['length'])
+const temporaryOrderSchema2WithoutLength = temporaryOrderSchema2.omit(['length'])
+
 const YMOOrderSchema = yup.object().shape({
     gofra: yup.boolean().nullable(),
     ymo1: yup.boolean().nullable(),
@@ -1102,6 +1180,8 @@ export {
     temporaryOrderSchema,
     operatorOrderSchema,
     temporaryOrderSchema2,
+    temporaryOrderSchemaWithoutLength,
+    temporaryOrderSchema2WithoutLength,
     groupOrdersSchema,
     splitSchema,
     userUpdateSchema,
@@ -1117,6 +1197,7 @@ export {
     productSchema,
     clientsSchema,
     communalsSchema,
+    unitsSchema,
     tariffsSchema,
     reportsSchema,
     formatSchema,

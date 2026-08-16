@@ -20,7 +20,7 @@ import {
 import styles from 'components/HOC/GroupOrderDetail/styles.module.scss'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {activityOptions, booleanOptions, cutOptions, statusOptions, verticalOptions} from 'helpers/options'
-import {groupOrdersSchema, temporaryOrderSchema, temporaryOrderSchema2} from 'helpers/yup'
+import {groupOrdersSchema, temporaryOrderSchema2WithoutLength, temporaryOrderSchemaWithoutLength} from 'helpers/yup'
 import {
     useActions,
     useAdd,
@@ -205,10 +205,9 @@ const Index = () => {
             tikish: false,
             yelimlash: false,
             is_last: false,
-            is_vertical: false,
-            length: ''
+            is_vertical: false
         },
-        resolver: yupResolver(detail?.is_list ? temporaryOrderSchema2 : temporaryOrderSchema)
+        resolver: yupResolver(detail?.is_list ? temporaryOrderSchema2WithoutLength : temporaryOrderSchemaWithoutLength)
     })
 
 
@@ -246,8 +245,7 @@ const Index = () => {
                 tikish: detail?.stages_to_passed?.includes('tikish'),
                 yelimlash: detail?.stages_to_passed?.includes('yelimlash'),
                 is_last: detail?.stages_to_passed?.includes('is_last'),
-                is_vertical: detail?.is_vertical,
-                length: detail?.length || ''
+                is_vertical: detail?.is_vertical
             })
         }
     }, [detail, updateId, resetEdit])
@@ -1039,9 +1037,8 @@ const Index = () => {
                                 l3: data?.l3,
                                 l4: data?.l4,
                                 l5: data?.l5,
-                                length: data?.length,
                                 is_vertical: data?.is_vertical,
-                                stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true && key !== 'length' && key !== 'is_vertical')?.reverse()
+                                stages_to_passed: Object.keys(data).filter((key) => data[key as keyof typeof data] === true && key !== 'is_vertical')?.reverse()
                             }
 
                             update(newData).then(async (data: any) => {
@@ -1392,23 +1389,6 @@ const Index = () => {
                                         onBlur={onBlur}
                                         defaultValue={getSelectValue(cutOptions, value)}
                                         handleOnChange={(e) => onChange(e as string)}
-                                    />
-                                )}
-                            />
-                        </div>
-                        <div className="span-4">
-                            <Controller
-                                name="length"
-                                control={control}
-                                render={({field}) => (
-                                    <NumberFormattedInput
-                                        id="length"
-                                        maxLength={3}
-                                        disableGroupSeparators
-                                        allowDecimals={false}
-                                        label={`${t('Uzunligi')} (${t('mm')})`}
-                                        error={editErrors?.length?.message}
-                                        {...field}
                                     />
                                 )}
                             />

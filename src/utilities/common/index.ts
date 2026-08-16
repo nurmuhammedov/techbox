@@ -186,7 +186,10 @@ function calculateTotalGlueUsageInL(
 
 		// const areaMm2 = count * (2 * (width + length) + 70) * Number(format || 0) * (orders[0]?.layer?.length - 1)
 
-		const areaMm2 = count * (2 * (width + length) + 70) * Number(format || 0) * ((orders[0]?.layer?.length - 1) == 1 ? 0.5 : (orders[0]?.layer?.length - 1) == 3 ? 1.5 : (orders[0]?.layer?.length - 1) == 4 ? 2 : 1)
+		// list: tayyor o'lcham (format * length), karobka: yoyilma perimetri
+		const spanMm = orders[0]?.is_list ? length : (2 * (width + length) + 70)
+
+		const areaMm2 = count * spanMm * Number(format || 0) * ((orders[0]?.layer?.length - 1) == 1 ? 0.5 : (orders[0]?.layer?.length - 1) == 3 ? 1.5 : (orders[0]?.layer?.length - 1) == 4 ? 2 : 1)
 
 		totalAreaM2 = areaMm2 / 1_000_000
 	}
