@@ -29,6 +29,7 @@ i18n.use(initReactI18next).init({
   fallbackLng: 'uz',
   interpolation: { escapeValue: false },
   returnEmptyString: false,
+  lowerCaseLng: true,
 })
 
 export function setLanguage(lang: Lang) {

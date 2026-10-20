@@ -1,4 +1,4 @@
-import { Button, Card, Grid, Group, Image, Modal, MultiSelect, NumberInput, SegmentedControl, Stack, Text, TextInput, Timeline } from '@mantine/core'
+import { Button, Card, Grid, Group, Image, Modal, MultiSelect, NumberInput, Stack, Text, TextInput, Timeline } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { IconArrowsSplit, IconCash, IconSearch } from '@tabler/icons-react'
 import { useState } from 'react'
@@ -10,6 +10,7 @@ import { useAuth } from '@/auth/AuthContext'
 import { Deadline, ItemStateBadge, RouteSteps, StageBadge } from '@/components/Badges'
 import { DataTable } from '@/components/DataTable'
 import { PageHeader } from '@/components/PageHeader'
+import { Segments } from '@/components/Segments'
 import { RemoteSelect } from '@/components/RemoteSelect'
 import { date, dateTime, kg, num } from '@/lib/format'
 import { useAction, useOne, usePage } from '@/lib/queries'
@@ -59,7 +60,7 @@ export function FinishedStock() {
       <PageHeader title={t('menu.finished')} subtitle={t('finished.subtitle')} />
       <Group mb="sm">
         <TextInput leftSection={<IconSearch size={16} />} placeholder={t('search')} value={search} onChange={(e) => setSearch(e.currentTarget.value)} />
-        <SegmentedControl
+        <Segments
           value={kind}
           onChange={setKind}
           data={[

@@ -230,7 +230,7 @@ export function CrudPage<T extends { id: number }>({
   const [debounced] = useDebouncedValue(search, 300)
   const [editing, setEditingState] = useState<T | 'new' | null>(null)
   const setEditing = (row: T | 'new' | null) => (onEdit && row !== null ? onEdit(row) : setEditingState(row))
-  const writable = can(...(Array.isArray(writePermission) ? writePermission : [writePermission]))
+  const writable = (fields.length > 0 || !!onEdit) && can(...(Array.isArray(writePermission) ? writePermission : [writePermission]))
   const query = usePage<T>(url, { ...params, page, search: debounced || undefined })
   const data = query.data as unknown
   const rows = Array.isArray(data) ? (data as T[]) : query.data?.results

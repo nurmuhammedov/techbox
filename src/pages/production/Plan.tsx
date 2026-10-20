@@ -178,7 +178,7 @@ export default function Plan() {
       <Grid gutter="md">
         <Grid.Col span={{ base: 12, lg: 5 }}>
           <Card withBorder radius="md">
-            <Group justify="space-between" mb="sm">
+            <Group justify="space-between" mb="sm" wrap="wrap" gap="xs">
               <Title order={5}>{t('plan.new_orders')}</Title>
               <TextInput size="xs" placeholder={t('search')} value={search} onChange={(e) => setSearch(e.currentTarget.value)} />
             </Group>

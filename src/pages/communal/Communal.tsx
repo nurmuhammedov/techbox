@@ -1,8 +1,9 @@
-import { Badge, Card, Group, SegmentedControl, SimpleGrid, Stack, Text } from '@mantine/core'
+import { Badge, Card, Group, SimpleGrid, Stack, Text } from '@mantine/core'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CrudPage } from '@/components/CrudPage'
 import { PageHeader } from '@/components/PageHeader'
+import { Segments } from '@/components/Segments'
 import { money, num } from '@/lib/format'
 import { useList } from '@/lib/queries'
 
@@ -58,7 +59,7 @@ export default function Communal() {
           </Card>
         ))}
       </SimpleGrid>
-      <SegmentedControl
+      <Segments
         mb="md"
         value={section}
         onChange={setSection}

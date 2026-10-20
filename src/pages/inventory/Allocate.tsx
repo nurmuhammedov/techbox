@@ -123,6 +123,7 @@ export function AllocateBatch() {
                     <Select
                       style={{ flex: 1 }}
                       label={i === 0 ? t('roll') : undefined}
+                      aria-label={`${t('layer')} ${layer + 1} ${t('roll')} ${i + 1}`}
                       data={options.map((r) => ({
                         value: String(r.id),
                         label: `${r.code || '#' + r.id} · ${kg(Number(r.available_weight) + ownReserved(r.id))}${r.supplier_name ? ' · ' + r.supplier_name : ''}`,
@@ -132,7 +133,7 @@ export function AllocateBatch() {
                       searchable
                       disabled={!editable}
                     />
-                    <NumberInput w={140} label={i === 0 ? t('weight') : undefined} value={p.weight} onChange={(v) => update(layer, i, { weight: v })} min={0} decimalScale={2} rightSection={<Text size="xs">kg</Text>} disabled={!editable} />
+                    <NumberInput w={140} aria-label={`${t('layer')} ${layer + 1} ${t('weight')} ${i + 1}`} label={i === 0 ? t('weight') : undefined} value={p.weight} onChange={(v) => update(layer, i, { weight: v })} min={0} decimalScale={2} rightSection={<Text size="xs">kg</Text>} disabled={!editable} />
                     {(picks[layer]?.length ?? 0) > 1 && (
                       <ActionIcon variant="subtle" color="red" mb={6} onClick={() => setPicks((s) => ({ ...s, [layer]: s[layer].filter((_x, j) => j !== i) }))}>
                         <IconTrash size={16} />

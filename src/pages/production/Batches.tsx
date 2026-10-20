@@ -1,4 +1,4 @@
-import { Button, Card, Grid, Group, SegmentedControl, Stack, Table, Text, Title } from '@mantine/core'
+import { Button, Card, Grid, Group, Stack, Table, Text, Title } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { IconListCheck, IconPencil, IconPlus, IconX } from '@tabler/icons-react'
 import { useState } from 'react'
@@ -10,6 +10,7 @@ import { BatchStatusBadge, ItemStateBadge, RouteSteps } from '@/components/Badge
 import { CutPlanDiagram } from '@/components/CutPlanDiagram'
 import { DataTable } from '@/components/DataTable'
 import { PageHeader } from '@/components/PageHeader'
+import { Segments } from '@/components/Segments'
 import { useAuth } from '@/auth/AuthContext'
 import { dateTime, kg, num } from '@/lib/format'
 import { useAction, useOne, usePage } from '@/lib/queries'
@@ -28,7 +29,7 @@ export function BatchList() {
         title={t('menu.batches')}
         actions={can('production.plan') && <Button leftSection={<IconPlus size={18} />} onClick={() => navigate('/production/plan')}>{t('plan.create')}</Button>}
       />
-      <SegmentedControl
+      <Segments
         mb="sm"
         value={status}
         onChange={(v) => {

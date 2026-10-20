@@ -6,7 +6,6 @@ import {
   Grid,
   Group,
   NumberInput,
-  SegmentedControl,
   Stack,
   Text,
   Textarea,
@@ -27,6 +26,7 @@ import { useAuth } from '@/auth/AuthContext'
 import { Deadline, OrderStatusBadge, RouteSteps } from '@/components/Badges'
 import { DataTable } from '@/components/DataTable'
 import { PageHeader } from '@/components/PageHeader'
+import { Segments } from '@/components/Segments'
 import { RemoteSelect } from '@/components/RemoteSelect'
 import { date, money, num } from '@/lib/format'
 import { fail, ok } from '@/lib/notify'
@@ -211,7 +211,7 @@ export default function Orders() {
       />
       <Group mb="sm" wrap="wrap">
         <TextInput leftSection={<IconSearch size={16} />} placeholder={t('search')} value={search} onChange={(e) => { setSearch(e.currentTarget.value); setPage(1) }} w={{ base: '100%', sm: 260 }} />
-        <SegmentedControl
+        <Segments
           value={status}
           onChange={(x) => { setStatus(x); setPage(1) }}
           data={[

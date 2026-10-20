@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Group, Modal, NumberInput, SegmentedControl, Stack, Text } from '@mantine/core'
+import { ActionIcon, Button, Group, Modal, NumberInput, Stack, Text } from '@mantine/core'
 import { IconPlus, IconTrash } from '@tabler/icons-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { api } from '@/api/client'
 import { CrudPage } from '@/components/CrudPage'
 import { PageHeader } from '@/components/PageHeader'
+import { Segments } from '@/components/Segments'
 import { RemoteSelect } from '@/components/RemoteSelect'
 import { dateTime, money, num } from '@/lib/format'
 import { useAction } from '@/lib/queries'
@@ -67,13 +68,14 @@ function MakeGlue({ onClose }: { onClose: () => void }) {
           <Group key={i} align="flex-end" wrap="nowrap">
             <RemoteSelect
               style={{ flex: 1 }}
+              aria-label={t('chem.type')}
               url="/chemicals/lots"
               params={{ in_stock: 1 }}
               labelOf={(r) => `${r.type_name} #${r.id} · ${num(r.remaining as number, 1)} ${r.unit}`}
               value={it.chemical}
               onChange={(v) => setItems((s) => s.map((x, j) => (j === i ? { ...x, chemical: v } : x)))}
             />
-            <NumberInput w={130} value={it.amount} onChange={(v) => setItems((s) => s.map((x, j) => (j === i ? { ...x, amount: v } : x)))} min={0} decimalScale={3} />
+            <NumberInput w={130} aria-label={t('chem.amount')} value={it.amount} onChange={(v) => setItems((s) => s.map((x, j) => (j === i ? { ...x, amount: v } : x)))} min={0} decimalScale={3} />
             <ActionIcon variant="subtle" color="red" mb={6} onClick={() => setItems((s) => s.filter((_x, j) => j !== i))} disabled={items.length === 1}>
               <IconTrash size={16} />
             </ActionIcon>
@@ -100,7 +102,7 @@ export default function Chemicals() {
         title={t('menu.chemicals')}
         actions={<Button onClick={() => setMaking(true)}>{t('glue.make')}</Button>}
       />
-      <SegmentedControl
+      <Segments
         mb="md"
         value={section}
         onChange={setSection}
