@@ -1,35 +1,53 @@
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
-import {AppContextProvider} from 'contexts/AppContext'
-import {BrowserRouter} from 'react-router-dom'
-import {createRoot} from 'react-dom/client'
-import {Alert, Router} from 'components'
-import {Provider} from 'react-redux'
-import 'assets/fonts/typography.css'
-import {store} from 'store'
-import 'styles/index.scss'
-import 'i18n'
+import '@mantine/core/styles.css'
+import '@mantine/dates/styles.css'
+import '@mantine/notifications/styles.css'
+import { createTheme, MantineProvider } from '@mantine/core'
+import { DatesProvider } from '@mantine/dates'
+import { ModalsProvider } from '@mantine/modals'
+import { Notifications } from '@mantine/notifications'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import 'dayjs/locale/ru'
+import 'dayjs/locale/uz-latn'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import App from './App'
+import { AuthProvider } from './auth/AuthContext'
+import './i18n'
+import { registerServiceWorker } from './realtime/push'
 
-
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			retry: false,
-			refetchOnWindowFocus: false
-		}
-	}
+const theme = createTheme({
+  primaryColor: 'blue',
+  defaultRadius: 'md',
+  fontFamily: 'Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
+  components: {
+    Button: { defaultProps: { radius: 'md' } },
+  },
 })
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { staleTime: 30_000, retry: 1, refetchOnWindowFocus: true },
+  },
+})
 
-createRoot(document.getElementById('root')!)
-	.render(
-		<BrowserRouter basename="/">
-			<Provider store={store}>
-				<QueryClientProvider client={queryClient}>
-					<AppContextProvider>
-						<Router/>
-					</AppContextProvider>
-					<Alert/>
-				</QueryClientProvider>
-			</Provider>
-		</BrowserRouter>
-	)
+void registerServiceWorker()
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <MantineProvider theme={theme} defaultColorScheme="light">
+      <DatesProvider settings={{ firstDayOfWeek: 1, locale: 'ru' }}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <ModalsProvider>
+              <Notifications position="top-right" limit={4} />
+              <AuthProvider>
+                <App />
+              </AuthProvider>
+            </ModalsProvider>
+          </BrowserRouter>
+        </QueryClientProvider>
+      </DatesProvider>
+    </MantineProvider>
+  </React.StrictMode>,
+)

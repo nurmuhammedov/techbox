@@ -1,31 +1,18 @@
 import react from '@vitejs/plugin-react'
-import {defineConfig} from 'vite'
+import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vite'
 
-// https://vite.dev/config/
+const backend = process.env.BACKEND_URL || 'http://localhost:8000'
+
 export default defineConfig({
-	plugins: [react()],
-	server: {
-		host: '127.7.7.7',
-		port: 80,
-		open: true
-	},
-	resolve: {
-		alias: {
-			'configurations': '/src/configurations',
-			'components': '/src/components',
-			'interfaces': '/src/interfaces',
-			'libraries': '/src/libraries',
-			'utilities': '/src/utilities',
-			'constants': '/src/constants',
-			'services': '/src/services',
-			'contexts': '/src/contexts',
-			'helpers': '/src/helpers',
-			'modules': '/src/modules',
-			'assets': '/src/assets',
-			'styles': '/src/styles',
-			'hooks': '/src/hooks',
-			'store': '/src/store',
-			'i18n': '/src/i18n'
-		}
-	}
+  plugins: [react()],
+  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+  server: {
+    port: 3000,
+    proxy: {
+      '/api': backend,
+      '/media': backend,
+      '/ws': { target: backend.replace('http', 'ws'), ws: true },
+    },
+  },
 })
