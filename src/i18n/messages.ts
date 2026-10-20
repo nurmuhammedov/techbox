@@ -177,7 +177,7 @@ const M: Record<string, [string, string, string]> = {
   'work.started': ['Partiya boshlandi', 'Партия начата', 'Batch started'],
   'work.finish': ['Tugatish', 'Завершить', 'Finish'],
   'work.finished': ['Bajarildi, keyingi bosqichga yuborildi', 'Готово, передано на следующий этап', 'Done, sent to the next stage'],
-  'work.to_store': ['Bajarildi, tayyor mahsulot omboriga o'tdi', 'Готово, передано на склад готовой продукции', 'Done, moved to finished goods'],
+  'work.to_store': ["Bajarildi, tayyor mahsulot omboriga o'tdi", 'Готово, передано на склад готовой продукции', 'Done, moved to finished goods'],
   'work.release': ['Navbatga qaytarish', 'Вернуть в очередь', 'Return to queue'],
   'work.released': ['Navbatga qaytarildi', 'Возвращено в очередь', 'Returned to queue'],
   'work.nothing_mine': ['Sizda hozir ish yo\'q. Navbatdan oling.', 'Сейчас у вас нет работы. Возьмите из очереди.', 'Nothing in progress. Take something from the queue.'],
