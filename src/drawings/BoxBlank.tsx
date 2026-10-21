@@ -10,6 +10,8 @@ interface Props {
   size: BoxSize
   /** When given, the six score sizes are typed straight onto the drawing. */
   onChange?: (key: ScoreKey, value: number | null) => void
+  /** Drawn for the big view: no limit on its height. */
+  large?: boolean
   className?: string
 }
 
@@ -24,7 +26,7 @@ const M = { left: 118, right: 24, top: 84, bottom: 70 }
  * The flat blank of a regular slotted box as the corrugator cuts it: glue flap, four panels,
  * top and bottom flaps. Solid lines are cuts, dashed lines are score (bend) lines.
  */
-export function BoxBlank({ size, onChange, className }: Props) {
+export function BoxBlank({ size, onChange, large, className }: Props) {
   const { t } = useTranslation()
   const id = useId().replace(/:/g, '')
   const real = blankOf(size)
@@ -85,7 +87,7 @@ export function BoxBlank({ size, onChange, className }: Props) {
     <div className={cn('flex flex-col gap-2', className)}>
       {/* On a phone the blank keeps a size the score fields fit on, and scrolls sideways. */}
       <div className="-mx-1 overflow-x-auto px-1 pb-1">
-      <div className={cn('relative mx-auto w-full', editable && 'min-w-[600px]')} style={{ aspectRatio: `${W} / ${H}`, maxWidth: `${Math.round((MAX_SCREEN_H * W) / H)}px` }}>
+      <div className={cn('relative mx-auto w-full', editable && 'min-w-[600px]')} style={{ aspectRatio: `${W} / ${H}`, maxWidth: large ? undefined : `${Math.round((MAX_SCREEN_H * W) / H)}px` }}>
         <svg viewBox={`0 0 ${W} ${H}`} className={cn('absolute inset-0 size-full', empty && 'opacity-45')} role="img" aria-label={t('drawing.blank')}>
           <Defs id={id} />
           {/* Glue flap: a trapezoid on the body height only. */}
@@ -102,7 +104,7 @@ export function BoxBlank({ size, onChange, className }: Props) {
             return (
               <g key={i}>
                 <rect x={a} y={yTop} width={z - a} height={yBody - yTop} fill={`url(#${id}-flute)`} />
-                <rect x={a} y={yTop} width={z - a} height={yBody - yTop} fill={panels[i] === b.l1 && i % 2 === 0 ? 'var(--draw-long)' : 'var(--draw-short)'} opacity="0.75" />
+                <rect x={a} y={yTop} width={z - a} height={yBody - yTop} fill={i % 2 === 0 ? 'var(--draw-long)' : 'var(--draw-short)'} opacity="0.75" />
                 <rect x={a + (i ? slot : 0)} y={y0} width={z - a - (i ? slot : 0) - (i < 3 ? slot : 0)} height={yTop - y0} fill="var(--draw-top)" stroke="var(--draw-cut)" strokeWidth="1.6" />
                 <rect x={a + (i ? slot : 0)} y={yBody} width={z - a - (i ? slot : 0) - (i < 3 ? slot : 0)} height={yEnd - yBody} fill="var(--draw-bottom)" stroke="var(--draw-cut)" strokeWidth="1.6" />
               </g>
@@ -143,7 +145,10 @@ export function BoxBlank({ size, onChange, className }: Props) {
           items={[
             { kind: 'cut', label: t('drawing.cut_line') },
             { kind: 'score', label: t('drawing.score_line') },
-            { kind: 'hatch', label: t('drawing.flap') },
+            { kind: 'color', color: 'var(--draw-long)', label: t('drawing.part_length') },
+            { kind: 'color', color: 'var(--draw-short)', label: t('drawing.part_width') },
+            { kind: 'color', color: 'var(--draw-top)', label: t('drawing.part_top') },
+            { kind: 'color', color: 'var(--draw-bottom)', label: t('drawing.part_bottom') },
           ]}
         />
         {mismatch ? (

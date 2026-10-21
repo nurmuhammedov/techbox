@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import type { MaterialType, Shape, Stage } from '@/api/types'
 import { Box3D } from '@/drawings/Box3D'
 import { BoxBlank } from '@/drawings/BoxBlank'
-import { DEFAULT_JOINT, flutedLayers, suggestedScores, toggleFlute, type ScoreKey } from '@/drawings/geometry'
+import { DEFAULT_JOINT, defaultFlutes, flutedLayers, setFlute, suggestedScores, type ScoreKey } from '@/drawings/geometry'
 import { LayerKind, LayersSection } from '@/drawings/LayersSection'
 import { SheetDrawing } from '@/drawings/SimpleSheets'
 import { STAGE_TONE } from '@/kit/badges'
@@ -28,7 +28,7 @@ export const EMPTY_SHAPE: Shape = {
   layers: [0, 0, 0],
   route: ['gofra', 'fleksa'],
   holds: [],
-  flutes: [],
+  flutes: [1],
   l0: null,
   l1: null,
   l2: null,
@@ -62,7 +62,7 @@ export function ShapeEditor({
   const setPly = (count: number) => {
     const layers = [...value.layers]
     while (layers.length < count) layers.push(layers[layers.length - 2] ?? 0)
-    onChange({ layers: layers.slice(0, count), flutes: [] })
+    onChange({ layers: layers.slice(0, count), flutes: defaultFlutes(count) })
   }
 
   const toggleStage = (stage: Stage) => {
@@ -155,25 +155,19 @@ export function ShapeEditor({
             <Segments
               value={String(value.layers.length)}
               onChange={(v) => setPly(Number(v))}
-              options={['2', '3', '4', '5', '6', '7'].map((x) => ({ value: x, label: x }))}
+              options={['1', '2', '3', '4', '5', '6', '7'].map((x) => ({ value: x, label: x }))}
               className="w-fit"
             />
-            {value.layers.length % 2 === 0 && value.layers.length > 2 ? (
-              <p className="rounded-md bg-warn-soft px-3 py-2 text-xs text-warn">{t('shape.ply_unusual', { n: value.layers.length })}</p>
-            ) : null}
+            <p className="text-xs text-ink-3">{t('layer.hint')}</p>
             {errors.layers ? <p className="text-xs text-bad">{errors.layers}</p> : null}
             <div className="flex flex-col gap-2">
               {value.layers.map((layer, i) => (
-                <div key={i} className="grid grid-cols-[96px_minmax(0,1fr)] items-center gap-2">
+                <div key={i} className="grid grid-cols-[150px_minmax(0,1fr)] items-center gap-2">
                   <span className="flex items-center gap-1.5 text-xs text-ink-2">
                     <b>{i + 1}.</b>
                     <LayerKind
                       fluted={flutedLayers(value.layers.length, value.flutes).includes(i)}
-                      blocked={toggleFlute(value.layers.length, value.flutes, i) === null}
-                      onToggle={() => {
-                        const next = toggleFlute(value.layers.length, value.flutes, i)
-                        if (next) onChange({ flutes: next })
-                      }}
+                      onChange={(fluted) => onChange({ flutes: setFlute(value.layers.length, value.flutes, i, fluted) })}
                     />
                   </span>
                   <RemoteCombo

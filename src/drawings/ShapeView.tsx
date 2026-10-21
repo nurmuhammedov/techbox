@@ -5,6 +5,7 @@ import { cn } from '@/lib/cn'
 
 import { Box3D } from './Box3D'
 import { BoxBlank } from './BoxBlank'
+import { Zoomable } from './Zoomable'
 import { PartsDrawing, SheetDrawing } from './SimpleSheets'
 
 type AnyShape = (Partial<Shape> & { kind: Shape['kind'] }) | ItemShape
@@ -50,7 +51,9 @@ export function ShapeView({
     <div className={cn('flex flex-col gap-4', className)}>
       <div className={cn('grid items-center gap-4', compact ? 'grid-cols-1' : 'sm:grid-cols-[180px_minmax(0,1fr)]')}>
         {!compact ? <Box3D length={size.length} width={size.width} height={size.height} logo={logo} className="max-w-[180px]" /> : null}
-        <BoxBlank size={size} />
+        <Zoomable title={t('drawing.blank')} large={<BoxBlank size={size} large />}>
+          <BoxBlank size={size} />
+        </Zoomable>
       </div>
       {parts > 1 ? <PartsDrawing size={size} parts={parts} quantity={quantity} /> : null}
     </div>

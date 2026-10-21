@@ -86,7 +86,7 @@ export function Dim({ id, x1, y1, x2, y2, offset, label, strong, fontSize = 13 }
   )
 }
 
-export function Legend({ items }: { items: { kind: 'cut' | 'score' | 'hatch' | 'fill'; label: string }[] }) {
+export function Legend({ items }: { items: { kind: 'cut' | 'score' | 'hatch' | 'fill' | 'color'; label: string; color?: string }[] }) {
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-ink-3">
       {items.map((item) => (
@@ -99,6 +99,7 @@ export function Legend({ items }: { items: { kind: 'cut' | 'score' | 'hatch' | '
             {item.kind === 'hatch' ? (
               <rect x="1" y="1" width="20" height="8" fill="var(--draw-fill)" stroke="var(--line-strong)" />
             ) : null}
+            {item.kind === 'color' ? <rect x="1" y="1" width="20" height="8" rx="2" fill={item.color} stroke="var(--line-strong)" /> : null}
             {item.kind === 'fill' ? (
               <rect x="1" y="1" width="20" height="8" rx="2" fill="var(--accent-soft)" stroke="var(--accent)" />
             ) : null}

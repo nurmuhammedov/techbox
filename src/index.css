@@ -84,10 +84,16 @@
   --draw-score: var(--accent);
   --draw-dim: var(--ink-3);
   --draw-fill: var(--sunken);
-  --draw-long: #bfdbfe;
-  --draw-short: #bbf7d0;
-  --draw-top: #fde68a;
-  --draw-bottom: #e9d5ff;
+  --draw-long: #e3eefe;
+  --draw-short: #e3f8ea;
+  --draw-top: #fdf4d3;
+  --draw-bottom: #f3ebfd;
+}
+.dark {
+  --draw-long: #1e2a3d;
+  --draw-short: #1b3326;
+  --draw-top: #3a3420;
+  --draw-bottom: #2e2540;
 }
 
 @theme inline {

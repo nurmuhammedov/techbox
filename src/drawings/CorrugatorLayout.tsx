@@ -1,6 +1,8 @@
 import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { Zoomable } from './Zoomable'
+
 import type { Plan } from '@/api/types'
 import { cn } from '@/lib/cn'
 import { num } from '@/lib/format'
@@ -15,7 +17,19 @@ const COLORS = ['#3b82f6', '#8b5cf6', '#f97316', '#10b981', '#ec4899', '#06b6d4'
  * Each order takes lanes (one per blank side by side); what is left is the pallet strip or offcut,
  * and the edge trim. A few blanks of each lane are drawn so the operator sees how they repeat.
  */
-export function CorrugatorLayout({ plan, className }: { plan: Plan; className?: string }) {
+export function CorrugatorLayout({ plan, className, zoom = true }: { plan: Plan; className?: string; zoom?: boolean }) {
+  const { t: tr } = useTranslation()
+  if (zoom) {
+    return (
+      <Zoomable title={tr('drawing.layout')} large={<CorrugatorLayout plan={plan} zoom={false} />}>
+        <CorrugatorLayout plan={plan} className={className} zoom={false} />
+      </Zoomable>
+    )
+  }
+  return <LayoutDrawing plan={plan} className={className} />
+}
+
+function LayoutDrawing({ plan, className }: { plan: Plan; className?: string }) {
   const { t } = useTranslation()
   const id = useId().replace(/:/g, '')
   const W = 1000

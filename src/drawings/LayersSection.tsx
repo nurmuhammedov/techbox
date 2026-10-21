@@ -65,22 +65,28 @@ export function LayersSection({ names, flutes, className }: { names: string[]; f
   )
 }
 
-/** "liner" or "flute" for one layer, clicked to switch. */
-export function LayerKind({ fluted, onToggle, blocked }: { fluted: boolean; onToggle?: () => void; blocked?: boolean }) {
+/** Liner or flute for one layer: both choices side by side, the chosen one filled. */
+export function LayerKind({ fluted, onChange }: { fluted: boolean; onChange?: (fluted: boolean) => void }) {
   const { t } = useTranslation()
-  return (
+  const option = (value: boolean, label: string) => (
     <button
       type="button"
-      onClick={onToggle}
-      disabled={!onToggle || blocked}
-      title={blocked ? t('layer.keep_one_flute') : t('layer.switch')}
+      role="radio"
+      aria-checked={fluted === value}
+      disabled={!onChange}
+      onClick={() => onChange?.(value)}
       className={cn(
-        'inline-flex h-6 items-center rounded-full border px-2 text-[11px] font-medium transition-colors disabled:cursor-default',
-        fluted ? 'border-warn/50 bg-warn-soft text-warn' : 'border-line-strong text-ink-2',
-        onToggle && !blocked && 'hover:border-accent',
+        'h-6 rounded px-2 text-[11px] font-medium whitespace-nowrap transition-colors',
+        fluted === value ? (value ? 'bg-warn text-white shadow-card' : 'bg-accent text-on-accent shadow-card') : 'text-ink-3 hover:text-ink',
       )}
     >
-      {fluted ? t('plan.flute') : t('plan.liner')}
+      {label}
     </button>
+  )
+  return (
+    <span role="radiogroup" className="inline-flex shrink-0 gap-0.5 rounded-md border border-line-strong bg-sunken p-0.5">
+      {option(false, t('plan.liner'))}
+      {option(true, t('plan.flute'))}
+    </span>
   )
 }

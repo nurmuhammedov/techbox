@@ -627,6 +627,14 @@ const M: Record<string, [string, string, string]> = {
   'batch.priority_col': ['Muhimlik', 'Приоритет', 'Priority'],
   'stock.legend_click': ["Format ustiga bossangiz, pastda o'sha rulonlar chiqadi", 'Нажмите на формат, чтобы увидеть его рулоны ниже', 'Click a format to list its rolls below'],
   'stock.legend_low': ['Kam qoldi (sozlamadagi chegaradan past)', 'Мало (ниже порога в настройках)', 'Low (below the threshold in settings)'],
+  'layer.hint': ["Standart tartib qo'yildi. Har qatlam uchun tekis yoki to'lqinni o'zingiz tanlashingiz mumkin, ketma-ket bir nechta tekisni ham.", 'Задан обычный порядок. Для каждого слоя можно выбрать лайнер или гофру, в том числе несколько лайнеров подряд.', 'The usual order is set. Choose liner or flute for each layer, several liners in a row too.'],
+  'drawing.zoom': ['Kattalashtirish', 'Увеличить', 'Enlarge'],
+  'drawing.zoom_in': ['Yaqinlashtirish', 'Приблизить', 'Zoom in'],
+  'drawing.zoom_out': ['Uzoqlashtirish', 'Отдалить', 'Zoom out'],
+  'drawing.part_length': ['Uzunlik tomoni (L)', 'Сторона длины (L)', 'Length side (L)'],
+  'drawing.part_width': ['En tomoni (W)', 'Сторона ширины (W)', 'Width side (W)'],
+  'drawing.part_top': ['Tepa qopqoq', 'Верхний клапан', 'Top flap'],
+  'drawing.part_bottom': ['Pastki qopqoq', 'Нижний клапан', 'Bottom flap'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(

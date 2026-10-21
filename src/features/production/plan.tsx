@@ -25,7 +25,7 @@ import { NumberInput } from '@/ui/number-input'
 import { Card, Page } from '@/ui/page'
 
 import { sizeOf } from '../sales/orders'
-import { flutedLayers, toggleFlute } from '@/drawings/geometry'
+import { defaultFlutes, flutedLayers, setFlute } from '@/drawings/geometry'
 import { LayerKind } from '@/drawings/LayersSection'
 import { HoldsFlow } from '@/features/shape/ShapeEditor'
 
@@ -58,7 +58,7 @@ export function PlanPage() {
   const [lines, setLines] = useState<Line[]>([])
   const [format, setFormat] = useState<number | null>(null)
   const [layers, setLayers] = useState<number[]>([0, 0, 0])
-  const [flutes, setFlutes] = useState<number[]>([])
+  const [flutes, setFlutes] = useState<number[]>([1])
   const [usePallet, setUsePallet] = useState(false)
   const [pallet, setPallet] = useState<{ length: number | null; route: Stage[]; holds: Stage[]; deadline: string }>({ length: 1000, route: [], holds: [], deadline: '' })
   const [comment, setComment] = useState('')
@@ -110,7 +110,7 @@ export function PlanPage() {
 
   const payload = useMemo(
     () =>
-      format && layers.length >= 2 && layers.every(Boolean) && lines.length
+      format && layers.length >= 1 && layers.every(Boolean) && lines.length
         ? {
             format,
             layers,
@@ -243,28 +243,24 @@ export function PlanPage() {
                       value={String(layers.length || 3) as '2'}
                       onChange={(v) => {
                         const n = Number(v)
-                        setFlutes([])
+                        setFlutes(defaultFlutes(n))
                         setLayers((ls) => {
                           const out = [...ls]
                           while (out.length < n) out.push(out[out.length - 2] ?? 0)
                           return out.slice(0, n)
                         })
                       }}
-                      options={['2', '3', '4', '5', '6', '7'].map((x) => ({ value: x as '2', label: x }))}
+                      options={['1', '2', '3', '4', '5', '6', '7'].map((x) => ({ value: x as '2', label: x }))}
                     /></div>
                   </div>
                   <div className="grid gap-2 sm:grid-cols-2">
                     {layers.map((l, i) => (
                       <div key={i} className="flex items-center gap-2">
-                        <span className="flex w-24 shrink-0 items-center gap-1 text-xs text-ink-3">
+                        <span className="flex shrink-0 items-center gap-1.5 text-xs text-ink-3">
                           {i + 1}.
                           <LayerKind
                             fluted={flutedLayers(layers.length, flutes).includes(i)}
-                            blocked={toggleFlute(layers.length, flutes, i) === null}
-                            onToggle={() => {
-                              const next = toggleFlute(layers.length, flutes, i)
-                              if (next) setFlutes(next)
-                            }}
+                            onChange={(fluted) => setFlutes(setFlute(layers.length, flutes, i, fluted))}
                           />
                         </span>
                         <Select value={l ? String(l) : ''} onChange={(v) => setLayers((ls) => ls.map((x, j) => (j === i ? Number(v) : x)))} options={materials.map((m) => ({ value: String(m.id), label: `${m.name} · ${m.gsm}` }))} placeholder={t('common.select')} />
