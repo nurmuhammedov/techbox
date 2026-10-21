@@ -75,7 +75,7 @@ export const NAVIGATION: NavGroup[] = [
         to: '/production/semi',
         label: 'menu.semi',
         icon: PackageOpen,
-        perms: ['production.board', 'production.plan'],
+        perms: ['production.board', 'production.plan', 'production.release'],
       },
       {
         to: '/production/stock',
@@ -169,5 +169,6 @@ export function homeFor(can: (...codes: string[]) => boolean, roleHome?: string 
 export function isActive(item: NavItem, all: NavItem[], pathname: string) {
   if (pathname === item.to) return true
   if (!pathname.startsWith(`${item.to}/`)) return false
-  return !all.some((other) => other !== item && other.to.startsWith(`${item.to}/`) && pathname.startsWith(other.to))
+  // A section's own page (e.g. /production) lights up only on itself, not on every page under it.
+  return !all.some((other) => other !== item && other.to.startsWith(`${item.to}/`))
 }

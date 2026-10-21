@@ -17,7 +17,7 @@ export const STAGE_TONE: Record<Stage, string> = {
 
 const ORDER_TONE: Record<OrderStatus, Tone> = { new: 'info', planned: 'accent', in_production: 'warn', done: 'ok', cancelled: 'neutral' }
 const BATCH_TONE: Record<BatchStatus, Tone> = { draft: 'warn', ready: 'info', in_work: 'accent', done: 'ok', cancelled: 'neutral' }
-const ITEM_TONE: Record<ItemState, Tone> = { waiting: 'info', in_work: 'warn', done: 'ok', cancelled: 'neutral' }
+const ITEM_TONE: Record<ItemState, Tone> = { waiting: 'info', held: 'warn', in_work: 'accent', done: 'ok', cancelled: 'neutral' }
 
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
   const { t } = useTranslation()
@@ -46,7 +46,7 @@ export function StageBadge({ stage }: { stage: Stage | null }) {
 }
 
 /** The stages an item goes through, done ones ticked, the current one highlighted. */
-export function RouteSteps({ route, step, compact }: { route: Stage[]; step: number; compact?: boolean }) {
+export function RouteSteps({ route, step, compact, holds = [] }: { route: Stage[]; step: number; compact?: boolean; holds?: Stage[] }) {
   const { t } = useTranslation()
   const all = [...route, 'store' as const]
   return (
@@ -58,6 +58,16 @@ export function RouteSteps({ route, step, compact }: { route: Stage[]; step: num
         return (
           <li key={s} className="flex items-center">
             {i > 0 ? <span className={cn('h-px w-3', done || current ? 'bg-accent' : 'bg-line-strong')} /> : null}
+            {i > 0 && holds.includes(all[i - 1] as Stage) ? (
+              <>
+                <Tooltip content={t('ymo.title')}>
+                  <span className={cn('inline-flex h-5 items-center rounded border px-1 text-[10px] font-semibold', done || current ? 'border-warn bg-warn-soft text-warn' : 'border-dashed border-line-strong text-ink-3')}>
+                    {t('ymo.short')}
+                  </span>
+                </Tooltip>
+                <span className={cn('h-px w-3', done || current ? 'bg-accent' : 'bg-line-strong')} />
+              </>
+            ) : null}
             <Tooltip content={s === 'store' ? t('stage.finished') : t(`stage.${s}`)}>
               <span
                 className={cn(

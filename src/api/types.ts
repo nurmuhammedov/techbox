@@ -45,6 +45,8 @@ export interface Shape {
   sheet_width: number | null
   layers: number[]
   route: Stage[]
+  /** Stages after which the goods go to the semi-finished warehouse before the next one. */
+  holds: Stage[]
   l0: number | null
   l1: number | null
   l2: number | null
@@ -83,7 +85,7 @@ export interface Order extends Shape {
   created_at: string
 }
 
-export type ItemState = 'waiting' | 'in_work' | 'done' | 'cancelled'
+export type ItemState = 'waiting' | 'held' | 'in_work' | 'done' | 'cancelled'
 
 export interface StageRun {
   id: number
@@ -112,6 +114,8 @@ export interface WorkItem {
   width: number | null
   length: number | null
   route: Stage[]
+  holds: Stage[]
+  held_at: string | null
   step: number
   stage: Stage | null
   next_stage: Stage | null

@@ -34,6 +34,7 @@ const P = {
   Item: page(production, 'ItemDetailPage'),
   Sell: page(production, 'SellPage'),
   Split: page(production, 'SplitPage'),
+  Dispatch: page(production, 'DispatchPage'),
   Return: page(production, 'ReturnPage'),
   Work: page(work, 'StageWorkPage'),
   ItemFinish: page(work, 'ItemFinishPage'),
@@ -117,11 +118,12 @@ export default function App() {
           {r('production/plan/:id', ['production.plan'], <P.Plan />)}
           {r('production/batches', ['production.plan', 'production.board', 'inventory.allocate'], <P.Batches />)}
           {r('production/batches/:id', ['production.plan', 'production.board', 'inventory.allocate', 'production.gofra'], <P.Batch />)}
-          {r('production/semi', ['production.board', 'production.plan'], <P.Semi />)}
+          {r('production/semi', ['production.board', 'production.plan', 'production.release'], <P.Semi />)}
           {r('production/stock', ['production.board', 'sales.manage', 'production.plan'], <P.Finished />)}
-          {r('production/items/:id', [...STAGES, 'sales.manage', 'orders.view', 'orders.view_all'], <P.Item />)}
+          {r('production/items/:id', [...STAGES, 'sales.manage', 'orders.view', 'orders.view_all', 'production.release'], <P.Item />)}
           {r('production/items/:id/sell', ['sales.manage'], <P.Sell />)}
-          {r('production/items/:id/split', ['production.plan'], <P.Split />)}
+          {r('production/items/:id/split', ['production.release', 'production.plan'], <P.Split />)}
+          {r('production/items/:id/dispatch', ['production.release', 'production.plan'], <P.Dispatch />)}
           {r('sales/orders', ORDERS, <P.Orders />)}
           {r('sales/orders/new', ['orders.manage'], <P.OrderForm />)}
           {r('sales/orders/:id', ORDERS, <P.Order />)}

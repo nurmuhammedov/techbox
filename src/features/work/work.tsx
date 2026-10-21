@@ -68,7 +68,6 @@ export function ItemCard({ item, children }: { item: WorkItem; children?: ReactN
           <p className="truncate text-base font-semibold">{item.name}</p>
           <p className="truncate text-xs text-ink-3"><span className="font-code">{item.number}</span> · {item.customer_name ?? t('item.kind.pallet')} · {item.size}</p>
         </div>
-        {item.logo ? <Picture src={item.logo} alt="" className="size-11 shrink-0 rounded-md border border-line object-contain p-0.5" /> : null}
       </div>
       <div className="grid grid-cols-3 gap-2 rounded-md bg-sunken p-2.5 text-center">
         <div>
@@ -84,7 +83,13 @@ export function ItemCard({ item, children }: { item: WorkItem; children?: ReactN
           <div className="text-sm"><Deadline value={item.deadline} /></div>
         </div>
       </div>
-      <RouteSteps route={item.route} step={item.step} compact />
+      {item.logo && item.stage !== 'gofra' ? (
+        <div className="flex items-center gap-3 rounded-md border border-warn/40 bg-warn-soft p-2.5">
+          <Picture src={item.logo} alt="" className="h-20 w-28 shrink-0 rounded border border-line bg-surface object-contain p-1" />
+          <p className="text-[13px] font-medium text-warn">{t('ymo.stick_label')}</p>
+        </div>
+      ) : null}
+      <RouteSteps route={item.route} step={item.step} holds={item.holds} compact />
       {item.note ? <p className="rounded-md bg-warn-soft px-2.5 py-1.5 text-xs text-warn">{item.note}</p> : null}
       {item.shape ? (
         <DrawingToggle>

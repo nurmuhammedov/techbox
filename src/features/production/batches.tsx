@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowLeftRight, Banknote, ListChecks, Pencil, Printer, Scissors, X } from 'lucide-react'
+import { ArrowLeftRight, Banknote, ListChecks, PackageOpen, Pencil, Printer, Scissors, Send, X } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router-dom'
@@ -12,6 +12,7 @@ import { CorrugatorLayout } from '@/drawings/CorrugatorLayout'
 import { ShapeView } from '@/drawings/ShapeView'
 import { BatchStatusBadge, Deadline, ItemStateBadge, RouteSteps, StageBadge } from '@/kit/badges'
 import { RemoteCombo } from '@/kit/fields'
+import { ImageField } from '@/kit/ImageField'
 import { useListState } from '@/kit/list-state'
 import { FormFooter, ResourceList } from '@/kit/resource'
 import { cn } from '@/lib/cn'
@@ -205,13 +206,15 @@ export function SemiStockPage() {
   const navigate = useNavigate()
   const state = useListState()
   const stage = state.filter('stage') ?? 'all'
+  const where = state.filter('state') ?? 'all'
   const columns: ColumnDef<WorkItem, unknown>[] = [
     { id: 'name', header: t('name'), cell: ({ row }) => <div><p className="font-medium">{row.original.name}</p><p className="text-xs text-ink-3"><span className="font-code">{row.original.number}</span> · {row.original.size}</p></div>, meta: { fixed: true, export: (r: WorkItem) => r.name } },
     { id: 'customer', header: t('customer'), cell: ({ row }) => row.original.customer_name ?? '—', meta: { export: (r: WorkItem) => r.customer_name } },
     { id: 'qty', header: t('qty'), cell: ({ row }) => <b className="tabular">{num(row.original.qty)}</b>, meta: { className: 'text-right', sortKey: 'qty', export: (r: WorkItem) => r.qty } },
     { id: 'stage', header: t('semi.waits_for'), cell: ({ row }) => <StageBadge stage={row.original.stage} />, meta: { export: (r: WorkItem) => (r.stage ? t(`stage.${r.stage}`) : '') } },
     { id: 'state', header: t('status'), cell: ({ row }) => <ItemStateBadge state={row.original.state} /> },
-    { id: 'route', header: t('semi.route'), cell: ({ row }) => <RouteSteps route={row.original.route} step={row.original.step} /> },
+    { id: 'route', header: t('semi.route'), cell: ({ row }) => <RouteSteps route={row.original.route} step={row.original.step} holds={row.original.holds} /> },
+    { id: 'held', header: t('ymo.since'), cell: ({ row }) => (row.original.held_at ? <span className="tabular text-xs">{dateTime(row.original.held_at)}</span> : '—') },
     { id: 'deadline', header: t('deadline'), cell: ({ row }) => <Deadline value={row.original.deadline} />, meta: { sortKey: 'deadline' } },
   ]
   return (
@@ -220,11 +223,14 @@ export function SemiStockPage() {
       url="/production/items"
       base="/production/items"
       columns={columns}
-      params={{ semi: 1, stage: stage === 'all' ? undefined : stage }}
+      params={{ semi: 1, stage: stage === 'all' ? undefined : stage, state__in: where === 'held' ? 'held' : where === 'queue' ? 'waiting,in_work' : undefined }}
       defaultSort="deadline"
       defaultOrder="asc"
       onRowOpen={(i) => navigate(`/production/items/${i.id}`)}
       filters={{
+        state: (
+          <FilterSelect value={where} onChange={(v) => state.set({ state: v === 'all' ? undefined : v })} options={[{ value: 'all', label: t('all') }, { value: 'held', label: t('ymo.in_store') }, { value: 'queue', label: t('ymo.in_queue') }]} />
+        ),
         stage: (
           <FilterSelect value={stage} onChange={(v) => state.set({ stage: v === 'all' ? undefined : v })} options={[{ value: 'all', label: t('all') }, ...['fleksa', 'tikish', 'yelimlash'].map((s) => ({ value: s, label: t(`stage.${s}`) }))]} />
         ),
@@ -238,8 +244,23 @@ export function ItemDetailPage() {
   const { id } = useParams()
   const { can } = useAuth()
   const navigate = useNavigate()
+  const confirm = useConfirm()
+  const qc = useQueryClient()
   const { data: i } = useQuery({ queryKey: ['items', 'one', id], queryFn: () => api.get<WorkItem>(`/production/items/${id}`) })
   if (!i) return <Page title="…" flow><LoadingCards rows={3} /></Page>
+  const keeper = can('production.release', 'production.plan')
+
+  const hold = async () => {
+    if (!(await confirm({ title: t('ymo.hold_confirm'), description: t('ymo.hold_body'), confirmLabel: t('ymo.hold') }))) return
+    try {
+      await api.post(`/production/items/${i.id}/hold`)
+      ok(t('ymo.held'))
+      await qc.invalidateQueries({ queryKey: ['items'] })
+    } catch (e) {
+      fail(e)
+    }
+  }
+
   return (
     <Page
       title={i.name}
@@ -247,7 +268,9 @@ export function ItemDetailPage() {
       flow
       actions={
         <>
-          {i.state === 'waiting' && i.step > 0 && can('production.plan') ? <Button onClick={() => navigate(`/production/items/${i.id}/split`)}><Scissors />{t('item.split')}</Button> : null}
+          {(i.state === 'waiting' || i.state === 'held') && i.step > 0 && keeper ? <Button onClick={() => navigate(`/production/items/${i.id}/split`)}><Scissors />{t('item.split')}</Button> : null}
+          {i.state === 'waiting' && i.step > 0 && keeper ? <Button onClick={() => void hold()}><PackageOpen />{t('ymo.hold')}</Button> : null}
+          {i.state === 'held' && keeper ? <Button variant="primary" onClick={() => navigate(`/production/items/${i.id}/dispatch`)}><Send />{t('ymo.dispatch')}</Button> : null}
           {i.available_qty > 0 && can('sales.manage') ? <Button variant="primary" onClick={() => navigate(`/production/items/${i.id}/sell`)}><Banknote />{t('sale.sell')}</Button> : null}
         </>
       }
@@ -259,7 +282,12 @@ export function ItemDetailPage() {
               <StageBadge stage={i.stage} />
               <ItemStateBadge state={i.state} />
             </div>
-            <RouteSteps route={i.route} step={i.step} />
+            <RouteSteps route={i.route} step={i.step} holds={i.holds} />
+            {i.state === 'held' ? (
+              <p className="mt-3 rounded-md bg-warn-soft px-3 py-2 text-xs text-warn">
+                {t('ymo.waiting_since', { date: dateTime(i.held_at), stage: t(`stage.${i.stage}`) })}
+              </p>
+            ) : null}
             <dl className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 text-[13px]">
               <Row label={t('size')} value={<span className="tabular">{i.size}</span>} />
               <Row label={t('qty')} value={<span className="tabular">{num(i.qty)} / {num(i.planned_qty)}</span>} />
@@ -271,6 +299,12 @@ export function ItemDetailPage() {
               {i.operator_name ? <Row label={t('operator')} value={i.operator_name} /> : null}
               {i.note ? <Row label={t('note')} value={i.note} /> : null}
             </dl>
+            {i.logo ? (
+              <div className="mt-4">
+                <p className="mb-1.5 text-xs font-medium text-ink-2">{t('ymo.label')}</p>
+                <img src={i.logo} alt="" className="max-h-40 rounded-md border border-line object-contain p-1" />
+              </div>
+            ) : null}
           </Card>
           <Card title={t('item.history')}>
             {!i.runs?.length ? <p className="text-[13px] text-ink-3">{t('item.no_runs')}</p> : null}
@@ -373,6 +407,7 @@ export function SplitPage() {
   const [qty, setQty] = useState<number | null>(null)
   const [route, setRoute] = useState<Stage[] | null>(null)
   const [note, setNote] = useState('')
+  const [logo, setLogo] = useState<File | null | undefined>(undefined)
   const [busy, setBusy] = useState(false)
   if (!i) return <Page title="…" flow><LoadingCards rows={2} /></Page>
   const rest = route ?? (i.route.slice(i.step) as Stage[])
@@ -382,7 +417,12 @@ export function SplitPage() {
     if (!qty) return
     setBusy(true)
     try {
-      const child = await api.post<WorkItem>(`/production/items/${i.id}/split`, { qty, route: rest, note })
+      const body = new FormData()
+      body.append('qty', String(qty))
+      rest.forEach((s) => body.append('route', s))
+      body.append('note', note)
+      if (logo) body.append('logo', logo)
+      const child = await api.post<WorkItem>(`/production/items/${i.id}/split`, body)
       ok(t('item.split_done'))
       navigate(`/production/items/${child.id}`)
     } catch (e) {
@@ -409,10 +449,63 @@ export function SplitPage() {
                 ))}
               </div>
             </div>
+            <Field label={t('ymo.label')} hint={t('ymo.label_hint')}>{(fid) => <ImageField id={fid} current={i.logo} value={logo} onChange={setLogo} />}</Field>
             <Field label={t('note')}>{(fid) => <Input id={fid} value={note} onChange={(e) => setNote(e.target.value)} />}</Field>
           </div>
         </Card>
         <FormFooter busy={busy} onCancel={() => navigate(-1)} label={t('item.split')} />
+      </Form>
+    </Page>
+  )
+}
+
+export function DispatchPage() {
+  const { t } = useTranslation()
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const qc = useQueryClient()
+  const { data: i } = useQuery({ queryKey: ['items', 'one', id], queryFn: () => api.get<WorkItem>(`/production/items/${id}`) })
+  const [qty, setQty] = useState<number | null>(null)
+  const [logo, setLogo] = useState<File | null | undefined>(undefined)
+  const [note, setNote] = useState('')
+  const [busy, setBusy] = useState(false)
+  if (!i) return <Page title="…" flow><LoadingCards rows={2} /></Page>
+  const counted = qty ?? i.qty
+  const short = i.qty - counted
+
+  const submit = async () => {
+    setBusy(true)
+    try {
+      const body = new FormData()
+      body.append('qty', String(counted))
+      body.append('note', note)
+      if (logo) body.append('logo', logo)
+      await api.post(`/production/items/${i.id}/dispatch`, body)
+      ok(t('ymo.dispatched', { stage: t(`stage.${i.stage}`) }))
+      await qc.invalidateQueries({ queryKey: ['items'] })
+      navigate(`/production/items/${i.id}`)
+    } catch (e) {
+      fail(e)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <Page title={`${t('ymo.dispatch')}: ${i.name}`} note={i.number} flow width="narrow">
+      <Form onSubmit={submit}>
+        <Card title={t('ymo.count')}>
+          <p className="mb-4 text-[13px] text-ink-2">{t('ymo.count_hint', { stage: t(`stage.${i.stage}`) })}</p>
+          <div className="grid gap-3.5">
+            <Field label={t('ymo.counted')} required hint={t('ymo.expected', { n: num(i.qty) })}>
+              {(fid) => <NumberInput id={fid} value={qty ?? i.qty} onChange={setQty} max={i.qty} suffix={t('pcs')} />}
+            </Field>
+            {short > 0 ? <p className="rounded-md bg-warn-soft px-3 py-2 text-xs text-warn">{t('ymo.shortage', { n: num(short) })}</p> : null}
+            <Field label={t('ymo.label')} hint={t('ymo.label_hint')}>{(fid) => <ImageField id={fid} current={i.logo} value={logo} onChange={setLogo} />}</Field>
+            <Field label={t('note')}>{(fid) => <Input id={fid} value={note} onChange={(e) => setNote(e.target.value)} />}</Field>
+          </div>
+        </Card>
+        <FormFooter busy={busy} onCancel={() => navigate(-1)} label={t('ymo.dispatch_to', { stage: t(`stage.${i.stage}`) })} />
       </Form>
     </Page>
   )

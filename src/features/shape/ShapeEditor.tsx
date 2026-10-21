@@ -1,4 +1,5 @@
-import { Check } from 'lucide-react'
+import { Check, Warehouse } from 'lucide-react'
+import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { MaterialType, Shape, Stage } from '@/api/types'
@@ -7,6 +8,7 @@ import { BoxBlank } from '@/drawings/BoxBlank'
 import { DEFAULT_JOINT, suggestedScores, type ScoreKey } from '@/drawings/geometry'
 import { LayersSection } from '@/drawings/LayersSection'
 import { SheetDrawing } from '@/drawings/SimpleSheets'
+import { STAGE_TONE } from '@/kit/badges'
 import { RemoteCombo, useOptions } from '@/kit/fields'
 import { cn } from '@/lib/cn'
 import { Button } from '@/ui/button'
@@ -25,6 +27,7 @@ export const EMPTY_SHAPE: Shape = {
   sheet_width: null,
   layers: [0, 0, 0],
   route: ['gofra', 'fleksa'],
+  holds: [],
   l0: null,
   l1: null,
   l2: null,
@@ -69,7 +72,8 @@ export function ShapeEditor({
       if (stage === 'yelimlash') route = route.filter((s) => s !== 'tikish')
       route.push(stage)
     }
-    onChange({ route: ['gofra', ...EXTRA.filter((s) => route.includes(s))] })
+    const next: Stage[] = ['gofra', ...EXTRA.filter((s) => route.includes(s))]
+    onChange({ route: next, holds: (value.holds ?? []).filter((s) => next.slice(0, -1).includes(s)) })
   }
 
   const resetScores = () => onChange({ l0: null, l1: null, l2: null, l3: null, l4: null, l5: null })
@@ -209,6 +213,45 @@ export function ShapeEditor({
           </span>
         </div>
         <p className="mt-2 text-xs text-ink-3">{t('shape.route_hint')}</p>
+        <div className="mt-4 border-t border-line pt-4">
+          <p className="text-[13px] font-medium">{t('ymo.flow')}</p>
+          <p className="mt-0.5 text-xs text-ink-3">{t('ymo.flow_hint')}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            {value.route.map((stage, i) => {
+              const last = i === value.route.length - 1
+              const held = (value.holds ?? []).includes(stage)
+              return (
+                <Fragment key={stage}>
+                  <span className="inline-flex h-8 items-center gap-1.5 rounded-md bg-sunken px-2.5 text-[13px] font-medium">
+                    <span className={cn('size-2 rounded-full', STAGE_TONE[stage])} />
+                    {t(`stage.${stage}`)}
+                  </span>
+                  <span className="text-ink-3">→</span>
+                  {last ? null : (
+                    <>
+                      <button
+                        type="button"
+                        aria-pressed={held}
+                        title={t('ymo.toggle', { stage: t(`stage.${stage}`) })}
+                        onClick={() => onChange({ holds: held ? value.holds.filter((s) => s !== stage) : [...(value.holds ?? []), stage] })}
+                        className={cn(
+                          'inline-flex h-8 items-center gap-1 rounded-md border px-2 text-xs font-semibold transition-colors',
+                          held ? 'border-warn bg-warn-soft text-warn' : 'border-dashed border-line-strong text-ink-3 hover:border-warn hover:text-warn',
+                        )}
+                      >
+                        <Warehouse className="size-3.5" />
+                        {held ? t('ymo.short') : `+ ${t('ymo.short')}`}
+                      </button>
+                      <span className="text-ink-3">→</span>
+                    </>
+                  )}
+                </Fragment>
+              )
+            })}
+            <span className="inline-flex h-8 items-center rounded-md border border-dashed border-line-strong px-2.5 text-[13px] text-ink-3">{t('stage.short.store')}</span>
+          </div>
+          {errors.holds ? <p className="mt-1 text-xs text-bad">{errors.holds}</p> : null}
+        </div>
         {errors.route ? <p className="mt-1 text-xs text-bad">{errors.route}</p> : null}
       </Card>
     </fieldset>
