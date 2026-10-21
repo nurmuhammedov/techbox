@@ -133,15 +133,6 @@ function LayoutDrawing({ plan, className }: { plan: Plan; className?: string }) 
           </g>
         ) : null}
         <rect x={x0} y={trimY} width={x1 - x0} height={trimH} fill="var(--bad-soft)" stroke="var(--bad)" strokeWidth="0.8" />
-        {/* the run goes on past what is drawn: the right end fades out */}
-        <defs>
-          <linearGradient id={`${id}-fade`} x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0" stopColor="var(--surface)" stopOpacity="0" />
-            <stop offset="1" stopColor="var(--surface)" stopOpacity="0.95" />
-          </linearGradient>
-        </defs>
-        <rect x={x1 - 70} y={top} width={70} height={h} fill={`url(#${id}-fade)`} />
-        <text x={x1 - 8} y={top + h / 2} dy="0.35em" textAnchor="end" fontSize="18" fontWeight={700} fill="var(--ink-3)">…</text>
         <Dim id={id} x1={x1} y1={trimY} x2={x1} y2={trimY + trimH} offset={70} label={fmt(plan.trim_mm)} fontSize={11} />
         <Dim id={id} x1={x0} y1={top} x2={x0} y2={top + h} offset={-34} label={`${fmt(plan.format_mm)}`} fontSize={13} />
         <g>
