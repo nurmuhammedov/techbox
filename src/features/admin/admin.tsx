@@ -2,6 +2,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import i18n from '@/i18n'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { api, ApiError } from '@/api/client'
@@ -182,7 +184,7 @@ const REF: RefSection[] = [
   { key: 'materials', url: '/catalog/materials', columns: [{ key: 'name', title: 'name' }, { key: 'seller_name', title: 'material.seller_name' }, { key: 'gsm', title: 'material.gsm', render: (r) => `${r.gsm} g/m²` }], fields: [{ name: 'name', label: 'name', required: true }, { name: 'seller_name', label: 'material.seller_name', span: 6 }, { name: 'gsm', label: 'material.gsm', type: 'number', suffix: 'g/m²', required: true, span: 6 }] },
   { key: 'suppliers', url: '/catalog/suppliers', columns: [{ key: 'name', title: 'name' }, { key: 'phone', title: 'phone' }], fields: [{ name: 'name', label: 'name', required: true }, { name: 'phone', label: 'phone', type: 'phone' }] },
   { key: 'countries', url: '/catalog/countries', columns: [{ key: 'name', title: 'name' }], fields: [{ name: 'name', label: 'name', required: true }] },
-  { key: 'warehouses', url: '/inventory/warehouses', columns: [{ key: 'name', title: 'name' }, { key: 'kind', title: 'type' }, { key: 'area', title: 'warehouse.area', render: (r) => (r.area ? `${r.area} m²` : '—') }, { key: 'address', title: 'hr.address' }], fields: [{ name: 'name', label: 'name', required: true }, { name: 'kind', label: 'type', type: 'segments', options: [{ value: 'raw', label: 'warehouse.raw' }, { value: 'semi', label: 'warehouse.semi' }, { value: 'finished', label: 'warehouse.finished' }] }, { name: 'area', label: 'warehouse.area', type: 'number', suffix: 'm²', span: 6 }, { name: 'address', label: 'hr.address', span: 6 }] },
+  { key: 'warehouses', url: '/inventory/warehouses', columns: [{ key: 'name', title: 'name' }, { key: 'holds', title: 'warehouse.holds', render: (r) => (['raw', 'semi', 'finished'].filter((k) => r[`holds_${k}`]).map((k) => i18n.t(`warehouse.${k}`)).join(', ') || '—') }, { key: 'area', title: 'warehouse.area', render: (r) => (r.area ? `${r.area} m²` : '—') }, { key: 'address', title: 'hr.address' }], fields: [{ name: 'name', label: 'name', required: true }, { name: 'holds_raw', label: 'warehouse.raw', type: 'switch', hint: 'warehouse.holds_hint', span: 4 }, { name: 'holds_semi', label: 'warehouse.semi', type: 'switch', span: 4 }, { name: 'holds_finished', label: 'warehouse.finished', type: 'switch', span: 4 }, { name: 'area', label: 'warehouse.area', type: 'number', suffix: 'm²', span: 6 }, { name: 'address', label: 'hr.address', span: 6 }] },
   { key: 'organizations', url: '/inventory/organizations', columns: [{ key: 'name', title: 'name' }], fields: [{ name: 'name', label: 'name', required: true }] },
   { key: 'service-types', url: '/inventory/service-types', columns: [{ key: 'name', title: 'name' }], fields: [{ name: 'name', label: 'name', required: true }] },
 ]
@@ -194,7 +196,7 @@ export function ReferencePage() {
   const columns: ColumnDef<Record<string, unknown> & { id: number }, unknown>[] = s.columns.map((c) => ({
     id: c.key,
     header: t(c.title),
-    cell: ({ row }) => (c.render ? c.render(row.original) : c.key === 'kind' ? t(`warehouse.${row.original.kind}`) : String(row.original[c.key] ?? '—')),
+    cell: ({ row }) => (c.render ? c.render(row.original) : String(row.original[c.key] ?? '—')),
   }))
   return (
     <Page title={t('menu.reference')}>
@@ -218,7 +220,7 @@ export function ReferencePage() {
 export function ReferenceFormPage() {
   const { section = 'formats' } = useParams()
   const s = REF.find((x) => x.key === section) ?? REF[0]
-  return <ResourceForm key={s.key} title={`ref.${s.key}`} url={s.url} back={`/admin/reference/${s.key}`} sections={[{ fields: s.fields }]} defaults={s.key === 'warehouses' ? { kind: 'raw' } : {}} />
+  return <ResourceForm key={s.key} title={`ref.${s.key}`} url={s.url} back={`/admin/reference/${s.key}`} sections={[{ fields: s.fields }]} defaults={s.key === 'warehouses' ? { holds_raw: true } : {}} />
 }
 
 export function SettingsPage() {

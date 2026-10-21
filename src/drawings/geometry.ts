@@ -20,7 +20,7 @@ export interface BoxSize {
 
 export type ScoreKey = 'l0' | 'l1' | 'l2' | 'l3' | 'l4' | 'l5'
 
-export const DEFAULT_JOINT = 40
+export const DEFAULT_JOINT = 70
 
 export interface Blank {
   l0: number

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import type { MaterialType, Shape, Stage } from '@/api/types'
 import { Box3D } from '@/drawings/Box3D'
 import { BoxBlank } from '@/drawings/BoxBlank'
-import { suggestedScores, type ScoreKey } from '@/drawings/geometry'
+import { DEFAULT_JOINT, suggestedScores, type ScoreKey } from '@/drawings/geometry'
 import { LayersSection } from '@/drawings/LayersSection'
 import { SheetDrawing } from '@/drawings/SimpleSheets'
 import { RemoteCombo, useOptions } from '@/kit/fields'
@@ -102,7 +102,7 @@ export function ShapeEditor({
                   {(id) => <NumberInput id={id} value={value.height} onChange={n('height')} suffix="mm" invalid={!!errors.height} />}
                 </Field>
                 <Field label={t('product.joint')} hint={t('shape.joint_hint')}>
-                  {(id) => <NumberInput id={id} value={value.joint} onChange={n('joint')} suffix="mm" placeholder="40" />}
+                  {(id) => <NumberInput id={id} value={value.joint} onChange={n('joint')} suffix="mm" placeholder={String(DEFAULT_JOINT)} />}
                 </Field>
               </div>
               <Box3D length={value.length} width={value.width} height={value.height} className="max-w-[200px] justify-self-center" />

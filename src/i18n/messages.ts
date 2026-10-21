@@ -579,6 +579,8 @@ const M: Record<string, [string, string, string]> = {
   'roll.section_what': ['Rulon', 'Рулон', 'Roll'],
   'roll.section_where': ['Ombor va narx', 'Склад и цена', 'Warehouse and price'],
   'waste.sale': ['Chiqindi sotuvi', 'Продажа отходов', 'Waste sale'],
+  'warehouse.holds': ['Saqlaydi', 'Хранит', 'Stores'],
+  'warehouse.holds_hint': ['Bir omborda bir nechta tur saqlanishi mumkin', 'Склад может хранить несколько видов', 'A warehouse may store several kinds'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(
