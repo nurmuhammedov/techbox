@@ -45,9 +45,9 @@ export function Box3D({
   const vbH = oy + (l + w) * s + 34
   return (
     <svg viewBox={`0 0 ${vbW} ${vbH}`} className={cn('w-full', empty && 'opacity-40', className)} role="img" aria-label={t('drawing.box3d')}>
-      <polygon points={[A2, B2, C2, D2].map(pt).join(' ')} fill="var(--accent-soft)" stroke="var(--draw-cut)" strokeWidth="1.4" />
-      <polygon points={[D, C, C2, D2].map(pt).join(' ')} fill="var(--draw-fill)" stroke="var(--draw-cut)" strokeWidth="1.4" />
-      <polygon points={[B, C, C2, B2].map(pt).join(' ')} fill="var(--surface)" stroke="var(--draw-cut)" strokeWidth="1.4" />
+      <polygon points={[A2, B2, C2, D2].map(pt).join(' ')} fill="var(--draw-top)" stroke="var(--draw-cut)" strokeWidth="1.4" />
+      <polygon points={[D, C, C2, D2].map(pt).join(' ')} fill="var(--draw-long)" stroke="var(--draw-cut)" strokeWidth="1.4" />
+      <polygon points={[B, C, C2, B2].map(pt).join(' ')} fill="var(--draw-short)" stroke="var(--draw-cut)" strokeWidth="1.4" />
       <line x1={(A2[0] + B2[0]) / 2} y1={(A2[1] + B2[1]) / 2} x2={(D2[0] + C2[0]) / 2} y2={(D2[1] + C2[1]) / 2} stroke="var(--draw-score)" strokeDasharray="4 3" />
       {logo ? (
         <image href={logo} x={(D[0] + C2[0]) / 2 - 18} y={(D[1] + C2[1]) / 2 - 12} width="36" height="24" preserveAspectRatio="xMidYMid meet" />

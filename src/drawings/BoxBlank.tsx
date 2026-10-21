@@ -102,12 +102,9 @@ export function BoxBlank({ size, onChange, className }: Props) {
             return (
               <g key={i}>
                 <rect x={a} y={yTop} width={z - a} height={yBody - yTop} fill={`url(#${id}-flute)`} />
-                <rect x={a} y={yTop} width={z - a} height={yBody - yTop} fill="var(--accent-soft)" opacity="0.35" />
-                <rect x={a + (i ? slot : 0)} y={y0} width={z - a - (i ? slot : 0) - (i < 3 ? slot : 0)} height={yTop - y0} fill="var(--draw-fill)" stroke="var(--draw-cut)" strokeWidth="1.6" />
-                <rect x={a + (i ? slot : 0)} y={yBody} width={z - a - (i ? slot : 0) - (i < 3 ? slot : 0)} height={yEnd - yBody} fill="var(--draw-fill)" stroke="var(--draw-cut)" strokeWidth="1.6" />
-                <text x={(a + z) / 2} y={(yTop + yBody) / 2} dy="0.35em" textAnchor="middle" fontSize={fs + 2} fill="var(--ink-3)" fontWeight={500}>
-                  {panels[i] >= Math.max(b.l1, b.l5) && b.l1 !== b.l5 ? t('drawing.side_long') : b.l1 === b.l5 ? t('drawing.side_equal') : t('drawing.side_short')}
-                </text>
+                <rect x={a} y={yTop} width={z - a} height={yBody - yTop} fill={panels[i] === b.l1 && i % 2 === 0 ? 'var(--draw-long)' : 'var(--draw-short)'} opacity="0.75" />
+                <rect x={a + (i ? slot : 0)} y={y0} width={z - a - (i ? slot : 0) - (i < 3 ? slot : 0)} height={yTop - y0} fill="var(--draw-top)" stroke="var(--draw-cut)" strokeWidth="1.6" />
+                <rect x={a + (i ? slot : 0)} y={yBody} width={z - a - (i ? slot : 0) - (i < 3 ? slot : 0)} height={yEnd - yBody} fill="var(--draw-bottom)" stroke="var(--draw-cut)" strokeWidth="1.6" />
               </g>
             )
           })}
