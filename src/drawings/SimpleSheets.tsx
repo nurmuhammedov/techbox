@@ -78,7 +78,7 @@ export function PartsDrawing({
   })
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      <svg viewBox={`0 0 ${W} ${h + 100}`} className="w-full" role="img" aria-label={t('drawing.parts')}>
+      <svg viewBox={`-30 0 ${W + 30} ${h + 100}`} className="w-full" role="img" aria-label={t('drawing.parts')}>
         <Defs id={id} />
         {pieces.map(({ i, start }) => {
           const jw = b.joint * k
@@ -94,7 +94,7 @@ export function PartsDrawing({
             </g>
           )
         })}
-        <Dim id={id} x1={30} y1={y} x2={30} y2={y + h} offset={-14} label="" />
+        <Dim id={id} x1={30} y1={y} x2={30} y2={y + h} offset={-14} label={fmt(b.l0)} fontSize={13} />
       </svg>
       <p className="tabular text-xs text-ink-2">
         {t('drawing.parts_line', { parts, each: fmt(b.along), pieces: Math.ceil(quantity * parts).toLocaleString('ru-RU') })}

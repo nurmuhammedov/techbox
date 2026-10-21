@@ -70,7 +70,7 @@ export function BoardPage() {
                   </span>
                   <span className="tabular text-[11px] text-ink-3">{t('board.week', { qty: num(week?.qty ?? 0) })}</span>
                 </header>
-                <div className="flex flex-col gap-2 p-2">
+                <div className="flex max-h-[min(70vh,640px)] flex-col gap-2 overflow-y-auto overscroll-contain p-2">
                   {items.map((item) => (
                     <button
                       key={item.id}

@@ -499,7 +499,7 @@ const M: Record<string, [string, string, string]> = {
   'drawing.layout': ['Gofra lentasida joylashuv', 'Раскладка на гофроагрегате', 'Corrugator layout'],
   'drawing.machine_direction': ["Mashina yo'nalishi", 'Направление машины', 'Machine direction'],
   'drawing.parts': ["Bo'laklar", 'Части', 'Parts'],
-  'drawing.parts_line': ["Bo'lish chizig'i", 'Линия деления', 'Split line'],
+  'drawing.parts_line': ["Quti {{parts}} bo'lakdan: har biri {{each}} mm · jami {{pieces}} list", 'Коробка из {{parts}} частей: каждая {{each}} мм · всего {{pieces}} листов', 'Box in {{parts}} parts: {{each}} mm each · {{pieces}} sheets in all'],
   'drawing.sheet': ['List', 'Лист', 'Sheet'],
   'drawing.l0': ["Zagotovka bo'yi (jami)", 'Высота заготовки (всего)', 'Total blank height'],
   'drawing.l1': ['Uzun panel', 'Длинная панель', 'Long panel'],
