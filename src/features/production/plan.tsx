@@ -27,7 +27,7 @@ import { Card, Page } from '@/ui/page'
 
 import { sizeOf } from '../sales/orders'
 import { defaultFlutes, flutedLayers, setFlute } from '@/drawings/geometry'
-import { LayerKind } from '@/drawings/LayersSection'
+import { LayerKind, LayersSection } from '@/drawings/LayersSection'
 import { HoldsFlow } from '@/features/shape/ShapeEditor'
 
 interface Line {
@@ -213,6 +213,7 @@ export function PlanPage() {
                       </span>
                       <span className="mt-1 flex items-center gap-2 text-xs">
                         <Badge>{o.layers.length} {t('plan.ply')}</Badge>
+                        {lines.length && o.layers.length && (o.layers.length !== layers.length || flutedLayers(o.layers.length, o.flutes).join() !== flutedLayers(layers.length, flutes).join()) ? <Badge tone="bad">{t('plan.other_board')}</Badge> : null}
                         <Deadline value={o.deadline} />
                       </span>
                     </span>
@@ -228,6 +229,7 @@ export function PlanPage() {
           <div className="flex min-w-0 flex-col gap-4">
             <Card title={t('plan.material')}>
               <div className="grid gap-4 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
+                <div className="flex flex-col gap-4">
                 <Field label={t('format')}>
                   {(fid) => (
                     <div className="flex gap-2">
@@ -239,6 +241,10 @@ export function PlanPage() {
                     </div>
                   )}
                 </Field>
+                <div className="rounded-lg border border-line bg-sunken/50 p-3">
+                  <LayersSection names={layers.map((id) => materials.find((m) => m.id === id)?.name ?? '')} flutes={flutes} />
+                </div>
+                </div>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-xs font-medium text-ink-2">{t('layers')}</span>

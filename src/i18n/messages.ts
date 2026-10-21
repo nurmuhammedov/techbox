@@ -665,6 +665,7 @@ const M: Record<string, [string, string, string]> = {
   'work.qty_in': ['Kirdi', 'Вход', 'In'],
   'work.qty_out': ['Chiqdi', 'Выход', 'Out'],
   'work.loss': ['Brak', 'Брак', 'Defects'],
+  'plan.other_board': ['Boshqa karton', 'Другой картон', 'Other board'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(
