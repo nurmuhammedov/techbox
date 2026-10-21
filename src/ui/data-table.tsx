@@ -304,6 +304,9 @@ export function DataTable<T>({
                         className={cn(
                           'h-8.5 bg-sunken px-3 text-left text-[11px] font-semibold tracking-[0.04em] whitespace-nowrap text-ink-3 uppercase',
                           !underHeader.size && 'border-b border-line',
+                          // A header sits over its numbers: right-aligned columns get right-aligned titles.
+                          meta?.className?.includes('text-right') && 'text-right',
+                          meta?.className?.includes('text-center') && 'text-center',
                           meta?.headerClassName,
                         )}
                       >
@@ -375,6 +378,7 @@ export function DataTable<T>({
                           key={cell.id}
                           className={cn(
                             'border-b border-line px-3 py-2 align-middle',
+                            cell.column.columnDef.meta?.className?.includes('text-right') && 'whitespace-nowrap',
                             cell.column.columnDef.meta?.className,
                           )}
                         >
