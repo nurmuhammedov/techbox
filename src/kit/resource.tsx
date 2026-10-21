@@ -324,7 +324,7 @@ export function ResourceForm({ title, url, sections, back, defaults = {}, aside,
 export function FormFooter({ busy, onCancel, label }: { busy?: boolean; onCancel: () => void; label?: string }) {
   const { t } = useTranslation()
   return (
-    <div className="sticky bottom-0 z-10 -mx-4 mt-2 flex items-center justify-between gap-2 border-t border-line bg-surface/95 px-4 py-3 backdrop-blur">
+    <div className="sticky bottom-3 z-10 mt-2 flex items-center justify-between gap-2 rounded-lg border border-line bg-surface/95 px-3 py-2.5 shadow-float backdrop-blur">
       <Button variant="ghost" onClick={onCancel}>
         <ArrowLeft />
         {t('back')}

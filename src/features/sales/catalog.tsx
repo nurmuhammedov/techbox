@@ -24,6 +24,7 @@ import { Input } from '@/ui/input'
 import { Card, Page } from '@/ui/page'
 
 import { sizeOf } from './orders'
+import { Picture } from '@/kit/Picture'
 
 // ───────────────────────────── Customers ─────────────────────────────
 
@@ -91,7 +92,7 @@ export function ProductsPage() {
         <div className="flex items-center gap-3">
           <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-line bg-sunken">
             {row.original.logo ? (
-              <img src={row.original.logo} alt="" className="size-full object-contain p-0.5" />
+              <Picture src={row.original.logo} alt="" className="size-full object-contain p-0.5" />
             ) : row.original.kind === 'box' ? (
               <Box3D length={row.original.length} width={row.original.width} height={row.original.height} className="size-9" />
             ) : null}

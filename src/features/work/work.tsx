@@ -22,6 +22,7 @@ import { Form } from '@/ui/form'
 import { Textarea } from '@/ui/input'
 import { NumberInput } from '@/ui/number-input'
 import { Card, Page } from '@/ui/page'
+import { Picture } from '@/kit/Picture'
 
 interface Queue<T> {
   waiting: T[]
@@ -67,7 +68,7 @@ export function ItemCard({ item, children }: { item: WorkItem; children?: ReactN
           <p className="truncate text-base font-semibold">{item.name}</p>
           <p className="truncate text-xs text-ink-3"><span className="font-code">{item.number}</span> · {item.customer_name ?? t('item.kind.pallet')} · {item.size}</p>
         </div>
-        {item.logo ? <img src={item.logo} alt="" className="size-11 shrink-0 rounded-md border border-line object-contain p-0.5" /> : null}
+        {item.logo ? <Picture src={item.logo} alt="" className="size-11 shrink-0 rounded-md border border-line object-contain p-0.5" /> : null}
       </div>
       <div className="grid grid-cols-3 gap-2 rounded-md bg-sunken p-2.5 text-center">
         <div>

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/cn'
 import { Button } from '@/ui/button'
 import { Dialog } from '@/ui/dialog'
+import { Picture } from './Picture'
 
 const MAX_MB = 8
 
@@ -66,7 +67,7 @@ export function ImageField({ id, current, value, onChange, invalid, className }:
       />
       {shown ? (
         <div className="group relative flex h-40 items-center justify-center overflow-hidden rounded-lg border border-line bg-sunken">
-          <img src={shown} alt="" className="max-h-full max-w-full object-contain p-2" />
+          <Picture src={shown} alt="" className="max-h-full max-w-full object-contain p-2" />
           <div className="absolute inset-x-0 bottom-0 flex justify-center gap-1.5 bg-gradient-to-t from-black/50 to-transparent p-2 opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100">
             <Button size="sm" onClick={() => setZoom(true)}>
               <ZoomIn />
@@ -113,7 +114,7 @@ export function ImageField({ id, current, value, onChange, invalid, className }:
       {error ? <p className="text-xs text-bad">{error}</p> : null}
       {zoom && shown ? (
         <Dialog open onClose={() => setZoom(false)} title={t('image.view')} size="lg">
-          <img src={shown} alt="" className="mx-auto max-h-[70vh] object-contain" />
+          <Picture src={shown} alt="" className="mx-auto max-h-[70vh] object-contain" />
         </Dialog>
       ) : null}
     </div>

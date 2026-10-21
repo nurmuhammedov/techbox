@@ -27,6 +27,7 @@ import { Form } from '@/ui/form'
 import { Input, Textarea } from '@/ui/input'
 import { NumberInput } from '@/ui/number-input'
 import { Card, Page } from '@/ui/page'
+import { Picture } from '@/kit/Picture'
 
 const STATUS_GROUPS: Record<string, string | undefined> = {
   active: 'new,planned,in_production',
@@ -356,7 +357,7 @@ export function OrderDetailPage() {
               <Row label={t('created')} value={`${dateTime(o.created_at)} · ${o.created_by_name ?? ''}`} />
               {o.comment ? <Row label={t('note')} value={o.comment} /> : null}
             </dl>
-            {o.logo ? <img src={o.logo} alt="" className="mt-3 max-h-24 rounded-md border border-line object-contain p-1" /> : null}
+            {o.logo ? <Picture src={o.logo} alt="" className="mt-3 max-h-24 rounded-md border border-line object-contain p-1" /> : null}
           </Card>
           <Card title={t('order.progress')}>
             {o.progress.length ? (
