@@ -612,7 +612,7 @@ const M: Record<string, [string, string, string]> = {
   'ymo.in_store': ['Omborda (chiqarish kutilmoqda)', 'На складе (ждёт выдачи)', 'In the warehouse'],
   'ymo.in_queue': ["Navbatda (to'g'ridan-to'g'ri)", 'В очереди (напрямую)', 'In a queue (straight on)'],
   'item.state.held': ['Omborda', 'На складе', 'In warehouse'],
-  'settings.hold_warn_days': ['Yarim tayyor omborda necha kundan ortiq tursa ogohlantirish', 'Предупреждать, если на складе полуфабрикатов дольше, дней', 'Warn when goods stay in the semi-finished warehouse longer than, days'],
+  'settings.hold_warn_days': ['YMO ogohlantirishi, kun', 'Предупреждение по YMO, дней', 'YMO warning, days'],
   'shape.ply_unusual': ["{{n}} qatlamda bir tomonda ikkita tekis qatlam ustma-ust yopishtiriladi. Qaysi qatlam to'lqin ekanini yorliqni bosib o'zgartirish mumkin.", 'При {{n}} слоях с одной стороны два лайнера склеены вместе. Какой слой гофра — меняется нажатием на метку.', 'With {{n}} layers two liners are glued together on one side. Click a layer tag to change which one is fluted.'],
   'item.loss': ["Brak: {{n}} dona · {{pct}}% · {{m2}} m²", 'Брак: {{n}} шт · {{pct}}% · {{m2}} м²', 'Defects: {{n}} pcs · {{pct}}% · {{m2}} m²'],
   'customer.orders': ['Mijoz buyurtmalari', 'Заказы клиента', 'Customer orders'],
@@ -621,6 +621,12 @@ const M: Record<string, [string, string, string]> = {
   'customer.bought': ['Sotib olgan', 'Куплено', 'Bought'],
   'layer.switch': ["Bosib tekis / to'lqin almashtiring", 'Нажмите, чтобы сменить лайнер / гофру', 'Click to switch liner / flute'],
   'layer.keep_one_flute': ["Kamida bitta to'lqin qatlam bo'lishi kerak", 'Нужен хотя бы один гофрослой', 'At least one flute is needed'],
+  'users.password_hint': ["Kamida 6 belgi. Tahrirlashda bo'sh qoldirsangiz o'zgarmaydi", 'Не менее 6 символов. При редактировании пустое поле не меняет пароль', 'At least 6 characters. Leave empty when editing to keep it'],
+  'users.employee_hint': ['Akkaunt qaysi xodimga tegishli', 'Какому сотруднику принадлежит аккаунт', 'The employee this account belongs to'],
+  'users.superuser_hint': ["Barcha ruxsatlar, rolga qaramay. Faqat ishonchli shaxsga bering", 'Все права независимо от роли. Только доверенным лицам', 'Every permission regardless of role. Trusted people only'],
+  'batch.priority_col': ['Muhimlik', 'Приоритет', 'Priority'],
+  'stock.legend_click': ["Format ustiga bossangiz, pastda o'sha rulonlar chiqadi", 'Нажмите на формат, чтобы увидеть его рулоны ниже', 'Click a format to list its rolls below'],
+  'stock.legend_low': ['Kam qoldi (sozlamadagi chegaradan past)', 'Мало (ниже порога в настройках)', 'Low (below the threshold in settings)'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(

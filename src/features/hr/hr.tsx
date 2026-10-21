@@ -184,7 +184,7 @@ export function IncidentsPage() {
   const { t } = useTranslation()
   const [tab, setTab] = useTab('list')
   const columns: ColumnDef<Incident, unknown>[] = [
-    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular">{dateTime(row.original.happened_at)}</span>, meta: { sortKey: 'happened_at' } },
+    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{dateTime(row.original.happened_at)}</span>, meta: { sortKey: 'happened_at' } },
     { id: 'employee', header: t('hr.employee'), cell: ({ row }) => row.original.employee_name ?? '—' },
     { id: 'type', header: t('type'), cell: ({ row }) => (row.original.type_name ? <Badge tone="warn">{row.original.type_name}</Badge> : '—') },
     { id: 'description', header: t('description'), cell: ({ row }) => <span className="line-clamp-2">{row.original.description}</span> },

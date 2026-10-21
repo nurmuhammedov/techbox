@@ -31,7 +31,7 @@ export function UsersPage() {
     { id: 'name', header: t('hr.full_name'), cell: ({ row }) => row.original.display_name, meta: { export: (r: User) => r.display_name } },
     { id: 'role', header: t('role'), cell: ({ row }) => (row.original.is_superuser ? <Badge tone="bad">{t('admin')}</Badge> : row.original.role_name ? <Badge tone="accent">{row.original.role_name}</Badge> : '—') },
     { id: 'status', header: t('status'), cell: ({ row }) => <Badge tone={row.original.is_active ? 'ok' : 'neutral'}>{row.original.is_active ? t('active') : t('inactive')}</Badge> },
-    { id: 'last', header: t('users.last_login'), cell: ({ row }) => <span className="tabular text-xs text-ink-3">{dateTime(row.original.last_login)}</span> },
+    { id: 'last', header: t('users.last_login'), cell: ({ row }) => <span className="tabular whitespace-nowrap text-xs text-ink-3">{dateTime(row.original.last_login)}</span> },
   ]
   return <ResourceList<User> title="menu.users" url="/core/users" base="/admin/users" columns={columns} writePermission="users.manage" defaultSort="username" />
 }
@@ -267,7 +267,7 @@ interface AuditRow { id: number; user_name: string | null; action: string; entit
 export function AuditPage() {
   const { t } = useTranslation()
   const columns: ColumnDef<AuditRow, unknown>[] = [
-    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at', export: (r: AuditRow) => r.created_at } },
+    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at', export: (r: AuditRow) => r.created_at } },
     { id: 'user', header: t('created_by'), cell: ({ row }) => row.original.user_name ?? '—', meta: { export: (r: AuditRow) => r.user_name } },
     { id: 'action', header: t('audit.action'), cell: ({ row }) => <Badge tone="accent">{t(`audit.${row.original.action}`, { defaultValue: row.original.action })}</Badge>, meta: { export: (r: AuditRow) => r.action } },
     { id: 'entity', header: t('audit.entity'), cell: ({ row }) => <span className="font-code text-xs">{row.original.entity.split('.').pop()} #{row.original.entity_id}</span> },

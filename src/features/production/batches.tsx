@@ -44,12 +44,12 @@ export function BatchesPage() {
   const columns: ColumnDef<Batch, unknown>[] = [
     { id: 'number', header: '№', cell: ({ row }) => <span className="font-code font-medium">{row.original.number}</span>, meta: { sortKey: 'created_at', fixed: true, export: (r: Batch) => r.number } },
     { id: 'status', header: t('status'), cell: ({ row }) => <BatchStatusBadge status={row.original.status} />, meta: { export: (r: Batch) => t(`batch.status.${r.status}`) } },
-    { id: 'format', header: t('format'), cell: ({ row }) => <span className="tabular">{row.original.format_mm} mm</span>, meta: { export: (r: Batch) => r.format_mm } },
+    { id: 'format', header: t('format'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{row.original.format_mm} mm</span>, meta: { export: (r: Batch) => r.format_mm } },
     { id: 'orders', header: t('menu.orders'), cell: ({ row }) => <span className="line-clamp-2">{row.original.lines.map((l) => l.order_name).join(', ')}</span> },
     { id: 'run', header: t('plan.run'), cell: ({ row }) => <span className="tabular">{row.original.plan?.run_m ? `${num(row.original.plan.run_m, 0)} m` : '—'}</span>, meta: { className: 'text-right' } },
-    { id: 'priority', header: '', cell: ({ row }) => (row.original.priority ? <Badge tone="bad">{t('batch.priority')}</Badge> : null) },
-    { id: 'operator', header: t('operator'), cell: ({ row }) => row.original.operator_name ?? '—' },
-    { id: 'created', header: t('created'), cell: ({ row }) => <span className="tabular text-xs text-ink-3">{dateTime(row.original.created_at)}</span> },
+    { id: 'priority', header: t('batch.priority_col'), cell: ({ row }) => (row.original.priority ? <Badge tone="bad">{t('batch.priority')}</Badge> : null) },
+    { id: 'operator', header: t('operator'), cell: ({ row }) => <span className="block max-w-40 truncate whitespace-nowrap" title={row.original.operator_name ?? undefined}>{row.original.operator_name ?? '—'}</span> },
+    { id: 'created', header: t('created'), cell: ({ row }) => <span className="tabular whitespace-nowrap text-xs text-ink-3">{dateTime(row.original.created_at)}</span> },
   ]
   return (
     <ResourceList<Batch>
@@ -180,7 +180,7 @@ export function FinishedStockPage() {
     { id: 'customer', header: t('customer'), cell: ({ row }) => row.original.customer_name ?? '—', meta: { export: (r: WorkItem) => r.customer_name } },
     { id: 'available', header: t('finished.available'), cell: ({ row }) => <b className="tabular text-ok">{num(row.original.available_qty)}</b>, meta: { className: 'text-right', export: (r: WorkItem) => r.available_qty } },
     { id: 'sold', header: t('finished.sold'), cell: ({ row }) => <span className="tabular">{num(row.original.sold_qty)}</span>, meta: { className: 'text-right', export: (r: WorkItem) => r.sold_qty } },
-    { id: 'finished', header: t('batch.finished'), cell: ({ row }) => <span className="tabular text-xs">{dateTime(row.original.finished_at)}</span>, meta: { sortKey: 'finished_at' } },
+    { id: 'finished', header: t('batch.finished'), cell: ({ row }) => <span className="tabular whitespace-nowrap text-xs">{dateTime(row.original.finished_at)}</span>, meta: { sortKey: 'finished_at' } },
   ]
   return (
     <ResourceList<WorkItem>
@@ -215,7 +215,7 @@ export function SemiStockPage() {
     { id: 'stage', header: t('semi.waits_for'), cell: ({ row }) => <StageBadge stage={row.original.stage} />, meta: { export: (r: WorkItem) => (r.stage ? t(`stage.${r.stage}`) : '') } },
     { id: 'state', header: t('status'), cell: ({ row }) => <ItemStateBadge state={row.original.state} /> },
     { id: 'route', header: t('semi.route'), cell: ({ row }) => <RouteSteps route={row.original.route} step={row.original.step} holds={row.original.holds} /> },
-    { id: 'held', header: t('ymo.since'), cell: ({ row }) => (row.original.held_at ? <span className="tabular text-xs">{dateTime(row.original.held_at)}</span> : '—') },
+    { id: 'held', header: t('ymo.since'), cell: ({ row }) => (row.original.held_at ? <span className="tabular whitespace-nowrap text-xs">{dateTime(row.original.held_at)}</span> : '—') },
     { id: 'deadline', header: t('deadline'), cell: ({ row }) => <Deadline value={row.original.deadline} />, meta: { sortKey: 'deadline' } },
   ]
   return (

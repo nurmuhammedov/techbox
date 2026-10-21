@@ -120,8 +120,8 @@ export function OrdersPage() {
       header: t('created'),
       cell: ({ row }) => (
         <div className="text-xs">
-          <p className="tabular">{dateTime(row.original.created_at)}</p>
-          <p className="text-ink-3">{row.original.created_by_name}</p>
+          <p className="tabular whitespace-nowrap">{dateTime(row.original.created_at)}</p>
+          <p className="max-w-40 truncate text-ink-3">{row.original.created_by_name}</p>
         </div>
       ),
     },

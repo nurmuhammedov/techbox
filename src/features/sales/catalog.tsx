@@ -37,7 +37,7 @@ export function CustomersPage() {
     { id: 'phone', header: t('phone'), cell: ({ row }) => <span className="tabular">{formatPhone(row.original.phone)}</span>, meta: { export: (r: Customer) => r.phone } },
     { id: 'tin', header: t('customer.tin'), cell: ({ row }) => <span className="tabular">{row.original.tin || '—'}</span>, meta: { export: (r: Customer) => r.tin } },
     { id: 'orders', header: t('menu.orders'), cell: ({ row }) => <span className="tabular">{num(row.original.orders_count)}</span>, meta: { sortKey: 'orders_count', className: 'text-right', export: (r: Customer) => r.orders_count } },
-    { id: 'created', header: t('created'), cell: ({ row }) => <span className="tabular text-xs text-ink-3">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at' } },
+    { id: 'created', header: t('created'), cell: ({ row }) => <span className="tabular whitespace-nowrap text-xs text-ink-3">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at' } },
   ]
   return (
     <ResourceList<Customer>
@@ -278,7 +278,7 @@ export function SalesPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const columns: ColumnDef<Sale, unknown>[] = [
-    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at', export: (r: Sale) => r.created_at } },
+    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at', export: (r: Sale) => r.created_at } },
     { id: 'customer', header: t('customer'), cell: ({ row }) => <span className="font-medium">{row.original.customer_name}</span>, meta: { export: (r: Sale) => r.customer_name } },
     { id: 'item', header: t('name'), cell: ({ row }) => <div><p>{row.original.item_name}</p><p className="font-code text-xs text-ink-3">{row.original.item_number}</p></div>, meta: { export: (r: Sale) => r.item_name } },
     { id: 'qty', header: t('qty'), cell: ({ row }) => <span className="tabular">{num(row.original.quantity)}</span>, meta: { className: 'text-right', export: (r: Sale) => r.quantity } },

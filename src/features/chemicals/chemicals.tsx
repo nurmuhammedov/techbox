@@ -33,7 +33,7 @@ export function ChemicalsPage() {
   const navigate = useNavigate()
   const [tab, setTab] = useTab('lots')
   const lots: ColumnDef<Lot, unknown>[] = [
-    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at' } },
+    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at' } },
     { id: 'type', header: t('chem.type'), cell: ({ row }) => <span className="font-medium">{row.original.type_name}</span>, meta: { export: (r: Lot) => r.type_name } },
     { id: 'amount', header: t('chem.amount'), cell: ({ row }) => <span className="tabular">{num(row.original.amount, 1)} {row.original.unit}</span>, meta: { className: 'text-right' } },
     { id: 'remaining', header: t('chem.remaining'), cell: ({ row }) => <b className={`tabular ${row.original.remaining > 0 ? 'text-ok' : 'text-ink-3'}`}>{num(row.original.remaining, 1)} {row.original.unit}</b>, meta: { className: 'text-right' } },
@@ -41,7 +41,7 @@ export function ChemicalsPage() {
     { id: 'supplier', header: t('roll.supplier'), cell: ({ row }) => row.original.supplier || '—' },
   ]
   const glue: ColumnDef<GlueRow, unknown>[] = [
-    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular">{dateTime(row.original.created_at)}</span> },
+    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{dateTime(row.original.created_at)}</span> },
     { id: 'type', header: t('glue.type'), cell: ({ row }) => <span className="font-medium">{row.original.type_name} <span className="font-code text-xs text-ink-3">#{row.original.id}</span></span> },
     { id: 'amount', header: t('glue.amount'), cell: ({ row }) => <span className="tabular">{num(row.original.amount, 1)}</span>, meta: { className: 'text-right' } },
     { id: 'remaining', header: t('chem.remaining'), cell: ({ row }) => <b className="tabular">{num(row.original.remaining, 1)}</b>, meta: { className: 'text-right' } },

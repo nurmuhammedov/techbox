@@ -83,8 +83,9 @@ export function Page({ title, note, actions, children, width = 'full', flow = fa
       setSlots((current) => (current[kind] === element ? current : { ...current, [kind]: element })),
     [],
   )
-  // Tabs are the screen's first row; a list's filters come after them.
-  const slot = slots.tabs ?? slots.toolbar
+  // Tabs are the screen's first row; a list's filters come after them. A page of stacked cards keeps its
+  // actions at the top, where they are seen, rather than in a list toolbar further down.
+  const slot = flow ? null : (slots.tabs ?? slots.toolbar)
   const bar = useMemo(() => ({ slot, claim }), [slot, claim])
 
   useEffect(() => {

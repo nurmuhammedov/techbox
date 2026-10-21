@@ -69,11 +69,15 @@ export function StockPage() {
     { id: 'price', header: t('roll.price'), cell: ({ row }) => <span className="tabular">{money(row.original.price_per_kg)}</span>, meta: { className: 'text-right', export: (r: Roll) => r.price_per_kg } },
     { id: 'supplier', header: t('roll.supplier'), cell: ({ row }) => [row.original.supplier_name, row.original.country_name].filter(Boolean).join(' · ') || '—' },
     { id: 'warehouse', header: t('warehouse'), cell: ({ row }) => row.original.warehouse_name },
-    { id: 'received', header: t('roll.received'), cell: ({ row }) => <span className="tabular text-xs text-ink-3">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at' } },
+    { id: 'received', header: t('roll.received'), cell: ({ row }) => <span className="tabular whitespace-nowrap text-xs text-ink-3">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at' } },
   ]
 
   return (
     <Page title={t('menu.stock')} flow actions={<Button variant="primary" onClick={() => navigate('/inventory/rolls/new')}><Plus />{t('roll.receive')}</Button>}>
+      <p className="-mt-1 mb-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-3">
+        <span>{t('stock.legend_click')}</span>
+        <span className="inline-flex items-center gap-1.5"><span className="size-3 rounded border border-bad/40 bg-bad-soft" />{t('stock.legend_low')}</span>
+      </p>
       <div className="mb-4 grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
         {Object.entries(byMaterial).map(([name, rows]) => (
           <Card key={name}>
@@ -144,7 +148,7 @@ function MovementsDialog({ roll, onClose }: { roll: Roll; onClose: () => void })
         <tbody>
           {data?.map((m) => (
             <tr key={m.id} className="border-b border-line last:border-0">
-              <td className="tabular py-1.5">{dateTime(m.created_at)}</td>
+              <td className="tabular whitespace-nowrap py-1.5">{dateTime(m.created_at)}</td>
               <td className="py-1.5">{t(`movement.${m.kind}`)}{m.note ? <span className="block text-xs text-ink-3">{m.note}</span> : null}</td>
               <td className="tabular py-1.5 text-right">{kg(m.weight)}</td>
               <td className="font-code py-1.5">{m.batch_number ?? '—'}</td>
@@ -358,7 +362,7 @@ interface Outlay { id: number; roll_label: string; weight: number; count: number
 export function OutlaysPage() {
   const { t } = useTranslation()
   const columns: ColumnDef<Outlay, unknown>[] = [
-    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular">{dateTime(row.original.created_at)}</span> },
+    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{dateTime(row.original.created_at)}</span> },
     { id: 'roll', header: t('roll'), cell: ({ row }) => row.original.roll_label, meta: { export: (r: Outlay) => r.roll_label } },
     { id: 'weight', header: t('weight'), cell: ({ row }) => <span className="tabular">{kg(row.original.weight)}</span>, meta: { className: 'text-right', export: (r: Outlay) => r.weight } },
     { id: 'count', header: t('qty'), cell: ({ row }) => <span className="tabular">{num(row.original.count)}</span>, meta: { className: 'text-right' } },
@@ -400,7 +404,7 @@ export function WastePage() {
   const navigate = useNavigate()
   const { data } = useQuery({ queryKey: ['waste', 'balance'], queryFn: () => api.get<{ collected: number; sold: number; balance: number }>('/inventory/waste/balance') })
   const columns: ColumnDef<WasteRow, unknown>[] = [
-    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular">{dateTime(row.original.created_at)}</span> },
+    { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{dateTime(row.original.created_at)}</span> },
     { id: 'kind', header: t('type'), cell: ({ row }) => <Badge tone={row.original.kind === 'sale' ? 'ok' : row.original.kind === 'in' ? 'info' : 'neutral'}>{t(`waste.kind.${row.original.kind}`)}</Badge> },
     { id: 'weight', header: t('weight'), cell: ({ row }) => <b className="tabular">{kg(row.original.weight)}</b>, meta: { className: 'text-right', export: (r: WasteRow) => r.weight } },
     { id: 'source', header: t('waste.source'), cell: ({ row }) => [row.original.stage && t(`stage.${row.original.stage}`, { defaultValue: row.original.stage }), row.original.batch_number, row.original.item_number].filter(Boolean).join(' · ') || '—' },

@@ -379,6 +379,8 @@ export function DataTable<T>({
                           className={cn(
                             'border-b border-line px-3 py-2 align-middle',
                             cell.column.columnDef.meta?.className?.includes('text-right') && 'whitespace-nowrap',
+                            // Text columns keep room to read; the main one more. Narrow screens scroll sideways instead.
+                            !cell.column.columnDef.meta?.className?.includes('text-right') && (cell.column.columnDef.meta?.fixed ? 'min-w-48' : 'min-w-28'),
                             cell.column.columnDef.meta?.className,
                           )}
                         >
