@@ -6,6 +6,18 @@ const backend = process.env.BACKEND_URL || 'http://localhost:8000'
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
+          mantine: ['@mantine/core', '@mantine/hooks', '@mantine/dates', '@mantine/notifications', '@mantine/modals'],
+          data: ['@tanstack/react-query', 'i18next', 'react-i18next', 'dayjs'],
+        },
+      },
+    },
+  },
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   server: {
     port: 3000,

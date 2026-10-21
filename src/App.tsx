@@ -1,29 +1,11 @@
 import { Center, Loader, Stack, Text, Title } from '@mantine/core'
-import { ReactNode } from 'react'
+import { lazy, ReactNode, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAuth } from '@/auth/AuthContext'
 import { homeFor } from '@/layout/menu'
 import { Shell } from '@/layout/Shell'
 import { RealtimeProvider } from '@/realtime/RealtimeProvider'
-import { Audit, Reference, Roles, Settings, Users } from '@/pages/admin/Admin'
-import Chemicals from '@/pages/chemicals/Chemicals'
-import Communal from '@/pages/communal/Communal'
-import { Attendance, Employees, Incidents, Safety } from '@/pages/hr/Hr'
-import { AllocateBatch, AllocateList } from '@/pages/inventory/Allocate'
-import { Outlays, Waste } from '@/pages/inventory/Other'
-import Stock from '@/pages/inventory/Stock'
-import Login from '@/pages/Login'
-import { BatchDetail, BatchList } from '@/pages/production/Batches'
-import Board from '@/pages/production/Board'
-import { FinishedStock, ItemDetail } from '@/pages/production/Items'
-import Plan from '@/pages/production/Plan'
-import { Notifications, Profile } from '@/pages/Profile'
-import Customers from '@/pages/sales/Customers'
-import Orders from '@/pages/sales/Orders'
-import Products from '@/pages/sales/Products'
-import Sales from '@/pages/sales/Sales'
-import StageWork from '@/pages/work/StageWork'
 
 function Guard({ perms, children }: { perms: string[]; children: ReactNode }) {
   const { can } = useAuth()
@@ -40,6 +22,37 @@ function Guard({ perms, children }: { perms: string[]; children: ReactNode }) {
   return <>{children}</>
 }
 
+const Audit = lazy(() => import('@/pages/admin/Admin').then((m) => ({ default: m.Audit })))
+const Reference = lazy(() => import('@/pages/admin/Admin').then((m) => ({ default: m.Reference })))
+const Roles = lazy(() => import('@/pages/admin/Admin').then((m) => ({ default: m.Roles })))
+const Settings = lazy(() => import('@/pages/admin/Admin').then((m) => ({ default: m.Settings })))
+const Users = lazy(() => import('@/pages/admin/Admin').then((m) => ({ default: m.Users })))
+const Chemicals = lazy(() => import('@/pages/chemicals/Chemicals'))
+const Communal = lazy(() => import('@/pages/communal/Communal'))
+const Attendance = lazy(() => import('@/pages/hr/Hr').then((m) => ({ default: m.Attendance })))
+const Employees = lazy(() => import('@/pages/hr/Hr').then((m) => ({ default: m.Employees })))
+const Incidents = lazy(() => import('@/pages/hr/Hr').then((m) => ({ default: m.Incidents })))
+const Safety = lazy(() => import('@/pages/hr/Hr').then((m) => ({ default: m.Safety })))
+const AllocateBatch = lazy(() => import('@/pages/inventory/Allocate').then((m) => ({ default: m.AllocateBatch })))
+const AllocateList = lazy(() => import('@/pages/inventory/Allocate').then((m) => ({ default: m.AllocateList })))
+const Outlays = lazy(() => import('@/pages/inventory/Other').then((m) => ({ default: m.Outlays })))
+const Waste = lazy(() => import('@/pages/inventory/Other').then((m) => ({ default: m.Waste })))
+const Stock = lazy(() => import('@/pages/inventory/Stock'))
+const Login = lazy(() => import('@/pages/Login'))
+const BatchDetail = lazy(() => import('@/pages/production/Batches').then((m) => ({ default: m.BatchDetail })))
+const BatchList = lazy(() => import('@/pages/production/Batches').then((m) => ({ default: m.BatchList })))
+const Board = lazy(() => import('@/pages/production/Board'))
+const FinishedStock = lazy(() => import('@/pages/production/Items').then((m) => ({ default: m.FinishedStock })))
+const ItemDetail = lazy(() => import('@/pages/production/Items').then((m) => ({ default: m.ItemDetail })))
+const Plan = lazy(() => import('@/pages/production/Plan'))
+const Notifications = lazy(() => import('@/pages/Profile').then((m) => ({ default: m.Notifications })))
+const Profile = lazy(() => import('@/pages/Profile').then((m) => ({ default: m.Profile })))
+const Customers = lazy(() => import('@/pages/sales/Customers'))
+const Orders = lazy(() => import('@/pages/sales/Orders'))
+const Products = lazy(() => import('@/pages/sales/Products'))
+const Sales = lazy(() => import('@/pages/sales/Sales'))
+const StageWork = lazy(() => import('@/pages/work/StageWork'))
+
 const STAGE_PERMS = ['production.gofra', 'production.fleksa', 'production.tikish', 'production.yelimlash', 'production.plan', 'production.board']
 
 export default function App() {
@@ -53,11 +66,15 @@ export default function App() {
   if (!user)
     return (
       <Routes>
-        <Route path="*" element={<Login />} />
+        <Route path="*" element={<Suspense fallback={null}><Login /></Suspense>} />
       </Routes>
     )
   const home = homeFor(can, user.role?.home)
-  const g = (perms: string[], el: ReactNode) => <Guard perms={perms}>{el}</Guard>
+  const g = (perms: string[], el: ReactNode) => (
+    <Guard perms={perms}>
+      <Suspense fallback={<Center h="40vh"><Loader /></Center>}>{el}</Suspense>
+    </Guard>
+  )
   return (
     <RealtimeProvider>
       <Routes>
@@ -91,8 +108,8 @@ export default function App() {
           <Route path="admin/reference" element={g(['catalog.manage', 'warehouses.manage'], <Reference />)} />
           <Route path="admin/settings" element={g(['settings.manage'], <Settings />)} />
           <Route path="admin/audit" element={g(['audit.view'], <Audit />)} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="notifications" element={<Notifications />} />
+          <Route path="profile" element={g([], <Profile />)} />
+          <Route path="notifications" element={g([], <Notifications />)} />
           <Route path="*" element={<Navigate to={home} replace />} />
         </Route>
       </Routes>
