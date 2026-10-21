@@ -513,7 +513,7 @@ const M: Record<string, [string, string, string]> = {
   'shape.joint_hint': ['Yelim/tikish qanoti, mm', 'Клеевой/сшивной клапан, мм', 'Glue/stitch joint, mm'],
   'shape.reset_scores': ['Avtomatikka qaytarish', 'Сбросить на авто', 'Reset to auto'],
   'shape.route_hint': ["Gofradan keyin qaysi bosqichlardan o'tadi", 'Какие этапы после гофры', 'Stages after the corrugator'],
-  'shape.suggested': ['Tavsiya: {{value}}', 'Рекомендуется: {{value}}', 'Suggested: {{value}}'],
+  'shape.suggested': ['Tavsiya: qopqoq {{l2}}, balandlik {{l3}}, jami L0 {{l0}} mm', 'Рекомендуется: клапан {{l2}}, высота {{l3}}, всего L0 {{l0}} мм', 'Suggested: flap {{l2}}, height {{l3}}, total L0 {{l0}} mm'],
   'batch.priority_hint': ["Yuqori bo'lsa navbatda oldinroq turadi", 'Чем выше, тем раньше в очереди', 'Higher goes earlier in the queue'],
   'chem.add_lot': ['Kimyo kirimi', 'Приход химии', 'Receive chemicals'],
   'glue.types': ['Yelim turlari', 'Виды клея', 'Glue types'],
@@ -582,6 +582,8 @@ const M: Record<string, [string, string, string]> = {
   'warehouse.holds': ['Saqlaydi', 'Хранит', 'Stores'],
   'warehouse.holds_hint': ['Bir omborda bir nechta tur saqlanishi mumkin', 'Склад может хранить несколько видов', 'A warehouse may store several kinds'],
   'drawing.enter_size': ["Chizma namuna. Qutining uzunligi, eni va balandligini kiriting", 'Это образец. Введите длину, ширину и высоту коробки', 'This is a sample. Enter the box length, width and height'],
+  'drawing.l0_mismatch': ["L0 ({{l0}}) qopqoqlar va balandlik yig'indisiga ({{sum}}) teng emas. Tekshiring", 'L0 ({{l0}}) не равно сумме клапанов и высоты ({{sum}}). Проверьте', 'L0 ({{l0}}) does not equal flaps plus height ({{sum}}). Please check'],
+  'drawing.side_equal': ['Yon tomoni', 'Боковая сторона', 'Side'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(

@@ -14,6 +14,9 @@ interface Props {
 }
 
 const W = 1000
+const MAX_H = 360
+/** The drawing never gets taller than this on screen, however wide the card is. */
+const MAX_SCREEN_H = 440
 const TEMPLATE = { length: 400, width: 300, height: 250, joint: null }
 const M = { left: 118, right: 24, top: 84, bottom: 70 }
 
@@ -29,14 +32,19 @@ export function BoxBlank({ size, onChange, className }: Props) {
   const b = empty ? blankOf({ ...TEMPLATE, joint: size.joint }) : real
   const editable = !!onChange
   const along = b.joint + 2 * (b.l1 + b.l5)
-  const scale = (W - M.left - M.right) / Math.max(along, 1)
-  const H = Math.max(b.l0 * scale, 120) + M.top + M.bottom
-  const ky = (b.l0 * scale) / Math.max(b.l0, 1)
-  const x0 = M.left
+  const flaps = b.l2 + b.l3 + b.l4
+  const across = Math.max(b.l0, flaps, 1)
+  const mismatch = !empty && b.l0 !== flaps
+  const room = W - M.left - M.right
+  const scale = Math.min(room / Math.max(along, 1), MAX_H / across)
+  const H = across * scale + M.top + M.bottom
+  const ky = scale
+  const x0 = M.left + (room - along * scale) / 2
   const y0 = M.top
   const yTop = y0 + b.l2 * ky
   const yBody = yTop + b.l3 * ky
   const yEnd = yBody + b.l4 * ky
+  const yL0 = y0 + b.l0 * ky
   const xj = x0 + b.joint * scale
   const panels = [b.l1, b.l5, b.l1, b.l5]
   const xs = panels.reduce<number[]>((acc, p) => [...acc, acc[acc.length - 1] + p * scale], [xj])
@@ -75,7 +83,7 @@ export function BoxBlank({ size, onChange, className }: Props) {
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      <div className="relative w-full" style={{ aspectRatio: `${W} / ${H}` }}>
+      <div className="relative mx-auto w-full" style={{ aspectRatio: `${W} / ${H}`, maxWidth: `${Math.round((MAX_SCREEN_H * W) / H)}px` }}>
         <svg viewBox={`0 0 ${W} ${H}`} className={cn('absolute inset-0 size-full', empty && 'opacity-45')} role="img" aria-label={t('drawing.blank')}>
           <Defs id={id} />
           {/* Glue flap: a trapezoid on the body height only. */}
@@ -96,7 +104,7 @@ export function BoxBlank({ size, onChange, className }: Props) {
                 <rect x={a + (i ? slot : 0)} y={y0} width={z - a - (i ? slot : 0) - (i < 3 ? slot : 0)} height={yTop - y0} fill="var(--draw-fill)" stroke="var(--draw-cut)" strokeWidth="1.6" />
                 <rect x={a + (i ? slot : 0)} y={yBody} width={z - a - (i ? slot : 0) - (i < 3 ? slot : 0)} height={yEnd - yBody} fill="var(--draw-fill)" stroke="var(--draw-cut)" strokeWidth="1.6" />
                 <text x={(a + z) / 2} y={(yTop + yBody) / 2} dy="0.35em" textAnchor="middle" fontSize={fs + 2} fill="var(--ink-3)" fontWeight={500}>
-                  {i % 2 === 0 ? t('drawing.side_long') : t('drawing.side_short')}
+                  {panels[i] >= Math.max(b.l1, b.l5) && b.l1 !== b.l5 ? t('drawing.side_long') : b.l1 === b.l5 ? t('drawing.side_equal') : t('drawing.side_short')}
                 </text>
               </g>
             )
@@ -121,14 +129,14 @@ export function BoxBlank({ size, onChange, className }: Props) {
           <Dim id={id} x1={x0} y1={y0} x2={x0} y2={yTop} offset={-30} label={label('l2')} strong={!b.auto.l2} fontSize={fs} />
           <Dim id={id} x1={x0} y1={yTop} x2={x0} y2={yBody} offset={-30} label={label('l3')} strong={!b.auto.l3} fontSize={fs} />
           <Dim id={id} x1={x0} y1={yBody} x2={x0} y2={yEnd} offset={-30} label={label('l4')} strong={!b.auto.l4} fontSize={fs} />
-          <Dim id={id} x1={x0} y1={y0} x2={x0} y2={yEnd} offset={-84} label={label('l0')} strong={!b.auto.l0} fontSize={fs} />
+          <Dim id={id} x1={x0} y1={y0} x2={x0} y2={yL0} offset={-84} label={label('l0')} strong={!b.auto.l0} fontSize={fs} />
         </svg>
         {field('l1', (xs[0] + xs[1]) / 2, y0 - 26)}
         {field('l5', (xs[1] + xs[2]) / 2, y0 - 26)}
         {field('l2', x0 - 30, (y0 + yTop) / 2, true)}
         {field('l3', x0 - 30, (yTop + yBody) / 2, true)}
         {field('l4', x0 - 30, (yBody + yEnd) / 2, true)}
-        {field('l0', x0 - 84, (y0 + yEnd) / 2, true)}
+        {field('l0', x0 - 84, (y0 + yL0) / 2, true)}
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Legend
@@ -138,7 +146,9 @@ export function BoxBlank({ size, onChange, className }: Props) {
             { kind: 'hatch', label: t('drawing.flap') },
           ]}
         />
-        {empty ? (
+        {mismatch ? (
+          <p className="text-xs text-bad">{t('drawing.l0_mismatch', { l0: fmt(b.l0), sum: fmt(flaps) })}</p>
+        ) : empty ? (
           <p className="text-xs text-warn">{t('drawing.enter_size')}</p>
         ) : (
           <p className="tabular text-xs text-ink-2">

@@ -78,7 +78,7 @@ export function Segments<T extends string>({ id, value, onChange, options, class
     <div
       id={id}
       role="radiogroup"
-      className={cn('flex h-8.5 w-full gap-0.5 rounded-md border border-line-strong bg-sunken p-0.5', className)}
+      className={cn('flex h-8.5 w-full min-w-fit gap-0.5 rounded-md border border-line-strong bg-sunken p-0.5', className)}
     >
       {options.map((option, index) => {
         const chosen = option.value === value
@@ -102,7 +102,7 @@ export function Segments<T extends string>({ id, value, onChange, options, class
               }
             }}
             className={cn(
-              'min-w-0 flex-1 truncate rounded px-2 text-[13px] transition-colors',
+              'flex-1 rounded px-3 text-[13px] whitespace-nowrap transition-colors',
               'focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent/40',
               chosen ? 'bg-surface font-medium text-ink shadow-card' : 'text-ink-2 hover:text-ink',
             )}
