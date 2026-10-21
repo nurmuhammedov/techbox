@@ -8,6 +8,8 @@ import { api } from '@/api/client'
 import { sequenceAsBatch, type Batch, type MaterialType, type Sequence, type Stage, type WorkItem } from '@/api/types'
 import { useAuth } from '@/auth/AuthContext'
 import { CorrugatorLayout } from '@/drawings/CorrugatorLayout'
+import { LayersSection } from '@/drawings/LayersSection'
+import { Peek } from '@/drawings/Peek'
 import { ShapeView } from '@/drawings/ShapeView'
 import { BatchStatusBadge, Deadline, RouteSteps, STAGE_TONE } from '@/kit/badges'
 import { RemoteCombo, useOptions } from '@/kit/fields'
@@ -257,7 +259,10 @@ function BatchCard({ batch, children }: { batch: Batch; children?: ReactNode }) 
         <span className="text-xs text-ink-3">{t('deadline')}: <Deadline value={earliest} /></span>
       </div>
       {batch.plan?.lines?.length ? <CorrugatorLayout plan={batch.plan} /> : <p className="text-[13px]">{t('plan.format')}: {batch.format_mm} mm</p>}
-      <p className="text-xs text-ink-2"><b>{t('layers')}:</b> {batch.layers.map(nameOf).join(' / ')}</p>
+      <div className="flex items-center gap-2">
+        <p className="min-w-0 flex-1 text-xs text-ink-2"><b>{t('layers')}:</b> {batch.layers.map(nameOf).join(' / ')}</p>
+        <Peek title={t('drawing.layers')} label={t('layers')}><LayersSection names={batch.layers.map(nameOf)} flutes={batch.flutes} /></Peek>
+      </div>
       <ul className="flex flex-col divide-y divide-line rounded-md border border-line">
         {batch.items.map((i) => (
           <li key={i.id} className="flex items-center justify-between gap-2 px-3 py-2">
@@ -265,7 +270,10 @@ function BatchCard({ batch, children }: { batch: Batch; children?: ReactNode }) 
               <p className="truncate text-[13px] font-medium">{i.name}</p>
               <p className="truncate text-xs text-ink-3"><span className="font-code">{i.number}</span> · {i.customer_name ?? t('item.kind.pallet')} · {i.size}</p>
             </div>
-            <b className="tabular text-[13px]">{num(i.planned_qty)}</b>
+            <span className="flex shrink-0 items-center gap-2">
+              {i.shape ? <Peek title={`${i.name} · ${i.size}`}><ShapeView shape={i.shape} quantity={i.planned_qty} logo={i.logo} /></Peek> : null}
+              <b className="tabular text-[13px]">{num(i.planned_qty)}</b>
+            </span>
           </li>
         ))}
       </ul>

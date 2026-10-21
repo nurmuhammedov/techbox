@@ -85,9 +85,9 @@ export function PartsDrawing({
           const pw = piece * k
           return (
             <g key={i}>
-              <path d={`M ${start + jw} ${y} L ${start} ${y + 8} L ${start} ${y + h - 8} L ${start + jw} ${y + h} Z`} fill="var(--draw-fill)" stroke="var(--draw-cut)" strokeWidth="1.4" />
-              <rect x={start + jw} y={y} width={pw} height={h} fill="var(--accent-soft)" stroke="var(--draw-cut)" strokeWidth="1.4" />
-              <text x={start + jw + pw / 2} y={y + h / 2} dy="0.35em" textAnchor="middle" fontSize="18" fontWeight={700} fill="var(--accent-ink)">
+              <rect x={start} y={y} width={pw} height={h} fill="var(--accent-soft)" stroke="var(--draw-cut)" strokeWidth="1.4" />
+              <path d={`M ${start + pw} ${y} L ${start + pw + jw} ${y + 8} L ${start + pw + jw} ${y + h - 8} L ${start + pw} ${y + h} Z`} fill="var(--draw-fill)" stroke="var(--draw-cut)" strokeWidth="1.4" />
+              <text x={start + pw / 2} y={y + h / 2} dy="0.35em" textAnchor="middle" fontSize="18" fontWeight={700} fill="var(--accent-ink)">
                 {i + 1}/{parts}
               </text>
               <Dim id={id} x1={start} y1={y + h} x2={start + jw + pw} y2={y + h} offset={26} label={fmt(b.along)} fontSize={13} />

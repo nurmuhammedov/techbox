@@ -657,6 +657,8 @@ const M: Record<string, [string, string, string]> = {
   'plan.drawing_show': ['Chizma', 'Чертёж', 'Drawing'],
   'plan.drawing_shown': ["Ko'rsatilmoqda", 'Показан', 'Shown'],
   'plan.drawing_of': ['Qaysi buyurtma chizmasi:', 'Чертёж какого заказа:', 'Drawing of:'],
+  'plan.pallet_count': ['{{n}} dona', '{{n}} шт', '{{n}} pcs'],
+  'drawing.peek': ["Chizmani ko'rish", 'Посмотреть чертёж', 'View drawing'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(

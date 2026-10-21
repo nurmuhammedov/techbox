@@ -10,6 +10,7 @@ import type { Batch, Sequence, Stage, WorkItem } from '@/api/types'
 import { useAuth } from '@/auth/AuthContext'
 import { CorrugatorLayout } from '@/drawings/CorrugatorLayout'
 import { blankOf } from '@/drawings/geometry'
+import { Peek } from '@/drawings/Peek'
 import { ShapeView } from '@/drawings/ShapeView'
 import { BatchStatusBadge, Deadline, ItemStateBadge, RouteSteps, StageBadge } from '@/kit/badges'
 import { RemoteCombo } from '@/kit/fields'
@@ -131,6 +132,7 @@ export function BatchDetailPage() {
                     <p className="text-xs text-ink-3"><span className="font-code">{i.number}</span> · {i.customer_name ?? t('item.kind.pallet')} · {i.size}</p>
                   </Link>
                   <div className="flex items-center gap-3">
+                    {i.shape ? <Peek title={`${i.name} · ${i.size}`}><ShapeView shape={i.shape} quantity={i.planned_qty} logo={i.logo} /></Peek> : null}
                     <RouteSteps route={i.route} step={i.step} compact />
                     <ItemStateBadge state={i.state} />
                     <span className="tabular w-28 text-right text-[13px]">{num(i.qty)} / {num(i.planned_qty)}</span>

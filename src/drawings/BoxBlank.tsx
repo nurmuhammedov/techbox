@@ -47,9 +47,9 @@ export function BoxBlank({ size, onChange, large, className }: Props) {
   const yBody = yTop + b.l3 * ky
   const yEnd = yBody + b.l4 * ky
   const yL0 = y0 + b.l0 * ky
-  const xj = x0 + b.joint * scale
+  const xEnd = x0 + along * scale
   const panels = [b.l1, b.l5, b.l1, b.l5]
-  const xs = panels.reduce<number[]>((acc, p) => [...acc, acc[acc.length - 1] + p * scale], [xj])
+  const xs = panels.reduce<number[]>((acc, p) => [...acc, acc[acc.length - 1] + p * scale], [x0])
   const slot = 3
   const fs = 13
 
@@ -92,7 +92,7 @@ export function BoxBlank({ size, onChange, large, className }: Props) {
           <Defs id={id} />
           {/* Glue flap: a trapezoid on the body height only. */}
           <path
-            d={`M ${xj} ${yTop} L ${x0} ${yTop + 12} L ${x0} ${yBody - 12} L ${xj} ${yBody} Z`}
+            d={`M ${xs[4]} ${yTop} L ${xEnd} ${yTop + 12} L ${xEnd} ${yBody - 12} L ${xs[4]} ${yBody} Z`}
             fill="var(--draw-fill)"
             stroke="var(--draw-cut)"
             strokeWidth="1.6"
@@ -111,20 +111,20 @@ export function BoxBlank({ size, onChange, large, className }: Props) {
             )
           })}
           {/* Body outline and score lines. */}
-          <line x1={xj} y1={yTop} x2={xs[4]} y2={yTop} stroke="var(--draw-score)" strokeWidth="1.6" strokeDasharray="7 5" />
-          <line x1={xj} y1={yBody} x2={xs[4]} y2={yBody} stroke="var(--draw-score)" strokeWidth="1.6" strokeDasharray="7 5" />
-          {xs.slice(0, 4).map((x, i) => (
+          <line x1={x0} y1={yTop} x2={xs[4]} y2={yTop} stroke="var(--draw-score)" strokeWidth="1.6" strokeDasharray="7 5" />
+          <line x1={x0} y1={yBody} x2={xs[4]} y2={yBody} stroke="var(--draw-score)" strokeWidth="1.6" strokeDasharray="7 5" />
+          {xs.slice(1, 5).map((x, i) => (
             <line key={i} x1={x} y1={yTop} x2={x} y2={yBody} stroke="var(--draw-score)" strokeWidth="1.6" strokeDasharray="7 5" />
           ))}
-          <line x1={xs[4]} y1={yTop} x2={xs[4]} y2={yBody} stroke="var(--draw-cut)" strokeWidth="1.6" />
+          <line x1={x0} y1={yTop} x2={x0} y2={yBody} stroke="var(--draw-cut)" strokeWidth="1.6" />
 
           {/* Sizes along: panels on top, the whole blank above them, the glue flap below. */}
           <Dim id={id} x1={xs[0]} y1={y0} x2={xs[1]} y2={y0} offset={-26} label={label('l1')} strong={!b.auto.l1} fontSize={fs} />
           <Dim id={id} x1={xs[1]} y1={y0} x2={xs[2]} y2={y0} offset={-26} label={label('l5')} strong={!b.auto.l5} fontSize={fs} />
           <Dim id={id} x1={xs[2]} y1={y0} x2={xs[3]} y2={y0} offset={-26} label={num('l1')} fontSize={fs} />
           <Dim id={id} x1={xs[3]} y1={y0} x2={xs[4]} y2={y0} offset={-26} label={num('l5')} fontSize={fs} />
-          <Dim id={id} x1={x0} y1={y0} x2={xs[4]} y2={y0} offset={-64} label={empty ? '—' : `${fmt(along)} mm`} fontSize={fs} />
-          <Dim id={id} x1={x0} y1={yEnd} x2={xj} y2={yEnd} offset={34} label={fmt(b.joint)} fontSize={fs - 1} />
+          <Dim id={id} x1={x0} y1={y0} x2={xEnd} y2={y0} offset={-64} label={empty ? '—' : `${fmt(along)} mm`} fontSize={fs} />
+          <Dim id={id} x1={xs[4]} y1={yEnd} x2={xEnd} y2={yEnd} offset={34} label={fmt(b.joint)} fontSize={fs - 1} />
 
           {/* Sizes across: flaps and body, then the whole height (l0). */}
           <Dim id={id} x1={x0} y1={y0} x2={x0} y2={yTop} offset={-30} label={label('l2')} strong={!b.auto.l2} fontSize={fs} />
