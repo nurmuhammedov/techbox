@@ -654,6 +654,9 @@ const M: Record<string, [string, string, string]> = {
   'seq.undo_hint': ["Partiyalar qoladi, ajratilgan rulonlar bo'shatiladi.", 'Партии останутся, выделенные рулоны освободятся.', 'The batches stay; reserved rolls are freed.'],
   'seq.undone': ['Ketma-ketlik bekor qilindi', 'Последовательность отменена', 'Sequence undone'],
   'hr.on_time': ["O'z vaqtida", 'Вовремя', 'On time'],
+  'plan.drawing_show': ['Chizma', 'Чертёж', 'Drawing'],
+  'plan.drawing_shown': ["Ko'rsatilmoqda", 'Показан', 'Shown'],
+  'plan.drawing_of': ['Qaysi buyurtma chizmasi:', 'Чертёж какого заказа:', 'Drawing of:'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(

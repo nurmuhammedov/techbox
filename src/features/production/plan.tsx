@@ -1,6 +1,6 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { AlertTriangle, Check, Search, Sparkles, Trash2 } from 'lucide-react'
+import { AlertTriangle, Check, Search, Sparkles, Trash2, Ruler } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
@@ -283,9 +283,15 @@ export function PlanPage() {
                         <button type="button" onClick={() => setPreview(l.order)} className="min-w-0 truncate text-left text-[13px] font-medium hover:text-accent">
                           {o?.name} <span className="font-code text-xs text-ink-3">{o?.number}</span>
                         </button>
-                        <Button variant="ghost" size="iconSm" onClick={() => o && toggle(o)} aria-label={t('delete')}>
-                          <Trash2 />
-                        </Button>
+                        <div className="flex shrink-0 items-center gap-1">
+                          <Button size="sm" variant={preview === l.order ? 'soft' : 'ghost'} onClick={() => setPreview(l.order)} aria-pressed={preview === l.order}>
+                            <Ruler />
+                            {preview === l.order ? t('plan.drawing_shown') : t('plan.drawing_show')}
+                          </Button>
+                          <Button variant="ghost" size="iconSm" onClick={() => o && toggle(o)} aria-label={t('delete')}>
+                            <Trash2 />
+                          </Button>
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                         <Field label={t('plan.production_qty')}>
@@ -318,6 +324,22 @@ export function PlanPage() {
 
             {previewOrder ? (
               <Card title={`${t('drawing.title')}: ${previewOrder.name}`}>
+                {lines.length > 1 ? (
+                  <div className="mb-3 flex flex-wrap items-center gap-1.5">
+                    <span className="text-xs text-ink-3">{t('plan.drawing_of')}</span>
+                    {lines.map((l) => (
+                      <button
+                        key={l.order}
+                        type="button"
+                        onClick={() => setPreview(l.order)}
+                        aria-pressed={preview === l.order}
+                        className={cn('h-7 rounded-full border px-2.5 text-xs font-medium transition-colors', preview === l.order ? 'border-accent bg-accent text-on-accent' : 'border-line-strong text-ink-2 hover:border-accent hover:text-accent')}
+                      >
+                        {picked[l.order]?.name}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
                 <ShapeView shape={{ ...previewOrder, parts: previewLine?.parts ?? 1, orientation: previewLine?.orientation ?? 'horizontal', ups: previewLine?.ups ?? 1 }} quantity={previewLine?.quantity ?? previewOrder.quantity} logo={previewOrder.logo} />
               </Card>
             ) : null}
