@@ -228,11 +228,11 @@ export function PlanPage() {
 
           <div className="flex min-w-0 flex-col gap-4">
             <Card title={t('plan.material')}>
-              <div className="grid gap-4 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
                 <div className="flex flex-col gap-4">
                 <Field label={t('format')}>
                   {(fid) => (
-                    <div className="flex gap-2">
+                    <div className="flex max-w-md gap-2">
                       <div className="min-w-0 flex-1"><Select id={fid} value={format ? String(format) : ''} onChange={(v) => setFormat(Number(v))} options={formats.map((f) => ({ value: String(f.id), label: `${f.width_mm} mm` }))} placeholder={t('common.select')} /></div>
                       <Button variant="soft" className="shrink-0" onClick={bestFormat} disabled={!lines.length || !layers.every(Boolean)} aria-label={t('plan.auto')}>
                         <Sparkles />
@@ -241,8 +241,8 @@ export function PlanPage() {
                     </div>
                   )}
                 </Field>
-                <div className="rounded-lg border border-line bg-sunken/50 p-3">
-                  <LayersSection names={layers.map((id) => materials.find((m) => m.id === id)?.name ?? '')} flutes={flutes} />
+                <div className="flex flex-1 items-center rounded-lg border border-line bg-sunken/50 p-4">
+                  <LayersSection className="max-h-64" names={layers.map((id) => materials.find((m) => m.id === id)?.name ?? '')} flutes={flutes} />
                 </div>
                 </div>
                 <div className="flex flex-col gap-2">
