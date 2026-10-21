@@ -239,7 +239,7 @@ export function PlanPage() {
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-xs font-medium text-ink-2">{t('layers')}</span>
-                    <div className="w-52 shrink-0"><Segments
+                    <div className="w-fit shrink-0"><Segments
                       value={String(layers.length || 3) as '2'}
                       onChange={(v) => {
                         const n = Number(v)

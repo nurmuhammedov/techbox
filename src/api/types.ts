@@ -207,6 +207,9 @@ export interface Batch {
   layers: number[]
   flutes: number[]
   status: BatchStatus
+  sequence: number | null
+  sequence_number: string | null
+  sequence_position: number
   plan: Plan & { legacy_group?: number }
   priority: number
   operator: number | null
@@ -301,4 +304,41 @@ export interface Employee {
   blacklisted: boolean
   blacklist_reason: string
   username: string | null
+}
+
+export interface Sequence {
+  id: number
+  number: string
+  comment: string
+  status: BatchStatus
+  format_mm: number | null
+  layers: number[]
+  flutes: number[]
+  needs: { layer: number; kg: number }[]
+  operator_name: string | null
+  batches: Batch[]
+  created_at: string
+}
+
+/** A sequence seen as one batch: one format, one board, the needs and rolls of all its batches together. */
+export function sequenceAsBatch(seq: Sequence): Batch {
+  const first = seq.batches[0]
+  const merged = new Map<string, Allocation>()
+  for (const b of seq.batches) {
+    for (const a of b.allocations) {
+      const key = `${a.layer}:${a.roll}`
+      const prev = merged.get(key)
+      merged.set(key, prev ? { ...prev, weight: Number(prev.weight) + Number(a.weight) } : { ...a })
+    }
+  }
+  return {
+    ...first,
+    id: seq.id,
+    number: seq.number,
+    status: seq.status,
+    plan: { ...first.plan, materials: seq.needs.map((n) => ({ layer: n.layer, material_id: first.layers[n.layer], fluted: seq.flutes.includes(n.layer), kg: n.kg })) },
+    allocations: [...merged.values()],
+    lines: seq.batches.flatMap((b) => b.lines),
+    items: seq.batches.flatMap((b) => b.items),
+  }
 }

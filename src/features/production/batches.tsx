@@ -1,12 +1,12 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowLeftRight, Banknote, ListChecks, PackageOpen, Pencil, Printer, Scissors, Send, X } from 'lucide-react'
+import { ArrowDown, ArrowLeftRight, ArrowUp, Banknote, Layers, ListChecks, PackageOpen, Pencil, Printer, Scissors, Send, X } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { api } from '@/api/client'
-import type { Batch, Stage, WorkItem } from '@/api/types'
+import type { Batch, Sequence, Stage, WorkItem } from '@/api/types'
 import { useAuth } from '@/auth/AuthContext'
 import { CorrugatorLayout } from '@/drawings/CorrugatorLayout'
 import { blankOf } from '@/drawings/geometry'
@@ -20,6 +20,7 @@ import { cn } from '@/lib/cn'
 import { dateTime, kg, money, num } from '@/lib/format'
 import { fail, ok } from '@/lib/notify'
 import { Row } from '@/features/sales/orders'
+import { SequenceCard } from '@/features/work/work'
 import { Button } from '@/ui/button'
 import { FilterSelect } from '@/ui/column-filters'
 import { Switch } from '@/ui/controls'
@@ -48,6 +49,7 @@ export function BatchesPage() {
     { id: 'orders', header: t('menu.orders'), cell: ({ row }) => <span className="line-clamp-2">{row.original.lines.map((l) => l.order_name).join(', ')}</span> },
     { id: 'run', header: t('plan.run'), cell: ({ row }) => <span className="tabular">{row.original.plan?.run_m ? `${num(row.original.plan.run_m, 0)} m` : '—'}</span>, meta: { className: 'text-right' } },
     { id: 'priority', header: t('batch.priority_col'), cell: ({ row }) => (row.original.priority ? <Badge tone="bad">{t('batch.priority')}</Badge> : null) },
+    { id: 'sequence', header: t('seq.title'), cell: ({ row }) => (row.original.sequence ? <Badge tone="accent">{row.original.sequence_number} · {row.original.sequence_position + 1}</Badge> : null) },
     { id: 'operator', header: t('operator'), cell: ({ row }) => <span className="block max-w-40 truncate whitespace-nowrap" title={row.original.operator_name ?? undefined}>{row.original.operator_name ?? '—'}</span> },
     { id: 'created', header: t('created'), cell: ({ row }) => <span className="tabular whitespace-nowrap text-xs text-ink-3">{dateTime(row.original.created_at)}</span> },
   ]
@@ -61,7 +63,7 @@ export function BatchesPage() {
       defaultOrder="desc"
       params={{ status__in: BATCH_GROUPS[status] }}
       onRowOpen={(b) => navigate(`/production/batches/${b.id}`)}
-      actions={can('production.plan') ? <Button variant="primary" onClick={() => navigate('/production/plan')}>{t('plan.create')}</Button> : null}
+      actions={can('production.plan') ? <><Button onClick={() => navigate('/production/sequences/new')}><Layers />{t('seq.create')}</Button><Button variant="primary" onClick={() => navigate('/production/plan')}>{t('plan.create')}</Button></> : null}
       filters={{
         status: (
           <FilterSelect
@@ -106,9 +108,10 @@ export function BatchDetailPage() {
       actions={
         <>
           <Button onClick={() => window.print()}><Printer />{t('print')}</Button>
-          {editable && can('production.plan') ? <Button variant="danger" onClick={cancel}><X />{t('batch.cancel')}</Button> : null}
+          {b.sequence ? <Button variant="soft" onClick={() => navigate(`/production/sequences/${b.sequence}`)}><Layers />{b.sequence_number}</Button> : null}
+          {editable && !b.sequence && can('production.plan') ? <Button variant="danger" onClick={cancel}><X />{t('batch.cancel')}</Button> : null}
           {editable && can('production.plan') ? <Button onClick={() => navigate(`/production/plan/${b.id}`)}><Pencil />{t('edit')}</Button> : null}
-          {editable && can('inventory.allocate') ? <Button variant="primary" onClick={() => navigate(`/inventory/allocate/${b.id}`)}><ListChecks />{t('menu.allocate')}</Button> : null}
+          {editable && !b.sequence && can('inventory.allocate') ? <Button variant="primary" onClick={() => navigate(`/inventory/allocate/${b.id}`)}><ListChecks />{t('menu.allocate')}</Button> : null}
         </>
       }
     >
@@ -578,3 +581,126 @@ export function ReturnPage() {
 }
 
 export { ArrowLeftRight }
+
+/** Batches of one format and one board picked to run back to back. */
+export function SequenceNewPage() {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const { data } = useQuery({ queryKey: ['batches', 'for-sequence'], queryFn: () => api.get<{ results: Batch[] }>('/production/batches', { status__in: 'draft,ready', page_size: 200, ordering: 'created_at' }) })
+  const [picked, setPicked] = useState<number[]>([])
+  const [comment, setComment] = useState('')
+  const [busy, setBusy] = useState(false)
+  if (!data) return <Page title={t('seq.create')} flow><LoadingCards rows={2} /></Page>
+  const free = data.results.filter((b) => !b.sequence)
+  const keyOf = (b: Batch) => `${b.format_mm}|${b.layers.join(',')}|${(b.flutes ?? []).join(',')}`
+  const groups = Object.values(
+    free.reduce<Record<string, Batch[]>>((acc, b) => {
+      ;(acc[keyOf(b)] ??= []).push(b)
+      return acc
+    }, {}),
+  ).filter((g) => g.length > 1)
+  const byId = Object.fromEntries(free.map((b) => [b.id, b]))
+  const groupKey = picked.length ? keyOf(byId[picked[0]]) : null
+  const toggle = (b: Batch) => setPicked((p) => (p.includes(b.id) ? p.filter((x) => x !== b.id) : [...p, b.id]))
+  const move = (i: number, d: number) => setPicked((p) => { const n = [...p]; [n[i], n[i + d]] = [n[i + d], n[i]]; return n })
+
+  const submit = async () => {
+    setBusy(true)
+    try {
+      const seq = await api.post<Sequence>('/production/sequences', { batches: picked, comment })
+      ok(t('seq.created'))
+      navigate(`/production/sequences/${seq.id}`)
+    } catch (e) {
+      fail(e)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <Page title={t('seq.create')} flow>
+      <Form onSubmit={submit}>
+        <p className="rounded-md bg-accent-soft px-3 py-2 text-[13px] text-accent-ink">{t('seq.create_hint')}</p>
+        {!groups.length ? <Card><p className="text-[13px] text-ink-3">{t('seq.no_groups')}</p></Card> : null}
+        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)]">
+          <div className="flex flex-col gap-3">
+            {groups.map((g) => {
+              const k = keyOf(g[0])
+              const locked = groupKey !== null && groupKey !== k
+              return (
+                <Card key={k} title={`${g[0].format_mm} mm · ${g[0].layers.length} ${t('plan.ply')}`}>
+                  <ul className={cn('flex flex-col divide-y divide-line', locked && 'opacity-40')}>
+                    {g.map((b) => (
+                      <li key={b.id}>
+                        <label className="flex cursor-pointer items-center gap-3 py-2">
+                          <input type="checkbox" className="size-4 accent-[var(--accent)]" checked={picked.includes(b.id)} disabled={locked} onChange={() => toggle(b)} />
+                          <span className="font-code text-[13px] font-semibold">{b.number}</span>
+                          <span className="min-w-0 flex-1 truncate text-[13px]">{b.lines.map((l) => l.order_name).join(', ')}</span>
+                          <span className="tabular text-xs whitespace-nowrap text-ink-3">{b.plan?.run_m ? `${num(b.plan.run_m, 0)} m` : ''}</span>
+                          <BatchStatusBadge status={b.status} />
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              )
+            })}
+          </div>
+          <Card title={t('seq.order')}>
+            {!picked.length ? <p className="text-[13px] text-ink-3">{t('seq.pick')}</p> : null}
+            <ol className="flex flex-col gap-1.5">
+              {picked.map((id, i) => (
+                <li key={id} className="flex items-center gap-2 rounded-md bg-sunken px-2 py-1.5">
+                  <span className="flex size-5 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-on-accent">{i + 1}</span>
+                  <span className="font-code flex-1 text-[13px]">{byId[id]?.number}</span>
+                  <Button size="iconSm" variant="ghost" disabled={i === 0} onClick={() => move(i, -1)} aria-label={t('seq.up')}><ArrowUp /></Button>
+                  <Button size="iconSm" variant="ghost" disabled={i === picked.length - 1} onClick={() => move(i, 1)} aria-label={t('seq.down')}><ArrowDown /></Button>
+                </li>
+              ))}
+            </ol>
+            <Field label={t('note')} className="mt-3">{(fid) => <Input id={fid} value={comment} onChange={(e) => setComment(e.target.value)} />}</Field>
+          </Card>
+        </div>
+        {picked.length >= 2 ? <FormFooter busy={busy} onCancel={() => navigate(-1)} label={t('seq.create')} /> : null}
+      </Form>
+    </Page>
+  )
+}
+
+export function SequenceDetailPage() {
+  const { t } = useTranslation()
+  const { id } = useParams()
+  const { can } = useAuth()
+  const navigate = useNavigate()
+  const confirm = useConfirm()
+  const qc = useQueryClient()
+  const { data: s } = useQuery({ queryKey: ['sequences', 'one', id], queryFn: () => api.get<Sequence>(`/production/sequences/${id}`) })
+  if (!s) return <Page title="…" flow><LoadingCards rows={3} /></Page>
+  const open = s.status === 'draft' || s.status === 'ready'
+  const undo = async () => {
+    if (!(await confirm({ title: t('seq.undo_confirm'), description: t('seq.undo_hint'), confirmLabel: t('seq.undo'), tone: 'danger' }))) return
+    try {
+      await api.delete(`/production/sequences/${s.id}`)
+      ok(t('seq.undone'))
+      await qc.invalidateQueries({ queryKey: ['batches'] })
+      navigate('/production/batches')
+    } catch (e) {
+      fail(e)
+    }
+  }
+  return (
+    <Page
+      title={`${t('seq.title')} ${s.number}`}
+      note={`${s.format_mm} mm · ${t('seq.badge', { n: s.batches.length })}`}
+      flow
+      actions={
+        <>
+          {open && can('production.plan') ? <Button variant="danger" onClick={undo}><X />{t('seq.undo')}</Button> : null}
+          {open && can('inventory.allocate') ? <Button variant="primary" onClick={() => navigate(`/inventory/allocate/sequence/${s.id}`)}><ListChecks />{t('menu.allocate')}</Button> : null}
+        </>
+      }
+    >
+      <SequenceCard seq={s} />
+    </Page>
+  )
+}

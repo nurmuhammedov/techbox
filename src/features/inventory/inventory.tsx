@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { api } from '@/api/client'
-import type { Batch, Format, MaterialType, Roll } from '@/api/types'
+import { sequenceAsBatch, type Batch, type Format, type MaterialType, type Roll, type Sequence } from '@/api/types'
 import { BatchStatusBadge, Deadline } from '@/kit/badges'
 import { useOptions } from '@/kit/fields'
 import { useListState } from '@/kit/list-state'
@@ -239,12 +239,26 @@ export function AllocateListPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { data } = useQuery({ queryKey: ['batches', 'allocate'], queryFn: () => api.get<{ results: Batch[] }>('/production/batches', { status__in: 'draft,ready', page_size: 100, ordering: '-priority' }) })
+  const seqs = useQuery({ queryKey: ['sequences', 'open'], queryFn: () => api.get<{ results: Sequence[] }>('/production/sequences', { status: 'open', page_size: 100 }) })
+  const waiting = (seqs.data?.results ?? []).filter((s) => s.status === 'draft' || s.status === 'ready')
+  const single = (data?.results ?? []).filter((b) => !b.sequence)
   return (
     <Page title={t('menu.allocate')} flow>
       {!data ? <LoadingCards rows={1} /> : null}
-      {data && !data.results.length ? <EmptyState icon={Plus} title={t('allocate.none')} /> : null}
+      {data && !single.length && !waiting.length ? <EmptyState icon={Plus} title={t('allocate.none')} /> : null}
       <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
-        {data?.results.map((b) => (
+        {waiting.map((s) => (
+          <button key={`s${s.id}`} type="button" onClick={() => navigate(`/inventory/allocate/sequence/${s.id}`)} className="flex flex-col gap-2 rounded-lg border border-accent/50 bg-accent-soft/40 p-4 text-left shadow-card transition hover:border-accent">
+            <div className="flex items-center justify-between gap-2">
+              <span className="flex items-center gap-2"><span className="font-code font-semibold">{s.number}</span><Badge tone="accent">{t('seq.badge', { n: s.batches.length })}</Badge></span>
+              <BatchStatusBadge status={s.status} />
+            </div>
+            <p className="text-[13px]">{t('format')}: <b>{s.format_mm} mm</b> · {s.layers.length} {t('plan.ply')}</p>
+            <p className="line-clamp-2 text-xs text-ink-3">{s.batches.map((b) => b.number).join(' → ')}</p>
+            <div className="mt-auto flex justify-end text-xs"><b className="tabular">{kg(s.needs.reduce((sum, n) => sum + n.kg, 0))}</b></div>
+          </button>
+        ))}
+        {single.map((b) => (
           <button key={b.id} type="button" onClick={() => navigate(`/inventory/allocate/${b.id}`)} className="flex flex-col gap-2 rounded-lg border border-line bg-surface p-4 text-left shadow-card transition hover:border-accent">
             <div className="flex items-center justify-between gap-2">
               <span className="font-code font-semibold">{b.number}</span>
@@ -269,10 +283,23 @@ interface Pick {
 }
 
 export function AllocateBatchPage() {
-  const { t } = useTranslation()
   const { id } = useParams()
-  const navigate = useNavigate()
   const { data: batch } = useQuery({ queryKey: ['batches', 'one', id], queryFn: () => api.get<Batch>(`/production/batches/${id}`) })
+  if (!batch) return <Page title="…" flow><LoadingCards rows={2} /></Page>
+  return <AllocateForm batch={batch} url={`/production/batches/${batch.id}/allocate`} />
+}
+
+/** Rolls for the whole sequence at once; the server shares each roll out between its batches. */
+export function AllocateSequencePage() {
+  const { id } = useParams()
+  const { data: seq } = useQuery({ queryKey: ['sequences', 'one', id], queryFn: () => api.get<Sequence>(`/production/sequences/${id}`) })
+  if (!seq) return <Page title="…" flow><LoadingCards rows={2} /></Page>
+  return <AllocateForm batch={sequenceAsBatch(seq)} url={`/production/sequences/${seq.id}/allocate`} sequence={seq} />
+}
+
+function AllocateForm({ batch, url, sequence }: { batch: Batch; url: string; sequence?: Sequence }) {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
   const materials = (useOptions('/catalog/materials').data ?? []) as unknown as MaterialType[]
   const rolls = (useOptions('/inventory/rolls', batch ? { format: batch.format, status: 'in_stock' } : { format: -1 }).data ?? []) as unknown as Roll[]
   const [picks, setPicks] = useState<Record<number, Pick[]>>({})
@@ -290,13 +317,12 @@ export function AllocateBatchPage() {
 
   const save = useAction(
     () =>
-      api.post(`/production/batches/${id}/allocate`, {
+      api.post(url, {
         allocations: Object.entries(picks).flatMap(([layer, list]) => list.filter((p) => p.roll && p.weight).map((p) => ({ layer: Number(layer), roll: Number(p.roll), weight: p.weight }))),
       }),
-    { success: t('allocate.saved'), invalidate: ['batches', 'rolls', 'stock'], onSuccess: () => navigate('/inventory/allocate') },
+    { success: t('allocate.saved'), invalidate: ['batches', 'sequences', 'rolls', 'stock'], onSuccess: () => navigate('/inventory/allocate') },
   )
 
-  if (!batch) return <Page title="…" flow><LoadingCards rows={2} /></Page>
   const editable = batch.status === 'draft' || batch.status === 'ready'
   const update = (layer: number, i: number, patch: Partial<Pick>) => setPicks((s) => ({ ...s, [layer]: s[layer].map((p, j) => (j === i ? { ...p, ...patch } : p)) }))
   const own = (rollId: number) => batch.allocations.filter((a) => a.roll === rollId).reduce((s, a) => s + Number(a.weight), 0)
@@ -304,6 +330,7 @@ export function AllocateBatchPage() {
   return (
     <Page title={`${t('menu.allocate')}: ${batch.number}`} note={`${batch.format_mm} mm · ${batch.lines.map((l) => l.order_name).join(', ')}`} flow>
       <Form onSubmit={() => save.mutate(undefined)}>
+        {sequence ? <p className="rounded-md bg-accent-soft px-3 py-2 text-[13px] text-accent-ink">{t('seq.allocate_hint', { batches: sequence.batches.map((b) => b.number).join(', ') })}</p> : null}
         {!editable ? <p className="rounded-md bg-warn-soft px-3 py-2 text-[13px] text-warn">{t('allocate.locked')}</p> : null}
         <div className="grid gap-3 lg:grid-cols-2">
           {batch.layers.map((materialId, layer) => {

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { api } from '@/api/client'
-import type { Batch, MaterialType, Stage, WorkItem } from '@/api/types'
+import { sequenceAsBatch, type Batch, type MaterialType, type Sequence, type Stage, type WorkItem } from '@/api/types'
 import { useAuth } from '@/auth/AuthContext'
 import { CorrugatorLayout } from '@/drawings/CorrugatorLayout'
 import { ShapeView } from '@/drawings/ShapeView'
@@ -31,6 +31,7 @@ interface Queue<T> {
   others: T[]
   done_today: T[]
   drafts?: T[]
+  sequences?: Sequence[]
 }
 
 function Section({ title, count, children, muted }: { title: string; count: number; children: ReactNode; muted?: boolean }) {
@@ -282,12 +283,37 @@ function GofraQueue() {
   const navigate = useNavigate()
   const { data } = useQuery({ queryKey: ['queue', 'gofra'], queryFn: () => api.get<Queue<Batch>>('/production/queue/gofra') })
   const start = useAction((id: number) => api.post(`/production/batches/${id}/start`), { success: t('work.started'), invalidate: ['queue'] })
+  const startSeq = useAction((id: number) => api.post(`/production/sequences/${id}/start`), { success: t('work.started'), invalidate: ['queue'] })
+  const { user } = useAuth()
   const grid = 'grid gap-3 2xl:grid-cols-2'
+  const seqs = data?.sequences ?? []
   return (
     <Page title={t('stage.gofra')} flow>
       {!data ? <LoadingCards rows={2} /> : null}
       {data ? (
         <div className="flex flex-col gap-6">
+          {seqs.length ? (
+            <Section title={t('seq.title')} count={seqs.length}>
+              <div className="flex flex-col gap-3">
+                {seqs.map((s) => {
+                  const mine = s.status === 'in_work' && s.batches.some((b) => b.operator === user?.id)
+                  return (
+                    <SequenceCard key={s.id} seq={s}>
+                      {s.status === 'ready' ? (
+                        <Button variant="primary" className="h-11 text-sm" loading={startSeq.isPending && startSeq.variables === s.id} onClick={() => startSeq.mutate(s.id)}><Play />{t('seq.start')}</Button>
+                      ) : mine ? (
+                        <Button variant="primary" className="h-11 text-sm" onClick={() => navigate(`/work/gofra/sequence/${s.id}/finish`)}><Check />{t('seq.finish')}</Button>
+                      ) : s.status === 'in_work' ? (
+                        <p className="text-xs text-ink-3">{t('work.by', { name: s.operator_name })}</p>
+                      ) : (
+                        <p className="text-xs text-warn">{t('seq.waiting_rolls')}</p>
+                      )}
+                    </SequenceCard>
+                  )
+                })}
+              </div>
+            </Section>
+          ) : null}
           {data.mine.length ? (
             <Section title={t('work.mine')} count={data.mine.length}>
               <div className={grid}>
@@ -333,12 +359,52 @@ function GofraQueue() {
   )
 }
 
-export function BatchFinishPage() {
+/** Several batches run back to back: each one drawn in its turn, one button for all. */
+export function SequenceCard({ seq, children }: { seq: Sequence; children?: ReactNode }) {
   const { t } = useTranslation()
+  return (
+    <article className="flex flex-col gap-3 rounded-lg border-2 border-accent/40 bg-accent-soft/30 p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+        <div className="flex items-center gap-2">
+          <h3 className="font-code text-base font-semibold">{seq.number}</h3>
+          <Badge tone="accent">{t('seq.badge', { n: seq.batches.length })}</Badge>
+          <BatchStatusBadge status={seq.status} />
+        </div>
+        <span className="text-xs text-ink-2">{t('format')}: <b>{seq.format_mm} mm</b> · {seq.batches.map((b) => b.number).join(' → ')}</span>
+      </div>
+      {seq.comment ? <p className="rounded-md bg-warn-soft px-2.5 py-1.5 text-xs text-warn">{seq.comment}</p> : null}
+      <ol className="flex flex-col gap-3">
+        {seq.batches.map((b, i) => (
+          <li key={b.id} className="flex gap-2">
+            <span className="mt-4 flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-on-accent">{i + 1}</span>
+            <div className="min-w-0 flex-1"><BatchCard batch={b} /></div>
+          </li>
+        ))}
+      </ol>
+      {children}
+    </article>
+  )
+}
+
+export function BatchFinishPage() {
   const { id } = useParams()
+  const { data: batch } = useQuery({ queryKey: ['batches', 'one', id], queryFn: () => api.get<Batch>(`/production/batches/${id}`) })
+  if (!batch) return <Page title="…" flow><LoadingCards rows={2} /></Page>
+  return <FinishForm batch={batch} url={`/production/batches/${batch.id}/finish`} layouts={[batch]} />
+}
+
+/** The whole sequence is closed at once: results of every item, rolls weighed once after the last batch. */
+export function SequenceFinishPage() {
+  const { id } = useParams()
+  const { data: seq } = useQuery({ queryKey: ['sequences', 'one', id], queryFn: () => api.get<Sequence>(`/production/sequences/${id}`) })
+  if (!seq) return <Page title="…" flow><LoadingCards rows={2} /></Page>
+  return <FinishForm batch={sequenceAsBatch(seq)} url={`/production/sequences/${seq.id}/finish`} layouts={seq.batches} />
+}
+
+function FinishForm({ batch, url, layouts }: { batch: Batch; url: string; layouts: Batch[] }) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const qc = useQueryClient()
-  const { data: batch } = useQuery({ queryKey: ['batches', 'one', id], queryFn: () => api.get<Batch>(`/production/batches/${id}`) })
   const [qty, setQty] = useState<Record<number, number | null>>({})
   const [left, setLeft] = useState<Record<number, number | null>>({})
   const [glue, setGlue] = useState<number | null>(null)
@@ -346,7 +412,6 @@ export function BatchFinishPage() {
   const [comment, setComment] = useState('')
   const [busy, setBusy] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  if (!batch) return <Page title="…" flow><LoadingCards rows={2} /></Page>
 
   const rolls = Object.values(
     batch.allocations.reduce<Record<number, { roll: number; label: string; before: number; layers: number[] }>>((acc, a) => {
@@ -363,7 +428,7 @@ export function BatchFinishPage() {
     if (Object.keys(e).length) return
     setBusy(true)
     try {
-      await api.post(`/production/batches/${batch.id}/finish`, {
+      await api.post(url, {
         items: batch.items.map((i) => ({ work_item: i.id, qty: qty[i.id] ?? i.planned_qty })),
         rolls: rolls.map((r) => ({ roll: r.roll, weight_after: left[r.roll] })),
         glue,
@@ -416,7 +481,11 @@ export function BatchFinishPage() {
               </div>
             </Card>
           </div>
-          {batch.plan?.lines?.length ? <Card title={t('drawing.layout')}><CorrugatorLayout plan={batch.plan} /></Card> : null}
+          <div className="flex flex-col gap-4">
+            {layouts.filter((b) => b.plan?.lines?.length).map((b, i) => (
+              <Card key={b.id} title={layouts.length > 1 ? `${i + 1}. ${b.number}` : t('drawing.layout')}><CorrugatorLayout plan={b.plan} /></Card>
+            ))}
+          </div>
         </div>
         <FormFooter busy={busy} onCancel={() => navigate('/work/gofra')} label={t('work.finish')} />
       </Form>

@@ -139,8 +139,8 @@ export function Shell() {
                     {initials(user?.display_name ?? '')}
                   </span>
                   <span className="hidden max-w-40 flex-col items-start leading-tight md:flex">
-                    <span className="truncate">{user?.display_name}</span>
-                    <span className="truncate text-[11px] font-normal text-ink-3">
+                    <span className="block max-w-full truncate" title={user?.display_name}>{user?.display_name}</span>
+                    <span className="block max-w-full truncate text-[11px] font-normal text-ink-3">
                       {user?.is_superuser ? t('admin') : user?.role?.name}
                     </span>
                   </span>

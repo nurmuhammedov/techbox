@@ -29,6 +29,10 @@ const P = {
   Plan: page(() => import('@/features/production/plan'), 'PlanPage'),
   Batches: page(production, 'BatchesPage'),
   Batch: page(production, 'BatchDetailPage'),
+  SequenceNew: page(production, 'SequenceNewPage'),
+  Sequence: page(production, 'SequenceDetailPage'),
+  SequenceFinish: page(work, 'SequenceFinishPage'),
+  AllocateSequence: page(inventory, 'AllocateSequencePage'),
   Finished: page(production, 'FinishedStockPage'),
   Semi: page(production, 'SemiStockPage'),
   Item: page(production, 'ItemDetailPage'),
@@ -113,6 +117,10 @@ export default function App() {
           <Route index element={<Navigate to={home} replace />} />
           {r('work/:stage', STAGES, <P.Work />)}
           {r('work/gofra/:id/finish', ['production.gofra', 'production.plan'], <P.BatchFinish />)}
+          {r('work/gofra/sequence/:id/finish', ['production.gofra', 'production.plan'], <P.SequenceFinish />)}
+          {r('production/sequences/new', ['production.plan'], <P.SequenceNew />)}
+          {r('production/sequences/:id', ['production.plan', 'production.board', 'inventory.allocate', 'production.gofra'], <P.Sequence />)}
+          {r('inventory/allocate/sequence/:id', ['inventory.allocate'], <P.AllocateSequence />)}
           {r('work/:stage/:id/finish', STAGES, <P.ItemFinish />)}
           {r('production', ['production.board', 'production.plan'], <P.Board />)}
           {r('production/plan', ['production.plan'], <P.Plan />)}
