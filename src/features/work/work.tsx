@@ -258,7 +258,7 @@ function BatchCard({ batch, children }: { batch: Batch; children?: ReactNode }) 
         </div>
         <span className="text-xs text-ink-3">{t('deadline')}: <Deadline value={earliest} /></span>
       </div>
-      {batch.plan?.lines?.length ? <CorrugatorLayout plan={batch.plan} /> : <p className="text-[13px]">{t('plan.format')}: {batch.format_mm} mm</p>}
+      {batch.plan?.lines?.length ? <div className="max-w-3xl"><CorrugatorLayout plan={batch.plan} /></div> : <p className="text-[13px]">{t('plan.format')}: {batch.format_mm} mm</p>}
       <div className="flex items-center gap-2">
         <p className="min-w-0 flex-1 text-xs text-ink-2"><b>{t('layers')}:</b> {batch.layers.map(nameOf).join(' / ')}</p>
         <Peek title={t('drawing.layers')} label={t('layers')}><LayersSection names={batch.layers.map(nameOf)} flutes={batch.flutes} /></Peek>
@@ -393,11 +393,15 @@ export function SequenceCard({ seq, children }: { seq: Sequence; children?: Reac
         <span className="text-xs text-ink-2">{t('format')}: <b>{seq.format_mm} mm</b> · {seq.batches.map((b) => b.number).join(' → ')}</span>
       </div>
       {seq.comment ? <p className="rounded-md bg-warn-soft px-2.5 py-1.5 text-xs text-warn">{seq.comment}</p> : null}
-      <ol className="flex flex-col gap-3">
+      <ol className="flex flex-col divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
         {seq.batches.map((b, i) => (
-          <li key={b.id} className="flex gap-2">
-            <span className="mt-4 flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-on-accent">{i + 1}</span>
-            <div className="min-w-0 flex-1"><BatchCard batch={b} /></div>
+          <li key={b.id} className="flex flex-wrap items-center gap-3 px-3 py-2.5">
+            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-on-accent">{i + 1}</span>
+            <span className="font-code text-[13px] font-semibold">{b.number}</span>
+            <BatchStatusBadge status={b.status} />
+            <span className="min-w-0 flex-1 truncate text-[13px]">{b.lines.map((l) => l.order_name).join(', ')}</span>
+            <span className="tabular text-xs whitespace-nowrap text-ink-3">{b.plan?.run_m ? `${num(b.plan.run_m, 0)} m` : ''} · {b.items.length} {t('seq.products')}</span>
+            <Peek title={`${b.number} · ${b.format_mm} mm`} label={t('drawing.title')}><BatchCard batch={b} /></Peek>
           </li>
         ))}
       </ol>

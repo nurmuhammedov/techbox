@@ -659,6 +659,7 @@ const M: Record<string, [string, string, string]> = {
   'plan.drawing_of': ['Qaysi buyurtma chizmasi:', 'Чертёж какого заказа:', 'Drawing of:'],
   'plan.pallet_count': ['{{n}} dona', '{{n}} шт', '{{n}} pcs'],
   'drawing.peek': ["Chizmani ko'rish", 'Посмотреть чертёж', 'View drawing'],
+  'seq.products': ['mahsulot', 'изделий', 'products'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(
