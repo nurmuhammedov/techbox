@@ -118,7 +118,7 @@ export function Page({ title, note, actions, children, width = 'full', flow = fa
           </header>
         ) : null}
         {actions && slot ? createPortal(actions, slot) : null}
-        <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+        <div className={cn("flex min-h-0 flex-1 flex-col", flow && "gap-4")}>{children}</div>
       </div>
     </PageBar.Provider>
   )

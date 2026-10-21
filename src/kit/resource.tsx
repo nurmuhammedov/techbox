@@ -162,7 +162,8 @@ export function ResourceList<T extends Row>({
     </>
   )
 
-  if (embedded) return table
+  // Inside a page of tabs or cards the list still fills the screen below it, as a list page does.
+  if (embedded) return <div className="flex min-h-[calc(100dvh-11rem)] flex-col">{table}</div>
   return (
     <Page
       title={t(title)}

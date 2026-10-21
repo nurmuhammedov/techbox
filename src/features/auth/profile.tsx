@@ -67,6 +67,7 @@ export function ProfilePage() {
 
   return (
     <Page title={t('profile')} flow width="narrow">
+      <div className="flex flex-col gap-4">
       <Card>
         <div className="flex items-center gap-3">
           <span className="flex size-12 items-center justify-center rounded-full bg-accent-soft text-base font-semibold text-accent-ink">{user?.display_name?.[0]}</span>
@@ -123,6 +124,7 @@ export function ProfilePage() {
           <div className="flex justify-end"><Button type="submit" variant="primary" disabled={!oldPassword || newPassword.length < 6}>{t('save')}</Button></div>
         </Form>
       </Card>
+      </div>
     </Page>
   )
 }
