@@ -28,7 +28,8 @@ export class ApiError extends Error {
 
 function errorMessage(data: unknown): string {
   if (!data) return ''
-  if (typeof data === 'string') return data
+  // An HTML error page from the server or a proxy says nothing useful to a person
+  if (typeof data === 'string') return /^\s*</.test(data) ? '' : data.slice(0, 300)
   if (Array.isArray(data)) return data.map(errorMessage).join(' ')
   if (typeof data === 'object') {
     const obj = data as Record<string, unknown>
