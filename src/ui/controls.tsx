@@ -42,6 +42,7 @@ export function Select({ id, value, onChange, options, placeholder, invalid, dis
       placeholder={placeholder}
       invalid={invalid}
       disabled={disabled}
+      required
       className={className}
     />
   )

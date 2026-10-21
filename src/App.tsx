@@ -44,6 +44,7 @@ const P = {
   Order: page(sales, 'OrderDetailPage'),
   Customers: page(catalog, 'CustomersPage'),
   CustomerForm: page(catalog, 'CustomerFormPage'),
+  Customer: page(catalog, 'CustomerDetailPage'),
   Products: page(catalog, 'ProductsPage'),
   ProductForm: page(catalog, 'ProductFormPage'),
   Sales: page(catalog, 'SalesPage'),
@@ -130,6 +131,7 @@ export default function App() {
           {r('sales/orders/:id/edit', ['orders.manage'], <P.OrderForm />)}
           {r('sales/customers', ['customers.view', 'customers.manage'], <P.Customers />)}
           {r('sales/customers/new', ['customers.manage'], <P.CustomerForm />)}
+          {r('sales/customers/:id', ['customers.view', 'customers.manage'], <P.Customer />)}
           {r('sales/customers/:id/edit', ['customers.manage'], <P.CustomerForm />)}
           {r('sales/products', ['products.view', 'products.manage'], <P.Products />)}
           {r('sales/products/new', ['products.manage'], <P.ProductForm />)}

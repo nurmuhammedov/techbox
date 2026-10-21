@@ -1,14 +1,14 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowLeftRight } from 'lucide-react'
+import { ArrowLeftRight, Pencil } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { api, ApiError } from '@/api/client'
-import type { Customer, Product, Shape } from '@/api/types'
+import type { Customer, Order, Product, Shape } from '@/api/types'
 import { Box3D } from '@/drawings/Box3D'
-import { RouteSteps } from '@/kit/badges'
+import { Deadline, OrderStatusBadge, RouteSteps } from '@/kit/badges'
 import { RemoteCombo } from '@/kit/fields'
 import { ImageField } from '@/kit/ImageField'
 import { FormFooter, ResourceForm, ResourceList } from '@/kit/resource'
@@ -23,7 +23,7 @@ import { Form } from '@/ui/form'
 import { Input } from '@/ui/input'
 import { Card, Page } from '@/ui/page'
 
-import { sizeOf } from './orders'
+import { Row, sizeOf } from './orders'
 import { Picture } from '@/kit/Picture'
 
 // ───────────────────────────── Customers ─────────────────────────────
@@ -47,8 +47,74 @@ export function CustomersPage() {
       columns={columns}
       writePermission="customers.manage"
       defaultSort="company"
-      rowMenu={(c) => [{ label: t('menu.orders'), icon: <ArrowLeftRight />, onSelect: () => navigate(`/sales/orders?status=all&q=${encodeURIComponent(c.company)}`) }]}
+      onRowOpen={(c) => navigate(`/sales/customers/${c.id}`)}
+      rowMenu={(c) => [{ label: t('menu.orders'), icon: <ArrowLeftRight />, onSelect: () => navigate(`/sales/customers/${c.id}`) }]}
     />
+  )
+}
+
+type CustomerSummary = { orders: number; open: number; done: number; total: number; bought: number }
+
+export function CustomerDetailPage() {
+  const { t } = useTranslation()
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const { data: c } = useQuery({ queryKey: ['customers', 'one', id], queryFn: () => api.get<Customer & { summary: CustomerSummary }>(`/sales/customers/${id}`) })
+  if (!c) return <Page title="…" flow><LoadingCards rows={3} /></Page>
+  const s = c.summary
+  const columns: ColumnDef<Order, unknown>[] = [
+    { id: 'number', header: '№', cell: ({ row }) => <span className="font-code text-xs">{row.original.number}</span>, meta: { sortKey: 'created_at', export: (r: Order) => r.number } },
+    { id: 'name', header: t('name'), cell: ({ row }) => <div><p className="font-medium">{row.original.name}</p><p className="text-xs text-ink-3">{sizeOf(row.original)}</p></div>, meta: { fixed: true, export: (r: Order) => r.name } },
+    { id: 'qty', header: t('qty'), cell: ({ row }) => <span className="tabular">{num(row.original.quantity)}</span>, meta: { className: 'text-right', export: (r: Order) => r.quantity } },
+    { id: 'sum', header: t('order.total'), cell: ({ row }) => (row.original.price ? <span className="tabular">{money(row.original.price * row.original.quantity)}</span> : '—'), meta: { className: 'text-right', export: (r: Order) => (r.price ?? 0) * r.quantity } },
+    { id: 'status', header: t('status'), cell: ({ row }) => <OrderStatusBadge status={row.original.status} /> },
+    { id: 'deadline', header: t('deadline'), cell: ({ row }) => <Deadline value={row.original.deadline} done={row.original.status === 'done'} />, meta: { sortKey: 'deadline' } },
+  ]
+  return (
+    <Page
+      title={c.company}
+      note={c.contact_name || undefined}
+      flow
+      actions={<Button onClick={() => navigate(`/sales/customers/${c.id}/edit`)}><Pencil />{t('edit')}</Button>}
+    >
+      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+        <Card>
+          <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 text-[13px]">
+            <Row label={t('phone')} value={<span className="tabular">{formatPhone(c.phone) || '—'}</span>} />
+            <Row label={t('customer.tin')} value={<span className="tabular">{c.tin || '—'}</span>} />
+            <Row label={t('customer.since')} value={c.since_year ?? '—'} />
+            {c.note ? <Row label={t('note')} value={c.note} /> : null}
+          </dl>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            {[
+              [t('menu.orders'), num(s.orders)],
+              [t('customer.open_orders'), num(s.open)],
+              [t('order.status.done'), num(s.done)],
+              [t('customer.orders_sum'), money(s.total)],
+              [t('customer.bought'), money(s.bought)],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-md bg-sunken p-2.5">
+                <p className="text-[11px] text-ink-3">{label}</p>
+                <p className="tabular text-sm font-semibold">{value}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Card title={t('customer.orders')}>
+          <ResourceList<Order>
+            title="menu.orders"
+            url="/sales/orders"
+            base="/sales/orders"
+            columns={columns}
+            params={{ customer: c.id, status__in: 'new,planned,in_production,done,cancelled' }}
+            defaultSort="created_at"
+            defaultOrder="desc"
+            onRowOpen={(o) => navigate(`/sales/orders/${o.id}`)}
+            embedded
+          />
+        </Card>
+      </div>
+    </Page>
   )
 }
 

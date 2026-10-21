@@ -152,11 +152,14 @@ export function ShapeEditor({
         <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <div className="flex flex-col gap-3">
             <Segments
-              value={String(value.layers.length) as '2' | '3' | '5' | '7'}
+              value={String(value.layers.length)}
               onChange={(v) => setPly(Number(v))}
-              options={['2', '3', '5', '7'].map((x) => ({ value: x as '2' | '3' | '5' | '7', label: `${x} ${t('plan.ply')}` }))}
+              options={['2', '3', '4', '5', '6', '7'].map((x) => ({ value: x, label: x }))}
               className="w-fit"
             />
+            {value.layers.length % 2 === 0 && value.layers.length > 2 ? (
+              <p className="rounded-md bg-warn-soft px-3 py-2 text-xs text-warn">{t('shape.ply_unusual', { n: value.layers.length })}</p>
+            ) : null}
             {errors.layers ? <p className="text-xs text-bad">{errors.layers}</p> : null}
             <div className="flex flex-col gap-2">
               {value.layers.map((layer, i) => (

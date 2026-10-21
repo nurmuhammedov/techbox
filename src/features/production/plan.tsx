@@ -240,7 +240,7 @@ export function PlanPage() {
                           return out.slice(0, n)
                         })
                       }}
-                      options={['2', '3', '5', '7'].map((x) => ({ value: x as '2', label: x }))}
+                      options={['2', '3', '4', '5', '6', '7'].map((x) => ({ value: x as '2', label: x }))}
                     /></div>
                   </div>
                   <div className="grid gap-2 sm:grid-cols-2">

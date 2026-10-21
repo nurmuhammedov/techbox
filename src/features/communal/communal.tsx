@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Plus } from 'lucide-react'
+import { Plus, TrendingDown, TrendingUp } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
@@ -10,11 +11,11 @@ import { cn } from '@/lib/cn'
 import { money, num } from '@/lib/format'
 import { useTab } from '@/features/chemicals/chemicals'
 import { Button } from '@/ui/button'
-import { TabPanel, Tabs } from '@/ui/controls'
+import { Select, TabPanel, Tabs } from '@/ui/controls'
 import { Badge } from '@/ui/feedback'
 import { Card, Page } from '@/ui/page'
 
-interface Report { id: number; resource_name: string; resource_type: string; year: number; month: number; meter_value: number | null; consumption: number; total_price: number; amount_paid: number; debt: number }
+interface Report { resource: number; id: number; resource_name: string; resource_type: string; year: number; month: number; meter_value: number | null; consumption: number; total_price: number; amount_paid: number; debt: number }
 interface Resource { id: number; name: string; unit_name: string | null; type: string; currency: string; tariffs: { id: number; from_value: number | null; to_value: number | null; price: number; label: string }[] }
 interface Tariff { id: number; resource: number; from_value: number | null; to_value: number | null; price: number; label: string }
 interface Unit { id: number; name: string; symbol: string }
@@ -25,12 +26,21 @@ export function CommunalPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [tab, setTab] = useTab('reports')
-  const year = new Date().getFullYear()
+  const thisYear = new Date().getFullYear()
+  const [year, setYear] = useState(thisYear)
   const summary = useQuery({ queryKey: ['communal/reports', 'summary', year], queryFn: () => api.get<{ resource: number; resource__name: string; consumption: number; total: number; paid: number; debt: number }[]>('/communal/reports/summary', { year }) })
   const monthly = useQuery({ queryKey: ['communal/reports', 'year', year], queryFn: () => api.get<{ results: Report[] }>('/communal/reports', { year, page_size: 200 }) })
   const months = Array.from({ length: 12 }, (_, i) => i + 1)
   const totals = months.map((m) => (monthly.data?.results ?? []).filter((r) => r.month === m).reduce((s, r) => s + Number(r.total_price), 0))
   const max = Math.max(...totals, 1)
+  /** The latest month with a report for the resource, and how it compares with the month before. */
+  const trend = (resource: number) => {
+    const rows = (monthly.data?.results ?? []).filter((r) => r.resource === resource).sort((a, b) => b.month - a.month)
+    const [last, prev] = rows
+    if (!last) return null
+    const change = prev && Number(prev.total_price) ? ((Number(last.total_price) - Number(prev.total_price)) / Number(prev.total_price)) * 100 : null
+    return { month: last.month, total: Number(last.total_price), change }
+  }
 
   const reports: ColumnDef<Report, unknown>[] = [
     { id: 'period', header: t('communal.period'), cell: ({ row }) => <span className="tabular font-medium">{String(row.original.month).padStart(2, '0')}.{row.original.year}</span> },
@@ -59,7 +69,18 @@ export function CommunalPage() {
   const addFor: Record<string, string> = { reports: '/communal/reports/new', resources: '/communal/resources/new', tariffs: '/communal/tariffs/new', units: '/communal/units/new' }
 
   return (
-    <Page title={t('menu.communal')} flow actions={<Button variant="primary" onClick={() => navigate(addFor[tab])}><Plus />{t('add')}</Button>}>
+    <Page
+      title={t('menu.communal')}
+      flow
+      actions={
+        <>
+          <div className="w-28">
+            <Select value={String(year)} onChange={(v) => setYear(Number(v))} options={Array.from({ length: 5 }, (_, i) => String(thisYear - i)).map((y) => ({ value: y, label: y }))} />
+          </div>
+          <Button variant="primary" onClick={() => navigate(addFor[tab])}><Plus />{t('add')}</Button>
+        </>
+      }
+    >
       <div className="mb-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
         <div className="grid gap-3 sm:grid-cols-2">
           {summary.data?.map((s) => (
@@ -67,14 +88,31 @@ export function CommunalPage() {
               <p className="text-xs text-ink-3">{s.resource__name} · {year}</p>
               <p className="tabular text-xl font-semibold">{money(s.total)}</p>
               <p className={cn('tabular text-xs', s.debt > 0 ? 'text-bad' : 'text-ok')}>{t('communal.debt')}: {money(s.debt)}</p>
+              {(() => {
+                const tr = trend(s.resource)
+                if (!tr) return null
+                return (
+                  <p className="tabular mt-2 flex flex-wrap items-center gap-1 border-t border-line pt-2 text-xs text-ink-2">
+                    {t(`month.${tr.month}`)}: <b>{money(tr.total)}</b>
+                    {tr.change === null ? null : (
+                      <span className={cn('inline-flex items-center gap-0.5', tr.change > 0 ? 'text-bad' : tr.change < 0 ? 'text-ok' : 'text-ink-3')}>
+                        {tr.change > 0 ? <TrendingUp className="size-3.5" /> : tr.change < 0 ? <TrendingDown className="size-3.5" /> : null}
+                        {tr.change > 0 ? '+' : ''}{tr.change.toFixed(1)}%
+                      </span>
+                    )}
+                  </p>
+                )
+              })()}
             </Card>
           ))}
         </div>
         <Card title={t('communal.by_month', { year })}>
           <div className="flex h-36 items-end gap-1.5">
             {totals.map((v, i) => (
-              <div key={i} className="flex flex-1 flex-col items-center gap-1" title={money(v)}>
-                <div className="w-full rounded-t bg-accent/80 transition-all hover:bg-accent" style={{ height: `${(v / max) * 100}%`, minHeight: v ? 3 : 0 }} />
+              <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1" title={`${t(`month.${i + 1}`)}: ${money(v)}`}>
+                <div className="flex w-full flex-1 items-end">
+                  <div className="w-full rounded-t bg-accent/80 transition-all hover:bg-accent" style={{ height: `${(v / max) * 100}%`, minHeight: v ? 3 : 0 }} />
+                </div>
                 <span className="tabular text-[10px] text-ink-3">{i + 1}</span>
               </div>
             ))}

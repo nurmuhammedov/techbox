@@ -9,6 +9,7 @@ import { api } from '@/api/client'
 import type { Batch, Stage, WorkItem } from '@/api/types'
 import { useAuth } from '@/auth/AuthContext'
 import { CorrugatorLayout } from '@/drawings/CorrugatorLayout'
+import { blankOf } from '@/drawings/geometry'
 import { ShapeView } from '@/drawings/ShapeView'
 import { BatchStatusBadge, Deadline, ItemStateBadge, RouteSteps, StageBadge } from '@/kit/badges'
 import { RemoteCombo } from '@/kit/fields'
@@ -239,6 +240,16 @@ export function SemiStockPage() {
   )
 }
 
+/** Board area of one piece in m², to tell how much board a loss of pieces was. */
+function unitArea(i: WorkItem) {
+  const s = i.shape
+  if (!s) return 0
+  if (s.kind === 'pallet') return ((s.width ?? 0) * (s.length ?? 0)) / 1e6
+  if (s.kind === 'sheet') return ((s.sheet_width ?? 0) * (s.sheet_length ?? 0)) / 1e6
+  const b = blankOf({ length: s.length, width: s.width, height: s.height ?? null, joint: s.joint ?? null, l0: s.l0, l1: s.l1, l2: s.l2, l3: s.l3, l4: s.l4, l5: s.l5 }, s.parts)
+  return (b.across * b.along) / 1e6
+}
+
 export function ItemDetailPage() {
   const { t } = useTranslation()
   const { id } = useParams()
@@ -318,6 +329,15 @@ export function ItemDetailPage() {
                     {t('item.run_line', { in: num(r.qty_in), out: r.qty_out === null ? '—' : num(r.qty_out) })}
                     {r.waste_kg ? ` · ${t('work.waste_kg')}: ${kg(r.waste_kg)}` : ''}
                   </p>
+                  {r.qty_out !== null && r.qty_in > r.qty_out ? (
+                    <p className="tabular text-xs text-bad">
+                      {t('item.loss', {
+                        n: num(r.qty_in - r.qty_out),
+                        pct: (((r.qty_in - r.qty_out) / r.qty_in) * 100).toFixed(1),
+                        m2: (((r.qty_in - r.qty_out) * unitArea(i)) || 0).toFixed(1),
+                      })}
+                    </p>
+                  ) : null}
                   {r.note ? <p className="mt-0.5 text-xs">{r.note}</p> : null}
                 </li>
               ))}

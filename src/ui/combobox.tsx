@@ -35,6 +35,8 @@ interface BaseProps {
    * `options`. The options are still sorted by the same forgiving match.
    */
   onQuery?: (text: string) => void
+  /** A choice that must stay made: no clear button. */
+  required?: boolean
   className?: string
 }
 
@@ -265,7 +267,7 @@ export function Combobox(props: SingleProps | MultiProps) {
             onKeyDown={handleKeyDown}
             className="h-6.5 min-w-16 flex-1 bg-transparent text-[13px] text-ink outline-none placeholder:text-ink-3"
           />
-          {!props.multiple && props.value && !disabled ? (
+          {!props.multiple && props.value && !disabled && !props.required ? (
             <button
               type="button"
               tabIndex={-1}

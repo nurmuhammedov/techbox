@@ -1,11 +1,12 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Check, ChevronDown, CornerUpLeft, Play, Ruler } from 'lucide-react'
+import { Check, ChevronDown, CornerUpLeft, Lock, Play, Ruler } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { api } from '@/api/client'
 import type { Batch, MaterialType, Stage, WorkItem } from '@/api/types'
+import { useAuth } from '@/auth/AuthContext'
 import { CorrugatorLayout } from '@/drawings/CorrugatorLayout'
 import { ShapeView } from '@/drawings/ShapeView'
 import { BatchStatusBadge, Deadline, RouteSteps, STAGE_TONE } from '@/kit/badges'
@@ -103,6 +104,11 @@ export function ItemCard({ item, children }: { item: WorkItem; children?: ReactN
 
 export function StageWorkPage() {
   const { stage } = useParams<{ stage: Stage }>()
+  const { can } = useAuth()
+  const { t } = useTranslation()
+  if (!can(`production.${stage}`, 'production.plan', 'production.board')) {
+    return <div className="p-10"><EmptyState icon={Lock} title={t('forbidden')} /></div>
+  }
   return stage === 'gofra' ? <GofraQueue /> : <ItemQueue key={stage} stage={stage!} />
 }
 
