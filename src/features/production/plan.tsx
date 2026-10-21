@@ -7,6 +7,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { api, ApiError, type Page as ApiPage } from '@/api/client'
 import type { Batch, Format, MaterialType, Order, Plan, Stage } from '@/api/types'
 import { CorrugatorLayout } from '@/drawings/CorrugatorLayout'
+import { Peek } from '@/drawings/Peek'
 import { ShapeView } from '@/drawings/ShapeView'
 import { Deadline } from '@/kit/badges'
 import { useOptions } from '@/kit/fields'
@@ -193,11 +194,11 @@ export function PlanPage() {
               {available.map((o) => {
                 const on = !!picked[o.id]
                 return (
+                  <div key={o.id} className="relative">
                   <button
-                    key={o.id}
                     type="button"
                     onClick={() => toggle(o)}
-                    className={cn('flex items-start gap-2.5 rounded-md border p-2.5 text-left transition-colors', on ? 'border-accent bg-accent-soft' : 'border-line hover:bg-sunken')}
+                    className={cn('flex w-full items-start gap-2.5 rounded-md border p-2.5 pb-8 text-left transition-colors', on ? 'border-accent bg-accent-soft' : 'border-line hover:bg-sunken')}
                   >
                     <span className={cn('mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border', on ? 'border-accent bg-accent text-on-accent' : 'border-line-strong')}>
                       {on ? <Check className="size-3" /> : null}
@@ -216,6 +217,8 @@ export function PlanPage() {
                       </span>
                     </span>
                   </button>
+                  <Peek title={`${o.name} · ${sizeOf(o)}`} className="absolute right-2 bottom-2 h-6 bg-surface"><ShapeView shape={{ ...o, parts: 1, orientation: 'horizontal', ups: 1 }} quantity={o.quantity} logo={o.logo} /></Peek>
+                  </div>
                 )
               })}
               {orders.data && !available.length ? <p className="py-8 text-center text-[13px] text-ink-3">{t('plan.no_new_orders')}</p> : null}

@@ -112,15 +112,36 @@ function LayoutDrawing({ plan, className }: { plan: Plan; className?: string }) 
                 <Dim id={id} x1={x0} y1={top + h} x2={Math.min(x1, x0 + plan.pallet.length * kx)} y2={top + h} offset={18} label={`${fmt(plan.pallet.length)}`} fontSize={12} strong />
               </>
             ) : null}
-            {offcutH > 14 ? (
+            {offcutH > 14 && !plan.pallet ? (
               <text x={x0 + 10} y={offcutY + offcutH / 2} dy="0.35em" fontSize={Math.min(14, offcutH * 0.5)} fontWeight={600} fill="var(--ink-2)">
-                {plan.pallet ? `${t('plan.pallet')} ${fmt(plan.pallet.width)}×${fmt(plan.pallet.length)} · ${t('plan.pallet_count', { n: plan.pallet.count })}` : t('plan.offcut')}
+                {t('plan.offcut')}
               </text>
             ) : null}
+            {plan.pallet && offcutH > 12
+              ? Array.from({ length: Math.ceil((x1 - x0) / (plan.pallet.length * kx)) }, (_, k) => {
+                  const a = x0 + k * plan.pallet!.length * kx
+                  const z = Math.min(x1, a + plan.pallet!.length * kx)
+                  return z - a > 18 ? (
+                    <g key={`n${k}`}>
+                      <rect x={(a + z) / 2 - 11} y={offcutY + offcutH / 2 - 9} width="22" height="18" rx="9" fill="var(--surface)" stroke="var(--line-strong)" />
+                      <text x={(a + z) / 2} y={offcutY + offcutH / 2} dy="0.35em" textAnchor="middle" fontSize="11" fontWeight={700} fill="var(--ink-2)">{k + 1}</text>
+                    </g>
+                  ) : null
+                })
+              : null}
             <Dim id={id} x1={x1} y1={offcutY} x2={x1} y2={offcutY + offcutH} offset={18} label={fmt(plan.offcut_mm)} fontSize={12} />
           </g>
         ) : null}
         <rect x={x0} y={trimY} width={x1 - x0} height={trimH} fill="var(--bad-soft)" stroke="var(--bad)" strokeWidth="0.8" />
+        {/* the run goes on past what is drawn: the right end fades out */}
+        <defs>
+          <linearGradient id={`${id}-fade`} x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stopColor="var(--surface)" stopOpacity="0" />
+            <stop offset="1" stopColor="var(--surface)" stopOpacity="0.95" />
+          </linearGradient>
+        </defs>
+        <rect x={x1 - 70} y={top} width={70} height={h} fill={`url(#${id}-fade)`} />
+        <text x={x1 - 8} y={top + h / 2} dy="0.35em" textAnchor="end" fontSize="18" fontWeight={700} fill="var(--ink-3)">…</text>
         <Dim id={id} x1={x1} y1={trimY} x2={x1} y2={trimY + trimH} offset={70} label={fmt(plan.trim_mm)} fontSize={11} />
         <Dim id={id} x1={x0} y1={top} x2={x0} y2={top + h} offset={-34} label={`${fmt(plan.format_mm)}`} fontSize={13} />
         <g>
@@ -140,6 +161,11 @@ function LayoutDrawing({ plan, className }: { plan: Plan; className?: string }) 
             { kind: 'hatch', label: plan.pallet ? t('plan.pallet') : t('plan.offcut') },
           ]}
         />
+        {plan.pallet ? (
+          <p className="tabular text-xs text-ink-2">
+            {t('plan.pallet')}: <b>{fmt(plan.pallet.width)}×{fmt(plan.pallet.length)} mm</b> · {t('plan.pallet_count', { n: num(plan.pallet.count) })}
+          </p>
+        ) : null}
         <p className="tabular text-xs text-ink-2">
           {t('plan.format')} {fmt(plan.format_mm)} mm · {t('plan.used')} {fmt(plan.used_mm)} mm ·{' '}
           <span className="text-bad">{t('plan.trim')} {fmt(plan.trim_mm)}</span>

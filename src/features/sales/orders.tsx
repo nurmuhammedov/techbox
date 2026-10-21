@@ -8,6 +8,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api, ApiError } from '@/api/client'
 import type { Order, Product, Shape } from '@/api/types'
 import { useAuth } from '@/auth/AuthContext'
+import { Peek } from '@/drawings/Peek'
 import { ShapeView } from '@/drawings/ShapeView'
 import { Deadline, ItemStateBadge, OrderStatusBadge, RouteSteps } from '@/kit/badges'
 import { RemoteCombo } from '@/kit/fields'
@@ -76,9 +77,12 @@ export function OrdersPage() {
       id: 'name',
       header: t('name'),
       cell: ({ row }) => (
-        <div className="min-w-0">
-          <p className="truncate font-medium">{row.original.name}</p>
-          <p className="truncate text-xs text-ink-3">{row.original.customer_name}</p>
+        <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-medium">{row.original.name}</p>
+            <p className="truncate text-xs text-ink-3">{row.original.customer_name}</p>
+          </div>
+          <Peek title={`${row.original.name} · ${sizeOf(row.original)}`}><ShapeView shape={{ ...row.original, parts: 1, orientation: 'horizontal', ups: 1 }} quantity={row.original.quantity} logo={row.original.logo} /></Peek>
         </div>
       ),
       meta: { export: (r: Order) => `${r.name} — ${r.customer_name}` },

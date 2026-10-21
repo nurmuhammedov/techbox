@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import type { ColumnDef } from '@tanstack/react-table'
 import { Check, ChevronDown, CornerUpLeft, Lock, Play, Ruler } from 'lucide-react'
 import { Children, isValidElement, useState, type ReactElement, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -13,9 +14,10 @@ import { Peek } from '@/drawings/Peek'
 import { ShapeView } from '@/drawings/ShapeView'
 import { BatchStatusBadge, Deadline, RouteSteps, STAGE_TONE } from '@/kit/badges'
 import { RemoteCombo, useOptions } from '@/kit/fields'
-import { FormFooter } from '@/kit/resource'
+import { useUrlFilters } from '@/kit/filters'
+import { FormFooter, ResourceList } from '@/kit/resource'
 import { cn } from '@/lib/cn'
-import { kg, num } from '@/lib/format'
+import { dateTime, kg, num } from '@/lib/format'
 import { fail, ok } from '@/lib/notify'
 import { useAction } from '@/lib/queries'
 import { useTab } from '@/features/chemicals/chemicals'
@@ -127,10 +129,63 @@ export function StageWorkPage() {
   return stage === 'gofra' ? <GofraQueue /> : <ItemQueue key={stage} stage={stage!} />
 }
 
+interface Run {
+  id: number
+  stage: Stage
+  item: number
+  item_number: string
+  item_name: string
+  customer_name: string | null
+  batch_number: string
+  qty_in: number
+  qty_out: number | null
+  loss: number | null
+  waste_kg: number | null
+  operator_name: string | null
+  started_at: string
+  finished_at: string
+}
+
+function useHistoryCount(stage: Stage) {
+  return useQuery({ queryKey: ['history', stage, 'count'], queryFn: () => api.get<{ count: number }>('/production/history', { stage, page_size: 1 }) }).data?.count ?? 0
+}
+
+/** Everything this operator has finished on the stage, newest first. */
+function RunHistory({ stage }: { stage: Stage }) {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const f = useUrlFilters({ date: { kind: 'dates', from: 'finished_at__date__gte', to: 'finished_at__date__lte' } })
+  const columns: ColumnDef<Run, unknown>[] = [
+    { id: 'date', header: t('work.finished_at'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{dateTime(row.original.finished_at)}</span>, meta: { sortKey: 'finished_at', export: (r: Run) => r.finished_at } },
+    { id: 'item', header: t('name'), cell: ({ row }) => <div><p className="font-medium">{row.original.item_name}</p><p className="text-xs text-ink-3"><span className="font-code">{row.original.item_number}</span>{row.original.customer_name ? ` · ${row.original.customer_name}` : ''}</p></div>, meta: { fixed: true, export: (r: Run) => r.item_name } },
+    { id: 'batch', header: t('batch'), cell: ({ row }) => <span className="font-code text-xs">{row.original.batch_number}</span> },
+    { id: 'in', header: t('work.qty_in'), cell: ({ row }) => <span className="tabular">{num(row.original.qty_in)}</span>, meta: { className: 'text-right', export: (r: Run) => r.qty_in } },
+    { id: 'out', header: t('work.qty_out'), cell: ({ row }) => <b className="tabular">{num(row.original.qty_out ?? 0)}</b>, meta: { className: 'text-right', sortKey: 'qty_out', export: (r: Run) => r.qty_out } },
+    { id: 'loss', header: t('work.loss'), cell: ({ row }) => (row.original.loss ? <span className="tabular text-bad">{num(row.original.loss)}</span> : '—'), meta: { className: 'text-right', export: (r: Run) => r.loss } },
+    { id: 'waste', header: t('work.waste_kg'), cell: ({ row }) => (row.original.waste_kg ? <span className="tabular">{kg(row.original.waste_kg)}</span> : '—'), meta: { className: 'text-right', export: (r: Run) => r.waste_kg } },
+  ]
+  return (
+    <ResourceList<Run>
+      embedded
+      title="work.history"
+      url="/production/history"
+      base="/production/history"
+      columns={columns}
+      params={{ stage, ...f.params }}
+      filters={f.filters}
+      deletable={false}
+      defaultSort="finished_at"
+      defaultOrder="desc"
+      onRowOpen={(r) => navigate(`/production/items/${r.item}`)}
+    />
+  )
+}
+
 function ItemQueue({ stage }: { stage: Stage }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { data } = useQuery({ queryKey: ['queue', stage], queryFn: () => api.get<Queue<WorkItem>>(`/production/queue/${stage}`) })
+  const history = useHistoryCount(stage)
   const take = useAction((id: number) => api.post(`/production/items/${id}/take`), { success: t('work.taken'), invalidate: ['queue'] })
   const release = useAction((id: number) => api.post(`/production/items/${id}/release`), { success: t('work.released'), invalidate: ['queue'] })
   const grid = 'grid gap-3 md:grid-cols-2 2xl:grid-cols-3'
@@ -180,6 +235,7 @@ function ItemQueue({ stage }: { stage: Stage }) {
               <div className={grid}>{data.done_today.map((item) => <ItemCard key={item.id} item={item} />)}</div>
             </Section>
           ) : null}
+          <Section id="history" title={t('work.history')} count={history}><RunHistory stage={stage} /></Section>
         </QueueTabs>
       ) : null}
     </Page>
@@ -302,6 +358,7 @@ function GofraQueue() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { data } = useQuery({ queryKey: ['queue', 'gofra'], queryFn: () => api.get<Queue<Batch>>('/production/queue/gofra') })
+  const history = useHistoryCount('gofra')
   const start = useAction((id: number) => api.post(`/production/batches/${id}/start`), { success: t('work.started'), invalidate: ['queue'] })
   const startSeq = useAction((id: number) => api.post(`/production/sequences/${id}/start`), { success: t('work.started'), invalidate: ['queue'] })
   const { user } = useAuth()
@@ -373,6 +430,7 @@ function GofraQueue() {
               <div className={grid}>{data.done_today.map((b) => <BatchCard key={b.id} batch={b} />)}</div>
             </Section>
           ) : null}
+          <Section id="history" title={t('work.history')} count={history}><RunHistory stage="gofra" /></Section>
         </QueueTabs>
       ) : null}
     </Page>

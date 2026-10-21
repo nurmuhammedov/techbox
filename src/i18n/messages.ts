@@ -660,6 +660,11 @@ const M: Record<string, [string, string, string]> = {
   'plan.pallet_count': ['{{n}} dona', '{{n}} шт', '{{n}} pcs'],
   'drawing.peek': ["Chizmani ko'rish", 'Посмотреть чертёж', 'View drawing'],
   'seq.products': ['mahsulot', 'изделий', 'products'],
+  'work.history': ['Tarixim', 'Моя история', 'My history'],
+  'work.finished_at': ['Tugatilgan', 'Завершено', 'Finished'],
+  'work.qty_in': ['Kirdi', 'Вход', 'In'],
+  'work.qty_out': ['Chiqdi', 'Выход', 'Out'],
+  'work.loss': ['Brak', 'Брак', 'Defects'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(
