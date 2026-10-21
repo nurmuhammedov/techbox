@@ -14,6 +14,7 @@ interface Props {
 }
 
 const W = 1000
+const TEMPLATE = { length: 400, width: 300, height: 250, joint: null }
 const M = { left: 118, right: 24, top: 84, bottom: 70 }
 
 /**
@@ -23,7 +24,9 @@ const M = { left: 118, right: 24, top: 84, bottom: 70 }
 export function BoxBlank({ size, onChange, className }: Props) {
   const { t } = useTranslation()
   const id = useId().replace(/:/g, '')
-  const b = blankOf(size)
+  const real = blankOf(size)
+  const empty = !(real.l1 > 0 && real.l5 > 0 && real.l3 > 0)
+  const b = empty ? blankOf({ ...TEMPLATE, joint: size.joint }) : real
   const editable = !!onChange
   const along = b.joint + 2 * (b.l1 + b.l5)
   const scale = (W - M.left - M.right) / Math.max(along, 1)
@@ -51,7 +54,7 @@ export function BoxBlank({ size, onChange, className }: Props) {
         aria-label={`${key.toUpperCase()} — ${t(`drawing.${key}`)}`}
         title={t(`drawing.${key}`)}
         value={value ?? ''}
-        placeholder={fmt(b[key])}
+        placeholder={empty ? key.toUpperCase() : fmt(b[key])}
         onChange={(e) => {
           const digits = e.target.value.replace(/\D/g, '')
           onChange!(key, digits ? Number(digits) : null)
@@ -67,12 +70,13 @@ export function BoxBlank({ size, onChange, className }: Props) {
     )
   }
 
-  const label = (key: ScoreKey) => (editable ? '' : fmt(b[key]))
+  const label = (key: ScoreKey) => (editable ? '' : empty ? key.toUpperCase() : fmt(b[key]))
+  const num = (key: ScoreKey) => (empty ? key.toUpperCase() : fmt(b[key]))
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
       <div className="relative w-full" style={{ aspectRatio: `${W} / ${H}` }}>
-        <svg viewBox={`0 0 ${W} ${H}`} className="absolute inset-0 size-full" role="img" aria-label={t('drawing.blank')}>
+        <svg viewBox={`0 0 ${W} ${H}`} className={cn('absolute inset-0 size-full', empty && 'opacity-45')} role="img" aria-label={t('drawing.blank')}>
           <Defs id={id} />
           {/* Glue flap: a trapezoid on the body height only. */}
           <path
@@ -108,9 +112,9 @@ export function BoxBlank({ size, onChange, className }: Props) {
           {/* Sizes along: panels on top, the whole blank above them, the glue flap below. */}
           <Dim id={id} x1={xs[0]} y1={y0} x2={xs[1]} y2={y0} offset={-26} label={label('l1')} strong={!b.auto.l1} fontSize={fs} />
           <Dim id={id} x1={xs[1]} y1={y0} x2={xs[2]} y2={y0} offset={-26} label={label('l5')} strong={!b.auto.l5} fontSize={fs} />
-          <Dim id={id} x1={xs[2]} y1={y0} x2={xs[3]} y2={y0} offset={-26} label={fmt(b.l1)} fontSize={fs} />
-          <Dim id={id} x1={xs[3]} y1={y0} x2={xs[4]} y2={y0} offset={-26} label={fmt(b.l5)} fontSize={fs} />
-          <Dim id={id} x1={x0} y1={y0} x2={xs[4]} y2={y0} offset={-64} label={`${fmt(along)} mm`} fontSize={fs} />
+          <Dim id={id} x1={xs[2]} y1={y0} x2={xs[3]} y2={y0} offset={-26} label={num('l1')} fontSize={fs} />
+          <Dim id={id} x1={xs[3]} y1={y0} x2={xs[4]} y2={y0} offset={-26} label={num('l5')} fontSize={fs} />
+          <Dim id={id} x1={x0} y1={y0} x2={xs[4]} y2={y0} offset={-64} label={empty ? '—' : `${fmt(along)} mm`} fontSize={fs} />
           <Dim id={id} x1={x0} y1={yEnd} x2={xj} y2={yEnd} offset={34} label={fmt(b.joint)} fontSize={fs - 1} />
 
           {/* Sizes across: flaps and body, then the whole height (l0). */}
@@ -134,9 +138,13 @@ export function BoxBlank({ size, onChange, className }: Props) {
             { kind: 'hatch', label: t('drawing.flap') },
           ]}
         />
-        <p className="tabular text-xs text-ink-2">
-          {t('drawing.blank_size')}: <b className="font-code">{fmt(b.across)} × {fmt(b.along)}</b> mm
-        </p>
+        {empty ? (
+          <p className="text-xs text-warn">{t('drawing.enter_size')}</p>
+        ) : (
+          <p className="tabular text-xs text-ink-2">
+            {t('drawing.blank_size')}: <b className="font-code">{fmt(b.across)} × {fmt(b.along)}</b> mm
+          </p>
+        )}
       </div>
     </div>
   )

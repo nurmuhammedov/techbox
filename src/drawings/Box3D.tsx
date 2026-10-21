@@ -19,9 +19,10 @@ export function Box3D({
   logo?: string | null
 }) {
   const { t } = useTranslation()
-  const L = length || 1
-  const Wd = width || 1
-  const Hh = height || 1
+  const empty = !(length && width && height)
+  const L = empty ? 400 : length!
+  const Wd = empty ? 300 : width!
+  const Hh = empty ? 250 : height!
   const max = Math.max(L, Wd, Hh)
   const k = 120 / max
   const l = L * k
@@ -43,7 +44,7 @@ export function Box3D({
   const vbW = ox + l * c + 40
   const vbH = oy + (l + w) * s + 34
   return (
-    <svg viewBox={`0 0 ${vbW} ${vbH}`} className={cn('w-full', className)} role="img" aria-label={t('drawing.box3d')}>
+    <svg viewBox={`0 0 ${vbW} ${vbH}`} className={cn('w-full', empty && 'opacity-40', className)} role="img" aria-label={t('drawing.box3d')}>
       <polygon points={[A2, B2, C2, D2].map(pt).join(' ')} fill="var(--accent-soft)" stroke="var(--draw-cut)" strokeWidth="1.4" />
       <polygon points={[D, C, C2, D2].map(pt).join(' ')} fill="var(--draw-fill)" stroke="var(--draw-cut)" strokeWidth="1.4" />
       <polygon points={[B, C, C2, B2].map(pt).join(' ')} fill="var(--surface)" stroke="var(--draw-cut)" strokeWidth="1.4" />
@@ -52,13 +53,13 @@ export function Box3D({
         <image href={logo} x={(D[0] + C2[0]) / 2 - 18} y={(D[1] + C2[1]) / 2 - 12} width="36" height="24" preserveAspectRatio="xMidYMid meet" />
       ) : null}
       <text x={(D[0] + C[0]) / 2 - 6} y={(D[1] + C[1]) / 2 + 16} textAnchor="middle" fontSize="11" fontFamily="var(--font-mono)" fill="var(--ink-2)">
-        {fmt(length ?? 0)}
+        {length ? fmt(length) : 'L'}
       </text>
       <text x={(B[0] + C[0]) / 2 + 8} y={(B[1] + C[1]) / 2 + 16} textAnchor="middle" fontSize="11" fontFamily="var(--font-mono)" fill="var(--ink-2)">
-        {fmt(width ?? 0)}
+        {width ? fmt(width) : 'W'}
       </text>
       <text x={C[0] + 8} y={(C[1] + C2[1]) / 2} fontSize="11" fontFamily="var(--font-mono)" fill="var(--ink-2)">
-        {fmt(height ?? 0)}
+        {height ? fmt(height) : 'H'}
       </text>
     </svg>
   )

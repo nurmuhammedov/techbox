@@ -581,6 +581,7 @@ const M: Record<string, [string, string, string]> = {
   'waste.sale': ['Chiqindi sotuvi', 'Продажа отходов', 'Waste sale'],
   'warehouse.holds': ['Saqlaydi', 'Хранит', 'Stores'],
   'warehouse.holds_hint': ['Bir omborda bir nechta tur saqlanishi mumkin', 'Склад может хранить несколько видов', 'A warehouse may store several kinds'],
+  'drawing.enter_size': ["Chizma namuna. Qutining uzunligi, eni va balandligini kiriting", 'Это образец. Введите длину, ширину и высоту коробки', 'This is a sample. Enter the box length, width and height'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(
