@@ -228,7 +228,7 @@ export function PlanPage() {
 
           <div className="flex min-w-0 flex-col gap-4">
             <Card title={t('plan.material')}>
-              <div className="grid gap-4 lg:grid-cols-[minmax(0,440px)_minmax(0,1fr)]">
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,540px)_minmax(0,1fr)]">
                 <div className="flex flex-col gap-4">
                 <Field label={t('format')}>
                   {(fid) => (
