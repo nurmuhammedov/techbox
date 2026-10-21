@@ -256,7 +256,7 @@ export function PlanPage() {
                       options={['1', '2', '3', '4', '5', '6', '7'].map((x) => ({ value: x as '2', label: x }))}
                     /></div>
                   </div>
-                  <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="flex flex-col gap-2">
                     {layers.map((l, i) => (
                       <div key={i} className="flex items-center gap-2">
                         <span className="flex shrink-0 items-center gap-1.5 text-xs text-ink-3">
