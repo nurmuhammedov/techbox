@@ -33,7 +33,7 @@ export function Zoomable({ title, children, large }: { title: string; children: 
           <span className="tabular w-12 text-center text-xs text-ink-2">{Math.round(STEPS[step] * 100)}%</span>
           <Button size="sm" onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))} disabled={step === STEPS.length - 1} aria-label={t('drawing.zoom_in')}><ZoomIn /></Button>
         </div>
-        <div className="overflow-auto">
+        <div className="overflow-auto px-1">
           <div className={cn('mx-auto')} style={{ width: `${STEPS[step] * 100}%` }}>
             {large ?? children}
           </div>
