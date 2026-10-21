@@ -12,6 +12,7 @@ import { useTab } from '@/features/chemicals/chemicals'
 import { TabPanel, Tabs } from '@/ui/controls'
 import { Badge } from '@/ui/feedback'
 import { Page } from '@/ui/page'
+import { useUrlFilters } from '@/kit/filters'
 
 const EMPLOYEE = (r: Record<string, unknown>) => String(r.full_name)
 
@@ -19,6 +20,7 @@ export function EmployeesPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [tab, setTab] = useTab('list')
+  const f = useUrlFilters({ position: { kind: 'remote', param: 'position', url: '/core/positions', label: (r) => String(r.name) } })
   const columns: ColumnDef<Employee, unknown>[] = [
     {
       id: 'name',
@@ -46,7 +48,7 @@ export function EmployeesPage() {
     <Page title={t('menu.employees')}>
       <Tabs value={tab} onChange={setTab} tabs={[{ value: 'list', label: t('menu.employees') }, { value: 'contracts', label: t('hr.contracts') }, { value: 'positions', label: t('ref.positions') }]}>
         <TabPanel value="list">
-          <ResourceList<Employee> embedded title="menu.employees" url="/core/employees" base="/hr/employees" columns={columns} writePermission="hr.manage" defaultSort="last_name"
+          <ResourceList<Employee> embedded title="menu.employees" url="/core/employees" base="/hr/employees" columns={columns} params={f.params} filters={f.filters} writePermission="hr.manage" defaultSort="last_name"
             rowMenu={(e) => [{ label: t('hr.add_contract'), icon: <FileSignature />, onSelect: () => navigate(`/hr/contracts/new?employee=${e.id}`) }]}
             toolbar={<AddButton to="/hr/employees/new" />} />
         </TabPanel>
@@ -183,6 +185,10 @@ interface Incident { id: number; employee_name: string | null; type_name: string
 export function IncidentsPage() {
   const { t } = useTranslation()
   const [tab, setTab] = useTab('list')
+  const f = useUrlFilters({
+    type: { kind: 'remote', param: 'incident_type', url: '/hr/incident-types', label: (r) => String(r.name) },
+    employee: { kind: 'remote', param: 'employee', url: '/core/employees', label: (r) => String(r.full_name ?? `${r.last_name} ${r.first_name}`) },
+  })
   const columns: ColumnDef<Incident, unknown>[] = [
     { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{dateTime(row.original.happened_at)}</span>, meta: { sortKey: 'happened_at' } },
     { id: 'employee', header: t('hr.employee'), cell: ({ row }) => row.original.employee_name ?? '—' },
@@ -192,7 +198,7 @@ export function IncidentsPage() {
   return (
     <Page title={t('menu.incidents')}>
       <Tabs value={tab} onChange={setTab} tabs={[{ value: 'list', label: t('menu.incidents') }, { value: 'types', label: t('ref.incident-types') }]}>
-        <TabPanel value="list"><ResourceList<Incident> embedded title="menu.incidents" url="/hr/incidents" base="/hr/incidents" columns={columns} writePermission="hr.manage" defaultSort="happened_at" defaultOrder="desc" toolbar={<AddButton to="/hr/incidents/new" />} /></TabPanel>
+        <TabPanel value="list"><ResourceList<Incident> embedded title="menu.incidents" url="/hr/incidents" base="/hr/incidents" columns={columns} params={f.params} filters={f.filters} writePermission="hr.manage" defaultSort="happened_at" defaultOrder="desc" toolbar={<AddButton to="/hr/incidents/new" />} /></TabPanel>
         <TabPanel value="types"><ResourceList<{ id: number; name: string }> embedded title="ref.incident-types" url="/hr/incident-types" base="/hr/incident-types" paginated={false} writePermission="hr.manage" columns={[{ id: 'name', header: t('name'), cell: ({ row }) => row.original.name }]} toolbar={<AddButton to="/hr/incident-types/new" />} /></TabPanel>
       </Tabs>
     </Page>
@@ -216,6 +222,11 @@ interface Attendance { id: number; employee_name: string; date: string; arrived_
 
 export function AttendancePage() {
   const { t } = useTranslation()
+  const f = useUrlFilters({
+    date: { kind: 'dates', from: 'date__gte', to: 'date__lte' },
+    employee: { kind: 'remote', param: 'employee', url: '/core/employees', label: (r) => String(r.full_name ?? `${r.last_name} ${r.first_name}`) },
+    late: { kind: 'select', param: 'late', options: [{ value: 'true', label: t('hr.late') }, { value: 'false', label: t('hr.on_time') }] },
+  })
   const columns: ColumnDef<Attendance, unknown>[] = [
     { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular">{date(row.original.date)}</span>, meta: { sortKey: 'date' } },
     { id: 'employee', header: t('hr.employee'), cell: ({ row }) => <span className="font-medium">{row.original.employee_name}</span> },
@@ -223,7 +234,7 @@ export function AttendancePage() {
     { id: 'left', header: t('hr.left'), cell: ({ row }) => <span className="tabular">{row.original.left_at?.slice(0, 5) ?? '—'}</span> },
     { id: 'late', header: t('hr.late'), cell: ({ row }) => (row.original.late ? <Badge tone="warn">{row.original.late_reason || t('hr.late')}</Badge> : null) },
   ]
-  return <ResourceList<Attendance> title="menu.attendance" url="/hr/attendance" base="/hr/attendance" columns={columns} writePermission="hr.manage" defaultSort="date" defaultOrder="desc" />
+  return <ResourceList<Attendance> title="menu.attendance" url="/hr/attendance" base="/hr/attendance" columns={columns} params={f.params} filters={f.filters} writePermission="hr.manage" defaultSort="date" defaultOrder="desc" />
 }
 
 export const AttendanceForm = () => (

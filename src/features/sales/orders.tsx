@@ -28,6 +28,7 @@ import { Input, Textarea } from '@/ui/input'
 import { NumberInput } from '@/ui/number-input'
 import { Card, Page } from '@/ui/page'
 import { Picture } from '@/kit/Picture'
+import { useUrlFilters } from '@/kit/filters'
 
 const STATUS_GROUPS: Record<string, string | undefined> = {
   active: 'new,planned,in_production',
@@ -59,6 +60,11 @@ export function OrdersPage() {
     }
   }
 
+  const f = useUrlFilters({
+    name: { kind: 'remote', param: 'customer', url: '/sales/customers', label: (r) => String(r.company) },
+    progress: { kind: 'select', param: 'stage', options: [{ value: 'gofra', label: t('stage.gofra') }, { value: 'fleksa', label: t('stage.fleksa') }, { value: 'tikish', label: t('stage.tikish') }, { value: 'yelimlash', label: t('stage.yelimlash') }] },
+    created: { kind: 'dates', from: 'created_at__date__gte', to: 'created_at__date__lte' },
+  })
   const columns: ColumnDef<Order, unknown>[] = [
     {
       id: 'number',
@@ -137,10 +143,11 @@ export function OrdersPage() {
       deletable={false}
       addLabel="order.new"
       defaultSort="deadline"
-      params={{ status__in: STATUS_GROUPS[status] }}
+      params={{ status__in: STATUS_GROUPS[status], ...f.params }}
       onRowOpen={(o) => navigate(`/sales/orders/${o.id}`)}
       rowMenu={(o) => (o.status === 'new' && can('orders.manage') ? [{ label: t('order.cancel'), icon: <Ban />, onSelect: () => void cancel(o), tone: 'danger' }] : [])}
       filters={{
+        ...f.filters,
         status: (
           <FilterSelect
             value={status}

@@ -17,6 +17,7 @@ import { Field } from '@/ui/field'
 import { Form } from '@/ui/form'
 import { NumberInput } from '@/ui/number-input'
 import { Card, Page } from '@/ui/page'
+import { useUrlFilters } from '@/kit/filters'
 
 interface Lot { id: number; type_name: string; unit: string; amount: number; remaining: number; price: number; supplier: string; created_at: string }
 interface GlueRow { id: number; type_name: string; amount: number; remaining: number; cost: number; ingredients: { chemical_name: string; amount: number }[]; created_at: string }
@@ -32,6 +33,7 @@ export function ChemicalsPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [tab, setTab] = useTab('lots')
+  const f = useUrlFilters({ type: { kind: 'remote', param: 'chemical_type', url: '/chemicals/types', label: (r) => String(r.name) } })
   const lots: ColumnDef<Lot, unknown>[] = [
     { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at' } },
     { id: 'type', header: t('chem.type'), cell: ({ row }) => <span className="font-medium">{row.original.type_name}</span>, meta: { export: (r: Lot) => r.type_name } },
@@ -55,7 +57,7 @@ export function ChemicalsPage() {
   return (
     <Page title={t('menu.chemicals')} actions={<Button variant="primary" onClick={() => navigate('/chemicals/glue/new')}><FlaskConical />{t('glue.make')}</Button>}>
       <Tabs value={tab} onChange={setTab} tabs={[{ value: 'lots', label: t('chem.lots') }, { value: 'glue', label: t('glue') }, { value: 'types', label: t('chem.types') }, { value: 'glue-types', label: t('glue.types') }]}>
-        <TabPanel value="lots"><ResourceList<Lot> embedded title="chem.lots" url="/chemicals/lots" base="/chemicals/lots" columns={lots} writePermission="chemicals.manage" onRowOpen={() => undefined} defaultSort="created_at" defaultOrder="desc" toolbar={<Button variant="soft" onClick={() => navigate('/chemicals/lots/new')}><Plus />{t('chem.add_lot')}</Button>} /></TabPanel>
+        <TabPanel value="lots"><ResourceList<Lot> embedded title="chem.lots" url="/chemicals/lots" base="/chemicals/lots" columns={lots} params={f.params} filters={f.filters} writePermission="chemicals.manage" onRowOpen={() => undefined} defaultSort="created_at" defaultOrder="desc" toolbar={<Button variant="soft" onClick={() => navigate('/chemicals/lots/new')}><Plus />{t('chem.add_lot')}</Button>} /></TabPanel>
         <TabPanel value="glue"><ResourceList<GlueRow> embedded title="glue" url="/chemicals/glue" base="/chemicals/glue" columns={glue} /></TabPanel>
         <TabPanel value="types"><ResourceList<Named> embedded title="chem.types" url="/chemicals/types" base="/chemicals/types" columns={types} writePermission="chemicals.manage" paginated={false} toolbar={<Button variant="soft" onClick={() => navigate('/chemicals/types/new')}><Plus />{t('add')}</Button>} /></TabPanel>
         <TabPanel value="glue-types"><ResourceList<Named> embedded title="glue.types" url="/chemicals/glue-types" base="/chemicals/glue-types" columns={types} writePermission="chemicals.manage" paginated={false} toolbar={<Button variant="soft" onClick={() => navigate('/chemicals/glue-types/new')}><Plus />{t('add')}</Button>} /></TabPanel>

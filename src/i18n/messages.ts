@@ -653,6 +653,7 @@ const M: Record<string, [string, string, string]> = {
   'seq.undo_confirm': ['Ketma-ketlik bekor qilinsinmi?', 'Отменить последовательность?', 'Undo this sequence?'],
   'seq.undo_hint': ["Partiyalar qoladi, ajratilgan rulonlar bo'shatiladi.", 'Партии останутся, выделенные рулоны освободятся.', 'The batches stay; reserved rolls are freed.'],
   'seq.undone': ['Ketma-ketlik bekor qilindi', 'Последовательность отменена', 'Sequence undone'],
+  'hr.on_time': ["O'z vaqtida", 'Вовремя', 'On time'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(

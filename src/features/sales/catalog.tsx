@@ -25,6 +25,7 @@ import { Card, Page } from '@/ui/page'
 
 import { Row, sizeOf } from './orders'
 import { Picture } from '@/kit/Picture'
+import { useUrlFilters } from '@/kit/filters'
 
 // ───────────────────────────── Customers ─────────────────────────────
 
@@ -277,6 +278,10 @@ interface Sale {
 export function SalesPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const f = useUrlFilters({
+    customer: { kind: 'remote', param: 'customer', url: '/sales/customers', label: (r) => String(r.company) },
+    date: { kind: 'dates', from: 'created_at__date__gte', to: 'created_at__date__lte' },
+  })
   const columns: ColumnDef<Sale, unknown>[] = [
     { id: 'date', header: t('date'), cell: ({ row }) => <span className="tabular whitespace-nowrap">{dateTime(row.original.created_at)}</span>, meta: { sortKey: 'created_at', export: (r: Sale) => r.created_at } },
     { id: 'customer', header: t('customer'), cell: ({ row }) => <span className="font-medium">{row.original.customer_name}</span>, meta: { export: (r: Sale) => r.customer_name } },
@@ -295,6 +300,8 @@ export function SalesPage() {
       columns={columns}
       defaultSort="created_at"
       defaultOrder="desc"
+      params={f.params}
+      filters={f.filters}
       onRowOpen={(s) => navigate(`/sales/sales/${s.id}/return`)}
       actions={<Button variant="primary" onClick={() => navigate('/production/stock')}>{t('sale.sell')}</Button>}
     />

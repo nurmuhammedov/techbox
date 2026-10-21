@@ -26,6 +26,7 @@ import { Input } from '@/ui/input'
 import { NumberInput } from '@/ui/number-input'
 import { Card, Page } from '@/ui/page'
 import { flutedLayers } from '@/drawings/geometry'
+import { useUrlFilters } from '@/kit/filters'
 
 interface StockRow {
   material: number
@@ -47,6 +48,10 @@ export function StockPage() {
   const navigate = useNavigate()
   const state = useListState()
   const summary = useQuery({ queryKey: ['stock'], queryFn: () => api.get<StockRow[]>('/inventory/stock') })
+  const f = useUrlFilters({
+    warehouse: { kind: 'remote', param: 'warehouse', url: '/inventory/warehouses', params: { kind: 'raw' }, label: (r) => String(r.name) },
+    received: { kind: 'dates', from: 'created_at__date__gte', to: 'created_at__date__lte' },
+  })
   const materials = (useOptions('/catalog/materials').data ?? []) as unknown as MaterialType[]
   const formats = (useOptions('/catalog/formats').data ?? []) as unknown as Format[]
   const [history, setHistory] = useState<Roll | null>(null)
@@ -111,12 +116,13 @@ export function StockPage() {
         deletable={false}
         defaultSort="created_at"
         defaultOrder="desc"
-        params={{ material, format, status: status === 'all' ? undefined : status }}
+        params={{ material, format, status: status === 'all' ? undefined : status, ...f.params }}
         rowMenu={(r) => [
           { label: t('roll.history'), icon: <History />, onSelect: () => setHistory(r) },
           { label: t('roll.adjust'), icon: <SlidersHorizontal />, onSelect: () => navigate(`/inventory/rolls/${r.id}/adjust`) },
         ]}
         filters={{
+          ...f.filters,
           material: <FilterSelect value={material ?? 'all'} onChange={(v) => state.set({ material: v === 'all' ? undefined : v })} options={[{ value: 'all', label: t('all') }, ...materials.map((m) => ({ value: String(m.id), label: m.name }))]} />,
           format: <FilterSelect value={format ?? 'all'} onChange={(v) => state.set({ format: v === 'all' ? undefined : v })} options={[{ value: 'all', label: t('all') }, ...formats.map((f) => ({ value: String(f.id), label: String(f.width_mm) }))]} />,
           available: <FilterSelect value={status} onChange={(v) => state.set({ status: v === 'in_stock' ? undefined : v })} options={[{ value: 'in_stock', label: t('roll.status.in_stock') }, { value: 'empty', label: t('roll.status.empty') }, { value: 'all', label: t('all') }]} />,

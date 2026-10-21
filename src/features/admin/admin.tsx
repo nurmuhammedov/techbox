@@ -23,9 +23,14 @@ import { Form } from '@/ui/form'
 import { Input, Textarea } from '@/ui/input'
 import { NumberInput } from '@/ui/number-input'
 import { Card, Page } from '@/ui/page'
+import { useUrlFilters } from '@/kit/filters'
 
 export function UsersPage() {
   const { t } = useTranslation()
+  const f = useUrlFilters({
+    role: { kind: 'remote', param: 'role', url: '/core/roles', label: (r) => String(r.name) },
+    status: { kind: 'select', param: 'is_active', options: [{ value: 'true', label: t('active') }, { value: 'false', label: t('inactive') }] },
+  })
   const columns: ColumnDef<User, unknown>[] = [
     { id: 'username', header: t('login.username'), cell: ({ row }) => <span className="font-code font-medium">{row.original.username}</span>, meta: { sortKey: 'username', fixed: true, export: (r: User) => r.username } },
     { id: 'name', header: t('hr.full_name'), cell: ({ row }) => row.original.display_name, meta: { export: (r: User) => r.display_name } },
@@ -33,7 +38,7 @@ export function UsersPage() {
     { id: 'status', header: t('status'), cell: ({ row }) => <Badge tone={row.original.is_active ? 'ok' : 'neutral'}>{row.original.is_active ? t('active') : t('inactive')}</Badge> },
     { id: 'last', header: t('users.last_login'), cell: ({ row }) => <span className="tabular whitespace-nowrap text-xs text-ink-3">{dateTime(row.original.last_login)}</span> },
   ]
-  return <ResourceList<User> title="menu.users" url="/core/users" base="/admin/users" columns={columns} writePermission="users.manage" defaultSort="username" />
+  return <ResourceList<User> title="menu.users" url="/core/users" base="/admin/users" columns={columns} writePermission="users.manage" defaultSort="username" params={f.params} filters={f.filters} />
 }
 
 export const UserForm = () => {

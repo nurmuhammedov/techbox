@@ -14,6 +14,7 @@ import { Button } from '@/ui/button'
 import { Select, TabPanel, Tabs } from '@/ui/controls'
 import { Badge } from '@/ui/feedback'
 import { Card, Page } from '@/ui/page'
+import { useUrlFilters } from '@/kit/filters'
 
 interface Report { resource: number; id: number; resource_name: string; resource_type: string; year: number; month: number; meter_value: number | null; consumption: number; total_price: number; amount_paid: number; debt: number }
 interface Resource { id: number; name: string; unit_name: string | null; type: string; currency: string; tariffs: { id: number; from_value: number | null; to_value: number | null; price: number; label: string }[] }
@@ -28,6 +29,11 @@ export function CommunalPage() {
   const [tab, setTab] = useTab('reports')
   const thisYear = new Date().getFullYear()
   const [year, setYear] = useState(thisYear)
+  const f = useUrlFilters({
+    resource: { kind: 'remote', param: 'resource', url: '/communal/resources', label: (r) => String(r.name) },
+    period: { kind: 'select', param: 'year', options: Array.from({ length: 5 }, (_, i) => String(thisYear - i)).map((y) => ({ value: y, label: y })) },
+    meter: { kind: 'select', param: 'month', options: Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: t(`month.${i + 1}`) })) },
+  })
   const summary = useQuery({ queryKey: ['communal/reports', 'summary', year], queryFn: () => api.get<{ resource: number; resource__name: string; consumption: number; total: number; paid: number; debt: number }[]>('/communal/reports/summary', { year }) })
   const monthly = useQuery({ queryKey: ['communal/reports', 'year', year], queryFn: () => api.get<{ results: Report[] }>('/communal/reports', { year, page_size: 200 }) })
   const months = Array.from({ length: 12 }, (_, i) => i + 1)
@@ -120,7 +126,7 @@ export function CommunalPage() {
         </Card>
       </div>
       <Tabs value={tab} onChange={setTab} tabs={[{ value: 'reports', label: t('communal.reports') }, { value: 'resources', label: t('communal.resources') }, { value: 'tariffs', label: t('communal.tariffs') }, { value: 'units', label: t('unit') }]}>
-        <TabPanel value="reports"><ResourceList<Report> embedded title="communal.reports" url="/communal/reports" base="/communal/reports" columns={reports} writePermission="communal.manage" /></TabPanel>
+        <TabPanel value="reports"><ResourceList<Report> embedded title="communal.reports" url="/communal/reports" base="/communal/reports" columns={reports} params={f.params} filters={f.filters} writePermission="communal.manage" /></TabPanel>
         <TabPanel value="resources"><ResourceList<Resource> embedded title="communal.resources" url="/communal/resources" base="/communal/resources" columns={resources} writePermission="communal.manage" paginated={false} /></TabPanel>
         <TabPanel value="tariffs"><ResourceList<Tariff> embedded title="communal.tariffs" url="/communal/tariffs" base="/communal/tariffs" columns={tariffs} writePermission="communal.manage" paginated={false} /></TabPanel>
         <TabPanel value="units"><ResourceList<Unit> embedded title="unit" url="/communal/units" base="/communal/units" columns={units} writePermission="communal.manage" paginated={false} /></TabPanel>
