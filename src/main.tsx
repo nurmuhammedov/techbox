@@ -13,7 +13,7 @@ import { ConfirmProvider } from './ui/dialog'
 import { TooltipProvider } from './ui/feedback'
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: 30_000, retry: 1, refetchOnWindowFocus: true } },
+  defaultOptions: { queries: { staleTime: 30_000, retry: 1, refetchOnWindowFocus: true, throwOnError: (_error, query) => query.state.data === undefined } },
 })
 
 void registerServiceWorker()

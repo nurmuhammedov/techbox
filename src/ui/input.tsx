@@ -29,7 +29,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       aria-invalid={invalid || undefined}
       autoComplete="off"
       spellCheck={false}
-      className={cn(controlClass, prefix && 'pl-0', suffix && 'pr-0', (prefix || suffix) && 'h-full border-0 bg-transparent focus:outline-0', className)}
+      className={cn(controlClass, prefix && 'pl-0', suffix && 'pr-0', (prefix || suffix) && 'h-full min-w-0 flex-1 border-0 bg-transparent focus:outline-0 disabled:bg-transparent', className)}
       {...props}
     />
   )
@@ -39,7 +39,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   return (
     <div
       className={cn(
-        'flex h-8.5 w-full items-center rounded-md border border-line-strong bg-surface transition-colors hover:border-control',
+        'flex h-8.5 w-full items-center overflow-hidden rounded-md border border-line-strong bg-surface transition-colors hover:border-control',
         'focus-within:border-accent focus-within:outline-2 focus-within:outline-accent/25',
         invalid && 'border-bad focus-within:border-bad focus-within:outline-bad/25',
         props.disabled && 'bg-sunken',

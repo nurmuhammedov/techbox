@@ -21,7 +21,7 @@ import { Button } from '@/ui/button'
 import { FilterSelect } from '@/ui/column-filters'
 import { DateInput } from '@/ui/date-input'
 import { useConfirm } from '@/ui/dialog'
-import { Skeleton } from '@/ui/feedback'
+import { LoadingCards } from '@/ui/feedback'
 import { Field } from '@/ui/field'
 import { Form } from '@/ui/form'
 import { Input, Textarea } from '@/ui/input'
@@ -201,7 +201,7 @@ export function OrderFormPage() {
   if (!v) {
     return (
       <Page title={t('edit')} flow>
-        <Skeleton className="h-96" />
+        <LoadingCards rows={3} />
       </Page>
     )
   }
@@ -318,7 +318,7 @@ export function OrderDetailPage() {
   if (!o) {
     return (
       <Page title="…" flow>
-        <Skeleton className="h-96" />
+        <LoadingCards rows={3} />
       </Page>
     )
   }

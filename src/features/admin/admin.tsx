@@ -17,7 +17,7 @@ import { dateTime } from '@/lib/format'
 import { fail, ok } from '@/lib/notify'
 import { Button } from '@/ui/button'
 import { Checkbox, Select } from '@/ui/controls'
-import { Badge, Skeleton } from '@/ui/feedback'
+import { Badge, LoadingCards } from '@/ui/feedback'
 import { Field } from '@/ui/field'
 import { Form } from '@/ui/form'
 import { Input, Textarea } from '@/ui/input'
@@ -134,7 +134,7 @@ export function RoleFormPage() {
     }
   }
 
-  if (editing && !role.data) return <Page title="…" flow><Skeleton className="h-96" /></Page>
+  if (editing && !role.data) return <Page title="…" flow><LoadingCards rows={3} /></Page>
   return (
     <Page title={editing ? `${t('edit')}: ${role.data?.name}` : t('new_of', { name: t('role') })} flow>
       <Form onSubmit={submit}>

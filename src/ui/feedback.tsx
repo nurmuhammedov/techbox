@@ -58,6 +58,24 @@ export function Skeleton({ className }: { className?: string }) {
   return <div className={cn('animate-pulse rounded bg-sunken', className)} />
 }
 
+/** Stands in for a page's cards while their data loads. */
+export function LoadingCards({ rows = 3 }: { rows?: number }) {
+  return (
+    <div className="flex flex-col gap-3" aria-busy="true">
+      {Array.from({ length: rows }, (_, i) => (
+        <div key={i} className="rounded-lg border border-line bg-surface p-4 shadow-card">
+          <Skeleton className="h-3 w-32" />
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <Skeleton className="h-9" />
+            <Skeleton className="h-9" />
+            <Skeleton className="h-9 sm:col-span-2" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function EmptyState({
   icon: Icon,
   title,

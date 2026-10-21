@@ -17,7 +17,7 @@ import { fail, ok } from '@/lib/notify'
 import { Button } from '@/ui/button'
 import { Segments, Select, Switch } from '@/ui/controls'
 import { DateInput } from '@/ui/date-input'
-import { Badge, Skeleton } from '@/ui/feedback'
+import { Badge, LoadingCards } from '@/ui/feedback'
 import { Field } from '@/ui/field'
 import { Form } from '@/ui/form'
 import { Input, Textarea } from '@/ui/input'
@@ -169,7 +169,7 @@ export function PlanPage() {
   const previewOrder = preview ? picked[preview] : null
   const previewLine = lines.find((l) => l.order === preview)
 
-  if (id && !editing.data) return <Page title="…" flow><Skeleton className="h-96" /></Page>
+  if (id && !editing.data) return <Page title="…" flow><LoadingCards rows={3} /></Page>
 
   return (
     <Page title={id ? t('plan.edit', { n: editing.data?.number ?? '' }) : t('menu.plan')} flow>

@@ -19,7 +19,7 @@ import { Button } from '@/ui/button'
 import { FilterSelect } from '@/ui/column-filters'
 import { Select } from '@/ui/controls'
 import { Dialog } from '@/ui/dialog'
-import { Badge, EmptyState, Skeleton } from '@/ui/feedback'
+import { Badge, EmptyState, LoadingCards } from '@/ui/feedback'
 import { Field } from '@/ui/field'
 import { Form } from '@/ui/form'
 import { Input } from '@/ui/input'
@@ -197,7 +197,7 @@ export function RollAdjustPage() {
   const [value, setValue] = useState<number | null>(null)
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState(false)
-  if (!roll) return <Page title="…" flow><Skeleton className="h-48" /></Page>
+  if (!roll) return <Page title="…" flow><LoadingCards rows={1} /></Page>
   const submit = async () => {
     if (value === null || !note.trim()) return
     setBusy(true)
@@ -236,7 +236,7 @@ export function AllocateListPage() {
   const { data } = useQuery({ queryKey: ['batches', 'allocate'], queryFn: () => api.get<{ results: Batch[] }>('/production/batches', { status__in: 'draft,ready', page_size: 100, ordering: '-priority' }) })
   return (
     <Page title={t('menu.allocate')} flow>
-      {!data ? <Skeleton className="h-48" /> : null}
+      {!data ? <LoadingCards rows={1} /> : null}
       {data && !data.results.length ? <EmptyState icon={Plus} title={t('allocate.none')} /> : null}
       <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
         {data?.results.map((b) => (
@@ -291,7 +291,7 @@ export function AllocateBatchPage() {
     { success: t('allocate.saved'), invalidate: ['batches', 'rolls', 'stock'], onSuccess: () => navigate('/inventory/allocate') },
   )
 
-  if (!batch) return <Page title="…" flow><Skeleton className="h-64" /></Page>
+  if (!batch) return <Page title="…" flow><LoadingCards rows={2} /></Page>
   const editable = batch.status === 'draft' || batch.status === 'ready'
   const update = (layer: number, i: number, patch: Partial<Pick>) => setPicks((s) => ({ ...s, [layer]: s[layer].map((p, j) => (j === i ? { ...p, ...patch } : p)) }))
   const own = (rollId: number) => batch.allocations.filter((a) => a.roll === rollId).reduce((s, a) => s + Number(a.weight), 0)

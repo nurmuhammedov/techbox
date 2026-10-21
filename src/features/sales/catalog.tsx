@@ -17,7 +17,7 @@ import { dateTime, formatPhone, money, num } from '@/lib/format'
 import { fail, ok } from '@/lib/notify'
 import { Button } from '@/ui/button'
 import { Switch } from '@/ui/controls'
-import { Badge, Skeleton } from '@/ui/feedback'
+import { Badge, LoadingCards } from '@/ui/feedback'
 import { Field } from '@/ui/field'
 import { Form } from '@/ui/form'
 import { Input } from '@/ui/input'
@@ -132,7 +132,7 @@ export function ProductFormPage() {
     if (existing.data && !v) setV({ ...existing.data, logo: undefined })
   }, [existing.data, v])
 
-  if (!v) return <Page title={t('edit')} flow><Skeleton className="h-96" /></Page>
+  if (!v) return <Page title={t('edit')} flow><LoadingCards rows={3} /></Page>
   const set = (patch: Partial<ProductState>) => setV((s) => ({ ...s!, ...patch }))
 
   const submit = async () => {

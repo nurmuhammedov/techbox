@@ -584,6 +584,9 @@ const M: Record<string, [string, string, string]> = {
   'drawing.enter_size': ["Chizma namuna. Qutining uzunligi, eni va balandligini kiriting", 'Это образец. Введите длину, ширину и высоту коробки', 'This is a sample. Enter the box length, width and height'],
   'drawing.l0_mismatch': ["L0 ({{l0}}) qopqoqlar va balandlik yig'indisiga ({{sum}}) teng emas. Tekshiring", 'L0 ({{l0}}) не равно сумме клапанов и высоты ({{sum}}). Проверьте', 'L0 ({{l0}}) does not equal flaps plus height ({{sum}}). Please check'],
   'drawing.side_equal': ['Yon tomoni', 'Боковая сторона', 'Side'],
+  'state.failed': ["Ma'lumotni yuklab bo'lmadi", 'Не удалось загрузить данные', 'Could not load the data'],
+  'state.offline': ["Server bilan aloqa yo'q", 'Нет связи с сервером', 'No connection to the server'],
+  'state.retry': ['Qayta urinish', 'Повторить', 'Try again'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(

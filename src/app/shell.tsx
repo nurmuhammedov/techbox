@@ -32,6 +32,7 @@ import { NotificationList, useNotifications } from './notifications'
 import { NAVIGATION } from './navigation'
 import { Logo, Sidebar } from './sidebar'
 import { ACCENTS, setAccent, setThemeMode, useAccent, useThemeMode, type ThemeMode } from './theme'
+import { PageErrorBoundary } from './error-boundary'
 
 const COLLAPSED_KEY = 'gofra.sidebar.collapsed'
 const NARROW = '(max-width: 767px)'
@@ -155,7 +156,9 @@ export function Shell() {
         </header>
         <main className="relative min-h-0 flex-1 overflow-y-auto">
           <PageChrome.Provider value={chrome}>
-            <Outlet />
+            <PageErrorBoundary>
+              <Outlet />
+            </PageErrorBoundary>
           </PageChrome.Provider>
         </main>
       </div>

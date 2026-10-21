@@ -16,7 +16,7 @@ import { kg, num } from '@/lib/format'
 import { fail, ok } from '@/lib/notify'
 import { useAction } from '@/lib/queries'
 import { Button } from '@/ui/button'
-import { Badge, EmptyState, Skeleton } from '@/ui/feedback'
+import { Badge, EmptyState, LoadingCards } from '@/ui/feedback'
 import { Field } from '@/ui/field'
 import { Form } from '@/ui/form'
 import { Textarea } from '@/ui/input'
@@ -110,7 +110,7 @@ function ItemQueue({ stage }: { stage: Stage }) {
   const grid = 'grid gap-3 md:grid-cols-2 2xl:grid-cols-3'
   return (
     <Page title={t(`stage.${stage}`)} flow>
-      {!data ? <Skeleton className="h-64" /> : null}
+      {!data ? <LoadingCards rows={2} /> : null}
       {data ? (
         <div className="flex flex-col gap-6">
           {data.mine.length ? (
@@ -170,7 +170,7 @@ export function ItemFinishPage() {
   const [waste, setWaste] = useState<number | null>(null)
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState(false)
-  if (!item) return <Page title="…" flow><Skeleton className="h-64" /></Page>
+  if (!item) return <Page title="…" flow><LoadingCards rows={2} /></Page>
   const good = qty ?? item.qty
 
   const submit = async () => {
@@ -274,7 +274,7 @@ function GofraQueue() {
   const grid = 'grid gap-3 2xl:grid-cols-2'
   return (
     <Page title={t('stage.gofra')} flow>
-      {!data ? <Skeleton className="h-64" /> : null}
+      {!data ? <LoadingCards rows={2} /> : null}
       {data ? (
         <div className="flex flex-col gap-6">
           {data.mine.length ? (
@@ -335,7 +335,7 @@ export function BatchFinishPage() {
   const [comment, setComment] = useState('')
   const [busy, setBusy] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  if (!batch) return <Page title="…" flow><Skeleton className="h-64" /></Page>
+  if (!batch) return <Page title="…" flow><LoadingCards rows={2} /></Page>
 
   const rolls = Object.values(
     batch.allocations.reduce<Record<number, { roll: number; label: string; before: number; layers: number[] }>>((acc, a) => {

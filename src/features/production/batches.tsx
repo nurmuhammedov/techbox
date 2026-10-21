@@ -22,7 +22,7 @@ import { Button } from '@/ui/button'
 import { FilterSelect } from '@/ui/column-filters'
 import { Switch } from '@/ui/controls'
 import { useConfirm } from '@/ui/dialog'
-import { Badge, Skeleton } from '@/ui/feedback'
+import { Badge, LoadingCards } from '@/ui/feedback'
 import { Field } from '@/ui/field'
 import { Form } from '@/ui/form'
 import { Input } from '@/ui/input'
@@ -81,7 +81,7 @@ export function BatchDetailPage() {
   const confirm = useConfirm()
   const qc = useQueryClient()
   const { data: b } = useQuery({ queryKey: ['batches', 'one', id], queryFn: () => api.get<Batch>(`/production/batches/${id}`) })
-  if (!b) return <Page title="…" flow><Skeleton className="h-96" /></Page>
+  if (!b) return <Page title="…" flow><LoadingCards rows={3} /></Page>
   const editable = b.status === 'draft' || b.status === 'ready'
 
   const cancel = async () => {
@@ -239,7 +239,7 @@ export function ItemDetailPage() {
   const { can } = useAuth()
   const navigate = useNavigate()
   const { data: i } = useQuery({ queryKey: ['items', 'one', id], queryFn: () => api.get<WorkItem>(`/production/items/${id}`) })
-  if (!i) return <Page title="…" flow><Skeleton className="h-96" /></Page>
+  if (!i) return <Page title="…" flow><LoadingCards rows={3} /></Page>
   return (
     <Page
       title={i.name}
@@ -312,7 +312,7 @@ export function SellPage() {
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  if (!i) return <Page title="…" flow><Skeleton className="h-64" /></Page>
+  if (!i) return <Page title="…" flow><LoadingCards rows={2} /></Page>
   const amount = qty ?? i.available_qty
 
   const submit = async () => {
@@ -374,7 +374,7 @@ export function SplitPage() {
   const [route, setRoute] = useState<Stage[] | null>(null)
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState(false)
-  if (!i) return <Page title="…" flow><Skeleton className="h-64" /></Page>
+  if (!i) return <Page title="…" flow><LoadingCards rows={2} /></Page>
   const rest = route ?? (i.route.slice(i.step) as Stage[])
   const extra: Stage[] = ['fleksa', 'tikish', 'yelimlash']
 
@@ -428,7 +428,7 @@ export function ReturnPage() {
   const [toWaste, setToWaste] = useState(false)
   const [weight, setWeight] = useState<number | null>(null)
   const [busy, setBusy] = useState(false)
-  if (!s) return <Page title="…" flow><Skeleton className="h-64" /></Page>
+  if (!s) return <Page title="…" flow><LoadingCards rows={2} /></Page>
   const max = s.quantity - s.returned
 
   const submit = async () => {

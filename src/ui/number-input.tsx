@@ -103,7 +103,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
       {/* With a unit after it the frame is around both, so that a long unit takes its own room and never lies under the number. */}
       <div
         className={cn(
-          suffix && 'flex h-8.5 items-center rounded-md border border-line-strong bg-surface transition-colors hover:border-control',
+          suffix && 'flex h-8.5 items-center overflow-hidden rounded-md border border-line-strong bg-surface transition-colors hover:border-control',
           suffix && 'focus-within:border-accent focus-within:outline-2 focus-within:outline-accent/25',
           suffix && bad && 'border-bad focus-within:border-bad focus-within:outline-bad/25',
           suffix && disabled && 'bg-sunken',
@@ -140,7 +140,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
           commit()
         }}
         onKeyDown={handleKeyDown}
-        className={cn(controlClass, 'tabular text-right', suffix && 'min-w-0 flex-1 border-0 bg-transparent pr-0 focus:outline-0')}
+        className={cn(controlClass, 'tabular text-right', suffix && 'h-full min-w-0 flex-1 border-0 bg-transparent pr-0 focus:outline-0 disabled:bg-transparent')}
       />
       {suffix ? <span className="shrink-0 pr-2.5 pl-1.5 text-xs text-ink-3 select-none">{suffix}</span> : null}
       </div>
