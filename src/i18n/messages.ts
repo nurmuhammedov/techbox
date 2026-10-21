@@ -65,7 +65,7 @@ const M: Record<string, [string, string, string]> = {
   'order.cancel': ['Bekor qilish', 'Отменить', 'Cancel order'],
   'order.cancel_confirm': ['Buyurtma bekor qilinsinmi?', 'Отменить заказ?', 'Cancel this order?'],
   'order.locked': ["Buyurtma rejalashtirilgan: o'lcham va sonini o'zgartirib bo'lmaydi.", 'Заказ запланирован: размер и количество менять нельзя.', 'The order is planned; size and quantity are locked.'],
-  'order.product_hint': ['Tanlansa, o\'lcham va qatlamlar avtomatik to\'ldiriladi', 'Размеры и слои заполнятся автоматически', 'Fills size and layers automatically'],
+  'order.product_hint': ["Tanlansa, o'lcham va qatlamlar o'zi to'ladi. Tanlanmasa, buyurtma shu mijozning yangi mahsuloti bo'lib saqlanadi", 'Если выбрать, размеры и слои заполнятся сами. Если нет, заказ сохранится как новый товар этого клиента', 'Pick one to fill size and layers. Otherwise the order is saved as a new product of this customer'],
   'order.progress': ['Jarayon', 'Ход', 'Progress'],
   'order.status.new': ['Yangi', 'Новый', 'New'],
   'order.status.planned': ['Rejalashtirilgan', 'Запланирован', 'Planned'],
