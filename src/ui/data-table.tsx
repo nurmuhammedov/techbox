@@ -287,7 +287,7 @@ export function DataTable<T>({
           onFocus={(event) =>
             event.target === event.currentTarget && setActive((current) => (current < 0 && rows.length ? 0 : current))
           }
-          className="min-h-0 flex-1 overflow-auto outline-none focus-visible:[&_tr[data-active=true]]:outline-accent"
+          className="min-h-0 flex-1 overflow-auto outline-none focus-visible:[&_tr[data-active=true]]:outline-2 focus-visible:[&_tr[data-active=true]]:-outline-offset-2 focus-visible:[&_tr[data-active=true]]:outline-accent"
         >
           <table className="w-full border-separate border-spacing-0 text-[13px]">
             <thead className="sticky top-0 z-10">
@@ -366,7 +366,7 @@ export function DataTable<T>({
                         onRowOpen?.(row.original)
                       }}
                       className={cn(
-                        'outline-2 -outline-offset-2 outline-transparent transition-colors',
+                        'transition-[background-color]',
                         onRowOpen && 'cursor-pointer hover:bg-canvas',
                         index === active && 'bg-accent-soft/60 hover:bg-accent-soft/60',
                         loading && 'opacity-60',

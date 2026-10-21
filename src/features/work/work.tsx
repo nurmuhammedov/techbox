@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Check, ChevronDown, CornerUpLeft, Lock, Play, Ruler } from 'lucide-react'
-import { useState, type ReactNode } from 'react'
+import { Children, isValidElement, useState, type ReactElement, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -16,6 +16,8 @@ import { cn } from '@/lib/cn'
 import { kg, num } from '@/lib/format'
 import { fail, ok } from '@/lib/notify'
 import { useAction } from '@/lib/queries'
+import { useTab } from '@/features/chemicals/chemicals'
+import { TabPanel, Tabs } from '@/ui/controls'
 import { Button } from '@/ui/button'
 import { Badge, EmptyState, LoadingCards } from '@/ui/feedback'
 import { Field } from '@/ui/field'
@@ -34,15 +36,25 @@ interface Queue<T> {
   sequences?: Sequence[]
 }
 
-function Section({ title, count, children, muted }: { title: string; count: number; children: ReactNode; muted?: boolean }) {
+interface SectionProps { id: string; title: string; count: number; children: ReactNode; muted?: boolean }
+
+/** One part of a queue; shown as a tab of the queue. */
+function Section({ children }: SectionProps) {
+  return <>{children}</>
+}
+
+const FIRST = ['sequences', 'mine', 'waiting']
+
+/** The parts of a queue as tabs with their counts; it opens on the first part that has work. */
+function QueueTabs({ children }: { children: ReactNode }) {
+  const sections = Children.toArray(children).filter(isValidElement) as ReactElement<SectionProps>[]
+  const fallback = FIRST.map((id) => sections.find((s) => s.props.id === id && s.props.count > 0)).find(Boolean)?.props.id ?? 'waiting'
+  const [tab, setTab] = useTab(fallback)
+  const current = sections.find((s) => s.props.id === tab) ?? sections.find((s) => s.props.id === fallback) ?? sections[0]
   return (
-    <section className="flex flex-col gap-3">
-      <h2 className={cn('flex items-center gap-2 text-sm font-semibold', muted && 'text-ink-3')}>
-        {title}
-        <span className="tabular rounded-full bg-sunken px-2 py-0.5 text-xs font-medium text-ink-2">{count}</span>
-      </h2>
-      {children}
-    </section>
+    <Tabs value={current?.props.id ?? ''} onChange={setTab} tabs={sections.map((s) => ({ value: s.props.id, label: `${s.props.title} · ${s.props.count}` }))}>
+      <TabPanel value={current?.props.id ?? ''}><div className="pt-1">{current}</div></TabPanel>
+    </Tabs>
   )
 }
 
@@ -124,9 +136,9 @@ function ItemQueue({ stage }: { stage: Stage }) {
     <Page title={t(`stage.${stage}`)} flow>
       {!data ? <LoadingCards rows={2} /> : null}
       {data ? (
-        <div className="flex flex-col gap-6">
+        <QueueTabs>
           {data.mine.length ? (
-            <Section title={t('work.mine')} count={data.mine.length}>
+            <Section id="mine" title={t('work.mine')} count={data.mine.length}>
               <div className={grid}>
                 {data.mine.map((item) => (
                   <ItemCard key={item.id} item={item}>
@@ -139,7 +151,7 @@ function ItemQueue({ stage }: { stage: Stage }) {
               </div>
             </Section>
           ) : null}
-          <Section title={t('work.waiting')} count={data.waiting.length}>
+          <Section id="waiting" title={t('work.waiting')} count={data.waiting.length}>
             {data.waiting.length ? (
               <div className={grid}>
                 {data.waiting.map((item) => (
@@ -153,7 +165,7 @@ function ItemQueue({ stage }: { stage: Stage }) {
             )}
           </Section>
           {data.others.length ? (
-            <Section title={t('work.others')} count={data.others.length} muted>
+            <Section id="others" title={t('work.others')} count={data.others.length} muted>
               <div className={grid}>
                 {data.others.map((item) => (
                   <ItemCard key={item.id} item={item}><p className="text-xs text-ink-3">{t('work.by', { name: item.operator_name })}</p></ItemCard>
@@ -162,11 +174,11 @@ function ItemQueue({ stage }: { stage: Stage }) {
             </Section>
           ) : null}
           {data.done_today.length ? (
-            <Section title={t('work.done_today')} count={data.done_today.length} muted>
+            <Section id="done" title={t('work.done_today')} count={data.done_today.length} muted>
               <div className={grid}>{data.done_today.map((item) => <ItemCard key={item.id} item={item} />)}</div>
             </Section>
           ) : null}
-        </div>
+        </QueueTabs>
       ) : null}
     </Page>
   )
@@ -291,9 +303,9 @@ function GofraQueue() {
     <Page title={t('stage.gofra')} flow>
       {!data ? <LoadingCards rows={2} /> : null}
       {data ? (
-        <div className="flex flex-col gap-6">
+        <QueueTabs>
           {seqs.length ? (
-            <Section title={t('seq.title')} count={seqs.length}>
+            <Section id="sequences" title={t('seq.title')} count={seqs.length}>
               <div className="flex flex-col gap-3">
                 {seqs.map((s) => {
                   const mine = s.status === 'in_work' && s.batches.some((b) => b.operator === user?.id)
@@ -315,7 +327,7 @@ function GofraQueue() {
             </Section>
           ) : null}
           {data.mine.length ? (
-            <Section title={t('work.mine')} count={data.mine.length}>
+            <Section id="mine" title={t('work.mine')} count={data.mine.length}>
               <div className={grid}>
                 {data.mine.map((b) => (
                   <BatchCard key={b.id} batch={b}>
@@ -325,7 +337,7 @@ function GofraQueue() {
               </div>
             </Section>
           ) : null}
-          <Section title={t('work.waiting')} count={data.waiting.length}>
+          <Section id="waiting" title={t('work.waiting')} count={data.waiting.length}>
             {data.waiting.length ? (
               <div className={grid}>
                 {data.waiting.map((b) => (
@@ -339,21 +351,21 @@ function GofraQueue() {
             )}
           </Section>
           {data.others.length ? (
-            <Section title={t('work.others')} count={data.others.length} muted>
+            <Section id="others" title={t('work.others')} count={data.others.length} muted>
               <div className={grid}>{data.others.map((b) => <BatchCard key={b.id} batch={b}><p className="text-xs text-ink-3">{t('work.by', { name: b.operator_name })}</p></BatchCard>)}</div>
             </Section>
           ) : null}
           {data.drafts?.length ? (
-            <Section title={t('work.drafts')} count={data.drafts.length} muted>
+            <Section id="drafts" title={t('work.drafts')} count={data.drafts.length} muted>
               <div className={grid}>{data.drafts.map((b) => <BatchCard key={b.id} batch={b} />)}</div>
             </Section>
           ) : null}
           {data.done_today.length ? (
-            <Section title={t('work.done_today')} count={data.done_today.length} muted>
+            <Section id="done" title={t('work.done_today')} count={data.done_today.length} muted>
               <div className={grid}>{data.done_today.map((b) => <BatchCard key={b.id} batch={b} />)}</div>
             </Section>
           ) : null}
-        </div>
+        </QueueTabs>
       ) : null}
     </Page>
   )
