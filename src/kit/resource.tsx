@@ -131,7 +131,7 @@ export function ResourceList<T extends Row>({
       <DataTable
         columns={[...columns, ...menuColumn]}
         data={rows}
-        loading={query.isFetching}
+        loading={query.isPending || query.isPlaceholderData}
         rowId={(row) => String(row.id)}
         onRowOpen={onRowOpen ?? (writable ? (row) => navigate(`${base}/${row.id}/edit`) : undefined)}
         sort={state.sort}
