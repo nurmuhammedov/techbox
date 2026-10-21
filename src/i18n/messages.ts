@@ -163,7 +163,7 @@ const M: Record<string, [string, string, string]> = {
   'menu.reference': ["Ma'lumotnomalar", 'Справочники', 'Reference data'],
   'menu.settings': ['Sozlamalar', 'Настройки', 'Settings'],
   'menu.audit': ['Amallar tarixi', 'История действий', 'Action history'],
-  'login.subtitle': ['Tizimga kirish', 'Вход в систему', 'Sign in'],
+  'login.subtitle': ['Login va parolingizni kiriting', 'Введите логин и пароль', 'Enter your username and password'],
   'login.username': ['Login', 'Логин', 'Username'],
   'login.password': ['Parol', 'Пароль', 'Password'],
   'login.submit': ['Kirish', 'Войти', 'Sign in'],

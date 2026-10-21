@@ -32,6 +32,13 @@ function Stat({ label, value, icon, tone, to }: { label: string; value: number |
   return to ? <Link to={to}>{body}</Link> : body
 }
 
+const STAGE_BORDER: Record<Stage, string> = {
+  gofra: 'border-t-orange-500 border-l-orange-500',
+  fleksa: 'border-t-violet-500 border-l-violet-500',
+  tikish: 'border-t-cyan-500 border-l-cyan-500',
+  yelimlash: 'border-t-lime-500 border-l-lime-500',
+}
+
 export function BoardPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -54,12 +61,12 @@ export function BoardPage() {
             const items = data?.columns[stage] ?? []
             const week = weekOf(stage)
             return (
-              <section key={stage} className="flex min-h-64 flex-col rounded-lg border border-line bg-sunken/60">
-                <header className="flex items-center justify-between gap-2 border-b border-line px-3 py-2.5">
+              <section key={stage} className={cn('flex min-h-64 flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-card border-t-[3px]', STAGE_BORDER[stage])}>
+                <header className="flex items-center justify-between gap-2 border-b border-line bg-sunken px-3 py-2.5">
                   <span className="flex items-center gap-2 text-[13px] font-semibold">
                     <span className={cn('size-2.5 rounded-full', STAGE_TONE[stage])} />
                     {t(`stage.${stage}`)}
-                    <span className="tabular rounded-full bg-surface px-1.5 text-xs text-ink-2">{items.length}</span>
+                    <span className="tabular rounded-full border border-line bg-surface px-1.5 text-xs text-ink-2">{items.length}</span>
                   </span>
                   <span className="tabular text-[11px] text-ink-3">{t('board.week', { qty: num(week?.qty ?? 0) })}</span>
                 </header>
@@ -98,7 +105,7 @@ export function BoardPage() {
           {STAGES.map((s) => {
             const w = weekOf(s)
             return (
-              <div key={s} className="rounded-md bg-sunken p-3">
+              <div key={s} className={cn('rounded-md border border-line border-l-[3px] bg-surface p-3', STAGE_BORDER[s])}>
                 <p className="flex items-center gap-2 text-[13px] font-medium">
                   <span className={cn('size-2 rounded-full', STAGE_TONE[s])} />
                   {t(`stage.${s}`)}
