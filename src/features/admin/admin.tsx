@@ -16,7 +16,7 @@ import { cn } from '@/lib/cn'
 import { dateTime } from '@/lib/format'
 import { fail, ok } from '@/lib/notify'
 import { Button } from '@/ui/button'
-import { Checkbox, Select } from '@/ui/controls'
+import { Checkbox, Select, TabPanel, Tabs } from '@/ui/controls'
 import { Badge, LoadingCards } from '@/ui/feedback'
 import { Field } from '@/ui/field'
 import { Form } from '@/ui/form'
@@ -197,6 +197,7 @@ const REF: RefSection[] = [
 export function ReferencePage() {
   const { t } = useTranslation()
   const { section = 'formats' } = useParams()
+  const navigate = useNavigate()
   const s = REF.find((x) => x.key === section) ?? REF[0]
   const columns: ColumnDef<Record<string, unknown> & { id: number }, unknown>[] = s.columns.map((c) => ({
     id: c.key,
@@ -205,19 +206,12 @@ export function ReferencePage() {
   }))
   return (
     <Page title={t('menu.reference')}>
-      <div className="grid min-h-0 flex-1 gap-4 md:grid-cols-[220px_minmax(0,1fr)]">
-        <nav className="flex flex-row gap-1 overflow-x-auto md:flex-col">
-          {REF.map((x) => (
-            <Link key={x.key} to={`/admin/reference/${x.key}`} className={cn('rounded-md px-3 py-2 text-[13px] whitespace-nowrap transition-colors', x.key === s.key ? 'bg-accent-soft font-medium text-accent-ink' : 'text-ink-2 hover:bg-sunken')}>
-              {t(`ref.${x.key}`)}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex min-h-0 flex-col">
+      <Tabs value={s.key} onChange={(key) => navigate(`/admin/reference/${key}`)} tabs={REF.map((x) => ({ value: x.key, label: t(`ref.${x.key}`) }))}>
+        <TabPanel value={s.key}>
           <ResourceList key={s.key} embedded title={`ref.${s.key}`} url={s.url} base={`/admin/reference/${s.key}`} columns={columns} writePermission={['catalog.manage', 'warehouses.manage', 'inventory.manage']} paginated={false}
             toolbar={<Link to={`/admin/reference/${s.key}/new`} className="flex h-8.5 items-center rounded-md bg-accent px-3.5 text-[13px] font-medium text-on-accent hover:bg-accent-hover">+ {t('add')}</Link>} />
-        </div>
-      </div>
+        </TabPanel>
+      </Tabs>
     </Page>
   )
 }
