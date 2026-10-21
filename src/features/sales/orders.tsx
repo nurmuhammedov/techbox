@@ -175,13 +175,13 @@ const fromOrder = (o: Order | null): FormState =>
   o
     ? {
         kind: o.kind, length: o.length, width: o.width, height: o.height, joint: o.joint, sheet_length: o.sheet_length,
-        sheet_width: o.sheet_width, layers: o.layers, route: o.route, holds: o.holds ?? [], l0: o.l0, l1: o.l1, l2: o.l2, l3: o.l3, l4: o.l4, l5: o.l5,
+        sheet_width: o.sheet_width, layers: o.layers, flutes: o.flutes ?? [], route: o.route, holds: o.holds ?? [], l0: o.l0, l1: o.l1, l2: o.l2, l3: o.l3, l4: o.l4, l5: o.l5,
         customer: o.customer, product: o.product, name: o.name, quantity: o.quantity, price: o.price, deadline: o.deadline ?? '',
         comment: o.comment, logo: undefined,
       }
     : { ...EMPTY_SHAPE, customer: null, product: null, name: '', quantity: null, price: null, deadline: '', comment: '', logo: undefined }
 
-const SHAPE_KEYS = ['kind', 'length', 'width', 'height', 'joint', 'sheet_length', 'sheet_width', 'layers', 'route', 'holds', 'l0', 'l1', 'l2', 'l3', 'l4', 'l5'] as const
+const SHAPE_KEYS = ['kind', 'length', 'width', 'height', 'joint', 'sheet_length', 'sheet_width', 'layers', 'flutes', 'route', 'holds', 'l0', 'l1', 'l2', 'l3', 'l4', 'l5'] as const
 
 export function OrderFormPage() {
   const { t } = useTranslation()

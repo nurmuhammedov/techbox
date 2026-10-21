@@ -613,12 +613,14 @@ const M: Record<string, [string, string, string]> = {
   'ymo.in_queue': ["Navbatda (to'g'ridan-to'g'ri)", 'В очереди (напрямую)', 'In a queue (straight on)'],
   'item.state.held': ['Omborda', 'На складе', 'In warehouse'],
   'settings.hold_warn_days': ['Yarim tayyor omborda necha kundan ortiq tursa ogohlantirish', 'Предупреждать, если на складе полуфабрикатов дольше, дней', 'Warn when goods stay in the semi-finished warehouse longer than, days'],
-  'shape.ply_unusual': ["{{n}} qatlam odatiy emas: gofra karton odatda 2, 3, 5 yoki 7 qatlamli bo'ladi (oxirgi qatlam tekis). Qatlamlarni tekshiring.", '{{n}} слоёв — нестандартно: гофрокартон обычно 2, 3, 5 или 7 слоёв (последний — плоский). Проверьте слои.', '{{n}} layers is unusual: board is normally 2, 3, 5 or 7 ply (ending with a liner). Please check.'],
+  'shape.ply_unusual': ["{{n}} qatlamda bir tomonda ikkita tekis qatlam ustma-ust yopishtiriladi. Qaysi qatlam to'lqin ekanini yorliqni bosib o'zgartirish mumkin.", 'При {{n}} слоях с одной стороны два лайнера склеены вместе. Какой слой гофра — меняется нажатием на метку.', 'With {{n}} layers two liners are glued together on one side. Click a layer tag to change which one is fluted.'],
   'item.loss': ["Brak: {{n}} dona · {{pct}}% · {{m2}} m²", 'Брак: {{n}} шт · {{pct}}% · {{m2}} м²', 'Defects: {{n}} pcs · {{pct}}% · {{m2}} m²'],
   'customer.orders': ['Mijoz buyurtmalari', 'Заказы клиента', 'Customer orders'],
   'customer.open_orders': ['Jarayonda', 'В работе', 'Open'],
   'customer.orders_sum': ['Buyurtmalar summasi', 'Сумма заказов', 'Orders total'],
   'customer.bought': ['Sotib olgan', 'Куплено', 'Bought'],
+  'layer.switch': ["Bosib tekis / to'lqin almashtiring", 'Нажмите, чтобы сменить лайнер / гофру', 'Click to switch liner / flute'],
+  'layer.keep_one_flute': ["Kamida bitta to'lqin qatlam bo'lishi kerak", 'Нужен хотя бы один гофрослой', 'At least one flute is needed'],
 }
 
 export const messages: Record<string, Row> = Object.fromEntries(

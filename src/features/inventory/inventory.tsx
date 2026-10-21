@@ -25,6 +25,7 @@ import { Form } from '@/ui/form'
 import { Input } from '@/ui/input'
 import { NumberInput } from '@/ui/number-input'
 import { Card, Page } from '@/ui/page'
+import { flutedLayers } from '@/drawings/geometry'
 
 interface StockRow {
   material: number
@@ -310,7 +311,7 @@ export function AllocateBatchPage() {
               <Card key={layer}>
                 <div className="mb-3 flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-semibold">{layer + 1}. {material?.name ?? `#${materialId}`} {layer % 2 ? <Badge tone="warn">{t('plan.flute')}</Badge> : null}</p>
+                    <p className="font-semibold">{layer + 1}. {material?.name ?? `#${materialId}`} {flutedLayers(batch.layers.length, batch.flutes).includes(layer) ? <Badge tone="warn">{t('plan.flute')}</Badge> : null}</p>
                     <p className="text-xs text-ink-3">{material?.gsm} g/m²</p>
                   </div>
                   <span className={cn('tabular rounded-md px-2 py-1 text-xs font-medium', chosen + 0.01 < need ? 'bg-warn-soft text-warn' : 'bg-ok-soft text-ok')}>

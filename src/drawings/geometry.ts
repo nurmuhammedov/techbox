@@ -62,3 +62,22 @@ export function blankOf(size: BoxSize, parts = 1): Blank {
 }
 
 export const fmt = (mm: number) => (Number.isFinite(mm) ? String(Math.round(mm)) : '—')
+
+/** Which layers are fluted. Every second one by default; with an even count the last two are both liners. */
+export function flutedLayers(count: number, flutes?: number[] | null): number[] {
+  if (flutes?.length) return [...new Set(flutes)].filter((i) => i >= 0 && i < count).sort((a, b) => a - b)
+  if (count <= 2) return count === 2 ? [1] : []
+  const out: number[] = []
+  for (let i = 1; i < count - 1; i += 2) out.push(i)
+  return out
+}
+
+/**
+ * Turns one layer between liner and flute. A liner next to a flute takes the flute over, so a flute can be moved
+ * by clicking where it should go; the last flute stays, since board without one is not board.
+ */
+export function toggleFlute(count: number, flutes: number[] | null | undefined, index: number): number[] | null {
+  const now = flutedLayers(count, flutes)
+  if (now.includes(index)) return now.length > 1 ? now.filter((i) => i !== index) : null
+  return [...now.filter((i) => i !== index - 1 && i !== index + 1), index].sort((a, b) => a - b)
+}

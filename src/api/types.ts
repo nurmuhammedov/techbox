@@ -44,6 +44,8 @@ export interface Shape {
   sheet_length: number | null
   sheet_width: number | null
   layers: number[]
+  /** Indexes of fluted layers; empty means the default pattern. */
+  flutes: number[]
   route: Stage[]
   /** Stages after which the goods go to the semi-finished warehouse before the next one. */
   holds: Stage[]
@@ -203,6 +205,7 @@ export interface Batch {
   format: number
   format_mm: number
   layers: number[]
+  flutes: number[]
   status: BatchStatus
   plan: Plan & { legacy_group?: number }
   priority: number

@@ -25,6 +25,8 @@ import { NumberInput } from '@/ui/number-input'
 import { Card, Page } from '@/ui/page'
 
 import { sizeOf } from '../sales/orders'
+import { flutedLayers, toggleFlute } from '@/drawings/geometry'
+import { LayerKind } from '@/drawings/LayersSection'
 
 interface Line {
   order: number
@@ -55,6 +57,7 @@ export function PlanPage() {
   const [lines, setLines] = useState<Line[]>([])
   const [format, setFormat] = useState<number | null>(null)
   const [layers, setLayers] = useState<number[]>([0, 0, 0])
+  const [flutes, setFlutes] = useState<number[]>([])
   const [usePallet, setUsePallet] = useState(false)
   const [pallet, setPallet] = useState<{ length: number | null; route: Stage[]; deadline: string }>({ length: 1000, route: [], deadline: '' })
   const [comment, setComment] = useState('')
@@ -69,6 +72,7 @@ export function PlanPage() {
     if (!b) return
     setFormat(b.format)
     setLayers(b.layers)
+    setFlutes(b.flutes ?? [])
     setLines(b.lines.map((l) => ({ order: l.order, quantity: l.quantity, ups: l.ups, parts: l.parts, orientation: l.orientation })))
     Promise.all(b.lines.map((l) => api.get<Order>(`/sales/orders/${l.order}`))).then((os) => setPicked(Object.fromEntries(os.map((o) => [o.id, o]))))
     const p = b.items.find((i) => i.kind === 'pallet')
@@ -89,7 +93,10 @@ export function PlanPage() {
     }
     setPicked((p) => ({ ...p, [o.id]: o }))
     setLines((ls) => [...ls, { order: o.id, quantity: o.quantity, ups: 1, parts: 1, orientation: 'horizontal' }])
-    if (!layers.some(Boolean)) setLayers(o.layers)
+    if (!layers.some(Boolean)) {
+      setLayers(o.layers)
+      setFlutes(o.flutes ?? [])
+    }
     setPreview(o.id)
   }
 
@@ -106,13 +113,14 @@ export function PlanPage() {
         ? {
             format,
             layers,
+            flutes,
             lines,
             pallet: usePallet && pallet.length ? { length: pallet.length, route: pallet.route, deadline: pallet.deadline || null } : null,
             comment,
             priority: priority ? 1 : 0,
           }
         : null,
-    [format, layers, lines, usePallet, pallet, comment, priority],
+    [format, layers, flutes, lines, usePallet, pallet, comment, priority],
   )
   const deferredPayload = useDeferredValue(payload)
 
@@ -139,7 +147,7 @@ export function PlanPage() {
 
   const bestFormat = async () => {
     try {
-      const r = await api.post<{ format: number; stock_ok: boolean }>('/production/batches/fit', { layers, lines })
+      const r = await api.post<{ format: number; stock_ok: boolean }>('/production/batches/fit', { layers, flutes, lines })
       setFormat(r.format)
       if (!r.stock_ok) fail(t('plan.no_stock_format'))
     } catch (e) {
@@ -234,6 +242,7 @@ export function PlanPage() {
                       value={String(layers.length || 3) as '2'}
                       onChange={(v) => {
                         const n = Number(v)
+                        setFlutes([])
                         setLayers((ls) => {
                           const out = [...ls]
                           while (out.length < n) out.push(out[out.length - 2] ?? 0)
@@ -246,8 +255,16 @@ export function PlanPage() {
                   <div className="grid gap-2 sm:grid-cols-2">
                     {layers.map((l, i) => (
                       <div key={i} className="flex items-center gap-2">
-                        <span className="w-14 shrink-0 text-xs text-ink-3">
-                          {i + 1}. {i % 2 ? t('plan.flute') : t('plan.liner')}
+                        <span className="flex w-24 shrink-0 items-center gap-1 text-xs text-ink-3">
+                          {i + 1}.
+                          <LayerKind
+                            fluted={flutedLayers(layers.length, flutes).includes(i)}
+                            blocked={toggleFlute(layers.length, flutes, i) === null}
+                            onToggle={() => {
+                              const next = toggleFlute(layers.length, flutes, i)
+                              if (next) setFlutes(next)
+                            }}
+                          />
                         </span>
                         <Select value={l ? String(l) : ''} onChange={(v) => setLayers((ls) => ls.map((x, j) => (j === i ? Number(v) : x)))} options={materials.map((m) => ({ value: String(m.id), label: `${m.name} · ${m.gsm}` }))} placeholder={t('common.select')} />
                       </div>

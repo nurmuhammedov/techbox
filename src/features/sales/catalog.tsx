@@ -181,7 +181,7 @@ export function ProductsPage() {
 }
 
 type ProductState = Shape & { customer: number | null; name: string; note: string; is_active: boolean; logo: File | null | undefined }
-const SHAPE_KEYS = ['kind', 'length', 'width', 'height', 'joint', 'sheet_length', 'sheet_width', 'layers', 'route', 'holds', 'l0', 'l1', 'l2', 'l3', 'l4', 'l5'] as const
+const SHAPE_KEYS = ['kind', 'length', 'width', 'height', 'joint', 'sheet_length', 'sheet_width', 'layers', 'flutes', 'route', 'holds', 'l0', 'l1', 'l2', 'l3', 'l4', 'l5'] as const
 
 export function ProductFormPage() {
   const { t } = useTranslation()
