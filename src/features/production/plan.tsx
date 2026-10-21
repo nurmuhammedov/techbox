@@ -54,7 +54,7 @@ export function PlanPage() {
   const [picked, setPicked] = useState<Record<number, Order>>({})
   const [lines, setLines] = useState<Line[]>([])
   const [format, setFormat] = useState<number | null>(null)
-  const [layers, setLayers] = useState<number[]>([])
+  const [layers, setLayers] = useState<number[]>([0, 0, 0])
   const [usePallet, setUsePallet] = useState(false)
   const [pallet, setPallet] = useState<{ length: number | null; route: Stage[]; deadline: string }>({ length: 1000, route: [], deadline: '' })
   const [comment, setComment] = useState('')
@@ -89,7 +89,7 @@ export function PlanPage() {
     }
     setPicked((p) => ({ ...p, [o.id]: o }))
     setLines((ls) => [...ls, { order: o.id, quantity: o.quantity, ups: 1, parts: 1, orientation: 'horizontal' }])
-    if (!layers.length) setLayers(o.layers)
+    if (!layers.some(Boolean)) setLayers(o.layers)
     setPreview(o.id)
   }
 
@@ -215,12 +215,12 @@ export function PlanPage() {
 
           <div className="flex min-w-0 flex-col gap-4">
             <Card title={t('plan.material')}>
-              <div className="grid gap-4 md:grid-cols-[220px_minmax(0,1fr)]">
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
                 <Field label={t('format')}>
                   {(fid) => (
                     <div className="flex gap-2">
-                      <Select id={fid} value={format ? String(format) : ''} onChange={(v) => setFormat(Number(v))} options={formats.map((f) => ({ value: String(f.id), label: `${f.width_mm} mm` }))} placeholder={t('common.select')} />
-                      <Button variant="soft" onClick={bestFormat} disabled={!lines.length || layers.length < 2} aria-label={t('plan.auto')}>
+                      <div className="min-w-0 flex-1"><Select id={fid} value={format ? String(format) : ''} onChange={(v) => setFormat(Number(v))} options={formats.map((f) => ({ value: String(f.id), label: `${f.width_mm} mm` }))} placeholder={t('common.select')} /></div>
+                      <Button variant="soft" className="shrink-0" onClick={bestFormat} disabled={!lines.length || !layers.every(Boolean)} aria-label={t('plan.auto')}>
                         <Sparkles />
                         <span className="hidden sm:inline">{t('plan.auto')}</span>
                       </Button>
@@ -228,9 +228,9 @@ export function PlanPage() {
                   )}
                 </Field>
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-3">
                     <span className="text-xs font-medium text-ink-2">{t('layers')}</span>
-                    <Segments
+                    <div className="w-52 shrink-0"><Segments
                       value={String(layers.length || 3) as '2'}
                       onChange={(v) => {
                         const n = Number(v)
@@ -241,7 +241,7 @@ export function PlanPage() {
                         })
                       }}
                       options={['2', '3', '5', '7'].map((x) => ({ value: x as '2', label: x }))}
-                    />
+                    /></div>
                   </div>
                   <div className="grid gap-2 sm:grid-cols-2">
                     {layers.map((l, i) => (
