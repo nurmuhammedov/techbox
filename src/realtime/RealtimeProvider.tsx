@@ -1,22 +1,16 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { notifications } from '@mantine/notifications'
+import { toast } from '@/lib/toast'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/auth/AuthContext'
 import type { Notification } from '@/api/types'
+import i18n from '@/i18n'
 import { playChime } from './sound'
 
 const TOPIC_KEYS: Record<string, string[]> = {
   production: ['batches', 'items', 'queue', 'board', 'orders', 'stock', 'rolls'],
   orders: ['orders', 'board'],
   stock: ['rolls', 'stock', 'items', 'sales', 'waste'],
-}
-
-const COLORS: Record<Notification['level'], string> = {
-  info: 'blue',
-  success: 'teal',
-  warning: 'yellow',
-  danger: 'red',
 }
 
 const RealtimeContext = createContext<{ connected: boolean }>({ connected: false })
@@ -54,13 +48,11 @@ export function RealtimeProvider({ children }: { children: ReactNode }) {
           const n = data.payload as Notification
           void queryClient.invalidateQueries({ queryKey: ['notifications'] })
           playChime(n.level)
-          notifications.show({
-            title: n.title,
-            message: n.body,
-            color: COLORS[n.level],
-            autoClose: n.level === 'danger' ? false : 8000,
-            onClick: () => n.link && navigate(n.link),
-            style: { cursor: n.link ? 'pointer' : undefined },
+          const tone = n.level === 'danger' ? 'error' : n.level === 'warning' ? 'warning' : n.level === 'success' ? 'success' : 'info'
+          toast[tone](n.title, {
+            description: n.body || undefined,
+            duration: n.level === 'danger' ? 30_000 : 8000,
+            action: n.link ? { label: i18n.t('open'), onClick: () => navigate(n.link) } : undefined,
           })
         }
       }

@@ -1,115 +1,197 @@
-import { Center, Loader, Stack, Text, Title } from '@mantine/core'
-import { lazy, ReactNode, Suspense } from 'react'
+import { Lock } from 'lucide-react'
+import { lazy, Suspense, type ComponentType, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, Route, Routes } from 'react-router-dom'
+
+import { homeFor } from '@/app/navigation'
+import { Shell } from '@/app/shell'
 import { useAuth } from '@/auth/AuthContext'
-import { homeFor } from '@/layout/menu'
-import { Shell } from '@/layout/Shell'
+import { LoginPage } from '@/features/auth/login'
 import { RealtimeProvider } from '@/realtime/RealtimeProvider'
+import { EmptyState, Spinner } from '@/ui/feedback'
+
+const page = <T,>(load: () => Promise<T>, name: keyof T) =>
+  lazy(() => load().then((m) => ({ default: m[name] as unknown as ComponentType })))
+
+const sales = () => import('@/features/sales/orders')
+const catalog = () => import('@/features/sales/catalog')
+const production = () => import('@/features/production/batches')
+const work = () => import('@/features/work/work')
+const inventory = () => import('@/features/inventory/inventory')
+const chemicals = () => import('@/features/chemicals/chemicals')
+const communal = () => import('@/features/communal/communal')
+const hr = () => import('@/features/hr/hr')
+const admin = () => import('@/features/admin/admin')
+const profile = () => import('@/features/auth/profile')
+
+const P = {
+  Board: page(() => import('@/features/production/board'), 'BoardPage'),
+  Plan: page(() => import('@/features/production/plan'), 'PlanPage'),
+  Batches: page(production, 'BatchesPage'),
+  Batch: page(production, 'BatchDetailPage'),
+  Finished: page(production, 'FinishedStockPage'),
+  Semi: page(production, 'SemiStockPage'),
+  Item: page(production, 'ItemDetailPage'),
+  Sell: page(production, 'SellPage'),
+  Split: page(production, 'SplitPage'),
+  Return: page(production, 'ReturnPage'),
+  Work: page(work, 'StageWorkPage'),
+  ItemFinish: page(work, 'ItemFinishPage'),
+  BatchFinish: page(work, 'BatchFinishPage'),
+  Orders: page(sales, 'OrdersPage'),
+  OrderForm: page(sales, 'OrderFormPage'),
+  Order: page(sales, 'OrderDetailPage'),
+  Customers: page(catalog, 'CustomersPage'),
+  CustomerForm: page(catalog, 'CustomerFormPage'),
+  Products: page(catalog, 'ProductsPage'),
+  ProductForm: page(catalog, 'ProductFormPage'),
+  Sales: page(catalog, 'SalesPage'),
+  Stock: page(inventory, 'StockPage'),
+  RollForm: page(inventory, 'RollFormPage'),
+  RollAdjust: page(inventory, 'RollAdjustPage'),
+  AllocateList: page(inventory, 'AllocateListPage'),
+  Allocate: page(inventory, 'AllocateBatchPage'),
+  Outlays: page(inventory, 'OutlaysPage'),
+  OutlayForm: page(inventory, 'OutlayFormPage'),
+  Waste: page(inventory, 'WastePage'),
+  WasteSell: page(inventory, 'WasteSellPage'),
+  Chemicals: page(chemicals, 'ChemicalsPage'),
+  LotForm: page(chemicals, 'ChemicalLotForm'),
+  ChemTypeForm: page(chemicals, 'ChemicalTypeForm'),
+  GlueTypeForm: page(chemicals, 'GlueTypeForm'),
+  GlueMake: page(chemicals, 'GlueMakePage'),
+  Communal: page(communal, 'CommunalPage'),
+  ReportForm: page(communal, 'ReportForm'),
+  ResourceForm: page(communal, 'ResourceFormPage'),
+  TariffForm: page(communal, 'TariffForm'),
+  UnitForm: page(communal, 'UnitForm'),
+  Employees: page(hr, 'EmployeesPage'),
+  EmployeeForm: page(hr, 'EmployeeForm'),
+  ContractForm: page(hr, 'ContractForm'),
+  PositionForm: page(hr, 'PositionForm'),
+  Safety: page(hr, 'SafetyPage'),
+  SafetyForm: page(hr, 'SafetyForm'),
+  Incidents: page(hr, 'IncidentsPage'),
+  IncidentForm: page(hr, 'IncidentForm'),
+  IncidentTypeForm: page(hr, 'IncidentTypeForm'),
+  Attendance: page(hr, 'AttendancePage'),
+  AttendanceForm: page(hr, 'AttendanceForm'),
+  Users: page(admin, 'UsersPage'),
+  UserForm: page(admin, 'UserForm'),
+  Roles: page(admin, 'RolesPage'),
+  RoleForm: page(admin, 'RoleFormPage'),
+  Reference: page(admin, 'ReferencePage'),
+  ReferenceForm: page(admin, 'ReferenceFormPage'),
+  Settings: page(admin, 'SettingsPage'),
+  Audit: page(admin, 'AuditPage'),
+  Profile: page(profile, 'ProfilePage'),
+  Notifications: page(profile, 'NotificationsPage'),
+}
+
+const STAGES = ['production.gofra', 'production.fleksa', 'production.tikish', 'production.yelimlash', 'production.plan', 'production.board']
+const ORDERS = ['orders.view', 'orders.view_all', 'orders.manage', 'production.plan', 'production.board']
 
 function Guard({ perms, children }: { perms: string[]; children: ReactNode }) {
   const { can } = useAuth()
   const { t } = useTranslation()
-  if (!can(...perms))
-    return (
-      <Center h="60vh">
-        <Stack align="center" gap={4}>
-          <Title order={3}>403</Title>
-          <Text c="dimmed">{t('forbidden')}</Text>
-        </Stack>
-      </Center>
-    )
-  return <>{children}</>
+  if (perms.length && !can(...perms)) return <div className="p-10"><EmptyState icon={Lock} title={t('forbidden')} /></div>
+  return <Suspense fallback={<div className="flex h-60 items-center justify-center"><Spinner /></div>}>{children}</Suspense>
 }
-
-const Audit = lazy(() => import('@/pages/admin/Admin').then((m) => ({ default: m.Audit })))
-const Reference = lazy(() => import('@/pages/admin/Admin').then((m) => ({ default: m.Reference })))
-const Roles = lazy(() => import('@/pages/admin/Admin').then((m) => ({ default: m.Roles })))
-const Settings = lazy(() => import('@/pages/admin/Admin').then((m) => ({ default: m.Settings })))
-const Users = lazy(() => import('@/pages/admin/Admin').then((m) => ({ default: m.Users })))
-const Chemicals = lazy(() => import('@/pages/chemicals/Chemicals'))
-const Communal = lazy(() => import('@/pages/communal/Communal'))
-const Attendance = lazy(() => import('@/pages/hr/Hr').then((m) => ({ default: m.Attendance })))
-const Employees = lazy(() => import('@/pages/hr/Hr').then((m) => ({ default: m.Employees })))
-const Incidents = lazy(() => import('@/pages/hr/Hr').then((m) => ({ default: m.Incidents })))
-const Safety = lazy(() => import('@/pages/hr/Hr').then((m) => ({ default: m.Safety })))
-const AllocateBatch = lazy(() => import('@/pages/inventory/Allocate').then((m) => ({ default: m.AllocateBatch })))
-const AllocateList = lazy(() => import('@/pages/inventory/Allocate').then((m) => ({ default: m.AllocateList })))
-const Outlays = lazy(() => import('@/pages/inventory/Other').then((m) => ({ default: m.Outlays })))
-const Waste = lazy(() => import('@/pages/inventory/Other').then((m) => ({ default: m.Waste })))
-const Stock = lazy(() => import('@/pages/inventory/Stock'))
-const Login = lazy(() => import('@/pages/Login'))
-const BatchDetail = lazy(() => import('@/pages/production/Batches').then((m) => ({ default: m.BatchDetail })))
-const BatchList = lazy(() => import('@/pages/production/Batches').then((m) => ({ default: m.BatchList })))
-const Board = lazy(() => import('@/pages/production/Board'))
-const FinishedStock = lazy(() => import('@/pages/production/Items').then((m) => ({ default: m.FinishedStock })))
-const ItemDetail = lazy(() => import('@/pages/production/Items').then((m) => ({ default: m.ItemDetail })))
-const Plan = lazy(() => import('@/pages/production/Plan'))
-const Notifications = lazy(() => import('@/pages/Profile').then((m) => ({ default: m.Notifications })))
-const Profile = lazy(() => import('@/pages/Profile').then((m) => ({ default: m.Profile })))
-const Customers = lazy(() => import('@/pages/sales/Customers'))
-const Orders = lazy(() => import('@/pages/sales/Orders'))
-const Products = lazy(() => import('@/pages/sales/Products'))
-const Sales = lazy(() => import('@/pages/sales/Sales'))
-const StageWork = lazy(() => import('@/pages/work/StageWork'))
-
-const STAGE_PERMS = ['production.gofra', 'production.fleksa', 'production.tikish', 'production.yelimlash', 'production.plan', 'production.board']
 
 export default function App() {
   const { user, loading, can } = useAuth()
-  if (loading)
-    return (
-      <Center h="100vh">
-        <Loader />
-      </Center>
-    )
-  if (!user)
-    return (
-      <Routes>
-        <Route path="*" element={<Suspense fallback={null}><Login /></Suspense>} />
-      </Routes>
-    )
+  if (loading) return <div className="flex h-full items-center justify-center"><Spinner /></div>
+  if (!user) return <Routes><Route path="*" element={<LoginPage />} /></Routes>
   const home = homeFor(can, user.role?.home)
-  const g = (perms: string[], el: ReactNode) => (
-    <Guard perms={perms}>
-      <Suspense fallback={<Center h="40vh"><Loader /></Center>}>{el}</Suspense>
-    </Guard>
-  )
+  const r = (path: string, perms: string[], el: ReactNode) => <Route key={path} path={path} element={<Guard perms={perms}>{el}</Guard>} />
   return (
     <RealtimeProvider>
       <Routes>
         <Route element={<Shell />}>
           <Route index element={<Navigate to={home} replace />} />
-          <Route path="work/:stage" element={g(STAGE_PERMS, <StageWork />)} />
-          <Route path="production" element={g(['production.board', 'production.plan'], <Board />)} />
-          <Route path="production/plan" element={g(['production.plan'], <Plan />)} />
-          <Route path="production/plan/:id" element={g(['production.plan'], <Plan />)} />
-          <Route path="production/batches" element={g(['production.plan', 'production.board', 'inventory.allocate'], <BatchList />)} />
-          <Route path="production/batches/:id" element={g(['production.plan', 'production.board', 'inventory.allocate', 'production.gofra'], <BatchDetail />)} />
-          <Route path="production/items/:id" element={g([...STAGE_PERMS, 'sales.manage', 'orders.view', 'orders.view_all'], <ItemDetail />)} />
-          <Route path="production/stock" element={g(['production.board', 'sales.manage', 'production.plan'], <FinishedStock />)} />
-          <Route path="sales/orders" element={g(['orders.view', 'orders.view_all', 'orders.manage'], <Orders />)} />
-          <Route path="sales/customers" element={g(['customers.view', 'customers.manage'], <Customers />)} />
-          <Route path="sales/products" element={g(['products.view', 'products.manage'], <Products />)} />
-          <Route path="sales/sales" element={g(['sales.manage'], <Sales />)} />
-          <Route path="inventory" element={g(['inventory.view', 'inventory.manage', 'inventory.allocate'], <Stock />)} />
-          <Route path="inventory/allocate" element={g(['inventory.allocate'], <AllocateList />)} />
-          <Route path="inventory/allocate/:id" element={g(['inventory.allocate'], <AllocateBatch />)} />
-          <Route path="inventory/outlays" element={g(['inventory.manage'], <Outlays />)} />
-          <Route path="inventory/waste" element={g(['waste.manage'], <Waste />)} />
-          <Route path="chemicals" element={g(['chemicals.manage'], <Chemicals />)} />
-          <Route path="communal" element={g(['communal.manage'], <Communal />)} />
-          <Route path="hr/employees" element={g(['hr.view', 'hr.manage'], <Employees />)} />
-          <Route path="hr/safety" element={g(['hr.view', 'hr.manage'], <Safety />)} />
-          <Route path="hr/incidents" element={g(['hr.view', 'hr.manage'], <Incidents />)} />
-          <Route path="hr/attendance" element={g(['hr.view', 'hr.manage'], <Attendance />)} />
-          <Route path="admin/users" element={g(['users.manage'], <Users />)} />
-          <Route path="admin/roles" element={g(['roles.manage'], <Roles />)} />
-          <Route path="admin/reference" element={g(['catalog.manage', 'warehouses.manage'], <Reference />)} />
-          <Route path="admin/settings" element={g(['settings.manage'], <Settings />)} />
-          <Route path="admin/audit" element={g(['audit.view'], <Audit />)} />
-          <Route path="profile" element={g([], <Profile />)} />
-          <Route path="notifications" element={g([], <Notifications />)} />
+          {r('work/:stage', STAGES, <P.Work />)}
+          {r('work/gofra/:id/finish', ['production.gofra', 'production.plan'], <P.BatchFinish />)}
+          {r('work/:stage/:id/finish', STAGES, <P.ItemFinish />)}
+          {r('production', ['production.board', 'production.plan'], <P.Board />)}
+          {r('production/plan', ['production.plan'], <P.Plan />)}
+          {r('production/plan/:id', ['production.plan'], <P.Plan />)}
+          {r('production/batches', ['production.plan', 'production.board', 'inventory.allocate'], <P.Batches />)}
+          {r('production/batches/:id', ['production.plan', 'production.board', 'inventory.allocate', 'production.gofra'], <P.Batch />)}
+          {r('production/semi', ['production.board', 'production.plan'], <P.Semi />)}
+          {r('production/stock', ['production.board', 'sales.manage', 'production.plan'], <P.Finished />)}
+          {r('production/items/:id', [...STAGES, 'sales.manage', 'orders.view', 'orders.view_all'], <P.Item />)}
+          {r('production/items/:id/sell', ['sales.manage'], <P.Sell />)}
+          {r('production/items/:id/split', ['production.plan'], <P.Split />)}
+          {r('sales/orders', ORDERS, <P.Orders />)}
+          {r('sales/orders/new', ['orders.manage'], <P.OrderForm />)}
+          {r('sales/orders/:id', ORDERS, <P.Order />)}
+          {r('sales/orders/:id/edit', ['orders.manage'], <P.OrderForm />)}
+          {r('sales/customers', ['customers.view', 'customers.manage'], <P.Customers />)}
+          {r('sales/customers/new', ['customers.manage'], <P.CustomerForm />)}
+          {r('sales/customers/:id/edit', ['customers.manage'], <P.CustomerForm />)}
+          {r('sales/products', ['products.view', 'products.manage'], <P.Products />)}
+          {r('sales/products/new', ['products.manage'], <P.ProductForm />)}
+          {r('sales/products/:id/edit', ['products.manage'], <P.ProductForm />)}
+          {r('sales/sales', ['sales.manage'], <P.Sales />)}
+          {r('sales/sales/:id/return', ['sales.manage'], <P.Return />)}
+          {r('inventory', ['inventory.view', 'inventory.manage', 'inventory.allocate'], <P.Stock />)}
+          {r('inventory/rolls/new', ['inventory.manage'], <P.RollForm />)}
+          {r('inventory/rolls/:id/edit', ['inventory.manage'], <P.RollForm />)}
+          {r('inventory/rolls/:id/adjust', ['inventory.manage'], <P.RollAdjust />)}
+          {r('inventory/allocate', ['inventory.allocate'], <P.AllocateList />)}
+          {r('inventory/allocate/:id', ['inventory.allocate'], <P.Allocate />)}
+          {r('inventory/outlays', ['inventory.manage'], <P.Outlays />)}
+          {r('inventory/outlays/new', ['inventory.manage'], <P.OutlayForm />)}
+          {r('inventory/waste', ['waste.manage'], <P.Waste />)}
+          {r('inventory/waste/sell', ['waste.manage'], <P.WasteSell />)}
+          {r('chemicals', ['chemicals.manage'], <P.Chemicals />)}
+          {r('chemicals/lots/new', ['chemicals.manage'], <P.LotForm />)}
+          {r('chemicals/types/new', ['chemicals.manage'], <P.ChemTypeForm />)}
+          {r('chemicals/types/:id/edit', ['chemicals.manage'], <P.ChemTypeForm />)}
+          {r('chemicals/glue-types/new', ['chemicals.manage'], <P.GlueTypeForm />)}
+          {r('chemicals/glue-types/:id/edit', ['chemicals.manage'], <P.GlueTypeForm />)}
+          {r('chemicals/glue/new', ['chemicals.manage'], <P.GlueMake />)}
+          {r('communal', ['communal.manage'], <P.Communal />)}
+          {r('communal/reports/new', ['communal.manage'], <P.ReportForm />)}
+          {r('communal/reports/:id/edit', ['communal.manage'], <P.ReportForm />)}
+          {r('communal/resources/new', ['communal.manage'], <P.ResourceForm />)}
+          {r('communal/resources/:id/edit', ['communal.manage'], <P.ResourceForm />)}
+          {r('communal/tariffs/new', ['communal.manage'], <P.TariffForm />)}
+          {r('communal/tariffs/:id/edit', ['communal.manage'], <P.TariffForm />)}
+          {r('communal/units/new', ['communal.manage'], <P.UnitForm />)}
+          {r('communal/units/:id/edit', ['communal.manage'], <P.UnitForm />)}
+          {r('hr/employees', ['hr.view', 'hr.manage'], <P.Employees />)}
+          {r('hr/employees/new', ['hr.manage'], <P.EmployeeForm />)}
+          {r('hr/employees/:id/edit', ['hr.manage'], <P.EmployeeForm />)}
+          {r('hr/contracts/new', ['hr.manage'], <P.ContractForm />)}
+          {r('hr/contracts/:id/edit', ['hr.manage'], <P.ContractForm />)}
+          {r('hr/positions/new', ['hr.manage'], <P.PositionForm />)}
+          {r('hr/positions/:id/edit', ['hr.manage'], <P.PositionForm />)}
+          {r('hr/safety', ['hr.view', 'hr.manage'], <P.Safety />)}
+          {r('hr/safety/new', ['hr.manage'], <P.SafetyForm />)}
+          {r('hr/safety/:id/edit', ['hr.manage'], <P.SafetyForm />)}
+          {r('hr/incidents', ['hr.view', 'hr.manage'], <P.Incidents />)}
+          {r('hr/incidents/new', ['hr.manage'], <P.IncidentForm />)}
+          {r('hr/incidents/:id/edit', ['hr.manage'], <P.IncidentForm />)}
+          {r('hr/incident-types/new', ['hr.manage'], <P.IncidentTypeForm />)}
+          {r('hr/incident-types/:id/edit', ['hr.manage'], <P.IncidentTypeForm />)}
+          {r('hr/attendance', ['hr.view', 'hr.manage'], <P.Attendance />)}
+          {r('hr/attendance/new', ['hr.manage'], <P.AttendanceForm />)}
+          {r('hr/attendance/:id/edit', ['hr.manage'], <P.AttendanceForm />)}
+          {r('admin/users', ['users.manage'], <P.Users />)}
+          {r('admin/users/new', ['users.manage'], <P.UserForm />)}
+          {r('admin/users/:id/edit', ['users.manage'], <P.UserForm />)}
+          {r('admin/roles', ['roles.manage'], <P.Roles />)}
+          {r('admin/roles/new', ['roles.manage'], <P.RoleForm />)}
+          {r('admin/roles/:id/edit', ['roles.manage'], <P.RoleForm />)}
+          {r('admin/reference', ['catalog.manage', 'warehouses.manage'], <P.Reference />)}
+          {r('admin/reference/:section', ['catalog.manage', 'warehouses.manage'], <P.Reference />)}
+          {r('admin/reference/:section/new', ['catalog.manage', 'warehouses.manage'], <P.ReferenceForm />)}
+          {r('admin/reference/:section/:id/edit', ['catalog.manage', 'warehouses.manage'], <P.ReferenceForm />)}
+          {r('admin/settings', ['settings.manage'], <P.Settings />)}
+          {r('admin/audit', ['audit.view'], <P.Audit />)}
+          {r('profile', [], <P.Profile />)}
+          {r('notifications', [], <P.Notifications />)}
           <Route path="*" element={<Navigate to={home} replace />} />
         </Route>
       </Routes>

@@ -29,3 +29,15 @@ export function daysLeft(value: string | null | undefined) {
 export function isoDate(value: Date | string | null | undefined) {
   return value ? dayjs(value).format('YYYY-MM-DD') : null
 }
+
+/** 1250000 -> "1 250 000" */
+export function formatNumber(value: number): string {
+  return String(Math.trunc(value)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+}
+
+/** "+998901234567" -> "+998 90 123 45 67" */
+export function formatPhone(value: string | null | undefined): string {
+  const digits = (value ?? '').replace(/\D/g, '')
+  if (digits.length !== 12) return value || '—'
+  return `+${digits.slice(0, 3)} ${digits.slice(3, 5)} ${digits.slice(5, 8)} ${digits.slice(8, 10)} ${digits.slice(10)}`
+}

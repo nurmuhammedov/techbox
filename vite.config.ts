@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
@@ -5,14 +6,14 @@ import { defineConfig } from 'vite'
 const backend = process.env.BACKEND_URL || 'http://localhost:8000'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   build: {
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
         manualChunks: {
           react: ['react', 'react-dom', 'react-router-dom'],
-          mantine: ['@mantine/core', '@mantine/hooks', '@mantine/dates', '@mantine/notifications', '@mantine/modals'],
+          ui: ['radix-ui', 'lucide-react', 'sonner', 'cmdk', '@tanstack/react-table'],
           data: ['@tanstack/react-query', 'i18next', 'react-i18next', 'dayjs'],
         },
       },

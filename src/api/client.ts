@@ -8,6 +8,12 @@ export class ApiError extends Error {
     this.data = data
   }
 
+  /** Per-field messages from the server, or undefined when the error is not about fields. */
+  get fields(): Record<string, string> | undefined {
+    const out = this.fieldErrors()
+    return Object.keys(out).length ? out : undefined
+  }
+
   fieldErrors(): Record<string, string> {
     const out: Record<string, string> = {}
     if (this.data && typeof this.data === 'object' && !Array.isArray(this.data)) {

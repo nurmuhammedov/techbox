@@ -1,0 +1,143 @@
+import { useId } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { cn } from '@/lib/cn'
+
+import { blankOf, fmt, type BoxSize, type ScoreKey } from './geometry'
+import { Defs, Dim, Legend } from './parts'
+
+interface Props {
+  size: BoxSize
+  /** When given, the six score sizes are typed straight onto the drawing. */
+  onChange?: (key: ScoreKey, value: number | null) => void
+  className?: string
+}
+
+const W = 1000
+const M = { left: 118, right: 24, top: 84, bottom: 70 }
+
+/**
+ * The flat blank of a regular slotted box as the corrugator cuts it: glue flap, four panels,
+ * top and bottom flaps. Solid lines are cuts, dashed lines are score (bend) lines.
+ */
+export function BoxBlank({ size, onChange, className }: Props) {
+  const { t } = useTranslation()
+  const id = useId().replace(/:/g, '')
+  const b = blankOf(size)
+  const editable = !!onChange
+  const along = b.joint + 2 * (b.l1 + b.l5)
+  const scale = (W - M.left - M.right) / Math.max(along, 1)
+  const H = Math.max(b.l0 * scale, 120) + M.top + M.bottom
+  const ky = (b.l0 * scale) / Math.max(b.l0, 1)
+  const x0 = M.left
+  const y0 = M.top
+  const yTop = y0 + b.l2 * ky
+  const yBody = yTop + b.l3 * ky
+  const yEnd = yBody + b.l4 * ky
+  const xj = x0 + b.joint * scale
+  const panels = [b.l1, b.l5, b.l1, b.l5]
+  const xs = panels.reduce<number[]>((acc, p) => [...acc, acc[acc.length - 1] + p * scale], [xj])
+  const slot = 3
+  const fs = 13
+
+  const pos = (x: number, y: number) => ({ left: `${(x / W) * 100}%`, top: `${(y / H) * 100}%` })
+  const field = (key: ScoreKey, x: number, y: number, vertical = false) => {
+    if (!editable) return null
+    const value = size[key]
+    return (
+      <input
+        key={key}
+        inputMode="numeric"
+        aria-label={`${key.toUpperCase()} — ${t(`drawing.${key}`)}`}
+        title={t(`drawing.${key}`)}
+        value={value ?? ''}
+        placeholder={fmt(b[key])}
+        onChange={(e) => {
+          const digits = e.target.value.replace(/\D/g, '')
+          onChange!(key, digits ? Number(digits) : null)
+        }}
+        className={cn(
+          'tabular absolute h-7 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border text-center font-code text-[12.5px] font-semibold shadow-card outline-none transition',
+          'focus:border-accent focus:ring-2 focus:ring-accent/30',
+          value ? 'border-accent bg-accent text-on-accent placeholder:text-on-accent' : 'border-line-strong bg-surface text-ink placeholder:text-ink-3',
+          vertical && '-rotate-90',
+        )}
+        style={pos(x, y)}
+      />
+    )
+  }
+
+  const label = (key: ScoreKey) => (editable ? '' : fmt(b[key]))
+
+  return (
+    <div className={cn('flex flex-col gap-2', className)}>
+      <div className="relative w-full" style={{ aspectRatio: `${W} / ${H}` }}>
+        <svg viewBox={`0 0 ${W} ${H}`} className="absolute inset-0 size-full" role="img" aria-label={t('drawing.blank')}>
+          <Defs id={id} />
+          {/* Glue flap: a trapezoid on the body height only. */}
+          <path
+            d={`M ${xj} ${yTop} L ${x0} ${yTop + 12} L ${x0} ${yBody - 12} L ${xj} ${yBody} Z`}
+            fill="var(--draw-fill)"
+            stroke="var(--draw-cut)"
+            strokeWidth="1.6"
+          />
+          {/* Panels with their flaps. */}
+          {panels.map((_, i) => {
+            const a = xs[i]
+            const z = xs[i + 1]
+            return (
+              <g key={i}>
+                <rect x={a} y={yTop} width={z - a} height={yBody - yTop} fill={`url(#${id}-flute)`} />
+                <rect x={a} y={yTop} width={z - a} height={yBody - yTop} fill="var(--accent-soft)" opacity="0.35" />
+                <rect x={a + (i ? slot : 0)} y={y0} width={z - a - (i ? slot : 0) - (i < 3 ? slot : 0)} height={yTop - y0} fill="var(--draw-fill)" stroke="var(--draw-cut)" strokeWidth="1.6" />
+                <rect x={a + (i ? slot : 0)} y={yBody} width={z - a - (i ? slot : 0) - (i < 3 ? slot : 0)} height={yEnd - yBody} fill="var(--draw-fill)" stroke="var(--draw-cut)" strokeWidth="1.6" />
+                <text x={(a + z) / 2} y={(yTop + yBody) / 2} dy="0.35em" textAnchor="middle" fontSize={fs + 2} fill="var(--ink-3)" fontWeight={500}>
+                  {i % 2 === 0 ? t('drawing.side_long') : t('drawing.side_short')}
+                </text>
+              </g>
+            )
+          })}
+          {/* Body outline and score lines. */}
+          <line x1={xj} y1={yTop} x2={xs[4]} y2={yTop} stroke="var(--draw-score)" strokeWidth="1.6" strokeDasharray="7 5" />
+          <line x1={xj} y1={yBody} x2={xs[4]} y2={yBody} stroke="var(--draw-score)" strokeWidth="1.6" strokeDasharray="7 5" />
+          {xs.slice(0, 4).map((x, i) => (
+            <line key={i} x1={x} y1={yTop} x2={x} y2={yBody} stroke="var(--draw-score)" strokeWidth="1.6" strokeDasharray="7 5" />
+          ))}
+          <line x1={xs[4]} y1={yTop} x2={xs[4]} y2={yBody} stroke="var(--draw-cut)" strokeWidth="1.6" />
+
+          {/* Sizes along: panels on top, the whole blank above them, the glue flap below. */}
+          <Dim id={id} x1={xs[0]} y1={y0} x2={xs[1]} y2={y0} offset={-26} label={label('l1')} strong={!b.auto.l1} fontSize={fs} />
+          <Dim id={id} x1={xs[1]} y1={y0} x2={xs[2]} y2={y0} offset={-26} label={label('l5')} strong={!b.auto.l5} fontSize={fs} />
+          <Dim id={id} x1={xs[2]} y1={y0} x2={xs[3]} y2={y0} offset={-26} label={fmt(b.l1)} fontSize={fs} />
+          <Dim id={id} x1={xs[3]} y1={y0} x2={xs[4]} y2={y0} offset={-26} label={fmt(b.l5)} fontSize={fs} />
+          <Dim id={id} x1={x0} y1={y0} x2={xs[4]} y2={y0} offset={-64} label={`${fmt(along)} mm`} fontSize={fs} />
+          <Dim id={id} x1={x0} y1={yEnd} x2={xj} y2={yEnd} offset={34} label={fmt(b.joint)} fontSize={fs - 1} />
+
+          {/* Sizes across: flaps and body, then the whole height (l0). */}
+          <Dim id={id} x1={x0} y1={y0} x2={x0} y2={yTop} offset={-30} label={label('l2')} strong={!b.auto.l2} fontSize={fs} />
+          <Dim id={id} x1={x0} y1={yTop} x2={x0} y2={yBody} offset={-30} label={label('l3')} strong={!b.auto.l3} fontSize={fs} />
+          <Dim id={id} x1={x0} y1={yBody} x2={x0} y2={yEnd} offset={-30} label={label('l4')} strong={!b.auto.l4} fontSize={fs} />
+          <Dim id={id} x1={x0} y1={y0} x2={x0} y2={yEnd} offset={-84} label={label('l0')} strong={!b.auto.l0} fontSize={fs} />
+        </svg>
+        {field('l1', (xs[0] + xs[1]) / 2, y0 - 26)}
+        {field('l5', (xs[1] + xs[2]) / 2, y0 - 26)}
+        {field('l2', x0 - 30, (y0 + yTop) / 2, true)}
+        {field('l3', x0 - 30, (yTop + yBody) / 2, true)}
+        {field('l4', x0 - 30, (yBody + yEnd) / 2, true)}
+        {field('l0', x0 - 84, (y0 + yEnd) / 2, true)}
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <Legend
+          items={[
+            { kind: 'cut', label: t('drawing.cut_line') },
+            { kind: 'score', label: t('drawing.score_line') },
+            { kind: 'hatch', label: t('drawing.flap') },
+          ]}
+        />
+        <p className="tabular text-xs text-ink-2">
+          {t('drawing.blank_size')}: <b className="font-code">{fmt(b.across)} × {fmt(b.along)}</b> mm
+        </p>
+      </div>
+    </div>
+  )
+}

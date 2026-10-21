@@ -45,7 +45,12 @@ export interface Shape {
   sheet_width: number | null
   layers: number[]
   route: Stage[]
-  scores: number[]
+  l0: number | null
+  l1: number | null
+  l2: number | null
+  l3: number | null
+  l4: number | null
+  l5: number | null
 }
 
 export interface Product extends Shape {
@@ -125,6 +130,26 @@ export interface WorkItem {
   finished_at: string | null
   runs?: StageRun[]
   layers?: number[]
+  shape?: ItemShape
+}
+
+export interface ItemShape {
+  kind: 'box' | 'sheet' | 'pallet'
+  parts: number
+  orientation: 'horizontal' | 'vertical'
+  ups: number
+  length: number | null
+  width: number | null
+  height?: number | null
+  joint?: number | null
+  sheet_length?: number | null
+  sheet_width?: number | null
+  l0?: number | null
+  l1?: number | null
+  l2?: number | null
+  l3?: number | null
+  l4?: number | null
+  l5?: number | null
 }
 
 export interface PlanLine {
