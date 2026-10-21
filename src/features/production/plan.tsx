@@ -27,6 +27,7 @@ import { Card, Page } from '@/ui/page'
 import { sizeOf } from '../sales/orders'
 import { flutedLayers, toggleFlute } from '@/drawings/geometry'
 import { LayerKind } from '@/drawings/LayersSection'
+import { HoldsFlow } from '@/features/shape/ShapeEditor'
 
 interface Line {
   order: number
@@ -59,7 +60,7 @@ export function PlanPage() {
   const [layers, setLayers] = useState<number[]>([0, 0, 0])
   const [flutes, setFlutes] = useState<number[]>([])
   const [usePallet, setUsePallet] = useState(false)
-  const [pallet, setPallet] = useState<{ length: number | null; route: Stage[]; deadline: string }>({ length: 1000, route: [], deadline: '' })
+  const [pallet, setPallet] = useState<{ length: number | null; route: Stage[]; holds: Stage[]; deadline: string }>({ length: 1000, route: [], holds: [], deadline: '' })
   const [comment, setComment] = useState('')
   const [priority, setPriority] = useState(false)
   const [plan, setPlan] = useState<Plan | null>(null)
@@ -78,7 +79,7 @@ export function PlanPage() {
     const p = b.items.find((i) => i.kind === 'pallet')
     if (p) {
       setUsePallet(true)
-      setPallet({ length: p.length ?? 1000, route: p.route.filter((s) => s !== 'gofra'), deadline: p.deadline ?? '' })
+      setPallet({ length: p.length ?? 1000, route: p.route.filter((s) => s !== 'gofra'), holds: p.holds ?? [], deadline: p.deadline ?? '' })
     }
     setComment(b.comment)
     setPriority(b.priority > 0)
@@ -115,7 +116,7 @@ export function PlanPage() {
             layers,
             flutes,
             lines,
-            pallet: usePallet && pallet.length ? { length: pallet.length, route: pallet.route, deadline: pallet.deadline || null } : null,
+            pallet: usePallet && pallet.length ? { length: pallet.length, route: pallet.route, holds: pallet.holds, deadline: pallet.deadline || null } : null,
             comment,
             priority: priority ? 1 : 0,
           }
@@ -399,6 +400,14 @@ export function PlanPage() {
                         )
                       })}
                     </div>
+                  </div>
+                  <div className="flex flex-col gap-1 sm:col-span-3">
+                    <span className="text-xs font-medium text-ink-2">{t('ymo.flow')}</span>
+                    <HoldsFlow
+                      route={['gofra', ...EXTRA.filter((s) => pallet.route.includes(s))]}
+                      holds={pallet.holds.filter((s) => ['gofra', ...pallet.route].slice(0, -1).includes(s))}
+                      onChange={(holds) => setPallet((p) => ({ ...p, holds }))}
+                    />
                   </div>
                 </div>
               ) : null}

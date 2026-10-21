@@ -228,44 +228,52 @@ export function ShapeEditor({
         <div className="mt-4 border-t border-line pt-4">
           <p className="text-[13px] font-medium">{t('ymo.flow')}</p>
           <p className="mt-0.5 text-xs text-ink-3">{t('ymo.flow_hint')}</p>
-          <div className="mt-3 flex flex-wrap items-center gap-1.5">
-            {value.route.map((stage, i) => {
-              const last = i === value.route.length - 1
-              const held = (value.holds ?? []).includes(stage)
-              return (
-                <Fragment key={stage}>
-                  <span className="inline-flex h-8 items-center gap-1.5 rounded-md bg-sunken px-2.5 text-[13px] font-medium">
-                    <span className={cn('size-2 rounded-full', STAGE_TONE[stage])} />
-                    {t(`stage.${stage}`)}
-                  </span>
-                  <span className="text-ink-3">→</span>
-                  {last ? null : (
-                    <>
-                      <button
-                        type="button"
-                        aria-pressed={held}
-                        title={t('ymo.toggle', { stage: t(`stage.${stage}`) })}
-                        onClick={() => onChange({ holds: held ? value.holds.filter((s) => s !== stage) : [...(value.holds ?? []), stage] })}
-                        className={cn(
-                          'inline-flex h-8 items-center gap-1 rounded-md border px-2 text-xs font-semibold transition-colors',
-                          held ? 'border-warn bg-warn-soft text-warn' : 'border-dashed border-line-strong text-ink-3 hover:border-warn hover:text-warn',
-                        )}
-                      >
-                        <Warehouse className="size-3.5" />
-                        {held ? t('ymo.short') : `+ ${t('ymo.short')}`}
-                      </button>
-                      <span className="text-ink-3">→</span>
-                    </>
-                  )}
-                </Fragment>
-              )
-            })}
-            <span className="inline-flex h-8 items-center rounded-md border border-dashed border-line-strong px-2.5 text-[13px] text-ink-3">{t('stage.short.store')}</span>
-          </div>
+          <HoldsFlow route={value.route} holds={value.holds ?? []} onChange={(holds) => onChange({ holds })} />
           {errors.holds ? <p className="mt-1 text-xs text-bad">{errors.holds}</p> : null}
         </div>
         {errors.route ? <p className="mt-1 text-xs text-bad">{errors.route}</p> : null}
       </Card>
     </fieldset>
+  )
+}
+
+/** The stages in order with a YMO switch between each two: where marked, the goods stop in the warehouse. */
+export function HoldsFlow({ route, holds, onChange }: { route: Stage[]; holds: Stage[]; onChange: (holds: Stage[]) => void }) {
+  const { t } = useTranslation()
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-1.5">
+      {route.map((stage, i) => {
+        const last = i === route.length - 1
+        const held = holds.includes(stage)
+        return (
+          <Fragment key={stage}>
+            <span className="inline-flex h-8 items-center gap-1.5 rounded-md bg-sunken px-2.5 text-[13px] font-medium">
+              <span className={cn('size-2 rounded-full', STAGE_TONE[stage])} />
+              {t(`stage.${stage}`)}
+            </span>
+            <span className="text-ink-3">→</span>
+            {last ? null : (
+              <>
+                <button
+                  type="button"
+                  aria-pressed={held}
+                  title={t('ymo.toggle', { stage: t(`stage.${stage}`) })}
+                  onClick={() => onChange(held ? holds.filter((s) => s !== stage) : [...holds, stage])}
+                  className={cn(
+                    'inline-flex h-8 items-center gap-1 rounded-md border px-2 text-xs font-semibold transition-colors',
+                    held ? 'border-warn bg-warn-soft text-warn' : 'border-dashed border-line-strong text-ink-3 hover:border-warn hover:text-warn',
+                  )}
+                >
+                  <Warehouse className="size-3.5" />
+                  {held ? t('ymo.short') : `+ ${t('ymo.short')}`}
+                </button>
+                <span className="text-ink-3">→</span>
+              </>
+            )}
+          </Fragment>
+        )
+      })}
+      <span className="inline-flex h-8 items-center rounded-md border border-dashed border-line-strong px-2.5 text-[13px] text-ink-3">{t('stage.short.store')}</span>
+    </div>
   )
 }
