@@ -24,7 +24,7 @@ function Stat({ label, value, icon, tone, to }: { label: string; value: number |
     <div className="flex items-center gap-3 rounded-lg border border-line bg-surface p-3.5 shadow-card transition-colors hover:border-line-strong">
       <span className={cn('flex size-10 shrink-0 items-center justify-center rounded-lg bg-sunken text-ink-2 [&_svg]:size-5', tone)}>{icon}</span>
       <div className="min-w-0">
-        <p className="truncate text-xs text-ink-3">{label}</p>
+        <p className="text-xs leading-tight text-ink-3">{label}</p>
         <p className="tabular text-2xl leading-tight font-semibold">{value ?? '—'}</p>
       </div>
     </div>

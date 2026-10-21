@@ -83,7 +83,9 @@ export function BoxBlank({ size, onChange, className }: Props) {
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      <div className="relative mx-auto w-full" style={{ aspectRatio: `${W} / ${H}`, maxWidth: `${Math.round((MAX_SCREEN_H * W) / H)}px` }}>
+      {/* On a phone the blank keeps a size the score fields fit on, and scrolls sideways. */}
+      <div className="-mx-1 overflow-x-auto px-1 pb-1">
+      <div className={cn('relative mx-auto w-full', editable && 'min-w-[600px]')} style={{ aspectRatio: `${W} / ${H}`, maxWidth: `${Math.round((MAX_SCREEN_H * W) / H)}px` }}>
         <svg viewBox={`0 0 ${W} ${H}`} className={cn('absolute inset-0 size-full', empty && 'opacity-45')} role="img" aria-label={t('drawing.blank')}>
           <Defs id={id} />
           {/* Glue flap: a trapezoid on the body height only. */}
@@ -137,6 +139,7 @@ export function BoxBlank({ size, onChange, className }: Props) {
         {field('l3', x0 - 30, (yTop + yBody) / 2, true)}
         {field('l4', x0 - 30, (yBody + yEnd) / 2, true)}
         {field('l0', x0 - 84, (y0 + yL0) / 2, true)}
+      </div>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Legend
