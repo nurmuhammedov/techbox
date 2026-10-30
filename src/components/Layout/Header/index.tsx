@@ -1,13 +1,15 @@
 import {Logout, SelectIcon, Status} from 'assets/icons'
+import {Menu} from 'lucide-react'
 import {useAppContext, useLogout, useSideMenu} from 'hooks'
 import {useTranslation} from 'react-i18next'
 import styles from './styles.module.scss'
 import classNames from 'classnames'
 import {useState, useMemo} from 'react'
 import {useLocation} from 'react-router-dom'
+import {activeChild} from 'configurations/menu'
 
 
-const Index = () => {
+const Index = ({onMenu}: {onMenu: () => void}) => {
 	const {t} = useTranslation()
 	const [accountIsOpen, setAccountIsOpen] = useState(false)
 	const {user} = useAppContext()
@@ -15,21 +17,29 @@ const Index = () => {
 	const location = useLocation()
 	const sideMenu = useSideMenu()
 
-	const currentMenuLabel = useMemo(() => {
+	const currentMenu = useMemo(() => {
 		// Sort by href length descending to match the most specific path first
 		const sortedMenu = [...(sideMenu || [])].sort((a, b) => b.href.length - a.href.length)
-		const match = sortedMenu.find(item => {
+		return sortedMenu.find(item => {
 			if (item.href === '/') return location.pathname === '/'
 			return location.pathname.startsWith(item.href)
 		})
-		return match ? match.label : ''
 	}, [location.pathname, sideMenu])
+	const currentChild = currentMenu ? activeChild(currentMenu, location.pathname, location.search) : undefined
 
 	return (
 		<div className={styles.root}>
-			<div className={styles.pageTitle}>
-				{t(currentMenuLabel)}
+			<button type="button" className={styles.menuButton} aria-label={t('Menu')} onClick={onMenu}>
+				<Menu size={22}/>
+			</button>
+			<div className={styles.titleRow}>
+				<div className={styles.pageTitle}>
+					{t(currentMenu?.label ?? '')}
+					{currentChild && <span className={styles.crumb}>{t(currentChild.label)}</span>}
+				</div>
+				<div id="page-title-slot" className={styles.titleSlot} data-section={t(currentMenu?.label ?? '')}/>
 			</div>
+			<div id="page-actions-slot" className={styles.actions}/>
 			<div className={styles['profile-container']}>
 				<div
 					onClick={() => setAccountIsOpen(p => !p)}

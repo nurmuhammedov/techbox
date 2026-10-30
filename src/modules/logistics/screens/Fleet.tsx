@@ -1,4 +1,3 @@
-import {PageTitle, Tab} from 'components'
 import {useData, useSearchParams} from 'hooks'
 import {useCallback} from 'react'
 import Crud, {ICrudField} from '../components/Crud'
@@ -13,31 +12,20 @@ import {
 	INCIDENT_STATUSES,
 	INCIDENT_TYPES,
 	SEVERITY_COLORS,
+	STAT_GRID,
+	StatCard,
 	index,
 	LICENSE_CATEGORIES,
 	MAINTENANCE_STATUSES,
 	MAINTENANCE_TYPES,
 	money,
 	TRANSPORT_STATUSES,
-	PAGE_FONT,
+	PAGE_BODY,
 	transportLabel
 } from '../helpers'
 
 
 type Row = Record<string, any>
-
-const TABS = [
-	{value: 'dashboard', label: 'Umumiy'},
-	{value: 'transports', label: 'Mashinalar'},
-	{value: 'drivers', label: 'Haydovchilar'},
-	{value: 'assignments', label: 'Biriktirish'},
-	{value: 'factories', label: 'Mijoz zavodlari'},
-	{value: 'fuel', label: 'Yoqilg‘i'},
-	{value: 'incidents', label: 'Nosozliklar'},
-	{value: 'maintenance', label: 'Texnik xizmat'},
-	{value: 'models', label: 'Modellar'},
-	{value: 'brands', label: 'Markalar'}
-]
 
 const TRANSPORT_COLORS: Record<string, string> = {
 	available: '#16a34a', busy: '#d97706', in_repair: '#dc2626', in_maintenance: '#7c3aed', accident: '#b91c1c'
@@ -68,20 +56,18 @@ const Dashboard = () => {
 	const {data: statuses = []} = useData<Row[]>('logistics/dashboard/transport-statuses')
 	return (
 		<div className="flex flex-col gap-lg">
-			<div className="grid gap-lg">
+			<div style={STAT_GRID}>
 				{CARDS.map(c => {
 					const value = cards?.[c.money ? c.key : `${c.key}_count`] ?? 0
 					const change = Number(cards?.[`${c.key}_prtg`] ?? 0)
 					return (
-						<div key={c.key} className="span-4" style={{background: '#fff', borderRadius: '1rem', padding: '1.6rem'}}>
-							<div style={{color: '#64748b', fontSize: '1.3rem'}}>{c.label}</div>
-							<div style={{fontSize: '2.4rem', fontWeight: 600, whiteSpace: 'nowrap'}}>
-								{c.money ? `${money(value)} so‘m` : value}
-							</div>
-							<div style={{fontSize: '.85em', color: change > 0 ? '#16a34a' : change < 0 ? '#dc2626' : '#94a3b8'}}>
-								{change > 0 ? '+' : ''}{change}% o‘tgan oyga nisbatan
-							</div>
-						</div>
+						<StatCard
+							key={c.key}
+							label={c.label}
+							value={c.money ? `${money(value)} so‘m` : value}
+							hint={`${change > 0 ? '+' : ''}${change}% o‘tgan oyga nisbatan`}
+							hintColor={change > 0 ? '#16a34a' : change < 0 ? '#dc2626' : '#64748b'}
+						/>
 					)
 				})}
 			</div>
@@ -209,10 +195,7 @@ const Fleet = () => {
 	], [])
 
 	return (
-		<div style={PAGE_FONT}>
-			<PageTitle title="Logistika"/>
-			<Tab query="tab" fallbackValue="dashboard" tabs={TABS}/>
-			<div style={{marginTop: '1.2rem'}}>
+		<div className="flex flex-col flex-1" style={PAGE_BODY}>
 				{tab === 'dashboard' && <Dashboard/>}
 				{tab === 'transports' && (
 					<Crud
@@ -384,7 +367,6 @@ const Fleet = () => {
 						]}
 					/>
 				)}
-			</div>
 		</div>
 	)
 }

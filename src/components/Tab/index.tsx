@@ -24,17 +24,20 @@ const Index: FC<IProperties> = ({tabs, fallbackValue, query = 'tab', style}) => 
 	}
 
 	return (
-		<div className={styles.root} style={style}>
+		<div className={styles.root} style={style} role="tablist">
 			{
 				tabs?.map(item => {
 					return (
-						<div
+						<button
 							key={item.value}
+							type="button"
+							role="tab"
+							aria-selected={item.value == status}
 							className={classNames(styles.tab, {[styles.active]: item.value == status})}
 							onClick={() => handleTabChange(item.value)}
 						>
 							{t(item.label as string)}
-						</div>
+						</button>
 					)
 				})
 			}

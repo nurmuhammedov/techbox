@@ -1,5 +1,5 @@
 import {Plus} from 'assets/icons'
-import {Button, Tab} from 'components'
+import {Button, Tab, PageTitle} from 'components'
 import {ROLE_LIST} from 'constants/roles'
 import {useAppContext, useSearchParams} from 'hooks'
 import {ISelectOption} from 'interfaces/form.interface'
@@ -21,8 +21,7 @@ const Index = () => {
 
 	return (
 		<>
-			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
-				<Tab fallbackValue={tabOptions[0]?.value} tabs={tabOptions}/>
+			<PageTitle>
 				{
 					user?.role === ROLE_LIST.ADMIN && (
 						<>
@@ -42,6 +41,9 @@ const Index = () => {
 						</>
 					)
 				}
+			</PageTitle>
+			<div className="flex align-center gap-lg" style={{marginBottom: '.5rem'}}>
+				<Tab fallbackValue={tabOptions[0]?.value} tabs={tabOptions}/>
 			</div>
 			{
 				tab === 'materialWarehouse' ? <Materials/> :

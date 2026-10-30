@@ -34,7 +34,7 @@ type ResizeDirection = 'right' | 'left' | 'bottom' | 'top' | 'bottom-right'
 const Modal = (
 	{
 		id,
-		animation = 'flip',
+		animation = 'fade',
 		queryParam = 'modal',
 		title = '',
 		children,

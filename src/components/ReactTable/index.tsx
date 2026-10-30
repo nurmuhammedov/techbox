@@ -100,7 +100,7 @@ const Index = <T extends object & { id: string | number }>({
 	}
 
 	return (
-		<div className={classNames(classes.root, className, {
+		<div data-table="" className={classNames(classes.root, className, {
 			[classes.screen]: screen,
 			[classes.loader]: isLoading,
 			[classes.empty]: !(data && data.length)

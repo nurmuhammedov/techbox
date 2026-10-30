@@ -352,6 +352,13 @@ export const menu: IMenuItem[] = [
 		label: 'Komunallar',
 		href: '/communals',
 		icon: Zap,
+		items: [
+			{label: 'Dashboard', href: '/communals?tab=dashboard'},
+			{label: 'Resources', href: '/communals?tab=resources'},
+			{label: 'Units', href: '/communals?tab=units'},
+			{label: 'Tariflar', href: '/communals?tab=tariffs'},
+			{label: 'Hisobotlar', href: '/communals?tab=reports'}
+		],
 		allowedRoles: [
 			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
@@ -366,6 +373,17 @@ export const menu: IMenuItem[] = [
 		label: 'Jo‘natmalar',
 		href: '/shipments',
 		icon: PackageCheck,
+		items: [
+			{label: 'Umumiy', href: '/shipments?stage=overview'},
+			{label: 'Barcha jo‘natmalar', href: '/shipments?stage=all'},
+			{label: 'Tayyorlash', href: '/shipments?stage=planned'},
+			{label: 'Qadoqlash', href: '/shipments?stage=packing'},
+			{label: 'Yuklash', href: '/shipments?stage=loading'},
+			{label: 'Haydovchiga topshirish', href: '/shipments?stage=handover'},
+			{label: 'Yo‘lda', href: '/shipments?stage=road'},
+			{label: 'Yakunlangan', href: '/shipments?stage=done'},
+			{label: 'Qaytarilgan tovarlar', href: '/shipments?stage=returns'}
+		],
 		allowedRoles: [
 			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
@@ -380,6 +398,18 @@ export const menu: IMenuItem[] = [
 		label: 'Logistika',
 		href: '/logistics',
 		icon: Truck,
+		items: [
+			{label: 'Umumiy', href: '/logistics?tab=dashboard'},
+			{label: 'Mashinalar', href: '/logistics?tab=transports'},
+			{label: 'Haydovchilar', href: '/logistics?tab=drivers'},
+			{label: 'Biriktirish', href: '/logistics?tab=assignments'},
+			{label: 'Mijoz zavodlari', href: '/logistics?tab=factories'},
+			{label: 'Yoqilg‘i', href: '/logistics?tab=fuel'},
+			{label: 'Nosozliklar', href: '/logistics?tab=incidents'},
+			{label: 'Texnik xizmat', href: '/logistics?tab=maintenance'},
+			{label: 'Modellar', href: '/logistics?tab=models'},
+			{label: 'Markalar', href: '/logistics?tab=brands'}
+		],
 		allowedRoles: [
 			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
@@ -394,6 +424,10 @@ export const menu: IMenuItem[] = [
 		label: 'Buxgalteriya',
 		href: '/accounting',
 		icon: Wallet,
+		items: [
+			{label: 'Xarajatlar', href: '/accounting?tab=reports'},
+			{label: 'Xarajat turlari', href: '/accounting?tab=types'}
+		],
 		allowedRoles: [
 			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
@@ -452,3 +486,14 @@ export const menu: IMenuItem[] = [
 		}
 	}
 ]
+
+// The submenu entry this URL points to; a bare section URL means its first entry
+export const activeChild = (item: IMenuItem, pathname: string, search: string) => {
+	if (!item.items || !pathname.startsWith(item.href)) return undefined
+	const params = new URLSearchParams(search)
+	const exact = item.items.find(child => {
+		const [path, query] = child.href.split('?')
+		return path === pathname && [...new URLSearchParams(query)].every(([key, value]) => params.get(key) === value)
+	})
+	return exact ?? (pathname === item.href ? item.items[0] : undefined)
+}

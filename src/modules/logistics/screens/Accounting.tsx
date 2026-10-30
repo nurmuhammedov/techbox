@@ -1,4 +1,4 @@
-import {Button, Form, Input, Modal, PageTitle, Tab} from 'components'
+import {Button, Form, Input, Modal, Tab} from 'components'
 import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {ROLE_LIST} from 'constants/roles'
 import {useAppContext, useData, useSearchParams} from 'hooks'
@@ -7,7 +7,7 @@ import {useQueryClient} from '@tanstack/react-query'
 import {useCallback, useState} from 'react'
 import {showMessage} from 'utilities/alert'
 import Crud from '../components/Crud'
-import {Badge, date, driverLabel, index, money, PAYMENT_METHODS, transportLabel, PAGE_FONT} from '../helpers'
+import {Badge, date, driverLabel, index, money, PAYMENT_METHODS, transportLabel, PAGE_BODY, PAGE_FONT} from '../helpers'
 
 
 type Row = Record<string, any>
@@ -20,9 +20,9 @@ const Summary = () => {
 	if (!data) return null
 	const card = (label: string, amount: number, count?: number, color = '#0f172a') => (
 		<div className="span-3" style={{background: '#fff', borderRadius: '1rem', padding: '1.6rem'}}>
-			<div style={{color: '#64748b', fontSize: '1.3rem'}}>{label}</div>
-			<div style={{fontSize: '2rem', fontWeight: 600, color, whiteSpace: 'nowrap'}}>{money(amount)} so‘m</div>
-			{count !== undefined && <div style={{color: '#64748b', fontSize: '1.2rem'}}>{count} ta hisobot</div>}
+			<div style={{color: '#64748b', fontSize: '.875rem'}}>{label}</div>
+			<div style={{fontSize: '1.625rem', fontWeight: 600, color, whiteSpace: 'nowrap'}}>{money(amount)} so‘m</div>
+			{count !== undefined && <div style={{color: '#64748b', fontSize: '.8125rem'}}>{count} ta hisobot</div>}
 		</div>
 	)
 	return (
@@ -131,13 +131,7 @@ const Accounting = () => {
 	], [])
 
 	return (
-		<div style={PAGE_FONT}>
-			<PageTitle title="Buxgalteriya: mashina xarajatlari"/>
-			<Tab query="tab" fallbackValue="reports" tabs={[
-				{value: 'reports', label: 'Xarajatlar'},
-				{value: 'types', label: 'Xarajat turlari'}
-			]}/>
-			<div style={{marginTop: '1.2rem'}}>
+		<div className="flex flex-col flex-1" style={PAGE_BODY}>
 				{tab === 'reports' && (
 					<>
 						<Summary/>
@@ -201,7 +195,6 @@ const Accounting = () => {
 						]}
 					/>
 				)}
-			</div>
 			<Modal title="Hisobotni rad etish" id="reject" onClose={closeReject} style={{width: '48rem', height: '26rem'}}>
 				<Form className="flex flex-col gap-lg" onSubmit={(e) => {
 					e.preventDefault()

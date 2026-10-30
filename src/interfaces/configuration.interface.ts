@@ -5,11 +5,17 @@ interface RoleOrder {
 	[key: string]: number
 }
 
+interface IMenuChild {
+	label: string
+	href: string
+}
+
 interface IMenuItem {
 	id: string
 	label: string
 	icon?: React.ElementType
 	href: string
+	items?: IMenuChild[]
 	allowedRoles: string[]
 	order: RoleOrder
 }
@@ -29,6 +35,7 @@ interface IIDName {
 
 export type {
 	IIDName,
+	IMenuChild,
 	IMenuItem,
 	IListResponse
 }

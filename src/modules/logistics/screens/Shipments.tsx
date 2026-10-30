@@ -1,24 +1,25 @@
 import {Plus} from 'assets/icons'
-import {Button, Card, FilterInput, PageTitle, Pagination, ReactTable, Tab} from 'components'
+import {Button, Card, FilterInput, PageTitle, Pagination, ReactTable} from 'components'
 import {usePaginatedData, usePagination, useSearchParams} from 'hooks'
 import {useMemo} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
-import {dateTime, index, ShipmentBadge, PAGE_FONT} from '../helpers'
+import {dateTime, index, ShipmentBadge, PAGE_BODY} from '../helpers'
+import Packing from './Packing'
 import Returns from './Returns'
+import WarehouseDashboard from './WarehouseDashboard'
 
 
 type Row = Record<string, any>
 
-// A tab is a stage of the work, so it groups the statuses that belong to it
-export const STAGES: Record<string, {label: string, statuses: string}> = {
-	all: {label: 'Jo‘natmalar', statuses: ''},
-	planned: {label: 'Tayyorlash', statuses: 'new,packed'},
-	loading: {label: 'Yuklash', statuses: 'loading_queue'},
-	handover: {label: 'Haydovchiga topshirish', statuses: 'loaded'},
-	road: {label: 'Yo‘lda', statuses: 'in_transit'},
-	done: {label: 'Yakunlangan', statuses: 'delivered,returned,cancelled'},
-	returns: {label: 'Qaytarilgan tovarlar', statuses: ''}
+// A stage of the work groups the statuses that belong to it
+const STAGES: Record<string, string> = {
+	all: '',
+	planned: 'new,packed',
+	loading: 'loading_queue',
+	handover: 'loaded',
+	road: 'in_transit',
+	done: 'delivered,returned,cancelled'
 }
 
 const ShipmentTable = ({stage}: {stage: string}) => {
@@ -30,7 +31,7 @@ const ShipmentTable = ({stage}: {stage: string}) => {
 		page,
 		page_size: pageSize,
 		search,
-		status: STAGES[String(stage)]?.statuses || undefined
+		status: STAGES[stage] || undefined
 	})
 
 	const columns = useMemo<Column<Row>[]>(() => [
@@ -41,7 +42,7 @@ const ShipmentTable = ({stage}: {stage: string}) => {
 			accessor: (r: Row) => (
 				<div>
 					<div>{r.customer?.company_name || r.customer?.fullname || '-'}</div>
-					<div style={{color: '#64748b', fontSize: '1.2rem'}}>
+					<div style={{color: '#64748b', fontSize: '.8125rem'}}>
 						{[r.sold_order?.order_name, r.dimensions].filter(Boolean).join(' · ')}
 					</div>
 				</div>
@@ -72,9 +73,9 @@ const ShipmentTable = ({stage}: {stage: string}) => {
 
 	return (
 		<>
-			<Card style={{marginTop: '1.2rem'}}>
+			<Card>
 				<div className="flex gap-lg" style={{padding: '.8rem'}}>
-					<FilterInput id="search" query="search" placeholder="Jo‘natma raqami, mijoz yoki manzil"/>
+					<FilterInput id="search" query="search" placeholder="Qidirish"/>
 				</div>
 				<ReactTable columns={columns} data={data} isLoading={isPending}/>
 			</Card>
@@ -85,20 +86,19 @@ const ShipmentTable = ({stage}: {stage: string}) => {
 
 const Shipments = () => {
 	const navigate = useNavigate()
-	const {paramsObject: {stage = 'all'}} = useSearchParams()
+	const {paramsObject: {stage = 'overview'}} = useSearchParams()
+	const current = String(stage)
 	return (
-		<div style={PAGE_FONT}>
-			<PageTitle title="Jo‘natmalar">
-				<Button icon={<Plus/>} onClick={() => navigate('add')}>Yangi jo‘natma</Button>
-			</PageTitle>
-			<Tab
-				query="stage"
-				fallbackValue="all"
-				tabs={Object.entries(STAGES).map(([value, s]) => ({value, label: s.label}))}
-			/>
-			{stage === 'returns'
-				? <div style={{marginTop: '1.2rem'}}><Returns/></div>
-				: <ShipmentTable stage={String(stage)}/>}
+		<div className="flex flex-col flex-1" style={PAGE_BODY}>
+			{current !== 'packing' && (
+				<PageTitle>
+					<Button icon={<Plus/>} onClick={() => navigate('add')}>Yangi jo‘natma</Button>
+				</PageTitle>
+			)}
+			{current === 'overview' && <WarehouseDashboard/>}
+			{current === 'packing' && <Packing/>}
+			{current === 'returns' && <Returns/>}
+			{current in STAGES && <ShipmentTable stage={current}/>}
 		</div>
 	)
 }

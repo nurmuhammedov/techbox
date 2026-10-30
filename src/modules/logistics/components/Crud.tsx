@@ -11,6 +11,7 @@ import {
 	Input,
 	Modal,
 	NumberFormattedInput,
+	PageTitle,
 	Pagination,
 	ReactTable,
 	Select
@@ -61,6 +62,8 @@ const MODAL = 'crud'
 // 1fr columns grow to fit wide selects and push the form out of the modal
 const FORM_GRID = {alignContent: 'start', gridTemplateColumns: 'repeat(12, minmax(0, 1fr))'}
 const FOOTER = {alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid #e2e8f0'}
+// A form this long does not fit a modal without scrolling, so it opens as a page
+const MODAL_FIELDS = 6
 
 // The shared modal has a fixed 30rem height; size it to the form so nothing scrolls inside
 const formHeight = (fields: ICrudField[]) => {
@@ -103,7 +106,7 @@ const SourceSelect = ({field, value, onChange, error}: {
 
 const Crud = ({endpoint, columns, fields, addLabel, params = {}, toForm, toolbar, rowActions, readOnly, hideAdd, onChanged, canModify}: IProperties) => {
 	const {page, pageSize} = usePagination()
-	const {addParams, removeParams, paramsObject: {updateId = undefined}} = useSearchParams()
+	const {addParams, removeParams, paramsObject: {updateId = undefined, modal = undefined}} = useSearchParams()
 	const empty = useMemo(() => Object.fromEntries(fields.map(f => [f.name, f.type === 'number' ? '' : undefined])), [fields])
 
 	const {data, totalPages, isPending: isLoading, refetch: refetchList} = usePaginatedData<Row[]>(endpoint, {
@@ -176,8 +179,9 @@ const Crud = ({endpoint, columns, fields, addLabel, params = {}, toForm, toolbar
 		}]
 	}, [columns, page, pageSize, readOnly, rowActions, refetch, canModify])
 
-	const renderField = (f: ICrudField) => (
-		<div key={f.name} className={`span-${f.span ?? 6}`}>
+	const renderField = (field: ICrudField) => {
+		const f = field.required ? {...field, label: `${field.label} *`} : field
+		return <div key={f.name} className={`span-${f.span ?? 6}`}>
 			<Controller
 				name={f.name}
 				control={control}
@@ -241,44 +245,54 @@ const Crud = ({endpoint, columns, fields, addLabel, params = {}, toForm, toolbar
 				}}
 			/>
 		</div>
+	}
+
+	const form = (saving: boolean) => (
+		<Form className="grid gap-lg" style={FORM_GRID} onSubmit={handleSubmit(onSubmit)}>
+			{fields.map(renderField)}
+			<div className="span-12 flex justify-end gap-lg" style={FOOTER}>
+				<Button type={FIELD.BUTTON} theme={BUTTON_THEME.OUTLINE} onClick={close}>Bekor qilish</Button>
+				<Button type={FIELD.SUBMIT} disabled={saving}>Saqlash</Button>
+			</div>
+		</Form>
 	)
+
+	const isLong = fields.length > MODAL_FIELDS
+	if (isLong && (modal === MODAL || modal === 'edit')) {
+		return (
+			<>
+				<PageTitle title={modal === 'edit' ? 'Tahrirlash' : addLabel}/>
+				<Card screen={false} style={{padding: '1.5rem'}}>
+					{form(modal === 'edit' ? isUpdating : isAdding)}
+				</Card>
+			</>
+		)
+	}
 
 	return (
 		<>
+			{!readOnly && !hideAdd && (
+				<PageTitle>
+					<Button icon={<Plus/>} onClick={() => {
+						reset(empty)
+						addParams({modal: MODAL}, 'updateId')
+					}}>
+						{addLabel}
+					</Button>
+				</PageTitle>
+			)}
 			<Card>
-				<div className="flex justify-between align-center gap-lg" style={{padding: '.8rem'}}>
-					<div className="flex gap-lg align-center">{toolbar}</div>
-					{!readOnly && !hideAdd && (
-						<Button icon={<Plus/>} onClick={() => {
-							reset(empty)
-							addParams({modal: MODAL}, 'updateId')
-						}}>
-							{addLabel}
-						</Button>
-					)}
-				</div>
+				{toolbar && <div className="flex gap-lg align-center" style={{padding: '.8rem'}}>{toolbar}</div>}
 				<ReactTable columns={tableColumns} data={data} isLoading={isLoading}/>
 			</Card>
 			<Pagination totalPages={totalPages}/>
 
-			<Modal title={addLabel} id={MODAL} onClose={close} style={modalSize}>
-				<Form className="grid gap-lg" style={FORM_GRID} onSubmit={handleSubmit(onSubmit)}>
-					{fields.map(renderField)}
-					<div className="span-12 flex justify-end gap-lg" style={FOOTER}>
-						<Button type={FIELD.BUTTON} theme={BUTTON_THEME.OUTLINE} onClick={close}>Bekor qilish</Button>
-						<Button type={FIELD.SUBMIT} disabled={isAdding}>Saqlash</Button>
-					</div>
-				</Form>
-			</Modal>
-			<Modal title="Tahrirlash" id="edit" onClose={close} style={modalSize}>
-				<Form className="grid gap-lg" style={FORM_GRID} onSubmit={handleSubmit(onSubmit)}>
-					{fields.map(renderField)}
-					<div className="span-12 flex justify-end gap-lg" style={FOOTER}>
-						<Button type={FIELD.BUTTON} theme={BUTTON_THEME.OUTLINE} onClick={close}>Bekor qilish</Button>
-						<Button type={FIELD.SUBMIT} disabled={isUpdating}>Saqlash</Button>
-					</div>
-				</Form>
-			</Modal>
+			{!isLong && (
+				<>
+					<Modal title={addLabel} id={MODAL} onClose={close} style={modalSize}>{form(isAdding)}</Modal>
+					<Modal title="Tahrirlash" id="edit" onClose={close} style={modalSize}>{form(isUpdating)}</Modal>
+				</>
+			)}
 			<DeleteModal endpoint={`${endpoint}/`} onDelete={() => refetch()}/>
 		</>
 	)

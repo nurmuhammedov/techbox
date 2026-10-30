@@ -70,7 +70,7 @@ const ShipmentReturns = ({shipment, onChanged}: {shipment: Row, onChanged: () =>
 							style={{padding: '.8rem 0', borderBottom: '1px solid #f1f5f9'}}>
 							<div className="flex flex-col" style={{gap: '.2rem'}}>
 								<b>{r.quantity} dona · {r.reason_display}</b>
-								<span style={{color: '#64748b', fontSize: '1.2rem'}}>
+								<span style={{color: '#64748b', fontSize: '.8125rem'}}>
 									{[dateTime(r.created_at), r.comment].filter(Boolean).join(' · ')}
 								</span>
 							</div>

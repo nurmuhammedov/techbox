@@ -1,5 +1,5 @@
 import {Plus} from 'assets/icons'
-import {Button, Tab} from 'components'
+import {Button, Tab, PageTitle} from 'components'
 import {useSearchParams} from 'hooks'
 import {ISelectOption} from 'interfaces/form.interface'
 import ChemicalType from 'modules/chemical-types/components/ChemicalType'
@@ -16,8 +16,7 @@ const ChemicalsIndex = () => {
 
 	return (
 		<>
-			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
-				<Tab fallbackValue={tabOptions[0]?.value} tabs={tabOptions}/>
+			<PageTitle>
 				{
 					tab === 'chemical-types' ? (
 						<Button icon={<Plus/>} onClick={() => addParams({modal: 'chemical-type'})}>
@@ -29,6 +28,9 @@ const ChemicalsIndex = () => {
 						</Button>
 					) : null
 				}
+			</PageTitle>
+			<div className="flex align-center gap-lg" style={{marginBottom: '.5rem'}}>
+				<Tab fallbackValue={tabOptions[0]?.value} tabs={tabOptions}/>
 			</div>
 			{
 				tab === 'chemical-types' ? <ChemicalType/> :

@@ -1,3 +1,4 @@
+import {ReactNode} from 'react'
 import {ISelectOption} from 'interfaces/form.interface'
 
 
@@ -101,9 +102,10 @@ export const Badge = ({label, color}: {label: string, color: string}) => (
 		display: 'inline-block',
 		padding: '.2rem .8rem',
 		borderRadius: '1rem',
-		fontSize: '1.2rem',
+		fontSize: '.8125rem',
 		fontWeight: 500,
 		color,
+		fontFamily: PAGE_FONT.fontFamily,
 		background: `${color}1a`,
 		whiteSpace: 'nowrap'
 	}}>
@@ -137,3 +139,41 @@ export const index = (page: number, pageSize: number) => ({
 
 // pages here use plain divs, which do not get the app font from the shared components
 export const PAGE_FONT = {fontFamily: 'Poppins, Arial, Helvetica, sans-serif'}
+// lets the table inside shrink to the free height
+export const PAGE_BODY = {...PAGE_FONT, minHeight: 0}
+
+export const PACKABLE_STATUSES = ['new', 'packed', 'loading_queue']
+
+export const STAT_GRID = {display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(13rem, 1fr))'}
+
+export const StatCard = ({label, value, hint, hintColor, onClick}: {
+	label: string,
+	value: ReactNode,
+	hint?: string,
+	hintColor?: string,
+	onClick?: () => void
+}) => {
+	const Tag = onClick ? 'button' : 'div'
+	return (
+		<Tag
+			type={onClick ? 'button' : undefined}
+			onClick={onClick}
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				gap: '.25rem',
+				padding: '1rem 1.25rem',
+				background: '#fff',
+				border: '1px solid var(--gray-pale)',
+				borderRadius: '.625rem',
+				cursor: onClick ? 'pointer' : undefined,
+				font: 'inherit',
+				textAlign: 'left'
+			}}
+		>
+			<span style={{color: '#64748b', fontSize: '.875rem'}}>{label}</span>
+			<span style={{color: '#1e293b', fontSize: '1.625rem', fontWeight: 600, whiteSpace: 'nowrap'}}>{value}</span>
+			{hint && <span style={{color: hintColor, fontSize: '.8125rem'}}>{hint}</span>}
+		</Tag>
+	)
+}

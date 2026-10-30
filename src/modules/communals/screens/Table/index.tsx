@@ -7,7 +7,6 @@ import {
 	EditButton,
 	Pagination,
 	ReactTable,
-	Tab
 } from 'components'
 import {
 	usePaginatedData,
@@ -54,13 +53,6 @@ const Index: FC = () => {
 		return () => document.removeEventListener('mousedown', handleClickOutside)
 	}, [])
 
-	const communalTabs = [
-		{value: 'dashboard', label: t('Dashboard')},
-		{value: 'resources', label: t('Resources')},
-		{value: 'units', label: t('Units')},
-		{value: 'tariffs', label: t('Tariflar')},
-		{value: 'reports', label: t('Hisobotlar')}
-	]
 	const {page, pageSize} = usePagination()
 	const {paramsObject: {tab = 'dashboard'}} = useSearchParams()
 
@@ -249,8 +241,7 @@ const Index: FC = () => {
 	if (tab === 'dashboard') {
 		return (
 			<>
-				<div className="flex justify-between items-center" style={{marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem'}}>
-					<Tab query="tab" fallbackValue="dashboard" tabs={communalTabs} />
+				<div className="flex justify-end items-center" style={{marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem'}}>
 					
 					<div className="flex items-center gap-md" style={{ position: 'relative' }} ref={pickerRef}>
 						<button 
@@ -314,8 +305,7 @@ const Index: FC = () => {
 
 	return (
 		<>
-			<div className="flex justify-between items-center" style={{marginBottom: '1rem'}}>
-				<Tab query="tab" fallbackValue="dashboard" tabs={communalTabs} />
+			<div className="flex justify-end items-center" style={{marginBottom: '1rem'}}>
 				<Button icon={<Plus/>} onClick={() => navigate(`add${tab === 'resources' ? '' : `-${(tab as string).slice(0, -1)}`}`)}>
 					{t('Add')}
 				</Button>

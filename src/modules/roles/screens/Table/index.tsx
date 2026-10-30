@@ -1,5 +1,5 @@
 import {Plus} from 'assets/icons'
-import {Button, Tab} from 'components'
+import {Button, Tab, PageTitle} from 'components'
 import {useSearchParams} from 'hooks'
 import {ISelectOption} from 'interfaces/form.interface'
 import Positions from 'modules/roles/components/Positions'
@@ -17,8 +17,7 @@ const Index = () => {
 
 	return (
 		<>
-			<div className="flex align-center justify-between gap-lg" style={{marginBottom: '.5rem'}}>
-				<Tab fallbackValue={tabOptions[0]?.value} tabs={tabOptions}/>
+			<PageTitle>
 				{
 					tab == 'roles' ?
 						<Button icon={<Plus/>} onClick={() => addParams({modal: 'role'})}>
@@ -29,6 +28,9 @@ const Index = () => {
 								Add position
 							</Button> : null
 				}
+			</PageTitle>
+			<div className="flex align-center gap-lg" style={{marginBottom: '.5rem'}}>
+				<Tab fallbackValue={tabOptions[0]?.value} tabs={tabOptions}/>
 			</div>
 			{
 				tab === 'roles' ? <Roles/> :

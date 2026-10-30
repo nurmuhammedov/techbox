@@ -1,4 +1,4 @@
-import {Edit} from 'assets/icons'
+import {Pencil} from 'lucide-react'
 import {useSearchParams} from 'hooks'
 import styles from '../DeleteButton/styles.module.scss'
 
@@ -12,12 +12,15 @@ interface IProperties {
 const Index = ({id, withSlash = false, onClick}: IProperties) => {
 	const {addParams} = useSearchParams()
 	return (
-		<div
+		<button
+			type="button"
+			aria-label="Tahrirlash"
+			title="Tahrirlash"
 			className={styles.root}
 			onClick={() => onClick ? onClick() : addParams({modal: 'edit', updateId: withSlash ? `${id}/` : id})}
 		>
-			<Edit/>
-		</div>
+			<Pencil size={18} color="#146df3"/>
+		</button>
 	)
 }
 

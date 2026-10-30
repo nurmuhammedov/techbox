@@ -47,7 +47,7 @@ const Index = () => {
 				}
 			},
 			{
-				Header: t('Full name'),
+				Header: t('Mahsulot nomi'),
 				accessor: (row: IProductDetail) => row.name
 			},
 			{
@@ -87,7 +87,7 @@ const Index = () => {
 					<FilterInput
 						id="search"
 						query="search"
-						placeholder="Full name"
+						placeholder="Mahsulot nomi"
 					/>
 				</div>
 				<ReactTable
