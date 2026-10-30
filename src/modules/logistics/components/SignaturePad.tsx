@@ -3,10 +3,11 @@ import {useEffect, useRef} from 'react'
 
 interface IProperties {
 	onChange: (dataUrl: string | null) => void
+	hint?: string
 }
 
 // Signature drawn with a finger or the mouse, handed over as a PNG data URL
-const SignaturePad = ({onChange}: IProperties) => {
+const SignaturePad = ({onChange, hint = 'Haydovchi shu yerga imzo chekadi'}: IProperties) => {
 	const canvas = useRef<HTMLCanvasElement>(null)
 	const drawing = useRef(false)
 	const signed = useRef(false)
@@ -64,7 +65,7 @@ const SignaturePad = ({onChange}: IProperties) => {
 				}}
 			/>
 			<div className="flex justify-between" style={{fontSize: '.85em', color: '#64748b'}}>
-				<span>Haydovchi shu yerga imzo chekadi</span>
+				<span>{hint}</span>
 				<a style={{cursor: 'pointer'}} onClick={clear}>Tozalash</a>
 			</div>
 		</div>

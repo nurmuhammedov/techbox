@@ -38,7 +38,8 @@ const roleOptions: ISelectOption[] = [
 	{ value: 'communal', label: 'Komunallar' },
 	{ value: 'shipments', label: 'Jo‘natmalar' },
 	{ value: 'logistics', label: 'Logistika' },
-	{ value: 'accounting', label: 'Buxgalteriya' }
+	{ value: 'accounting', label: 'Buxgalteriya' },
+	{ value: 'driver', label: 'Haydovchi (mening reyslarim)' }
 ]
 
 

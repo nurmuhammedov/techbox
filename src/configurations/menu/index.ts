@@ -420,6 +420,24 @@ export const menu: IMenuItem[] = [
 		}
 	},
 	{
+		id: 'driver',
+		label: 'Mening reyslarim',
+		href: '/driver',
+		icon: Truck,
+		items: [
+			{label: 'Faol reyslar', href: '/driver?tab=active'},
+			{label: 'Tarix', href: '/driver?tab=history'}
+		],
+		allowedRoles: [
+			ROLE_LIST.ADMIN,
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 29,
+			[ROLE_LIST.EMPLOYEE]: 0
+		}
+	},
+	{
 		id: 'accounting',
 		label: 'Buxgalteriya',
 		href: '/accounting',

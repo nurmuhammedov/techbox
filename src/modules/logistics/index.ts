@@ -7,7 +7,15 @@ import TripDetail from './screens/TripDetail'
 import AccountingPage from './screens/Accounting'
 
 
+import DriverTrips from './screens/DriverTrips'
+import DriverTrip from './screens/DriverTrip'
+import DriverStop from './screens/DriverStop'
+
+
 export {
+	DriverTrips,
+	DriverTrip,
+	DriverStop,
 	LogisticsFleet,
 	ShipmentsTable,
 	AddShipment,

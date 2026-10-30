@@ -58,7 +58,10 @@ import {
 	ShipmentDetail,
 	AddTrip,
 	TripDetail,
-	AccountingPage
+	AccountingPage,
+	DriverTrips,
+	DriverTrip,
+	DriverStop
 } from 'modules'
 
 
@@ -503,6 +506,15 @@ const useAppRoutes = () => {
 			id: 'logistics',
 			path: 'logistics',
 			element: <LogisticsFleet />
+		},
+		{
+			id: 'driver',
+			path: 'driver',
+			children: [
+				{index: true, element: <DriverTrips />},
+				{path: 'trips/:id', element: <DriverTrip />},
+				{path: 'trips/:id/stops/:stopId', element: <DriverStop />}
+			]
 		},
 		{
 			id: 'accounting',
