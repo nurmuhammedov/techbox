@@ -406,6 +406,8 @@ export const menu: IMenuItem[] = [
 			{label: 'Mijoz zavodlari', href: '/logistics?tab=factories'},
 			{label: 'Yoqilg‘i', href: '/logistics?tab=fuel'},
 			{label: 'Nosozliklar', href: '/logistics?tab=incidents'},
+			{label: 'Xarajatlar', href: '/logistics?tab=expenses'},
+			{label: 'Xarajat turlari', href: '/logistics?tab=expense_types'},
 			{label: 'Texnik xizmat', href: '/logistics?tab=maintenance'},
 			{label: 'Modellar', href: '/logistics?tab=models'},
 			{label: 'Markalar', href: '/logistics?tab=brands'}
@@ -429,11 +431,9 @@ export const menu: IMenuItem[] = [
 			{label: 'Tarix', href: '/driver?tab=history'}
 		],
 		allowedRoles: [
-			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
-			[ROLE_LIST.ADMIN]: 29,
 			[ROLE_LIST.EMPLOYEE]: 0
 		}
 	},
@@ -447,11 +447,9 @@ export const menu: IMenuItem[] = [
 			{label: 'Xarajat turlari', href: '/accounting?tab=types'}
 		],
 		allowedRoles: [
-			ROLE_LIST.ADMIN,
 			ROLE_LIST.EMPLOYEE
 		],
 		order: {
-			[ROLE_LIST.ADMIN]: 28,
 			[ROLE_LIST.EMPLOYEE]: 28
 		}
 	},

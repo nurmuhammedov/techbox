@@ -58,9 +58,11 @@ const Summary = () => {
 	)
 }
 
-const Accounting = () => {
+// Vehicle expenses; inside Logistika the section comes from the Logistika menu, not the URL tab
+const Accounting = ({section}: {section?: 'reports' | 'types'}) => {
 	const {user} = useAppContext()
-	const {addParams, removeParams, paramsObject: {tab = 'reports', status = ''}} = useSearchParams()
+	const {addParams, removeParams, paramsObject: {tab: urlTab = 'reports', status = ''}} = useSearchParams()
+	const tab = section ?? urlTab
 	const queryClient = useQueryClient()
 	const refreshSummary = useCallback(
 		() => queryClient.invalidateQueries({queryKey: ['accounting/expense-reports/summary']}),

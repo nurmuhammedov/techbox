@@ -1,5 +1,6 @@
 import {useData, useSearchParams} from 'hooks'
 import {useCallback} from 'react'
+import Accounting from './Accounting'
 import Crud, {ICrudField} from '../components/Crud'
 import {
 	Badge,
@@ -197,6 +198,8 @@ const Fleet = () => {
 	return (
 		<div className="flex flex-col flex-1" style={PAGE_BODY}>
 				{tab === 'dashboard' && <Dashboard/>}
+				{tab === 'expenses' && <Accounting section="reports"/>}
+				{tab === 'expense_types' && <Accounting section="types"/>}
 				{tab === 'transports' && (
 					<Crud
 						endpoint="logistics/transports"

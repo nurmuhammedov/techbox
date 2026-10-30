@@ -12,6 +12,8 @@ const pickOnlyAllowedMenu = (menuItem: IMenuItem, role: IRole, categories: strin
 		return isAllowedRole
 	}
 	const isAllowedPermission = menuItem.id ? categories.includes(menuItem.id) : true
+	// vehicle expenses also live in the Logistika menu, so its users do not get them twice
+	if (menuItem.id === 'accounting' && categories.includes('logistics')) return false
 	return isAllowedRole && isAllowedPermission
 }
 const sortMenu = (a: IMenuItem, b: IMenuItem, role: IRole) => a?.order?.[role] - b?.order?.[role]
