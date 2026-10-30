@@ -169,6 +169,12 @@ const Index: FC<IProperties> = ({ leader: _leader = false }) => {
     const columns2: Column<IOrderDetail>[] = useMemo(
         () => [
             {
+                // one order can be sold in several parts, so each sale needs its own number
+                Header: 'Sotuv №',
+                accessor: (row: IOrderDetail) => `S-${row.id}`,
+                style: {whiteSpace: 'nowrap'}
+            },
+            {
                 Header: t('Order number'),
                 accessor: (row: IOrderDetail) => `#${row.order?.id}`,
                 style: {
@@ -200,7 +206,9 @@ const Index: FC<IProperties> = ({ leader: _leader = false }) => {
             },
             {
                 Header: t('Sotilgan sana'),
-                accessor: (row: IOrderDetail) => row?.created_at ? getDate(row?.created_at) : ''
+                accessor: (row: IOrderDetail) => row?.created_at
+                    ? `${getDate(row.created_at)}, ${new Date(row.created_at).toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'})}`
+                    : ''
             },
             {
                 Header: t('Actions'),
