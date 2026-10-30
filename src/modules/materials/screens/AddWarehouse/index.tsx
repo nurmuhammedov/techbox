@@ -128,7 +128,7 @@ const ProductPage: FC<IProperties> = ({ edit = false }) => {
 
 	return (
 		<>
-			<PageTitle title={edit ? 'Edit material' : 'Add material'}>
+			<PageTitle title={edit ? 'Xomashyo ma‘lumotlari' : 'Add material'}>
 				<div className="flex justify-center gap-lg align-center">
 					<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
 						Back

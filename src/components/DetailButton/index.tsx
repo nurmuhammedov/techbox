@@ -11,12 +11,15 @@ interface IProperties {
 
 const Index = ({onClick}: IProperties) => {
 	return (
-		<div
+		<button
+			type="button"
+			aria-label="Ko‘rish"
+			title="Ko‘rish"
 			className={styles.root}
 			onClick={() => onClick ? onClick() : noop()}
 		>
 			<Info/>
-		</div>
+		</button>
 	)
 }
 

@@ -224,7 +224,6 @@ const Index: FC = () => {
 				accessor: (row: ICommunalReport) => (
 					<div className="flex items-start gap-lg">
 						<EditButton onClick={() => navigate(`edit-report/${row.id}`)}/>
-						<DeleteButton id={row.id}/>
 					</div>
 				)
 			}

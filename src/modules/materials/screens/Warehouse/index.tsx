@@ -1,5 +1,5 @@
 import { Plus } from 'assets/icons'
-import { Button, Card, EditButton, PageTitle, Pagination, ReactTable } from 'components'
+import { Button, Card, DetailButton, PageTitle, Pagination, ReactTable } from 'components'
 import { usePaginatedData, usePagination, useSearchParams } from 'hooks'
 import { IBaseMaterialList } from 'interfaces/materials.interface'
 import { useMemo } from 'react'
@@ -71,7 +71,7 @@ const Index = () => {
 			{
 				Header: t('Actions'),
 				accessor: (row: IBaseMaterialList) => <div className="flex items-start gap-lg">
-					<EditButton
+					<DetailButton
 						onClick={() => navigate(`edit/${row.id || 'detail'}?created_at=${row?.created_at}&warehouse=${row?.warehouse?.id}&format=${row?.format?.id}&material=${row?.material?.id}`)} />
 				</div>
 			}
