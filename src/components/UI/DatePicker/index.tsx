@@ -92,7 +92,7 @@ const DatePicker = forwardRef<any, IDatePickerProps>(
 						wrapperClassName={classes.dateWrapper}
 						autoComplete="off"
 						isClearable={!disabled && !!value}
-						onKeyDown={(e) => e.preventDefault()} // Yozishni cheklash
+						strictParsing
 						showPopperArrow={false} // Uchburchak strelkani olib tashlash
 						popperPlacement="bottom-start" // Chap tomonga tekislash
 						calendarStartDay={1} // Dushanbadan boshlash
