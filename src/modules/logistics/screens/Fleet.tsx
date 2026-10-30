@@ -8,6 +8,11 @@ import {
 	dateTime,
 	driverLabel,
 	FUEL_TYPES,
+	INCIDENT_COLORS,
+	INCIDENT_SEVERITIES,
+	INCIDENT_STATUSES,
+	INCIDENT_TYPES,
+	SEVERITY_COLORS,
 	index,
 	LICENSE_CATEGORIES,
 	MAINTENANCE_STATUSES,
@@ -28,6 +33,7 @@ const TABS = [
 	{value: 'assignments', label: 'Biriktirish'},
 	{value: 'factories', label: 'Mijoz zavodlari'},
 	{value: 'fuel', label: 'Yoqilg‘i'},
+	{value: 'incidents', label: 'Nosozliklar'},
 	{value: 'maintenance', label: 'Texnik xizmat'},
 	{value: 'models', label: 'Modellar'},
 	{value: 'brands', label: 'Markalar'}
@@ -72,7 +78,7 @@ const Dashboard = () => {
 							<div style={{fontSize: '2.4rem', fontWeight: 600, whiteSpace: 'nowrap'}}>
 								{c.money ? `${money(value)} so‘m` : value}
 							</div>
-							<div style={{fontSize: '1.2rem', color: change > 0 ? '#16a34a' : change < 0 ? '#dc2626' : '#94a3b8'}}>
+							<div style={{fontSize: '.85em', color: change > 0 ? '#16a34a' : change < 0 ? '#dc2626' : '#94a3b8'}}>
 								{change > 0 ? '+' : ''}{change}% o‘tgan oyga nisbatan
 							</div>
 						</div>
@@ -161,6 +167,34 @@ const Fleet = () => {
 		{Header: 'Xizmat turi', accessor: (r: Row) => r.service_type_display},
 		{Header: 'Narxi', accessor: (r: Row) => money(r.cost)},
 		{Header: 'Holati', accessor: (r: Row) => r.status_display}
+	], [])
+
+	const incidents = useCallback((page: number, size: number) => [
+		index(page, size),
+		{Header: 'Vaqti', accessor: (r: Row) => dateTime(r.incident_date)},
+		{Header: 'Mashina', accessor: (r: Row) => r.transport?.plate_number ?? '-'},
+		{Header: 'Haydovchi', accessor: (r: Row) => r.driver_name || '-'},
+		{Header: 'Turi', accessor: (r: Row) => r.incident_type_display},
+		{
+			Header: 'Jiddiyligi',
+			accessor: (r: Row) => <Badge label={r.severity_display} color={SEVERITY_COLORS[r.severity] ?? '#475569'}/>
+		},
+		{Header: 'Joy', accessor: (r: Row) => r.location || '-'},
+		{
+			Header: 'Tavsif',
+			accessor: (r: Row) => (
+				<div className="flex flex-col" style={{gap: '.2rem'}}>
+					<span>{r.description}</span>
+					{r.resolution && <span style={{fontSize: '.85em', color: '#16a34a'}}>Hal etildi: {r.resolution}</span>}
+				</div>
+			)
+		},
+		{Header: 'Xarajat', accessor: (r: Row) => money(r.actual_cost ?? r.estimated_cost)},
+		{Header: 'Foto', accessor: (r: Row) => r.photo?.file ? <a href={r.photo.file} target="_blank" rel="noreferrer">Ko‘rish</a> : '-'},
+		{
+			Header: 'Holati',
+			accessor: (r: Row) => <Badge label={r.status_display} color={INCIDENT_COLORS[r.status] ?? '#475569'}/>
+		}
 	], [])
 
 	const models = useCallback((page: number, size: number) => [
@@ -284,6 +318,33 @@ const Fleet = () => {
 							{name: 'odometer_after', label: 'Spidometr (keyin)', type: 'number', span: 3}
 						]}
 					/>
+				)}
+				{tab === 'incidents' && (
+					<>
+						<div style={{background: '#eff6ff', color: '#1e3a8a', borderRadius: '1rem', padding: '1rem 1.6rem', marginBottom: '1.2rem'}}>
+							Nosozlik qayd etilsa mashina «Ta’mirda» (YTH bo‘lsa «YTH») holatiga o‘tadi va jo‘natmaga tanlanmaydi. Hal etilgach yana «Mavjud» bo‘ladi.
+						</div>
+						<Crud
+							endpoint="logistics/incidents"
+							addLabel="Nosozlik qayd etish"
+							columns={incidents}
+							toForm={(r) => ({...r, transport: id(r.transport), incident_date: r.incident_date?.slice(0, 16)})}
+							fields={[
+								{...transportPicker, span: 4},
+								{...driverPicker('driver', 'Haydovchi', false), span: 4},
+								{name: 'incident_date', label: 'Vaqti', type: 'datetime', required: true, span: 4},
+								{name: 'incident_type', label: 'Turi', type: 'select', options: INCIDENT_TYPES, required: true, span: 4},
+								{name: 'severity', label: 'Jiddiyligi', type: 'select', options: INCIDENT_SEVERITIES, required: true, span: 4},
+								{name: 'status', label: 'Holati', type: 'select', options: INCIDENT_STATUSES, span: 4},
+								{name: 'location', label: 'Joy (masalan M-39, Chinoz)', span: 6},
+								{name: 'estimated_cost', label: 'Taxminiy xarajat', type: 'number', span: 3},
+								{name: 'actual_cost', label: 'Haqiqiy xarajat', type: 'number', span: 3},
+								{name: 'description', label: 'Nima bo‘ldi', required: true, span: 12},
+								{name: 'resolution', label: 'Qanday hal etildi (hal etilganda majburiy)', span: 12},
+								{name: 'photo', label: 'Foto / hujjat', type: 'file', span: 12}
+							]}
+						/>
+					</>
 				)}
 				{tab === 'maintenance' && (
 					<Crud

@@ -7,6 +7,7 @@ import {ReactNode, useState} from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
 import {getSelectValue} from 'utilities/common'
 import {showMessage} from 'utilities/alert'
+import ShipmentReturns from '../components/ShipmentReturns'
 import SignaturePad from '../components/SignaturePad'
 import {dateTime, driverLabel, ShipmentBadge, transportLabel, PAGE_FONT} from '../helpers'
 
@@ -228,6 +229,8 @@ const ShipmentDetail = () => {
 						</div>
 					</Card>
 				)}
+
+				<ShipmentReturns shipment={s} onChanged={() => refetch()}/>
 			</div>
 		</div>
 	)

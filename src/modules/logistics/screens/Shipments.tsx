@@ -5,6 +5,7 @@ import {useMemo} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {dateTime, index, ShipmentBadge, PAGE_FONT} from '../helpers'
+import Returns from './Returns'
 
 
 type Row = Record<string, any>
@@ -16,13 +17,14 @@ export const STAGES: Record<string, {label: string, statuses: string}> = {
 	loading: {label: 'Yuklash', statuses: 'loading_queue'},
 	handover: {label: 'Haydovchiga topshirish', statuses: 'loaded'},
 	road: {label: 'Yo‘lda', statuses: 'in_transit'},
-	done: {label: 'Yakunlangan', statuses: 'delivered,returned,cancelled'}
+	done: {label: 'Yakunlangan', statuses: 'delivered,returned,cancelled'},
+	returns: {label: 'Qaytarilgan tovarlar', statuses: ''}
 }
 
-const Shipments = () => {
+const ShipmentTable = ({stage}: {stage: string}) => {
 	const navigate = useNavigate()
 	const {page, pageSize} = usePagination()
-	const {paramsObject: {stage = 'all', search = ''}} = useSearchParams()
+	const {paramsObject: {search = ''}} = useSearchParams()
 
 	const {data, totalPages, isPending} = usePaginatedData<Row[]>('logistics/shipments', {
 		page,
@@ -69,6 +71,22 @@ const Shipments = () => {
 	], [page, pageSize, navigate])
 
 	return (
+		<>
+			<Card style={{marginTop: '1.2rem'}}>
+				<div className="flex gap-lg" style={{padding: '.8rem'}}>
+					<FilterInput id="search" query="search" placeholder="Jo‘natma raqami, mijoz yoki manzil"/>
+				</div>
+				<ReactTable columns={columns} data={data} isLoading={isPending}/>
+			</Card>
+			<Pagination totalPages={totalPages}/>
+		</>
+	)
+}
+
+const Shipments = () => {
+	const navigate = useNavigate()
+	const {paramsObject: {stage = 'all'}} = useSearchParams()
+	return (
 		<div style={PAGE_FONT}>
 			<PageTitle title="Jo‘natmalar">
 				<Button icon={<Plus/>} onClick={() => navigate('add')}>Yangi jo‘natma</Button>
@@ -78,13 +96,9 @@ const Shipments = () => {
 				fallbackValue="all"
 				tabs={Object.entries(STAGES).map(([value, s]) => ({value, label: s.label}))}
 			/>
-			<Card style={{marginTop: '1.2rem'}}>
-				<div className="flex gap-lg" style={{padding: '.8rem'}}>
-					<FilterInput id="search" query="search" placeholder="Jo‘natma raqami, mijoz yoki manzil"/>
-				</div>
-				<ReactTable columns={columns} data={data} isLoading={isPending}/>
-			</Card>
-			<Pagination totalPages={totalPages}/>
+			{stage === 'returns'
+				? <div style={{marginTop: '1.2rem'}}><Returns/></div>
+				: <ShipmentTable stage={String(stage)}/>}
 		</div>
 	)
 }

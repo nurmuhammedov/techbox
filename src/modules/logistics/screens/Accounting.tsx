@@ -115,7 +115,7 @@ const Accounting = () => {
 			accessor: (r: Row) => (
 				<div className="flex flex-col" style={{gap: '.2rem'}}>
 					<Badge label={r.status_display} color={STATUS_COLORS[r.status] ?? '#475569'}/>
-					{r.manager_comment && <span style={{fontSize: '1.2rem', color: '#64748b'}}>{r.manager_comment}</span>}
+					{r.manager_comment && <span style={{fontSize: '.85em', color: '#64748b'}}>{r.manager_comment}</span>}
 				</div>
 			)
 		}
@@ -207,7 +207,7 @@ const Accounting = () => {
 					e.preventDefault()
 					submitReject()
 				}}>
-					<div style={{color: '#64748b'}}>
+					<div style={{...PAGE_FONT, color: '#64748b'}}>
 						{rejecting && `${rejecting.row.report_number} · ${rejecting.row.expense_type_name} · ${money(rejecting.row.amount)} so‘m`}
 					</div>
 					<Input

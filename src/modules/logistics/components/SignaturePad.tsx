@@ -63,7 +63,7 @@ const SignaturePad = ({onChange}: IProperties) => {
 					drawing.current = false
 				}}
 			/>
-			<div className="flex justify-between" style={{fontSize: '1.2rem', color: '#64748b'}}>
+			<div className="flex justify-between" style={{fontSize: '.85em', color: '#64748b'}}>
 				<span>Haydovchi shu yerga imzo chekadi</span>
 				<a style={{cursor: 'pointer'}} onClick={clear}>Tozalash</a>
 			</div>

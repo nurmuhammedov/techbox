@@ -49,6 +49,8 @@ interface IProperties {
 	toolbar?: ReactNode
 	rowActions?: (row: Row, refetch: () => void) => ReactNode
 	readOnly?: boolean
+	// records created elsewhere (e.g. from a shipment) are only edited here
+	hideAdd?: boolean
 	// after anything here changes the list, e.g. to refresh totals shown elsewhere
 	onChanged?: () => void
 	// rows that may still be edited or deleted (e.g. a reviewed report is final)
@@ -99,7 +101,7 @@ const SourceSelect = ({field, value, onChange, error}: {
 	)
 }
 
-const Crud = ({endpoint, columns, fields, addLabel, params = {}, toForm, toolbar, rowActions, readOnly, onChanged, canModify}: IProperties) => {
+const Crud = ({endpoint, columns, fields, addLabel, params = {}, toForm, toolbar, rowActions, readOnly, hideAdd, onChanged, canModify}: IProperties) => {
 	const {page, pageSize} = usePagination()
 	const {addParams, removeParams, paramsObject: {updateId = undefined}} = useSearchParams()
 	const empty = useMemo(() => Object.fromEntries(fields.map(f => [f.name, f.type === 'number' ? '' : undefined])), [fields])
@@ -246,7 +248,7 @@ const Crud = ({endpoint, columns, fields, addLabel, params = {}, toForm, toolbar
 			<Card>
 				<div className="flex justify-between align-center gap-lg" style={{padding: '.8rem'}}>
 					<div className="flex gap-lg align-center">{toolbar}</div>
-					{!readOnly && (
+					{!readOnly && !hideAdd && (
 						<Button icon={<Plus/>} onClick={() => {
 							reset(empty)
 							addParams({modal: MODAL}, 'updateId')

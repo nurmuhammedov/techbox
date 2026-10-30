@@ -46,6 +46,45 @@ export const PAYMENT_METHODS: ISelectOption[] = [
 	{value: 'bank_transfer', label: 'Pul o‘tkazish'}
 ]
 
+export const RETURN_REASONS: ISelectOption[] = [
+	{value: 'damaged', label: 'Shikastlangan / yaroqsiz'},
+	{value: 'customer_rejected', label: 'Mijoz rad etdi'},
+	{value: 'wrong_dimension', label: 'Noto‘g‘ri o‘lcham'},
+	{value: 'over_order', label: 'Ortiqcha buyurtma'},
+	{value: 'other', label: 'Boshqa'}
+]
+
+export const RETURN_DECISIONS: ISelectOption[] = [
+	{value: 'restock', label: 'Omborga qaytarish'},
+	{value: 'rework', label: 'Qayta ishlashga'},
+	{value: 'scrap', label: 'Brak / hisobdan chiqarish'}
+]
+
+export const INCIDENT_TYPES: ISelectOption[] = [
+	{value: 'breakdown', label: 'Texnik nosozlik'},
+	{value: 'accident', label: 'YTH'},
+	{value: 'tire_puncture', label: 'Balon yorilishi'},
+	{value: 'engine_issue', label: 'Dvigatel nosozligi'},
+	{value: 'other', label: 'Boshqa'}
+]
+
+export const INCIDENT_SEVERITIES: ISelectOption[] = [
+	{value: 'low', label: 'Past'},
+	{value: 'medium', label: 'O‘rta'},
+	{value: 'high', label: 'Yuqori'},
+	{value: 'critical', label: 'Favqulodda'}
+]
+
+export const INCIDENT_STATUSES: ISelectOption[] = [
+	{value: 'reported', label: 'Xabar berildi'},
+	{value: 'in_review', label: 'Ko‘rib chiqilmoqda'},
+	{value: 'resolved', label: 'Hal etildi'}
+]
+
+export const SEVERITY_COLORS: Record<string, string> = {low: '#64748b', medium: '#d97706', high: '#dc2626', critical: '#991b1b'}
+export const INCIDENT_COLORS: Record<string, string> = {reported: '#dc2626', in_review: '#d97706', resolved: '#16a34a'}
+export const RETURN_COLORS: Record<string, string> = {pending: '#d97706', inspected: '#16a34a'}
+
 export const SHIPMENT_STATUSES: Record<string, {label: string, color: string}> = {
 	new: {label: 'Yangi', color: '#2563eb'},
 	packed: {label: 'Tayyor', color: '#0d9488'},
