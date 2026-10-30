@@ -51,7 +51,12 @@ import {
 	LaborProtectionTable,
 	EventsTable,
 	AccidentsTable,
-	ParticipationTable
+	ParticipationTable,
+	LogisticsFleet,
+	ShipmentsTable,
+	AddShipment,
+	ShipmentDetail,
+	AccountingPage
 } from 'modules'
 
 
@@ -480,6 +485,25 @@ const useAppRoutes = () => {
 					element: <WarehouseOrder edit={true} />
 				}
 			]
+		},
+		{
+			id: 'shipments',
+			path: 'shipments',
+			children: [
+				{index: true, element: <ShipmentsTable />},
+				{path: 'add', element: <AddShipment />},
+				{path: ':id', element: <ShipmentDetail />}
+			]
+		},
+		{
+			id: 'logistics',
+			path: 'logistics',
+			element: <LogisticsFleet />
+		},
+		{
+			id: 'accounting',
+			path: 'accounting',
+			element: <AccountingPage />
 		},
 		{
 			id: 'communal',

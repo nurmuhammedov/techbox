@@ -24,7 +24,10 @@ import {
     ShieldAlert,
     Calendar,
     AlertTriangle,
-    Clock
+    Clock,
+    Truck,
+    PackageCheck,
+    Wallet
 } from 'lucide-react'
 import { ROLE_LIST } from 'constants/roles'
 import { IMenuItem } from 'interfaces/configuration.interface'
@@ -356,6 +359,48 @@ export const menu: IMenuItem[] = [
 		order: {
 			[ROLE_LIST.ADMIN]: 25,
 			[ROLE_LIST.EMPLOYEE]: 25
+		}
+	},
+	{
+		id: 'shipments',
+		label: 'Jo‘natmalar',
+		href: '/shipments',
+		icon: PackageCheck,
+		allowedRoles: [
+			ROLE_LIST.ADMIN,
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 26,
+			[ROLE_LIST.EMPLOYEE]: 26
+		}
+	},
+	{
+		id: 'logistics',
+		label: 'Logistika',
+		href: '/logistics',
+		icon: Truck,
+		allowedRoles: [
+			ROLE_LIST.ADMIN,
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 27,
+			[ROLE_LIST.EMPLOYEE]: 27
+		}
+	},
+	{
+		id: 'accounting',
+		label: 'Buxgalteriya',
+		href: '/accounting',
+		icon: Wallet,
+		allowedRoles: [
+			ROLE_LIST.ADMIN,
+			ROLE_LIST.EMPLOYEE
+		],
+		order: {
+			[ROLE_LIST.ADMIN]: 28,
+			[ROLE_LIST.EMPLOYEE]: 28
 		}
 	},
 	{
