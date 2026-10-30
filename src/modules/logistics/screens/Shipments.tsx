@@ -5,7 +5,6 @@ import {useMemo} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {dateTime, index, ShipmentBadge, PAGE_BODY} from '../helpers'
-import Packing from './Packing'
 import Returns from './Returns'
 import WarehouseDashboard from './WarehouseDashboard'
 
@@ -90,13 +89,10 @@ const Shipments = () => {
 	const current = String(stage)
 	return (
 		<div className="flex flex-col flex-1" style={PAGE_BODY}>
-			{current !== 'packing' && (
-				<PageTitle>
-					<Button icon={<Plus/>} onClick={() => navigate('add')}>Yangi jo‘natma</Button>
-				</PageTitle>
-			)}
+			<PageTitle>
+				<Button icon={<Plus/>} onClick={() => navigate('add')}>Yangi jo‘natma</Button>
+			</PageTitle>
 			{current === 'overview' && <WarehouseDashboard/>}
-			{current === 'packing' && <Packing/>}
 			{current === 'returns' && <Returns/>}
 			{current in STAGES && <ShipmentTable stage={current}/>}
 		</div>

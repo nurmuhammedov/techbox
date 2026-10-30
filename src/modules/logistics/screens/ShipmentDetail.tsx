@@ -7,7 +7,6 @@ import {ReactNode, useState} from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
 import {getSelectValue} from 'utilities/common'
 import {showMessage} from 'utilities/alert'
-import ShipmentPacking from '../components/ShipmentPacking'
 import ShipmentReturns from '../components/ShipmentReturns'
 import SignaturePad from '../components/SignaturePad'
 import {dateTime, driverLabel, ShipmentBadge, transportLabel, PAGE_FONT} from '../helpers'
@@ -140,8 +139,6 @@ const ShipmentDetail = () => {
 						</div>
 					</Card>
 				</div>
-
-				<ShipmentPacking shipment={s}/>
 
 				{(s.status === 'new' || s.status === 'packed') && (
 					<Card style={{padding: '1.5rem'}}>

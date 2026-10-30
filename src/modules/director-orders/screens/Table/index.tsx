@@ -439,7 +439,7 @@ const Index: FC<IProperties> = ({ leader: _leader = false }) => {
                                         maxLength={6}
                                         disableGroupSeparators={false}
                                         allowDecimals={false}
-                                        label="Count"
+                                        label={`${t('Count')} (omborda ${decimalToInteger(productDetail?.count_last) || 0})`}
                                         error={errors?.count?.message}
                                         {...field}
                                     />

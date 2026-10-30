@@ -92,7 +92,7 @@ const WarehouseDashboard = () => {
 							<span className="flex flex-col" style={{gap: '.125rem', textAlign: 'right', whiteSpace: 'nowrap'}}>
 								<span>{money(s.quantity)} dona</span>
 								<span style={{color: '#64748b', fontSize: '.8125rem'}}>
-									{[s.pallets ? `${s.pallets} pallet` : '', s.planned_date, s.planned_time?.slice(0, 5)].filter(Boolean).join(' · ')}
+									{[s.planned_date, s.planned_time?.slice(0, 5)].filter(Boolean).join(' · ')}
 								</span>
 							</span>
 						</button>

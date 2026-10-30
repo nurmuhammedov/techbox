@@ -377,7 +377,6 @@ export const menu: IMenuItem[] = [
 			{label: 'Umumiy', href: '/shipments?stage=overview'},
 			{label: 'Barcha jo‘natmalar', href: '/shipments?stage=all'},
 			{label: 'Tayyorlash', href: '/shipments?stage=planned'},
-			{label: 'Qadoqlash', href: '/shipments?stage=packing'},
 			{label: 'Yuklash', href: '/shipments?stage=loading'},
 			{label: 'Haydovchiga topshirish', href: '/shipments?stage=handover'},
 			{label: 'Yo‘lda', href: '/shipments?stage=road'},

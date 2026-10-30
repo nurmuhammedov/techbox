@@ -142,8 +142,6 @@ export const PAGE_FONT = {fontFamily: 'Poppins, Arial, Helvetica, sans-serif'}
 // lets the table inside shrink to the free height
 export const PAGE_BODY = {...PAGE_FONT, minHeight: 0}
 
-export const PACKABLE_STATUSES = ['new', 'packed', 'loading_queue']
-
 export const STAT_GRID = {display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(13rem, 1fr))'}
 
 export const StatCard = ({label, value, hint, hintColor, onClick}: {
