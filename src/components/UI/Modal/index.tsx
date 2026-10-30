@@ -190,6 +190,16 @@ const Modal = (
 	}, [visible])
 
 	useEffect(() => {
+		if (!visible) return
+		// a select or calendar inside handles Escape first and marks it as used
+		const closeOnEscape = (e: KeyboardEvent) => {
+			if (e.key === 'Escape' && !e.defaultPrevented) handleClose()
+		}
+		window.addEventListener('keydown', closeOnEscape)
+		return () => window.removeEventListener('keydown', closeOnEscape)
+	}, [visible])
+
+	useEffect(() => {
 		const body = document.querySelector('body') as HTMLBodyElement
 		if (!visible) {
 			body.style.overflow = 'auto'
@@ -217,6 +227,9 @@ const Modal = (
 				>
 					<div 
 						ref={modalRef}
+						role="dialog"
+						aria-modal="true"
+						aria-label={title ? t(title) : undefined}
 						className={classes.root}
 						style={{
 							transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
@@ -234,6 +247,8 @@ const Modal = (
 								title ? <p className={classes.title}>{t(title)}</p> : <div></div>
 							}
 							<button
+								type="button"
+								aria-label={t('Close')}
 								className={classes.times}
 								onClick={handleClose}
 							>

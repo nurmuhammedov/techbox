@@ -39,6 +39,9 @@ interface ITableOptions<T extends object> extends TableOptions<T>, ICustomProps 
 	data: T[];
 }
 
+// 1 200, 3.5 or 12,5 but not a date like 20.08.2026
+const NUMBER = /^-?\d[\d\s]*([.,]\d+)?$/
+
 const Index = <T extends object & { id: string | number }>({
 	                                                           columns,
 	                                                           data,
@@ -99,6 +102,12 @@ const Index = <T extends object & { id: string | number }>({
 		)
 	}
 
+	const isNumber = (value: unknown) => value === null || value === undefined || value === '' || value === '-'
+		|| typeof value === 'number' || (typeof value === 'string' && NUMBER.test(value.trim()))
+	const isNumeric = (id: string, header: unknown) => header !== '№' && columns.length > 3 && rows.length > 0
+		&& rows.some(row => row.values[id] !== null && row.values[id] !== undefined && row.values[id] !== '')
+		&& rows.every(row => isNumber(row.values[id]))
+
 	return (
 		<div data-table="" className={classNames(classes.root, className, {
 			[classes.screen]: screen,
@@ -122,12 +131,16 @@ const Index = <T extends object & { id: string | number }>({
 										<th
 											{...column.getHeaderProps()}
 											style={{
+												...(isNumeric(column.id, column.Header) ? {textAlign: 'right'} : {}),
 												...column.style,
 												cursor: column.dynamicFilter ? 'pointer' : 'default'
 											}}
 											rowSpan={column.headerRowSpan}
 											key={idx}
+											tabIndex={column.dynamicFilter ? 0 : undefined}
+											aria-sort={sortDirection === 'none' ? undefined : sortDirection === 'asc' ? 'ascending' : 'descending'}
 											onClick={() => column.dynamicFilter && handleSort(column.dynamicFilter)}
+											onKeyDown={(e) => e.key === 'Enter' && column.dynamicFilter && handleSort(column.dynamicFilter)}
 										>
 											<div className={classes.headerContent}>
 												{column.render('Header') as ReactNode}
@@ -183,7 +196,10 @@ const Index = <T extends object & { id: string | number }>({
 													return (
 														<td
 															{...cell.getCellProps()}
-															style={{...customColumn.style}}
+															style={{
+																...(isNumeric(cell.column.id, cell.column.Header) ? {textAlign: 'right', whiteSpace: 'nowrap'} : {}),
+																...customColumn.style
+															}}
 															key={idx}
 														>
 															{cell.render('Cell') as ReactNode}

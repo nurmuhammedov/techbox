@@ -91,6 +91,7 @@ const Index: FC<IProperties> = ({ leader: _leader = false }) => {
             },
             {
                 Header: t('Count'),
+                style: {whiteSpace: 'nowrap'},
                 accessor: (row: IOrderDetail) => decimalToInteger(row.count || ''),
                 dynamicFilter: 'count'
             },
@@ -181,6 +182,7 @@ const Index: FC<IProperties> = ({ leader: _leader = false }) => {
             },
             {
                 Header: t('Count'),
+                style: {whiteSpace: 'nowrap'},
                 accessor: (row: IOrderDetail) => decimalToInteger(row.count || '')
             },
             {
@@ -244,6 +246,7 @@ const Index: FC<IProperties> = ({ leader: _leader = false }) => {
                 },
                 {
                     Header: t('Count'),
+                    style: {whiteSpace: 'nowrap'},
                     accessor: (row: IOrderDetail) => decimalToInteger(row.count || '')
                 }
             ] : [

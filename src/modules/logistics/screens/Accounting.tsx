@@ -12,7 +12,7 @@ import {Badge, date, driverLabel, index, money, PAYMENT_METHODS, transportLabel,
 
 type Row = Record<string, any>
 
-const STATUS_COLORS: Record<string, string> = {pending: '#d97706', approved: '#16a34a', rejected: '#dc2626'}
+const STATUS_COLORS: Record<string, string> = {pending: '#b45309', approved: '#15803d', rejected: '#b91c1c'}
 const id = (v: unknown) => (v && typeof v === 'object' ? (v as Row).id : v)
 
 const Summary = () => {
@@ -33,9 +33,9 @@ const Summary = () => {
 				</div>
 			)}
 			<div className="grid gap-lg">
-				{card('Tasdiqlangan xarajat', data.approved?.amount ?? 0, data.approved?.count, '#16a34a')}
-				{card('Kutilmoqda', data.pending?.amount ?? 0, data.pending?.count, '#d97706')}
-				{card('Rad etilgan', data.rejected?.amount ?? 0, data.rejected?.count, '#dc2626')}
+				{card('Tasdiqlangan xarajat', data.approved?.amount ?? 0, data.approved?.count, '#15803d')}
+				{card('Kutilmoqda', data.pending?.amount ?? 0, data.pending?.count, '#b45309')}
+				{card('Rad etilgan', data.rejected?.amount ?? 0, data.rejected?.count, '#b91c1c')}
 				{card('Jami hisobotlar', data.all_reports_amount ?? 0, data.total_reports_count)}
 			</div>
 			{Array.isArray(data.breakdown_by_type) && data.breakdown_by_type.length > 0 && (

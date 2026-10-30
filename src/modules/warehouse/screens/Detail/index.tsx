@@ -85,7 +85,7 @@ const Index = () => {
 
 	return (
 		<>
-			<PageTitle style={{marginBottom: ''}} title={`${t('Material warehouse')} - ${detail?.name}`}>
+			<PageTitle style={{marginBottom: ''}} title={`${t('Material warehouse')} - ${detail?.name ?? ''}`}>
 				<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
 					Back
 				</Button>

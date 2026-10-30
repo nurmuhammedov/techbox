@@ -1,4 +1,5 @@
 .filterContainer {
+  flex-wrap: wrap;
   display: flex;
   gap: .5rem; // Adjust gap as per your design system
   align-items: flex-start; // Aligns items to the top

@@ -330,13 +330,13 @@ const Index: FC<IDashboardProps> = ({ currentDate }) => {
               <BarChart data={barChartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
                 <XAxis 
                   dataKey="name" 
-                  stroke="#94a3b8" 
+                  stroke="#566579" 
                   fontSize={12} 
                   tickLine={false} 
                   axisLine={false} 
                 />
                 <YAxis 
-                  stroke="#94a3b8" 
+                  stroke="#566579" 
                   fontSize={12} 
                   tickLine={false} 
                   axisLine={false} 
@@ -385,7 +385,7 @@ const Index: FC<IDashboardProps> = ({ currentDate }) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     height: '100%',
-                    color: '#94a3b8',
+                    color: '#566579',
                     fontSize: '0.875rem',
                     fontWeight: 500,
                     fontFamily: "'Golos Text', 'Inter', sans-serif",

@@ -6,7 +6,8 @@ import {
 	DeleteModal,
 	EditButton,
 	Pagination,
-	ReactTable,
+	PageTitle,
+	ReactTable
 } from 'components'
 import {
 	usePaginatedData,
@@ -305,11 +306,11 @@ const Index: FC = () => {
 
 	return (
 		<>
-			<div className="flex justify-end items-center" style={{marginBottom: '1rem'}}>
+			<PageTitle>
 				<Button icon={<Plus/>} onClick={() => navigate(`add${tab === 'resources' ? '' : `-${(tab as string).slice(0, -1)}`}`)}>
 					{t('Add')}
 				</Button>
-			</div>
+			</PageTitle>
 			<Card>
 				<ReactTable
 					columns={columns}

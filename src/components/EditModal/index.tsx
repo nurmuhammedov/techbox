@@ -20,7 +20,7 @@ const Index = ({title = 'Edit', children, style, isLoading = true}: IUpdateModal
 
 
 	return (
-		<Modal title={title} animation="flip" id="edit" style={style} onClose={handleClose}>
+		<Modal title={title} id="edit" style={style} onClose={handleClose}>
 			{isLoading ? <div className={classes.root}>
 				<Loader/>
 			</div> : children}

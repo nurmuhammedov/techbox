@@ -61,6 +61,7 @@ const Index = () => {
 			},
 			{
 				Header: t('Count'),
+				style: {whiteSpace: 'nowrap'},
 				accessor: (row: IOrderDetail) => decimalToInteger(row.count || ''),
 				dynamicFilter: 'count'
 			},

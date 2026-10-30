@@ -70,6 +70,7 @@ const Index = () => {
 			},
 			{
 				Header: t('Count'),
+				style: {whiteSpace: 'nowrap'},
 				accessor: (row: IOrderDetail) => decimalToInteger(row?.count || 0)
 			},
 			{
@@ -94,7 +95,7 @@ const Index = () => {
 
 	return (
 		<>
-			<PageTitle title={`${t('Semi-finished warehouse')} - ${detail?.name}`}>
+			<PageTitle title={`${t('Semi-finished warehouse')} - ${detail?.name ?? ''}`}>
 				<Button onClick={() => navigate(-1)} theme={BUTTON_THEME.OUTLINE}>
 					Back
 				</Button>

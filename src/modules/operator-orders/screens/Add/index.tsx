@@ -144,6 +144,7 @@ const Index: FC<IProperties> = ({ retrieve: _retrieve = false }) => {
 			},
 			{
 				Header: t('Count'),
+				style: {whiteSpace: 'nowrap'},
 				accessor: (row: IGroupOrder) => <div>
 					{
 						row?.orders?.map((order, index) => (

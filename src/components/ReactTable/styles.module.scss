@@ -81,6 +81,7 @@
       transition: color 0.15s ease-in-out;
 
       tr {
+        background: var(--white);
         border-bottom: 1px solid var(--gray-pale);
 
         td {
@@ -98,15 +99,11 @@
         td:last-child {
           position: sticky;
           right: 0;
-          background: var(--white);
+          background: inherit;
         }
 
         &:nth-child(even) {
           background: var(--gray-lightest);
-
-          td:last-child {
-            background: var(--gray-lightest);
-          }
         }
 
         &:last-child {

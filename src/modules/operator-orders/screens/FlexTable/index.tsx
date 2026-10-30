@@ -71,6 +71,7 @@ const Index: FC<IProperties> = ({type = 'fleksa'}) => {
 			},
 			{
 				Header: t('Count'),
+				style: {whiteSpace: 'nowrap'},
 				accessor: (row: IOrderDetail) => decimalToInteger(row?.count_last || row?.count_after_bet || row?.count_after_gluing || row?.count_after_flex || row?.count_after_processing || row?.count_entered_leader || row?.count || 0)
 			},
 			{

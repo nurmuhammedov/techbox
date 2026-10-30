@@ -121,6 +121,7 @@ const Index: FC<IProperties> = ({type = 'gofra'}) => {
             },
             {
                 Header: t('Count'),
+                style: {whiteSpace: 'nowrap'},
                 accessor: (row: IGroupOrder) => <div>
                     {
                         row?.orders?.map((order, index) => (

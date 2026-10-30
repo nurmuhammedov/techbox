@@ -82,18 +82,18 @@ export const INCIDENT_STATUSES: ISelectOption[] = [
 	{value: 'resolved', label: 'Hal etildi'}
 ]
 
-export const SEVERITY_COLORS: Record<string, string> = {low: '#64748b', medium: '#d97706', high: '#dc2626', critical: '#991b1b'}
-export const INCIDENT_COLORS: Record<string, string> = {reported: '#dc2626', in_review: '#d97706', resolved: '#16a34a'}
-export const RETURN_COLORS: Record<string, string> = {pending: '#d97706', inspected: '#16a34a'}
+export const SEVERITY_COLORS: Record<string, string> = {low: '#64748b', medium: '#b45309', high: '#b91c1c', critical: '#991b1b'}
+export const INCIDENT_COLORS: Record<string, string> = {reported: '#b91c1c', in_review: '#b45309', resolved: '#15803d'}
+export const RETURN_COLORS: Record<string, string> = {pending: '#b45309', inspected: '#15803d'}
 
 export const SHIPMENT_STATUSES: Record<string, {label: string, color: string}> = {
 	new: {label: 'Yangi', color: '#2563eb'},
-	packed: {label: 'Tayyor', color: '#0d9488'},
-	loading_queue: {label: 'Yuklash navbatida', color: '#d97706'},
+	packed: {label: 'Tayyor', color: '#0f766e'},
+	loading_queue: {label: 'Yuklash navbatida', color: '#b45309'},
 	loaded: {label: 'Yuklandi', color: '#7c3aed'},
-	in_transit: {label: 'Yo‘lda', color: '#0284c7'},
-	delivered: {label: 'Yetkazildi', color: '#16a34a'},
-	returned: {label: 'Qaytarildi', color: '#dc2626'},
+	in_transit: {label: 'Yo‘lda', color: '#0369a1'},
+	delivered: {label: 'Yetkazildi', color: '#15803d'},
+	returned: {label: 'Qaytarildi', color: '#b91c1c'},
 	cancelled: {label: 'Bekor qilindi', color: '#6b7280'}
 }
 

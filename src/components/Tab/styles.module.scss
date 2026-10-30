@@ -2,10 +2,14 @@
   display: flex;
   align-items: center;
   gap: .25rem;
+  max-width: 100%;
+  overflow-x: auto;
 
   .tab {
     background: none;
     border: none;
+    flex-shrink: 0;
+    white-space: nowrap;
     padding: 1rem 0.5rem;
     color: var(--navy-dark);
     text-align: center;

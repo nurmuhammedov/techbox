@@ -64,7 +64,7 @@ const GlueCreatePage: FC<IProperties> = () => {
 
 	return (
 		<Form className="grid gap-xl flex-0" onSubmit={(e) => e.preventDefault()}>
-			<PageTitle title="Create Glue" style={{marginBottom: '0'}}>
+			<PageTitle title="Yelim qo‘shish" style={{marginBottom: '0'}}>
 				<Button type="submit"
 				        onClick={handleSubmit(async (data) => {
 					        await add(data)

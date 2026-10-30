@@ -12,7 +12,7 @@ import {Badge, dateTime, index, RETURN_COLORS, RETURN_DECISIONS, RETURN_REASONS,
 
 type Row = Record<string, any>
 
-const DECISION_COLORS: Record<string, string> = {restock: '#16a34a', rework: '#2563eb', scrap: '#dc2626'}
+const DECISION_COLORS: Record<string, string> = {restock: '#15803d', rework: '#2563eb', scrap: '#b91c1c'}
 
 // Returned goods: recorded from a shipment, then checked in the warehouse and decided on
 const Returns = () => {

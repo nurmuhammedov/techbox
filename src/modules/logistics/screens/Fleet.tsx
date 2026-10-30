@@ -28,7 +28,7 @@ import {
 type Row = Record<string, any>
 
 const TRANSPORT_COLORS: Record<string, string> = {
-	available: '#16a34a', busy: '#d97706', in_repair: '#dc2626', in_maintenance: '#7c3aed', accident: '#b91c1c'
+	available: '#15803d', busy: '#b45309', in_repair: '#b91c1c', in_maintenance: '#7c3aed', accident: '#b91c1c'
 }
 
 const transportPicker: ICrudField = {
@@ -66,7 +66,7 @@ const Dashboard = () => {
 							label={c.label}
 							value={c.money ? `${money(value)} so‘m` : value}
 							hint={`${change > 0 ? '+' : ''}${change}% o‘tgan oyga nisbatan`}
-							hintColor={change > 0 ? '#16a34a' : change < 0 ? '#dc2626' : '#64748b'}
+							hintColor={change > 0 ? '#15803d' : change < 0 ? '#b91c1c' : '#64748b'}
 						/>
 					)
 				})}
@@ -171,7 +171,7 @@ const Fleet = () => {
 			accessor: (r: Row) => (
 				<div className="flex flex-col" style={{gap: '.2rem'}}>
 					<span>{r.description}</span>
-					{r.resolution && <span style={{fontSize: '.85em', color: '#16a34a'}}>Hal etildi: {r.resolution}</span>}
+					{r.resolution && <span style={{fontSize: '.85em', color: '#15803d'}}>Hal etildi: {r.resolution}</span>}
 				</div>
 			)
 		},

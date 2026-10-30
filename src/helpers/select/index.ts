@@ -30,7 +30,7 @@ const getSelectStyles = (error?: boolean, top?: boolean) => ({
 	}),
 	'placeholder': (base: CSSObjectWithLabel) => ({
 		...base,
-		color: 'var(--gray-light)',
+		color: '#566579',
 		fontFamily: 'Poppins, Arial, Helvetica, sans-serif',
 		fontSize: '1rem',
 		fontWeight: '400',
