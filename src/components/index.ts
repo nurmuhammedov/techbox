@@ -2,6 +2,7 @@ import DeleteButton from './DeleteButton'
 import DeleteModal from './DeleteModal'
 import FilterInput from './FilterInput'
 import Pagination from './Pagination'
+import DetailButton from './DetailButton'
 import EditButton from './EditButton'
 import ReactTable from './ReactTable'
 import PageTitle from './PageTitle'
@@ -33,6 +34,7 @@ export {
 	PageIcon,
 	OrderInfo,
 	FilterInput,
+	DetailButton,
 	EditButton,
 	CutDiagram,
 	PageTitle,

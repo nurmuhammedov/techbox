@@ -50,7 +50,7 @@ const ShipmentPacking = ({shipment}: {shipment: Row}) => {
 	const [form, setForm] = useState<Row>({})
 	const [errors, setErrors] = useState<Row>({})
 
-	const rows: Row[] = useMemo(() => data?.results ?? [], [data])
+	const rows = useMemo<any[]>(() => data?.results ?? [], [data])
 	const boxes = rows.reduce((sum, r) => sum + r.box_count, 0)
 	const weight = rows.reduce((sum, r) => sum + r.weight, 0)
 	const left = shipment.quantity - boxes

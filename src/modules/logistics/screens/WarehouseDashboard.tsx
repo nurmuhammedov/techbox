@@ -31,7 +31,7 @@ const WarehouseDashboard = () => {
 
 	if (isPending || !data) return <Loader/>
 
-	const week = (data.week as Row[]).map(d => ({...d, label: dayLabel(d.date)}))
+	const week = (data.week as Row[]).map((d): Row => ({...d, label: dayLabel(d.date)}))
 	const hasWeek = week.some(d => d.dispatched || d.delivered)
 	const queue: Row[] = data.queue
 
