@@ -4,7 +4,7 @@ import {useAdd, useData, useDetail} from 'hooks'
 import {ISelectOption} from 'interfaces/form.interface'
 import interceptor from 'libraries/interceptor'
 import {ReactNode, useState} from 'react'
-import {useNavigate, useParams} from 'react-router-dom'
+import {Link, useNavigate, useParams} from 'react-router-dom'
 import {getSelectValue} from 'utilities/common'
 import {showMessage} from 'utilities/alert'
 import ShipmentReturns from '../components/ShipmentReturns'
@@ -150,7 +150,13 @@ const ShipmentDetail = () => {
 					</Card>
 				)}
 
-				{s.status === 'loading_queue' && (
+				{s.trip && (
+					<Card style={{padding: '1rem 1.5rem'}}>
+						Bu jo‘natma <Link to={`/shipments/trips/${s.trip}`}><b>{s.trip_number}</b></Link> reysida. Yuklash va topshirish reys sahifasida qilinadi.
+					</Card>
+				)}
+
+				{s.status === 'loading_queue' && !s.trip && (
 					<Card style={{padding: '1.5rem'}}>
 						<h3 style={{marginBottom: '1.2rem'}}>Yuklash</h3>
 						<Form className="grid gap-lg" onSubmit={e => e.preventDefault()}>
@@ -179,7 +185,7 @@ const ShipmentDetail = () => {
 					</Card>
 				)}
 
-				{s.status === 'loaded' && (
+				{s.status === 'loaded' && !s.trip && (
 					<Card style={{padding: '1.5rem'}}>
 						<h3 style={{marginBottom: '1.2rem'}}>Haydovchiga topshirish</h3>
 						<Form className="grid gap-lg" onSubmit={e => e.preventDefault()}>

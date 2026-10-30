@@ -56,6 +56,8 @@ import {
 	ShipmentsTable,
 	AddShipment,
 	ShipmentDetail,
+	AddTrip,
+	TripDetail,
 	AccountingPage
 } from 'modules'
 
@@ -492,6 +494,8 @@ const useAppRoutes = () => {
 			children: [
 				{index: true, element: <ShipmentsTable />},
 				{path: 'add', element: <AddShipment />},
+				{path: 'trips/add', element: <AddTrip />},
+				{path: 'trips/:id', element: <TripDetail />},
 				{path: ':id', element: <ShipmentDetail />}
 			]
 		},

@@ -97,6 +97,14 @@ export const SHIPMENT_STATUSES: Record<string, {label: string, color: string}> =
 	cancelled: {label: 'Bekor qilindi', color: '#6b7280'}
 }
 
+export const TRIP_STATUSES: Record<string, {label: string, color: string}> = {
+	planned: {label: 'Rejalashtirilgan', color: '#1d4ed8'},
+	loaded: {label: 'Yuklangan', color: '#7c3aed'},
+	in_transit: {label: 'Yo‘lda', color: '#0369a1'},
+	completed: {label: 'Yakunlangan', color: '#15803d'},
+	cancelled: {label: 'Bekor qilingan', color: '#6b7280'}
+}
+
 export const Badge = ({label, color}: {label: string, color: string}) => (
 	<span style={{
 		display: 'inline-block',
@@ -115,6 +123,11 @@ export const Badge = ({label, color}: {label: string, color: string}) => (
 
 export const ShipmentBadge = ({status}: {status: string}) => {
 	const s = SHIPMENT_STATUSES[status] ?? {label: status, color: '#6b7280'}
+	return <Badge label={s.label} color={s.color}/>
+}
+
+export const TripBadge = ({status}: {status: string}) => {
+	const s = TRIP_STATUSES[status] ?? {label: status, color: '#6b7280'}
 	return <Badge label={s.label} color={s.color}/>
 }
 

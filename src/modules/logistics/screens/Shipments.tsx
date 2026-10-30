@@ -6,6 +6,7 @@ import {useNavigate} from 'react-router-dom'
 import {Column} from 'react-table'
 import {dateTime, index, ShipmentBadge, PAGE_BODY} from '../helpers'
 import Returns from './Returns'
+import Trips from './Trips'
 import WarehouseDashboard from './WarehouseDashboard'
 
 
@@ -62,6 +63,7 @@ const ShipmentTable = ({stage}: {stage: string}) => {
 			Header: 'Mashina / haydovchi',
 			accessor: (r: Row) => [r.transport_plate_number, r.driver_name].filter(Boolean).join(' · ') || '-'
 		},
+		{Header: 'Reys', accessor: (r: Row) => r.trip_number || '-'},
 		{Header: 'Holati', accessor: (r: Row) => <ShipmentBadge status={r.status}/>},
 		{Header: 'Yaratildi', accessor: (r: Row) => dateTime(r.created_at)},
 		{
@@ -90,10 +92,13 @@ const Shipments = () => {
 	return (
 		<div className="flex flex-col flex-1" style={PAGE_BODY}>
 			<PageTitle>
-				<Button icon={<Plus/>} onClick={() => navigate('add')}>Yangi jo‘natma</Button>
+				{current === 'trips'
+					? <Button icon={<Plus/>} onClick={() => navigate('trips/add')}>Yangi reys</Button>
+					: <Button icon={<Plus/>} onClick={() => navigate('add')}>Yangi jo‘natma</Button>}
 			</PageTitle>
 			{current === 'overview' && <WarehouseDashboard/>}
 			{current === 'returns' && <Returns/>}
+			{current === 'trips' && <Trips/>}
 			{current in STAGES && <ShipmentTable stage={current}/>}
 		</div>
 	)
