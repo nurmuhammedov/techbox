@@ -1044,7 +1044,8 @@ const soldSchema = yup.object().shape({
     count: yup
         .string()
         .trim()
-        .required('This field is required'),
+        .required('This field is required')
+        .test('positive', 'Kamida 1 dona soting', (v) => Number(String(v ?? '').replace(/\s/g, '')) >= 1),
     price: yup
         .string()
         .trim()

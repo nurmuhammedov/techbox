@@ -283,6 +283,7 @@ const Index: FC<IProperties> = ({ leader: _leader = false }) => {
         handleSubmit,
         control,
         reset,
+        setError,
         formState: { errors }
     } = useForm({
         resolver: yupResolver(soldSchema),
@@ -499,19 +500,26 @@ const Index: FC<IProperties> = ({ leader: _leader = false }) => {
                     theme={BUTTON_THEME.PRIMARY}
                     disabled={isAdding}
                     onClick={() => {
-                        handleSubmit((data) =>
-                            add({ ...data, count: Number(data?.count), order: updateId })
-                                .then(async () => {
+                        handleSubmit((data) => {
+                            const count = Number(String(data?.count ?? '').replace(/\s/g, ''))
+                            const left = Number(productDetail?.count_last ?? 0)
+                            if (count > left) {
+                                setError('count', {message: `Omborda ${left} dona bor`})
+                                return
+                            }
+                            return add({ ...data, count, order: updateId })
+                                .then(() => {
+                                    // close at once, so a second click cannot sell the same goods again
+                                    removeParams('modal', 'updateId')
                                     reset({
                                         customer: undefined,
                                         price: '',
                                         money_paid: '',
                                         count: ''
                                     })
-                                    await refetch()
-                                    removeParams('modal')
+                                    refetch()
                                 })
-                        )()
+                        })()
                     }}
                 >
                     Save
