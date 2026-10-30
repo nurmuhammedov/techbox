@@ -1,10 +1,13 @@
-import {Button, Loader, PageTitle} from 'components'
+import {IFIle} from 'interfaces/form.interface'
+import {Button, FileUpLoader, Loader, PageTitle} from 'components'
 import {BUTTON_THEME} from 'constants/fields'
 import {useDetail} from 'hooks'
 import interceptor from 'libraries/interceptor'
 import {useState} from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
 import {showMessage} from 'utilities/alert'
+import DriverNav from '../components/DriverNav'
+import InspectionForm from '../components/InspectionForm'
 import SignaturePad from '../components/SignaturePad'
 import {date, dateTime, PAGE_BODY, ShipmentBadge, TripBadge} from '../helpers'
 
@@ -65,6 +68,7 @@ const DriverTrip = () => {
 	const navigate = useNavigate()
 	const {data: trip, isPending, refetch} = useDetail<Row>('logistics/driver/trips/', id)
 	const [signature, setSignature] = useState<string | null>(null)
+	const [loadPhotos, setLoadPhotos] = useState<Row[]>([])
 	const [busy, setBusy] = useState(false)
 
 	if (isPending || !trip) return <Loader/>
@@ -72,7 +76,7 @@ const DriverTrip = () => {
 	const accept = () => {
 		if (!signature) return showMessage('Imzo qo‘ying', 'error')
 		setBusy(true)
-		interceptor.post(`logistics/driver/trips/${id}/accept`, {signature_image: signature})
+		interceptor.post(`logistics/driver/trips/${id}/accept`, {signature_image: signature, photos: loadPhotos.map(p => p.id)})
 			.then(() => {
 				showMessage('Yuk qabul qilindi, oq yo‘l!', 'success')
 				return refetch()
@@ -81,10 +85,11 @@ const DriverTrip = () => {
 	}
 
 	const stops: Row[] = trip.stops ?? []
+	const passed = !!trip.inspection?.passed
 	return (
 		<div className="flex flex-col gap-md" style={PAGE_BODY}>
 			<PageTitle>
-				<Button theme={BUTTON_THEME.OUTLINE} onClick={() => navigate('/driver')}>Orqaga</Button>
+				<Button theme={BUTTON_THEME.OUTLINE} onClick={() => navigate('/driver/trips')}>Orqaga</Button>
 			</PageTitle>
 
 			<div className="flex flex-col gap-sm" style={CARD}>
@@ -99,14 +104,27 @@ const DriverTrip = () => {
 
 			{trip.status === 'planned' && (
 				<div style={{...CARD, background: '#eff6ff', color: '#1e3a8a'}}>
-					Reys hali yuklanmagan. Ombor yuklab bo‘lgach, shu yerda imzo qo‘yib qabul qilasiz.
+					Reys hali yuklanmagan. Mashinani hozir tekshirib qo‘yishingiz mumkin, ombor yuklab bo‘lgach imzo qo‘yib qabul qilasiz.
 				</div>
 			)}
 
-			{trip.status === 'loaded' && (
+			{['planned', 'loaded'].includes(trip.status) && !passed && (
 				<div className="flex flex-col gap-md" style={CARD}>
-					<b>Yukni qabul qilish</b>
-					<span style={MUTED}>Yukni sanab ko‘ring. Hammasi to‘g‘ri bo‘lsa, imzo qo‘yib yo‘lga chiqing.</span>
+					<b>1. Transport tekshiruvi</b>
+					<span style={MUTED}>Yo‘lga chiqishdan oldin mashinani tekshiring. Tekshiruvsiz reys yo‘lga chiqmaydi.</span>
+					<InspectionForm endpoint={`logistics/driver/trips/${id}/inspection`} last={trip.inspection} onDone={() => refetch()}/>
+				</div>
+			)}
+			{passed && trip.status !== 'completed' && (
+				<div style={{...CARD, background: '#f0fdf4', color: '#166534'}}>✓ Mashina tekshiruvdan o‘tgan</div>
+			)}
+
+			{trip.status === 'loaded' && passed && (
+				<div className="flex flex-col gap-md" style={CARD}>
+					<b>2. Yukni qabul qilish</b>
+					<span style={MUTED}>Yukni sanab, suratga oling. Hammasi to‘g‘ri bo‘lsa, imzo qo‘yib yo‘lga chiqing.</span>
+					<FileUpLoader id="load_photos" url="attachments/create" type="image" multi={true} label="Yuk rasmlari"
+						value={loadPhotos as IFIle[]} onChange={(v) => setLoadPhotos((v as Row[]) ?? [])}/>
 					<SignaturePad onChange={setSignature}/>
 					<Button disabled={busy} onClick={accept}>Qabul qildim, yo‘lga chiqaman</Button>
 				</div>
@@ -122,6 +140,7 @@ const DriverTrip = () => {
 					onReject={() => navigate(`stops/${stop.id}?action=reject`)}
 				/>
 			))}
+			<DriverNav/>
 		</div>
 	)
 }

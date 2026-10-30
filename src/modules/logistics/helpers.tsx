@@ -188,3 +188,13 @@ export const StatCard = ({label, value, hint, hintColor, onClick}: {
 		</Tag>
 	)
 }
+
+// Where the phone is now; resolves to nulls when the driver refuses or there is no GPS
+export const currentPosition = () => new Promise<{latitude: number | null, longitude: number | null}>((resolve) => {
+	if (!navigator.geolocation) return resolve({latitude: null, longitude: null})
+	navigator.geolocation.getCurrentPosition(
+		(p) => resolve({latitude: p.coords.latitude, longitude: p.coords.longitude}),
+		() => resolve({latitude: null, longitude: null}),
+		{enableHighAccuracy: true, timeout: 8000, maximumAge: 60000}
+	)
+})

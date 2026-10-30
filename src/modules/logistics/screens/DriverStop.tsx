@@ -2,12 +2,13 @@ import {Button, FileUpLoader, Input, Loader, NumberFormattedInput, PageTitle, Se
 import {BUTTON_THEME, FIELD} from 'constants/fields'
 import {useDetail, useSearchParams} from 'hooks'
 import interceptor from 'libraries/interceptor'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
 import {showMessage} from 'utilities/alert'
 import {getSelectValue} from 'utilities/common'
+import DriverNav from '../components/DriverNav'
 import SignaturePad from '../components/SignaturePad'
-import {PAGE_BODY, RETURN_REASONS} from '../helpers'
+import {currentPosition, PAGE_BODY, RETURN_REASONS} from '../helpers'
 
 
 type Row = Record<string, any>
@@ -22,9 +23,14 @@ const DriverStop = () => {
 	const {paramsObject: {action = 'deliver'}} = useSearchParams()
 	const reject = action === 'reject'
 	const {data: trip, isPending} = useDetail<Row>('logistics/driver/trips/', id)
-	const [form, setForm] = useState<Row>({returned_quantity: ''})
+	const [form, setForm] = useState<Row>({returned_quantity: '', photos: []})
+	const [position, setPosition] = useState<{latitude: number | null, longitude: number | null}>({latitude: null, longitude: null})
 	const [errors, setErrors] = useState<Row>({})
 	const [busy, setBusy] = useState(false)
+
+	useEffect(() => {
+		currentPosition().then(setPosition)
+	}, [])
 
 	if (isPending || !trip) return <Loader/>
 	const stop: Row | undefined = (trip.stops ?? []).find((s: Row) => String(s.id) === stopId)
@@ -49,26 +55,30 @@ const DriverStop = () => {
 	const submit = () => {
 		const next: Row = {}
 		const returned = Number(form.returned_quantity || 0)
+		if (!form.receiver_name?.trim()) next.receiver_name = reject ? 'Kim rad etdi?' : 'Kim qabul qildi?'
 		if (reject) {
 			if (!form.return_reason) next.return_reason = 'Sababni tanlang'
 		} else {
-			if (!form.receiver_name?.trim()) next.receiver_name = 'Kim qabul qildi?'
 			if (returned >= sent) next.returned_quantity = 'Hammasi qaytsa «Qabul qilmadi» ni tanlang'
 			if (returned > 0 && !form.return_reason) next.return_reason = 'Qaytish sababini tanlang'
 		}
 		setErrors(next)
 		if (Object.keys(next).length) return
 		setBusy(true)
+		const photos: Row[] = form.photos ?? []
+		const common = {
+			receiver_name: form.receiver_name.trim(),
+			receiver_phone: form.receiver_phone || '',
+			client_signature: form.client_signature || undefined,
+			comment: form.comment || '',
+			photos: photos.map(p => p.id),
+			photo: photos[0]?.id,
+			latitude: position.latitude,
+			longitude: position.longitude
+		}
 		const body = reject
-			? {return_reason: form.return_reason, comment: form.comment || '', photo: form.photo?.id}
-			: {
-				receiver_name: form.receiver_name.trim(),
-				client_signature: form.client_signature || undefined,
-				comment: form.comment || '',
-				returned_quantity: returned,
-				return_reason: returned > 0 ? form.return_reason : undefined,
-				photo: form.photo?.id
-			}
+			? {...common, return_reason: form.return_reason, receiver_position: form.receiver_position || ''}
+			: {...common, returned_quantity: returned, return_reason: returned > 0 ? form.return_reason : undefined}
 		interceptor.post(`logistics/driver/stops/${stopId}/${reject ? 'reject' : 'deliver'}`, body)
 			.then(() => {
 				showMessage(reject ? 'Qaytarish qayd etildi' : 'Yetkazildi', 'success')
@@ -92,9 +102,13 @@ const DriverStop = () => {
 				<b>{reject ? 'Mijoz yukni qabul qilmadi' : 'Yukni topshirish'}</b>
 				{reject && <span style={MUTED}>Hammasi ({sent} dona) omborga qaytadi va u yerda tekshiriladi.</span>}
 
-				{!reject && (
-					<Input id="receiver_name" label="Kim qabul qildi (F.I.Sh.)" value={form.receiver_name ?? ''}
-						error={errors.receiver_name} onChange={(e) => set('receiver_name', e.target.value)}/>
+				<Input id="receiver_name" label={reject ? 'Kim rad etdi (F.I.Sh.)' : 'Kim qabul qildi (F.I.Sh.)'} value={form.receiver_name ?? ''}
+					error={errors.receiver_name} onChange={(e) => set('receiver_name', e.target.value)}/>
+				<Input id="receiver_phone" label="Telefon raqami" value={form.receiver_phone ?? ''}
+					onChange={(e) => set('receiver_phone', e.target.value)}/>
+				{reject && (
+					<Input id="receiver_position" label="Lavozimi (masalan, ombor mudiri)" value={form.receiver_position ?? ''}
+						onChange={(e) => set('receiver_position', e.target.value)}/>
 				)}
 				{!reject && (
 					<NumberFormattedInput id="returned_quantity" label={`Qabul qilinmagan qismi (bo‘lsa), ${sent} donadan`}
@@ -107,18 +121,21 @@ const DriverStop = () => {
 						handleOnChange={(v) => set('return_reason', v)}/>
 				)}
 				<Input id="comment" label="Izoh" value={form.comment ?? ''} onChange={(e) => set('comment', e.target.value)}/>
-				<FileUpLoader id="photo" url="attachments/create" type="image" label="Foto (shikast, hujjat)"
-					value={form.photo ?? null} onChange={(v) => set('photo', v)}/>
-				{!reject && (
-					<div className="flex flex-col gap-sm">
-						<span style={MUTED}>Qabul qiluvchining imzosi</span>
-						<SignaturePad hint="Qabul qiluvchi shu yerga imzo chekadi" onChange={(v) => set('client_signature', v)}/>
-					</div>
-				)}
+				<FileUpLoader id="photos" url="attachments/create" type="image" multi={true} label="Rasmlar (yuk, shikast, hujjat)"
+					value={form.photos ?? []} onChange={(v) => set('photos', v ?? [])}/>
+				<div className="flex flex-col gap-sm">
+					<span style={MUTED}>{reject ? 'Rad etgan shaxsning imzosi' : 'Qabul qiluvchining imzosi'}</span>
+					<SignaturePad hint={reject ? 'Rad etgan shaxs shu yerga imzo chekadi' : 'Qabul qiluvchi shu yerga imzo chekadi'}
+						onChange={(v) => set('client_signature', v)}/>
+				</div>
+				<span style={MUTED}>
+					Joylashuv: {position.latitude != null ? `${position.latitude.toFixed(4)}, ${position.longitude?.toFixed(4)}` : 'aniqlanmadi'}
+				</span>
 				<Button type={FIELD.BUTTON} disabled={busy} theme={reject ? BUTTON_THEME.DANGER : BUTTON_THEME.PRIMARY} onClick={submit}>
 					{reject ? 'Qaytarishni tasdiqlash' : 'Topshirildi'}
 				</Button>
 			</div>
+			<DriverNav/>
 		</div>
 	)
 }

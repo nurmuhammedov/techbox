@@ -61,7 +61,11 @@ import {
 	AccountingPage,
 	DriverTrips,
 	DriverTrip,
-	DriverStop
+	DriverStop,
+	DriverHome,
+	DriverIncident,
+	DriverExpenses,
+	DriverExpenseAdd
 } from 'modules'
 
 
@@ -511,9 +515,13 @@ const useAppRoutes = () => {
 			id: 'driver',
 			path: 'driver',
 			children: [
-				{index: true, element: <DriverTrips />},
+				{index: true, element: <DriverHome />},
+				{path: 'trips', element: <DriverTrips />},
 				{path: 'trips/:id', element: <DriverTrip />},
-				{path: 'trips/:id/stops/:stopId', element: <DriverStop />}
+				{path: 'trips/:id/stops/:stopId', element: <DriverStop />},
+				{path: 'expenses', element: <DriverExpenses />},
+				{path: 'expenses/add', element: <DriverExpenseAdd />},
+				{path: 'incident', element: <DriverIncident />}
 			]
 		},
 		{

@@ -1,6 +1,7 @@
 import {Loader, PageTitle} from 'components'
 import {usePaginatedData, useSearchParams} from 'hooks'
 import {useNavigate} from 'react-router-dom'
+import DriverNav from '../components/DriverNav'
 import {date, PAGE_BODY, TripBadge} from '../helpers'
 
 
@@ -42,7 +43,7 @@ const DriverTrips = () => {
 			) : (
 				<div className="flex flex-col gap-md">
 					{trips.map(trip => (
-						<button key={trip.id} type="button" style={CARD} onClick={() => navigate(`trips/${trip.id}`)}>
+						<button key={trip.id} type="button" style={CARD} onClick={() => navigate(`/driver/trips/${trip.id}`)}>
 							<div className="flex justify-between align-center gap-md">
 								<b style={{fontSize: '1.0625rem'}}>{trip.trip_number}</b>
 								<TripBadge status={trip.status}/>
@@ -58,6 +59,7 @@ const DriverTrips = () => {
 					))}
 				</div>
 			)}
+			<DriverNav/>
 		</div>
 	)
 }

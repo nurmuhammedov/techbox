@@ -423,12 +423,15 @@ export const menu: IMenuItem[] = [
 	},
 	{
 		id: 'driver',
-		label: 'Mening reyslarim',
+		label: 'Haydovchi',
 		href: '/driver',
 		icon: Truck,
 		items: [
-			{label: 'Faol reyslar', href: '/driver?tab=active'},
-			{label: 'Tarix', href: '/driver?tab=history'}
+			{label: 'Bosh sahifa', href: '/driver'},
+			{label: 'Faol reyslar', href: '/driver/trips?tab=active'},
+			{label: 'Tarix', href: '/driver/trips?tab=history'},
+			{label: 'Xarajatlar', href: '/driver/expenses'},
+			{label: 'Hodisa haqida xabar', href: '/driver/incident'}
 		],
 		allowedRoles: [
 			ROLE_LIST.EMPLOYEE

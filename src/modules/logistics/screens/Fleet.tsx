@@ -166,7 +166,6 @@ const Fleet = () => {
 			Header: 'Jiddiyligi',
 			accessor: (r: Row) => <Badge label={r.severity_display} color={SEVERITY_COLORS[r.severity] ?? '#475569'}/>
 		},
-		{Header: 'Joy', accessor: (r: Row) => r.location || '-'},
 		{
 			Header: 'Tavsif',
 			accessor: (r: Row) => (
@@ -177,7 +176,24 @@ const Fleet = () => {
 			)
 		},
 		{Header: 'Xarajat', accessor: (r: Row) => money(r.actual_cost ?? r.estimated_cost)},
-		{Header: 'Foto', accessor: (r: Row) => r.photo?.file ? <a href={r.photo.file} target="_blank" rel="noreferrer">Ko‘rish</a> : '-'},
+		{
+			Header: 'Foto',
+			accessor: (r: Row) => {
+				const files: Row[] = [...(r.photo ? [r.photo] : []), ...(r.photos ?? [])]
+				if (!files.length) return '-'
+				return (
+					<div className="flex gap-sm">
+						{files.map((f, i) => <a key={f.id ?? i} href={f.file} target="_blank" rel="noreferrer">{i + 1}</a>)}
+					</div>
+				)
+			}
+		},
+		{
+			Header: 'Joy',
+			accessor: (r: Row) => r.latitude != null
+				? <a href={`https://maps.google.com/?q=${r.latitude},${r.longitude}`} target="_blank" rel="noreferrer">{r.location || 'Xaritada'}</a>
+				: (r.location || '-')
+		},
 		{
 			Header: 'Holati',
 			accessor: (r: Row) => <Badge label={r.status_display} color={INCIDENT_COLORS[r.status] ?? '#475569'}/>

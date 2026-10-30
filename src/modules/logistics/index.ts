@@ -10,12 +10,19 @@ import AccountingPage from './screens/Accounting'
 import DriverTrips from './screens/DriverTrips'
 import DriverTrip from './screens/DriverTrip'
 import DriverStop from './screens/DriverStop'
+import DriverHome from './screens/DriverHome'
+import DriverIncident from './screens/DriverIncident'
+import {DriverExpenseAdd, DriverExpenses} from './screens/DriverExpenses'
 
 
 export {
 	DriverTrips,
 	DriverTrip,
 	DriverStop,
+	DriverHome,
+	DriverIncident,
+	DriverExpenses,
+	DriverExpenseAdd,
 	LogisticsFleet,
 	ShipmentsTable,
 	AddShipment,

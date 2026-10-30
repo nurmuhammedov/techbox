@@ -5,6 +5,7 @@ import interceptor from 'libraries/interceptor'
 import {useState} from 'react'
 import {Link, useNavigate, useParams} from 'react-router-dom'
 import {showMessage} from 'utilities/alert'
+import InspectionForm from '../components/InspectionForm'
 import SignaturePad from '../components/SignaturePad'
 import {date, dateTime, money, PAGE_FONT, ShipmentBadge, TripBadge} from '../helpers'
 
@@ -138,13 +139,38 @@ const TripDetail = () => {
 				</Card>
 			)}
 
+			{['planned', 'loaded'].includes(trip.status) && (
+				<Card screen={false} style={CARD}>
+					<h3 style={{marginBottom: '1rem'}}>Transport tekshiruvi</h3>
+					{trip.inspection?.passed ? (
+						<span style={{color: '#15803d'}}>
+							✓ Mashina tekshiruvdan o‘tgan · {dateTime(trip.inspection.created_at)}
+						</span>
+					) : (
+						<>
+							<span style={MUTED}>Tekshiruvni haydovchi telefonida yoki shu yerda, uning yonida qilish mumkin. Tekshiruvsiz reys yo‘lga chiqmaydi.</span>
+							<div style={{marginTop: '1rem', maxWidth: '40rem'}}>
+								<InspectionForm endpoint={`logistics/trips/${id}/inspection`} last={trip.inspection} onDone={() => refetch()}/>
+							</div>
+						</>
+					)}
+				</Card>
+			)}
+
 			{trip.status === 'loaded' && (
 				<Card screen={false} style={CARD}>
 					<h3 style={{marginBottom: '1rem'}}>Haydovchiga topshirish</h3>
-					<SignaturePad onChange={setSignature}/>
+					{trip.inspection?.passed ? (
+						<>
+							<span style={MUTED}>Haydovchi o‘z telefonida ham imzo qo‘yib qabul qilishi mumkin.</span>
+							<SignaturePad onChange={setSignature}/>
+						</>
+					) : (
+						<span style={MUTED}>Avval transport tekshiruvidan o‘ting.</span>
+					)}
 					<div className="flex justify-end gap-lg" style={{marginTop: '1rem'}}>
 						<Button theme={BUTTON_THEME.DANGER_OUTLINE} disabled={busy} onClick={cancel}>Reysni bekor qilish</Button>
-						<Button disabled={busy} onClick={handOver}>Topshirish va yo‘lga chiqarish</Button>
+						<Button disabled={busy || !trip.inspection?.passed} onClick={handOver}>Topshirish va yo‘lga chiqarish</Button>
 					</div>
 				</Card>
 			)}
