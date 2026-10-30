@@ -621,7 +621,7 @@ const Index: FC<IProperties> = ({ leader: _leader = false }) => {
                         )()
                     }}
                 >
-                    Return order
+                    Save
                 </Button>
             </Modal>
 
